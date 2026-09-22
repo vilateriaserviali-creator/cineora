@@ -320,7 +320,7 @@ io.on("connection", socket => {
     socket.to(target.id).emit("voice-signal", { from: socket.id, name: socket.data.name || "Гость", data });
   });
 
-  socket.on("join-room", ({ roomId, name }) =>
+  socket.on("join-room", ({ roomId, name }) => {
     roomId = String(roomId || "").trim().toUpperCase().slice(0, 16);
     name = String(name || "Гость").trim().slice(0, 24);
     if (!roomId) return;
