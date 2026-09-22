@@ -755,7 +755,7 @@ function startRoom(roomId){
     const b=document.getElementById("fullscreenBtn");
     const full=document.fullscreenElement===wrap;
     if(b)b.textContent=full?"⛶ Выйти из полного экрана":"⛶ На весь экран";
-    if(full){wrap.appendChild(sideCard);setFullscreenChat(false)}else{sideCard.classList.remove("fullscreen-chat","is-open");setFullscreenChat(false);sideParent.insertBefore(sideCard,sideNext)}
+    if(full){wrap.appendChild(sideCard);sideCard.classList.add("fullscreen-chat");setFullscreenChat(true)}else{sideCard.classList.remove("fullscreen-chat","is-open");setFullscreenChat(false);sideParent.insertBefore(sideCard,sideNext)}
   });
   document.getElementById("syncBtn").onclick=()=>{
     const b=document.getElementById("syncBtn");
@@ -769,7 +769,7 @@ function startRoom(roomId){
     socket.emit("request-sync");
     setTimeout(()=>{b.textContent="✓ Синхронизировано";setTimeout(()=>b.textContent="↻ Синхронизировать",1200)},350);
   };
-  document.querySelector(".chat-close").onclick=()=>{if(document.fullscreenElement===wrap)setFullscreenChat(false)};
+  document.querySelector(".chat-close").onclick=()=>{setFullscreenChat(false)};
   document.getElementById("copyRoom").onclick=async()=>{
     const url=location.origin+"/?room="+encodeURIComponent(roomId);
     try{await navigator.clipboard.writeText(url);document.getElementById("copyRoom").textContent="Ссылка скопирована";setTimeout(()=>document.getElementById("copyRoom").textContent="Скопировать ссылку",1500)}
@@ -923,7 +923,7 @@ function startRoom(roomId){
     hostId=state.hostId||"";
     roomPlaying=!!state.playing;roomPosition=Number(state.position)||0;roomServerTime=Number(state.serverTime)||Date.now();
     document.getElementById("mediaUrlRoom").value=state.mediaUrl||"";
-    document.getElementById("syncState").textContent="Видео синхронизируется между участниками";
+    const syncStateEl=document.getElementById("syncState"); if(syncStateEl) syncStateEl.textContent="Видео синхронизируется между участниками";
     loadMedia(state.mediaUrl);
     setTimeout(()=>applySync(state.playing,state.position,state.serverTime),1200);
   });
