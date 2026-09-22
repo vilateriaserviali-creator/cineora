@@ -161,14 +161,14 @@ body{background:#e8dfe4;color:var(--ink)}
 <header class="header">
 <a class="logo" href="/">CINE<span>ORA</span></a>
 <nav class="nav"><a href="#about">О сервисе</a><a href="#features">Возможности</a><a href="#how">Как это работает</a></nav>
-<div><button class="login" id="login">Войти / Регистрация</button><button class="create-top" id="createTop">Создать сессию</button></div>
+<div><button type="button" class="login" id="login">Войти / Регистрация</button><button type="button" class="create-top" id="createTop">Создать сессию</button></div>
 </header>
 <div class="hero-content">
 <div class="eyebrow" id="funEyebrow">Совместный просмотр фильмов и видео</div>
 <div class="brand-big">CINE<span class="accent">O</span>RA</div>
 <h1>Кино становится <em class="accent">ближе.</em></h1>
 <p class="lead">Смотрите фильмы и видео вместе с друзьями — в одной синхронизированной сессии, где бы вы ни были.</p><div id="funLine" style="margin-top:16px;font-size:13px;color:#6f6470;min-height:20px"></div>
-<div class="actions"><button class="primary" id="join">▶ &nbsp;Присоединиться к сессии</button><button class="secondary" id="create">＋ &nbsp;Создать сессию</button></div>
+<div class="actions"><button type="button" class="primary" id="join">▶ &nbsp;Присоединиться к сессии</button><button type="button" class="secondary" id="create">＋ &nbsp;Создать сессию</button></div>
 <div class="sources"><div class="sources-title">Поддерживаем популярные источники</div><div class="source-row"><div class="source"><span class="source-icon">▶</span>YouTube</div><div class="source"><span class="source-icon">VK</span>VK Видео</div><div class="source"><span class="source-icon">R</span>RUTUBE</div><div class="source"><span class="source-icon">↗</span>Видео из интернета</div></div></div>
 </div>
 <div class="features"><div class="feature"><span class="feature-icon">♧</span><span>Любое количество<br>участников</span></div><div class="feature"><span class="feature-icon">ϟ</span><span>Синхронизация<br>в реальном времени</span></div><div class="feature"><span class="feature-icon">▣</span><span>Телефон, планшет<br>и компьютер</span></div></div>
@@ -214,7 +214,7 @@ body{background:#e8dfe4;color:var(--ink)}
 
 <footer class="footer"><div class="wrap"><span>CINEORA</span><button class="idea-link" id="ideaBtn">Предложить идею для сервиса</button><span>Кино становится ближе.</span></div></footer>
 
-<div class="modal hidden" id="modal"><div class="modal-box"><button class="close" id="close">×</button><h2 id="modalTitle">Войти в CINEORA</h2><p id="modalText">Введите имя. Для входа в существующую комнату укажите её код.</p><input id="name" placeholder="Ваше имя" maxlength="24" autocomplete="nickname"><input id="room" placeholder="Код сессии" maxlength="16" autocomplete="off"><div id="modalStatus" style="min-height:20px;color:#dbc5d8;font-size:13px;margin:6px 0"></div><button class="go" id="go">Войти</button><div id="authBenefits" style="margin-top:12px;color:#d9d0d8;font-size:12px;line-height:1.55"></div></div></div><div class="modal hidden" id="ideaModal"><div class="modal-box suggestion-box"><button class="close" id="ideaClose">×</button><h2>Предложить идею</h2><p>Расскажите, что стоит добавить или улучшить в CINEORA.</p><input id="ideaName" placeholder="Ваше имя (необязательно)" maxlength="40"><textarea id="ideaText" placeholder="Например: хочу совместные реакции, список фильмов, голосование..."></textarea><div class="suggestion-status" id="ideaStatus"></div><button class="go" id="ideaSend">Отправить предложение</button></div></div>
+<div class="modal hidden" id="modal"><div class="modal-box"><button class="close" id="close">×</button><h2 id="modalTitle">Войти в CINEORA</h2><p id="modalText">Введите имя. Для входа в существующую комнату укажите её код.</p><input id="name" placeholder="Ваше имя" maxlength="24" autocomplete="nickname"><input id="room" placeholder="Код сессии" maxlength="16" autocomplete="off"><div id="modalStatus" style="min-height:20px;color:#dbc5d8;font-size:13px;margin:6px 0"></div><button type="button" class="go" id="go">Войти</button><div id="authBenefits" style="margin-top:12px;color:#d9d0d8;font-size:12px;line-height:1.55"></div></div></div><div class="modal hidden" id="ideaModal"><div class="modal-box suggestion-box"><button class="close" id="ideaClose">×</button><h2>Предложить идею</h2><p>Расскажите, что стоит добавить или улучшить в CINEORA.</p><input id="ideaName" placeholder="Ваше имя (необязательно)" maxlength="40"><textarea id="ideaText" placeholder="Например: хочу совместные реакции, список фильмов, голосование..."></textarea><div class="suggestion-status" id="ideaStatus"></div><button class="go" id="ideaSend">Отправить предложение</button></div></div>
 
 <script src="/socket.io/socket.io.js"></script>
 <script>
@@ -249,14 +249,9 @@ function enterRoom(){
   localStorage.setItem("cineora_name",n);sessionStorage.setItem("cineora_name",n);
   modalStatus.textContent=modalCreate?"Создаём комнату…":"Открываем комнату…";
   if(modalCreate){
-    const creator=io();
-    const go=()=>creator.emit("create-room",{roomId:r},ack=>{
-      if(!ack?.ok){modalStatus.textContent=ack?.error||"Не удалось создать комнату.";creator.disconnect();return}
-      creator.disconnect();
-      location.assign("/?room="+encodeURIComponent(r));
-    });
-    if(creator.connected) go(); else creator.once("connect",go);
-    creator.once("connect_error",()=>{modalStatus.textContent="Не удалось подключиться к серверу. Попробуйте ещё раз.";creator.disconnect()});
+    // Комната создаётся сервером автоматически при первом входе.
+    // Не ждём отдельного Socket.IO-соединения: сразу открываем уникальную ссылку комнаты.
+    location.assign("/?room="+encodeURIComponent(r));
     return;
   }
   location.assign("/?room="+encodeURIComponent(r))
