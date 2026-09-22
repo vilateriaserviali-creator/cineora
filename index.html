@@ -1116,58 +1116,44 @@ function startRoom(roomId,pageParams){
     setTimeout(()=>{b.textContent="✓ Синхронизировано";setTimeout(()=>b.textContent="↻ Синхронизировать",1200)},350);
   };
   document.querySelector(".chat-close").onclick=()=>{setFullscreenChat()};
-  document.getElementById("inviteJoin")?.addEventListener("click",function inviteClick(){
-    const button=document.getElementById("inviteJoin");
-    if(!button)return;
-    const roomCode=(new URLSearchParams(window.location.search).get("room")||"").trim().toUpperCase();
-    const privateFlag=new URLSearchParams(window.location.search).get("private")==="1"?"&private=1":"";
-    const url=window.location.origin+"/?room="+encodeURIComponent(roomCode)+privateFlag;
+  document.getElementById("inviteJoin")?.addEventListener("click",async function(){
+    const button=this;
+    const params=new URLSearchParams(location.search);
+    const roomCode=(params.get("room")||"").trim().toUpperCase();
+    if(!roomCode){
+      button.textContent="⚠️ Комната не найдена";
+      setTimeout(()=>button.textContent="🔗 Скопировать приглашение",1800);
+      return;
+    }
+    const url=location.origin+"/?room="+encodeURIComponent(roomCode)+(params.get("private")==="1"?"&private=1":"");
     const original="🔗 Скопировать приглашение";
-    const setResult=(label)=>{
-      button.textContent=label;
-      clearTimeout(window.__cineoraInviteTimer);
-      window.__cineoraInviteTimer=setTimeout(()=>{button.textContent=original;button.disabled=false},2200);
-    };
     button.disabled=true;
     button.textContent="Копируем…";
-    (async()=>{
-      try{
-        if(navigator.share && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)){
-          await navigator.share({title:"CINEORA — приглашение",text:"Присоединяйся к просмотру 🍿",url});
-          setResult("✓ Приглашение готово");
-          return;
-        }
-        let copied=false;
-        if(navigator.clipboard && window.isSecureContext){
-          try{await navigator.clipboard.writeText(url);copied=true}catch(e){}
-        }
-        if(!copied){
-          const ta=document.createElement("textarea");
-          ta.value=url;
-          ta.readOnly=true;
-          ta.style.cssText="position:fixed;left:0;top:0;width:2px;height:2px;opacity:0;z-index:99999;";
-          document.body.appendChild(ta);
-          ta.focus();
-          ta.select();
-          ta.setSelectionRange(0,url.length);
-          try{copied=document.execCommand("copy")}catch(e){}
-          ta.remove();
-        }
-        if(copied){
-          setResult("✓ Ссылка скопирована");
-        }else{
-          button.disabled=false;
-          button.textContent="📋 Нажмите и скопируйте";
-          window.prompt("Скопируйте приглашение в комнату:",url);
-          setResult("✓ Готово");
-        }
-      }catch(e){
-        button.disabled=false;
-        if(e?.name==="AbortError"){setResult("🔗 Скопировать приглашение");return}
-        try{window.prompt("Скопируйте приглашение в комнату:",url)}catch(_){}
-        setResult("📋 Ссылка показана");
+    let done=false;
+    try{
+      if(navigator.clipboard?.writeText){
+        await navigator.clipboard.writeText(url);
+        done=true;
       }
-    })();
+    }catch(_){}
+    if(!done){
+      const box=document.createElement("div");
+      box.style.cssText="position:fixed;inset:0;background:#0008;z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px";
+      box.innerHTML='<div style="width:min(520px,100%);background:#fff;border-radius:18px;padding:20px;box-shadow:0 20px 60px #0005"><b style="display:block;margin-bottom:10px">Ссылка на комнату</b><input id="cineoraInviteField" readonly style="width:100%;box-sizing:border-box;padding:12px;border:1px solid #d5cbd7;border-radius:10px;font-size:14px" value="'+escapeHtml(url)+'"><button id="cineoraInviteCopy" type="button" style="margin-top:10px;width:100%;padding:12px;border:0;border-radius:10px;background:#957b93;color:#fff;font-weight:700">Скопировать ссылку</button><button id="cineoraInviteClose" type="button" style="margin-top:7px;width:100%;padding:10px;border:0;background:transparent">Закрыть</button></div>';
+      document.body.appendChild(box);
+      const field=box.querySelector("#cineoraInviteField");
+      field.focus();field.select();
+      box.querySelector("#cineoraInviteCopy").onclick=async()=>{
+        field.focus();field.select();
+        try{await navigator.clipboard.writeText(url);box.querySelector("#cineoraInviteCopy").textContent="✓ Скопировано"}catch(_){document.execCommand("copy");box.querySelector("#cineoraInviteCopy").textContent="✓ Скопировано"}
+      };
+      box.querySelector("#cineoraInviteClose").onclick=()=>box.remove();
+      button.disabled=false;
+      button.textContent=original;
+      return;
+    }
+    button.textContent="✓ Ссылка скопирована";
+    setTimeout(()=>{button.textContent=original;button.disabled=false},1800);
   });
 
   document.getElementById("leaveRoom").onclick=()=>{location.href="/"};
