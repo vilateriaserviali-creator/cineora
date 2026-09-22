@@ -34,6 +34,17 @@
 .side-title{color:#4b4550}.participants{background:#fff0}.person-row{background:#f5f1f5;border:1px solid #e5dfe5}.person-name{color:#4e4852}.person-time{color:#7c7480}.chat{border-top-color:#e1dbe1}.chat-messages{background:#fcfafc}.chat-msg{background:#f2eef3}.chat-msg b{color:#75627e}.chat-msg span{color:#4d4850}
 .fullscreen-chat{min-height:0!important;height:auto!important}
 @media(max-width:1000px){.room-top{background:#fffaf7}.player-wrap{min-height:360px}}
+</style><style id="cineora-player-size-fix">
+/* Плеер должен занимать всю область карточки, без маленького окна по центру */
+.player-wrap{position:relative!important;overflow:hidden!important;aspect-ratio:16/9!important;height:auto!important;min-height:0!important;padding:0!important}
+.player-wrap > #universalPlayer{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;display:block!important}
+.player-wrap #universalPlayer > iframe,
+.player-wrap #universalPlayer > video,
+.player-wrap #universalPlayer > .universal-player,
+.player-wrap #ytPlayer,
+.player-wrap #ytPlayer > iframe{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;min-width:100%!important;min-height:100%!important;border:0!important;display:block!important}
+.player-wrap video{width:100%!important;height:100%!important;object-fit:contain!important}
+@media(max-width:1000px){.player-wrap{aspect-ratio:16/9!important;min-height:0!important}}
 </style><style id="cineora-soft-theme">
 :root{--ink:#403943;--paper:#e8dfe4;--cream:#ddd1d9;--soft:#cdbdc9;--line:#bdaeb9;--accent:#b99bb5;--accent2:#aebbc8;--muted:#756b75}
 body{background:#e8dfe4;color:var(--ink)}
