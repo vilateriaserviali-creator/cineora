@@ -199,6 +199,7 @@ body{background:#e8dfe4;color:var(--ink)}
 .cineora-controls{display:none!important}
 </style><style id="cineora-remove-player-widget">
 .player-tools{display:none!important}
+.cineora-controls{display:flex!important}
 </style><style id="cineora-hide-player-controls-final">
 .cineora-controls{display:none!important}
 </style><style id="cineora-emoji-final-fix">
@@ -738,9 +739,8 @@ function startRoom(roomId){
   };
   document.getElementById("setMediaRoom").onclick=submitMedia;
   document.getElementById("mediaUrlRoom").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();submitMedia()}});
-  const roomLayout=document.querySelector(".room-layout"),sideCard=document.getElementById("sideCard"),sideParent=sideCard.parentNode,sideNext=sideCard.nextSibling;
-  let fullscreenChatOpen=false;
-  const setFullscreenChat=(open)=>{fullscreenChatOpen=!!open;sideCard.classList.toggle("is-open",fullscreenChatOpen)};
+  const roomLayout=document.querySelector(".room-layout"),sideCard=document.getElementById("sideCard");
+  const setFullscreenChat=()=>{sideCard.classList.remove("is-open","fullscreen-chat")};
   const fullscreenBtn=document.getElementById("fullscreenBtn");
   if(fullscreenBtn) fullscreenBtn.onclick=async()=>{
     try{
@@ -754,7 +754,7 @@ function startRoom(roomId){
     const b=document.getElementById("fullscreenBtn");
     const full=document.fullscreenElement===wrap;
     if(b)b.textContent=full?"⛶ Выйти из полного экрана":"⛶ На весь экран";
-    if(full){wrap.appendChild(sideCard);sideCard.classList.add("fullscreen-chat");setFullscreenChat(true)}else{sideCard.classList.remove("fullscreen-chat","is-open");setFullscreenChat(false);sideParent.insertBefore(sideCard,sideNext)}
+    setFullscreenChat();
   });
   document.getElementById("syncBtn").onclick=()=>{
     const b=document.getElementById("syncBtn");
@@ -768,7 +768,7 @@ function startRoom(roomId){
     socket.emit("request-sync");
     setTimeout(()=>{b.textContent="✓ Синхронизировано";setTimeout(()=>b.textContent="↻ Синхронизировать",1200)},350);
   };
-  document.querySelector(".chat-close").onclick=()=>{setFullscreenChat(false)};
+  document.querySelector(".chat-close").onclick=()=>{setFullscreenChat()};
   document.getElementById("copyRoom").onclick=async()=>{
     const url=location.origin+"/?room="+encodeURIComponent(roomId);
     try{await navigator.clipboard.writeText(url);document.getElementById("copyRoom").textContent="Ссылка скопирована";setTimeout(()=>document.getElementById("copyRoom").textContent="Скопировать ссылку",1500)}
