@@ -868,7 +868,7 @@ function startRoom(roomId){
   socket.on("voice-user-state",u=>renderVoiceUsers(u.users||[]));
   socket.on("voice-peer-left",id=>removeVoicePeer(id));
 
-  socket.on("disconnect",()=>{setStatus("Соединение потеряно — переподключаемся…");const el=document.getElementById("chatConnection");if(el)el.textContent="● нет связи"});
+  socket.on("disconnect",()=>{setStatus("Соединение потеряно — переподключаемся…");const el=document.getElementById("chatConnection");if(el)el.textContent="● нет связи";window.dispatchEvent(new Event("cineora:disconnected"))});
   socket.on("connect_error",()=>{setStatus("Нет соединения с комнатой — переподключаемся…");const el=document.getElementById("chatConnection");if(el)el.textContent="● нет связи"});
   socket.on("connect",()=>{
     const cookieName=(document.cookie.match(/(?:^|; )cineora_name=([^;]*)/)||[])[1];
@@ -876,6 +876,7 @@ function startRoom(roomId){
     socket.emit("join-room",{roomId,name:saved||"Гость"});
     setStatus("Комната подключена");
     const el=document.getElementById("chatConnection");if(el)el.textContent="● онлайн";
+    window.dispatchEvent(new Event("cineora:connected"));
     if(pendingChat){
       const msg=pendingChat;pendingChat="";
       socket.emit("chat-message",{text:msg},ack=>{if(!ack?.ok)setStatus(ack?.error||"Не удалось отправить сообщение")});
@@ -984,39 +985,58 @@ function startRoom(roomId){
 (function(){
   const overlay=document.getElementById("cineoraWakeup");
   if(!overlay)return;
-  let lastOk=Date.now();
-  let checking=false;
-  async function checkServer(showOverlay){
-    if(checking)return;
-    checking=true;
-    if(showOverlay)overlay.classList.add("show");
-    const started=Date.now();
+  const roomPage=new URLSearchParams(location.search).has("room");
+  let retryTimer=null;
+  let wakeTimer=null;
+
+  function hide(){
+    clearTimeout(wakeTimer);
+    overlay.classList.remove("show");
+  }
+  function show(){
+    if(roomPage) overlay.classList.add("show");
+  }
+  async function wakeServer(){
     try{
       const controller=new AbortController();
-      const timer=setTimeout(()=>controller.abort(),12000);
+      const timer=setTimeout(()=>controller.abort(),8000);
       const r=await fetch("/health?ts="+Date.now(),{cache:"no-store",signal:controller.signal});
       clearTimeout(timer);
-      if(!r.ok)throw new Error("health");
-      lastOk=Date.now();
-      overlay.classList.remove("show");
+      if(r.ok) hide();
+      else throw new Error("health");
     }catch(e){
-      if(Date.now()-started<12000 && !showOverlay)overlay.classList.add("show");
-      setTimeout(()=>checkServer(true),1200);
-      return;
-    }finally{
-      checking=false;
+      if(roomPage){
+        clearTimeout(retryTimer);
+        retryTimer=setTimeout(wakeServer,2000);
+      }
     }
   }
-  document.addEventListener("visibilitychange",()=>{
-    if(document.visibilityState==="visible"){
-      if(Date.now()-lastOk>120000)checkServer(true);
-      else checkServer(false);
-    }
+
+  window.addEventListener("cineora:connected",hide);
+  window.addEventListener("cineora:disconnected",()=>{
+    if(!roomPage)return;
+    clearTimeout(wakeTimer);
+    wakeTimer=setTimeout(()=>{
+      show();
+      wakeServer();
+    },1500);
   });
-  window.addEventListener("pageshow",()=>checkServer(false));
-  setInterval(()=>{
-    if(document.visibilityState==="visible")checkServer(false);
-  },10*60*1000);
+
+  // Do not block the homepage while Render is waking up.
+  // On a room page, give Socket.IO a moment to connect before showing the overlay.
+  if(roomPage){
+    wakeTimer=setTimeout(()=>{
+      if(!overlay.classList.contains("show")) show();
+      wakeServer();
+    },5000);
+  }
+
+  document.addEventListener("visibilitychange",()=>{
+    if(document.visibilityState==="visible" && roomPage) wakeServer();
+  });
+  window.addEventListener("pageshow",()=>{
+    if(roomPage) wakeServer();
+  });
 })();
 </script>
 </body>
