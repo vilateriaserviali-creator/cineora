@@ -3,83 +3,49 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>CINEORA — совместный просмотр</title>
+<title>CINEORA — Кино становится ближе</title>
 <style>
-:root{--bg:#09090c;--panel:#111116;--panel2:#17171e;--text:#f4f3f6;--muted:#9897a1;--line:rgba(255,255,255,.09);--accent:#c8ff45}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif}button,input{font:inherit}button{cursor:pointer}
-.wrap{width:min(1200px,calc(100% - 28px));margin:auto}.top{height:70px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}.logo{font-weight:900;letter-spacing:.17em}.logo span{color:var(--accent)}
-.room{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:14px;padding:18px 0}.main{min-width:0}.player{position:relative;aspect-ratio:16/9;background:#050507;border:1px solid var(--line);border-radius:18px;overflow:hidden}.player video{width:100%;height:100%;display:block;background:#050507}.empty{position:absolute;inset:0;display:grid;place-items:center;text-align:center;color:var(--muted);padding:30px}.empty strong{display:block;color:#eee;font-size:20px;margin-bottom:8px}.controls{display:flex;align-items:center;gap:10px;padding:12px 2px}.controls button,.small{border:1px solid var(--line);background:var(--panel);color:#fff;border-radius:10px;padding:9px 12px}.time{font-variant-numeric:tabular-nums;color:#b8b7c0;font-size:13px}.url{display:flex;gap:8px;margin:8px 0 16px}.url input{flex:1;min-width:0;background:var(--panel);border:1px solid var(--line);color:#fff;padding:11px 12px;border-radius:10px}.url button{background:var(--accent);border:0;border-radius:10px;padding:0 15px;color:#111;font-weight:800}
-.side{background:var(--panel);border:1px solid var(--line);border-radius:18px;display:flex;flex-direction:column;min-height:600px}.sidehead{padding:18px;border-bottom:1px solid var(--line);font-weight:800}.tabs{display:flex}.tabs button{flex:1;border:0;background:transparent;color:var(--muted);padding:13px;border-bottom:1px solid var(--line)}.tabs button.active{color:#fff;border-bottom-color:var(--accent)}.content{padding:15px;overflow:auto;flex:1}.users{display:grid;gap:10px}.user{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05)}.u-left{display:flex;align-items:center;gap:9px}.dot{width:8px;height:8px;border-radius:50%;background:var(--accent)}.u-time{color:#aaa;font-size:12px;font-variant-numeric:tabular-nums}.chat{display:none;height:100%;flex-direction:column}.messages{flex:1;overflow:auto}.msg{margin:0 0 13px}.msg b{font-size:12px;color:#d0cfd6}.msg p{margin:3px 0 0;word-break:break-word}.msg time{font-size:10px;color:#686771;margin-left:6px}.chatform{display:flex;gap:7px;margin-top:12px}.chatform input{flex:1;min-width:0;background:#0d0d11;border:1px solid var(--line);color:#fff;border-radius:10px;padding:10px}.emoji{width:42px}.chatform button{border:1px solid var(--line);background:var(--panel2);color:#fff;border-radius:10px;padding:0 12px}.join{position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:20px;z-index:5}.box{width:min(420px,100%);background:#141419;border:1px solid var(--line);border-radius:20px;padding:26px}.box h1{margin:0 0 20px;font-size:27px}.box input{width:100%;padding:13px;background:#0d0d11;border:1px solid var(--line);color:#fff;border-radius:10px;margin-bottom:10px}.box button{width:100%;padding:13px;background:var(--accent);border:0;border-radius:10px;font-weight:800}.hidden{display:none!important}
-@media(max-width:850px){.room{grid-template-columns:1fr}.side{min-height:420px}.player{border-radius:14px}}
+:root{--bg:#171318;--text:#fffaf8;--muted:#e4d9d7;--line:#ffffff2b;--accent:#d9f58a}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif}button,input{font:inherit}button{cursor:pointer}
+.hidden{display:none!important}.landing{min-height:100vh;position:relative;overflow:hidden;background:linear-gradient(90deg,#171218e8 0%,#171218b5 38%,#17121820 78%,#17121855),url("cineora-hero.png") center/cover no-repeat}.landing:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,#0002,transparent 50%,#0007);pointer-events:none}.wrap{width:min(1280px,calc(100% - 42px));margin:auto;position:relative;z-index:1}
+.top{height:82px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}.logo{font-size:25px;font-weight:900;letter-spacing:.18em}.logo span{color:var(--accent)}.nav{display:flex;gap:32px}.nav a{color:#fff;text-decoration:none;font-size:14px}.login{border:0;background:none;color:#fff;font-size:14px}.heart{font-size:24px;margin-left:20px}
+.hero{min-height:calc(100vh - 82px);display:flex;align-items:center;padding:55px 0 75px}.copy{max-width:575px}.kicker{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:#eee2e0;margin-bottom:20px}h1{font-size:clamp(55px,7vw,88px);letter-spacing:.08em;line-height:.9;margin:0 0 22px}.accent{color:var(--accent)}.tagline{font-size:clamp(30px,3.4vw,46px);font-weight:750;line-height:1;margin-bottom:20px}.desc{max-width:520px;font-size:17px;line-height:1.65;color:#f0e6e3;margin-bottom:30px}
+.actions{display:flex;gap:14px;flex-wrap:wrap}.primary,.secondary{border-radius:999px;padding:16px 25px;min-width:205px;transition:.2s}.primary{border:1px solid var(--accent);background:var(--accent);color:#202415;font-weight:850;box-shadow:0 10px 35px #d9f58a33}.secondary{border:1px solid var(--accent);background:#19151c66;color:#fff}.primary:hover,.secondary:hover{transform:translateY(-2px)}
+.platforms{margin-top:42px}.platform-title{font-size:12px;text-transform:uppercase;letter-spacing:.1em;margin-bottom:11px;color:#ded4d2}.platform-row{display:flex;gap:9px;flex-wrap:wrap}.platform{padding:11px 15px;border:1px solid var(--line);background:#17151b99;backdrop-filter:blur(10px);border-radius:13px;font-size:14px}
+.features{display:flex;margin-top:42px;padding-top:19px;border-top:1px solid var(--line);gap:24px}.feature{font-size:13px;color:#f1e8e5;padding-right:24px;border-right:1px solid var(--line)}.feature:last-child{border:0}.feature b{color:var(--accent);font-size:20px;margin-right:7px}
+.modal{position:fixed;inset:0;z-index:10;background:#0c090dcc;backdrop-filter:blur(12px);display:grid;place-items:center;padding:20px}.card{width:min(430px,100%);background:#211c22;border:1px solid var(--line);border-radius:24px;padding:27px;box-shadow:0 30px 90px #0009}.card h2{margin:0 0 8px}.card p{color:var(--muted);line-height:1.5;margin:0 0 20px}.card input{width:100%;padding:13px 14px;margin-bottom:10px;background:#151217;border:1px solid var(--line);border-radius:11px;color:#fff}.card button{padding:13px;border-radius:11px;border:1px solid var(--line);background:#29232a;color:#fff}.card .go{background:var(--accent);color:#202415;border:0;font-weight:800;width:100%}.close{float:right;background:none!important;border:0!important;font-size:22px!important;color:#aaa;padding:0!important}
+@media(max-width:800px){.nav{display:none}.hero{align-items:flex-end;padding-bottom:30px}.features{display:none}.desc{font-size:15px}.actions{display:grid}.primary,.secondary{width:100%}.landing{background-position:center}.wrap{width:calc(100% - 28px)}}
 </style>
 </head>
 <body>
-<div id="join" class="join">
- <div class="box">
-  <h1>Войти в комнату</h1>
-  <input id="name" placeholder="Ваше имя" maxlength="24">
-  <input id="roomId" placeholder="Код комнаты" maxlength="16">
-  <button id="joinBtn">Войти</button>
- </div>
+<section class="landing">
+<div class="wrap">
+<header class="top">
+<div class="logo">CINE<span>ORA</span></div>
+<nav class="nav"><a href="#about">О сервисе</a><a href="#features">Возможности</a><a href="#how">Как это работает</a></nav>
+<button class="login" id="login">Войти <span class="heart">♡</span></button>
+</header>
+<main class="hero" id="about"><div class="copy">
+<div class="kicker">Совместный просмотр видео и фильмов</div>
+<h1>CINE<span class="accent">O</span>RA</h1>
+<div class="tagline">Кино становится <span class="accent">ближе.</span></div>
+<p class="desc">Смотрите фильмы и видео вместе с друзьями — в одной синхронизированной сессии, где бы вы ни были.</p>
+<div class="actions"><button class="primary" id="join">▶&nbsp; Присоединиться к сессии</button><button class="secondary" id="create">＋&nbsp; Создать сессию</button></div>
+<div class="platforms"><div class="platform-title">Поддерживаем популярные источники</div><div class="platform-row"><span class="platform">▶ YouTube</span><span class="platform">VK Видео</span><span class="platform">RUTUBE</span><span class="platform">↗ Видео из интернета</span></div></div>
+<div class="features" id="features"><div class="feature"><b>♧</b>Любое количество участников</div><div class="feature"><b>ϟ</b>Синхронизация в реальном времени</div><div class="feature"><b>▣</b>На любом устройстве</div></div>
+</div></main>
 </div>
+</section>
 
-<header><div class="wrap top"><div class="logo">CINE<span>ORA</span></div><div id="roomLabel"></div></div></header>
-<main class="wrap room">
- <section class="main">
-  <div class="player" id="playerBox">
-   <video id="video" controls playsinline></video>
-   <div class="empty" id="empty"><div><strong>Добавьте видео</strong><span>Укажите прямую ссылку на видеофайл ниже.</span></div></div>
-  </div>
-  <div class="controls">
-   <button id="playBtn">Play</button><button id="pauseBtn">Pause</button>
-   <span class="time" id="roomTime">00:00 / 00:00</span>
-   <span style="margin-left:auto" class="time" id="status">Подключение…</span>
-  </div>
-  <div class="url"><input id="mediaUrl" placeholder="Прямая ссылка на видеофайл"><button id="setMedia">Загрузить</button></div>
- </section>
- <aside class="side">
-  <div class="sidehead">CINEORA ROOM</div>
-  <div class="tabs"><button id="usersTab" class="active">Участники</button><button id="chatTab">Чат</button></div>
-  <div id="usersContent" class="content"><div class="users" id="users"></div></div>
-  <div id="chatContent" class="content chat">
-    <div class="messages" id="messages"></div>
-    <form class="chatform" id="chatForm"><button type="button" class="emoji" id="emoji">😊</button><input id="chatInput" placeholder="Сообщение…" maxlength="500"><button>Отправить</button></form>
-  </div>
- </aside>
-</main>
+<div class="modal hidden" id="modal"><div class="card"><button class="close" id="close">×</button><h2 id="title">Присоединиться к сессии</h2><p id="text">Введите имя и код сессии.</p><input id="name" placeholder="Ваше имя" maxlength="24"><input id="room" placeholder="Код сессии" maxlength="16"><button class="go" id="go">Войти</button></div></div>
 
-<script src="/socket.io/socket.io.js"></script>
 <script>
-const socket=io();
-const video=document.getElementById("video"), empty=document.getElementById("empty");
-const usersEl=document.getElementById("users"), statusEl=document.getElementById("status");
-const roomTime=document.getElementById("roomTime");
-let roomId="", myId="", suppress=false, lastSync=0;
-
-function fmt(s){s=Math.max(0,Math.floor(s||0));const h=Math.floor(s/3600),m=Math.floor(s%3600/60),sec=s%60;return (h?String(h).padStart(2,"0")+":":"")+String(m).padStart(2,"0")+":"+String(sec).padStart(2,"0")}
-function join(){const name=document.getElementById("name").value.trim()||"Гость";roomId=document.getElementById("roomId").value.trim().toUpperCase();if(!roomId)return;socket.emit("join-room",{roomId,name});document.getElementById("join").classList.add("hidden");document.getElementById("roomLabel").textContent=roomId;statusEl.textContent="В комнате"}
-document.getElementById("joinBtn").onclick=join;
-document.getElementById("playBtn").onclick=()=>video.play();
-document.getElementById("pauseBtn").onclick=()=>video.pause();
-document.getElementById("setMedia").onclick=()=>{const url=document.getElementById("mediaUrl").value.trim();if(url)socket.emit("set-media",{url})};
-
-video.addEventListener("play",()=>{if(!suppress)socket.emit("sync",{playing:true,position:video.currentTime})});
-video.addEventListener("pause",()=>{if(!suppress)socket.emit("sync",{playing:false,position:video.currentTime})});
-video.addEventListener("seeked",()=>{if(!suppress)socket.emit("sync",{playing:!video.paused,position:video.currentTime})});
-video.addEventListener("timeupdate",()=>{roomTime.textContent=fmt(video.currentTime)+" / "+fmt(video.duration);if(Date.now()-lastSync>900){lastSync=Date.now();socket.emit("user-progress",{position:video.currentTime,playing:!video.paused})}});
-
-socket.on("room-state",state=>{if(state.mediaUrl)loadMedia(state.mediaUrl);applySync(state.playing,state.position)});
-socket.on("media-changed",url=>loadMedia(url));
-function loadMedia(url){document.getElementById("mediaUrl").value=url;video.src=url;video.load();empty.classList.add("hidden")}
-function applySync(playing,pos){suppress=true;try{if(Math.abs(video.currentTime-pos)>0.7)video.currentTime=pos;if(playing)video.play().catch(()=>{});else video.pause()}finally{setTimeout(()=>suppress=false,150)}}
-
-socket.on("room-users",users=>{usersEl.innerHTML="";users.forEach(u=>{const row=document.createElement("div");row.className="user";row.innerHTML='<div class="u-left"><span class="dot"></span><span></span></div><span class="u-time"></span>';row.querySelector(".u-left span:last-child").textContent=u.name+(u.id===socket.id?" (вы)":"");row.querySelector(".u-time").textContent=fmt(u.position)+(u.playing?"":" · пауза");usersEl.appendChild(row)})});
-socket.on("user-progress",u=>{});
-socket.on("chat-message",m=>{const el=document.createElement("div");el.className="msg";const b=document.createElement("b");b.textContent=m.name;const t=document.createElement("time");t.textContent=m.time;const p=document.createElement("p");p.textContent=m.text;el.append(b,t,p);document.getElementById("messages").appendChild(el);document.getElementById("messages").scrollTop=999999});
-document.getElementById("chatForm").onsubmit=e=>{e.preventDefault();const i=document.getElementById("chatInput");if(i.value.trim()){socket.emit("chat-message",{text:i.value});i.value=""}};
-document.getElementById("emoji").onclick=()=>{const i=document.getElementById("chatInput");i.value+=" 😊";i.focus()};
-document.getElementById("usersTab").onclick=()=>{document.getElementById("usersContent").style.display="block";document.getElementById("chatContent").style.display="none";usersTab.classList.add("active");chatTab.classList.remove("active")};
-document.getElementById("chatTab").onclick=()=>{document.getElementById("usersContent").style.display="none";document.getElementById("chatContent").style.display="flex";chatTab.classList.add("active");usersTab.classList.remove("active")};
+const modal=document.getElementById("modal"),name=document.getElementById("name"),room=document.getElementById("room"),title=document.getElementById("title"),text=document.getElementById("text");let creating=false;
+function code(){return String(Math.floor(1000+Math.random()*9000))}
+function openModal(make){creating=make;title.textContent=make?"Создать сессию":"Присоединиться к сессии";text.textContent=make?"Введите имя — код сессии будет создан автоматически.":"Введите имя и код сессии, который вам отправили.";room.value=make?code():"";room.placeholder=make?"Код создан автоматически":"Код сессии";modal.classList.remove("hidden");name.focus()}
+document.getElementById("join").onclick=()=>openModal(false);document.getElementById("create").onclick=()=>openModal(true);document.getElementById("login").onclick=()=>openModal(false);document.getElementById("close").onclick=()=>modal.classList.add("hidden");
+document.getElementById("go").onclick=()=>{const n=name.value.trim()||"Гость",r=room.value.trim().toUpperCase();if(!r)return;location.href="/?room="+encodeURIComponent(r);sessionStorage.setItem("cineora_name",n)};
+const q=new URLSearchParams(location.search).get("room");if(q){openModal(false);room.value=q.toUpperCase()}
 </script>
 </body>
 </html>
