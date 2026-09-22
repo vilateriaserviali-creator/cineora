@@ -287,7 +287,7 @@ function roomState(roomId) {
   if (!rooms.has(roomId)) rooms.set(roomId, { users: new Map(), hostId: null, playing: false, position: 0, updatedAt: Date.now(), mediaUrl: "" });
   return rooms.get(roomId);
 }
-function publicUsers(room) { return [...room.users.values()].map(u => ({ id: u.id, name: u.name, position: u.position, playing: u.playing })); }
+function publicUsers(room) {\n  const now = Date.now();\n  return [...room.users.values()].map(u => ({\n    id: u.id,\n    name: u.name,\n    position: u.playing ? u.position + Math.max(0, now - (u.progressUpdatedAt || now)) / 1000 : u.position,\n    playing: u.playing\n  }));\n}
 function broadcastRoom(roomId) { const room = rooms.get(roomId); if (room) io.to(roomId).emit("room-users", publicUsers(room)); }
 
 io.on("connection", socket => {
@@ -297,7 +297,7 @@ io.on("connection", socket => {
     if (!roomId) return;
     const room = roomState(roomId); socket.join(roomId); socket.data.roomId = roomId; socket.data.name = name;
     if (!room.hostId) room.hostId = socket.id;
-    room.users.set(socket.id, { id: socket.id, name, position: room.playing ? room.position + (Date.now() - room.updatedAt) / 1000 : room.position, playing: room.playing });
+    room.users.set(socket.id, { id: socket.id, name, position: room.playing ? room.position + (Date.now() - room.updatedAt) / 1000 : room.position, playing: room.playing, progressUpdatedAt: Date.now() });
     socket.emit("room-state", { hostId: room.hostId, playing: room.playing, position: room.playing ? room.position + (Date.now() - room.updatedAt) / 1000 : room.position, serverTime: Date.now(), mediaUrl: room.mediaUrl });
     broadcastRoom(roomId);
   });
@@ -318,7 +318,7 @@ io.on("connection", socket => {
     room.position = Math.max(0, Number(position) || 0);
     room.updatedAt = Date.now();
     const user = room.users.get(socket.id);
-    if (user) { user.position = room.position; user.playing = room.playing; }
+    if (user) { user.position = room.position; user.playing = room.playing; user.progressUpdatedAt = Date.now(); }
     socket.to(roomId).emit("sync", { playing: room.playing, position: room.position, serverTime: room.updatedAt });
     broadcastRoom(roomId);
   });
@@ -334,7 +334,7 @@ io.on("connection", socket => {
       serverTime: Date.now()
     });
   });
-  socket.on("user-progress", ({ position, playing }) => { const roomId = socket.data.roomId; if (!roomId) return; const room = roomState(roomId); const user = room.users.get(socket.id); if (!user) return; user.position = Math.max(0, Number(position) || 0); user.playing = !!playing; socket.to(roomId).emit("user-progress", { id: socket.id, position: user.position, playing: user.playing }); broadcastRoom(roomId); });
+  socket.on("user-progress", ({ position, playing }) => { const roomId = socket.data.roomId; if (!roomId) return; const room = roomState(roomId); const user = room.users.get(socket.id); if (!user) return; user.position = Math.max(0, Number(position) || 0); user.playing = !!playing; user.progressUpdatedAt = Date.now(); socket.to(roomId).emit("user-progress", { id: socket.id, position: user.position, playing: user.playing }); broadcastRoom(roomId); });
   socket.on("chat-message", ({ text }) => { const roomId = socket.data.roomId; if (!roomId) return; const clean = String(text || "").trim().slice(0, 500); if (!clean) return; io.to(roomId).emit("chat-message", { id: socket.id, name: socket.data.name || "Гость", text: clean, time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) }); });
   socket.on("disconnect", () => {
     const roomId = socket.data.roomId; if (!roomId || !rooms.has(roomId)) return;
