@@ -230,7 +230,7 @@ function openModal(create){
   roomInput.value=create?makeRoomCode():"";
   roomInput.readOnly=!!create;
   roomInput.style.display=create?"":"block";
-  roomInput.placeholder=create?"Код новой комнаты":"Код сессии (если входите в существующую)";
+  roomInput.placeholder=create?"Код новой комнаты":"Код сессии (необязательно)";
   document.getElementById("go").textContent=create?"Создать комнату":"Продолжить";
   authBenefits.innerHTML=create?"":"✨ <b>Что даёт регистрация:</b><br>• имя запоминается на этом устройстве;<br>• не нужно каждый раз вводить его заново;<br>• имя отображается в комнатах и чате.<br><br>🔓 Регистрация необязательна — можно заходить как гость.";
   modalStatus.textContent="";
@@ -240,21 +240,25 @@ function openModal(create){
 document.getElementById("join").onclick=()=>openModal(false);document.getElementById("create").onclick=()=>openModal(true);document.getElementById("createTop").onclick=()=>openModal(true);document.getElementById("login").onclick=()=>openModal(false);document.getElementById("close").onclick=()=>modal.classList.add("hidden");
 function enterRoom(){
   const n=nameInput.value.trim()||"Гость",r=roomInput.value.trim().toUpperCase();
-  if(modalAuth&&!r){
-    localStorage.setItem("cineora_name",n);sessionStorage.setItem("cineora_name",n);
-    modalStatus.textContent="✓ Имя сохранено. Теперь можно создать сессию или войти по коду.";
+  localStorage.setItem("cineora_name",n);
+  sessionStorage.setItem("cineora_name",n);
+
+  // Вход/регистрация — самостоятельное действие. Код комнаты здесь необязателен.
+  if(modalAuth){
+    if(r){
+      modalStatus.textContent="Открываем комнату…";
+      location.assign("/?room="+encodeURIComponent(r));
+    }else{
+      modalStatus.textContent="✓ Готово! Вы вошли как "+n+". Имя сохранено на этом устройстве.";
+      nameInput.value=n;
+      roomInput.value="";
+    }
     return;
   }
-  if(!r){modalStatus.textContent="Укажите код комнаты.";roomInput.focus();return}
-  localStorage.setItem("cineora_name",n);sessionStorage.setItem("cineora_name",n);
-  modalStatus.textContent=modalCreate?"Создаём комнату…":"Открываем комнату…";
-  if(modalCreate){
-    // Комната создаётся сервером автоматически при первом входе.
-    // Не ждём отдельного Socket.IO-соединения: сразу открываем уникальную ссылку комнаты.
-    location.assign("/?room="+encodeURIComponent(r));
-    return;
-  }
-  location.assign("/?room="+encodeURIComponent(r))
+
+  if(!r){modalStatus.textContent="Код комнаты создаётся автоматически.";return}
+  modalStatus.textContent="Создаём комнату…";
+  location.assign("/?room="+encodeURIComponent(r));
 }
 document.getElementById("go").onclick=enterRoom;
 [nameInput,roomInput].forEach(el=>el.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();enterRoom()}}));
