@@ -1116,40 +1116,58 @@ function startRoom(roomId,pageParams){
     setTimeout(()=>{b.textContent="✓ Синхронизировано";setTimeout(()=>b.textContent="↻ Синхронизировать",1200)},350);
   };
   document.querySelector(".chat-close").onclick=()=>{setFullscreenChat()};
-  document.getElementById("inviteJoin")?.addEventListener("click",async()=>{
+  document.getElementById("inviteJoin")?.addEventListener("click",function inviteClick(){
     const button=document.getElementById("inviteJoin");
-    const url=window.location.href;
-    const original=button.innerHTML;
+    if(!button)return;
+    const roomCode=(new URLSearchParams(window.location.search).get("room")||"").trim().toUpperCase();
+    const privateFlag=new URLSearchParams(window.location.search).get("private")==="1"?"&private=1":"";
+    const url=window.location.origin+"/?room="+encodeURIComponent(roomCode)+privateFlag;
+    const original="🔗 Скопировать приглашение";
+    const setResult=(label)=>{
+      button.textContent=label;
+      clearTimeout(window.__cineoraInviteTimer);
+      window.__cineoraInviteTimer=setTimeout(()=>{button.textContent=original;button.disabled=false},2200);
+    };
     button.disabled=true;
     button.textContent="Копируем…";
-    let copied=false;
-    try{
-      if(navigator.clipboard && window.isSecureContext){
-        try{await navigator.clipboard.writeText(url);copied=true}catch(e){}
+    (async()=>{
+      try{
+        if(navigator.share && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)){
+          await navigator.share({title:"CINEORA — приглашение",text:"Присоединяйся к просмотру 🍿",url});
+          setResult("✓ Приглашение готово");
+          return;
+        }
+        let copied=false;
+        if(navigator.clipboard && window.isSecureContext){
+          try{await navigator.clipboard.writeText(url);copied=true}catch(e){}
+        }
+        if(!copied){
+          const ta=document.createElement("textarea");
+          ta.value=url;
+          ta.readOnly=true;
+          ta.style.cssText="position:fixed;left:0;top:0;width:2px;height:2px;opacity:0;z-index:99999;";
+          document.body.appendChild(ta);
+          ta.focus();
+          ta.select();
+          ta.setSelectionRange(0,url.length);
+          try{copied=document.execCommand("copy")}catch(e){}
+          ta.remove();
+        }
+        if(copied){
+          setResult("✓ Ссылка скопирована");
+        }else{
+          button.disabled=false;
+          button.textContent="📋 Нажмите и скопируйте";
+          window.prompt("Скопируйте приглашение в комнату:",url);
+          setResult("✓ Готово");
+        }
+      }catch(e){
+        button.disabled=false;
+        if(e?.name==="AbortError"){setResult("🔗 Скопировать приглашение");return}
+        try{window.prompt("Скопируйте приглашение в комнату:",url)}catch(_){}
+        setResult("📋 Ссылка показана");
       }
-      if(!copied){
-        const ta=document.createElement("textarea");
-        ta.value=url;
-        ta.setAttribute("readonly","");
-        ta.style.cssText="position:fixed;left:-9999px;top:0;width:1px;height:1px;opacity:0;";
-        document.body.appendChild(ta);
-        ta.focus();ta.select();ta.setSelectionRange(0,ta.value.length);
-        try{copied=document.execCommand("copy")}catch(e){}
-        ta.remove();
-      }
-      if(copied){
-        button.textContent="✓ Ссылка скопирована";
-        if(navigator.vibrate)try{navigator.vibrate(30)}catch(e){}
-      }else{
-        window.prompt("Скопируйте ссылку на комнату:",url);
-        button.textContent="✓ Ссылка готова";
-      }
-    }catch(e){
-      try{window.prompt("Скопируйте ссылку на комнату:",url)}catch(_){}
-      button.textContent="Скопируйте ссылку";
-    }finally{
-      setTimeout(()=>{button.innerHTML=original;button.disabled=false},2200);
-    }
+    })();
   });
 
   document.getElementById("leaveRoom").onclick=()=>{location.href="/"};
