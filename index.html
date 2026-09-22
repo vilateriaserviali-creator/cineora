@@ -161,60 +161,19 @@ body{background:#e8dfe4;color:var(--ink)}
 }
 </style><style id="cineora-funny-ui">#funLine{font-weight:600;letter-spacing:.01em}#modalStatus{line-height:1.4}</style>
 <style id="cineora-full-player-fix">
-/* Видео заполняет всю область плеера — без маленького центрального окна */
-.player-wrap{
-  display:block!important;
-  place-items:unset!important;
-  align-items:stretch!important;
-  justify-items:stretch!important;
-  position:relative!important;
-  overflow:hidden!important;
-  width:100%!important;
-  height:auto!important;
-  min-height:0!important;
-  aspect-ratio:16/9!important;
-  padding:0!important;
-}
-.player-wrap > #universalPlayer,
-.player-wrap > #universalPlayer > *,
+.player-wrap{display:block!important;position:relative!important;overflow:hidden!important;width:100%!important;height:auto!important;min-height:0!important;aspect-ratio:16/9!important;padding:0!important;background:#000!important}
+.player-wrap > #universalPlayer{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;margin:0!important;padding:0!important;display:block!important}
+.player-wrap #universalPlayer > *,
 .player-wrap #universalPlayer iframe,
 .player-wrap #universalPlayer video,
-.player-wrap #universalPlayer > .universal-player,
 .player-wrap #ytPlayer,
-.player-wrap #ytPlayer > iframe{
-  position:absolute!important;
-  inset:0!important;
-  width:100%!important;
-  height:100%!important;
-  max-width:none!important;
-  max-height:none!important;
-  min-width:0!important;
-  min-height:0!important;
-  margin:0!important;
-  border:0!important;
-}
-.player-wrap #universalPlayer > video,
-.player-wrap video{
-  object-fit:contain!important;
-  background:#000!important;
-}
-.player-wrap #universalPlayer iframe{display:block!important}
-.player-wrap .empty-player{
-  position:absolute!important;
-  inset:0!important;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  flex-direction:column;
-  text-align:center;
-  z-index:2;
-}
-.cineora-controls{z-index:20!important}
-@media(max-width:700px){
-  .player-wrap{aspect-ratio:16/9!important;min-height:0!important}
-}
+.player-wrap #ytPlayer > iframe{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;min-width:0!important;min-height:0!important;margin:0!important;padding:0!important;border:0!important;display:block!important}
+.player-wrap video{object-fit:contain!important;background:#000!important}
+.player-wrap .empty-player{position:absolute!important;inset:0!important;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;z-index:2}
+.cineora-controls{position:absolute!important;left:12px!important;right:12px!important;bottom:12px!important;z-index:20!important;display:flex!important;align-items:center!important}
+@media(max-width:700px){.player-wrap{aspect-ratio:16/9!important;min-height:0!important}.cineora-controls{left:6px!important;right:6px!important;bottom:6px!important}}
 </style>
-</head>
+<style id="cineora-player-status-layout">.player-wrap #mediaStatus,.player-wrap #syncState,.player-wrap .source-pill{position:static!important}</style></head>
 <body>
 
 
