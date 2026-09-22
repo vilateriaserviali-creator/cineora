@@ -3,6 +3,7 @@ const fs = require("fs");
 const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
+const nodemailer = require("nodemailer");
 
 const app = express();
 const server = http.createServer(app);
@@ -14,6 +15,13 @@ app.get("/cineora-hero.png", (req, res) => res.sendFile(path.join(__dirname, "ci
 
 // Permanent user suggestions storage via PostgreSQL.
 const { Pool } = require("pg");
+
+const mailer = process.env.SMTP_USER && process.env.SMTP_PASS
+  ? nodemailer.createTransport({
+      service: "gmail",
+      auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS }
+    })
+  : null;
 
 const pool = process.env.DATABASE_URL
   ? new Pool({
@@ -57,6 +65,29 @@ app.post("/api/suggestions", async (req, res) => {
     if (text.length < 3) return res.status(400).json({ ok: false, error: "Напишите предложение чуть подробнее." });
     const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
     await pool.query("INSERT INTO suggestions (id, name, text) VALUES ($1, $2, $3)", [id, name || "Гость", text]);
+
+    // Email notification is secondary: a mail failure must not undo the saved suggestion.
+    if (mailer) {
+      try {
+        await mailer.sendMail({
+          from: process.env.SMTP_USER,
+          to: process.env.ADMIN_EMAIL || process.env.SMTP_USER,
+          subject: "Новое предложение для CINEORA",
+          text: [
+            "Новое предложение для CINEORA",
+            "",
+            `Имя: ${name || "Гость"}`,
+            "",
+            text
+          ].join("\n")
+        });
+      } catch (mailErr) {
+        console.error("Suggestion email failed:", mailErr);
+      }
+    } else {
+      console.warn("SMTP_USER/SMTP_PASS are not set. Suggestion email notification is disabled.");
+    }
+
     res.json({ ok: true });
   } catch (err) {
     console.error("Suggestion insert error:", err);
