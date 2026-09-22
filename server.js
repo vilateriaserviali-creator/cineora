@@ -16,10 +16,14 @@ app.get("/cineora-hero.png", (req, res) => res.sendFile(path.join(__dirname, "ci
 // Permanent user suggestions storage via PostgreSQL.
 const { Pool } = require("pg");
 
-const mailer = process.env.SMTP_USER && process.env.SMTP_PASS
+const smtpUser = String(process.env.SMTP_USER || "").trim();
+const smtpPass = String(process.env.SMTP_PASS || "").replace(/\s+/g, "");
+const mailer = smtpUser && smtpPass
   ? nodemailer.createTransport({
-      service: "gmail",
-      auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS }
+      host: "smtp.gmail.com",
+      port: 465,
+      secure: true,
+      auth: { user: smtpUser, pass: smtpPass }
     })
   : null;
 
@@ -70,8 +74,8 @@ app.post("/api/suggestions", async (req, res) => {
     if (mailer) {
       try {
         await mailer.sendMail({
-          from: process.env.SMTP_USER,
-          to: process.env.ADMIN_EMAIL || process.env.SMTP_USER,
+          from: smtpUser,
+          to: String(process.env.ADMIN_EMAIL || smtpUser).trim(),
           subject: "Новое предложение для CINEORA",
           text: [
             "Новое предложение для CINEORA",
@@ -282,5 +286,17 @@ io.on("connection", socket => {
 
 const PORT = process.env.PORT || 3000;
 initDatabase()
-  .then(() => server.listen(PORT, "0.0.0.0", () => console.log(`CINEORA running on port ${PORT}`)))
+  .then(async () => {
+    if (mailer) {
+      try {
+        await mailer.verify();
+        console.log("SMTP connection verified.");
+      } catch (err) {
+        console.error("SMTP verification failed:", err.message);
+      }
+    } else {
+      console.warn("SMTP is not configured. Email notifications are disabled.");
+    }
+    server.listen(PORT, "0.0.0.0", () => console.log(`CINEORA running on port ${PORT}`));
+  })
   .catch(err => { console.error("Database initialization failed:", err); process.exit(1); });
