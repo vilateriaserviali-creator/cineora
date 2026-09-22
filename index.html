@@ -615,7 +615,7 @@ const modal=document.getElementById("modal"),nameInput=document.getElementById("
 const modalStatus=document.getElementById("modalStatus"); const authBenefits=document.getElementById("authBenefits"); let modalCreate=false,modalAuth=false;
 function makeRoomCode(){return Math.random().toString(36).slice(2,10).toUpperCase()}
 const funnyLines=["🍿 Кто принёс попкорн — тот сегодня главный.","🎬 Фильм сам себя не посмотрит. К сожалению.","👀 Все пришли? Отлично. Никто не спойлерит.","🛋️ Диван виртуальный, но настроение настоящее.","😂 Если фильм плохой — хотя бы чат спасёт вечер.","🍕 Срочно собираем компанию. Пицца тоже приветствуется.","🎞️ Нажмите «Создать сессию» — приключение началось."]; 
-const funLine=document.getElementById("funLine"); if(funLine)funLine.textContent=funnyLines[Math.floor(Math.random()*funnyLines.length)];
+const funLine=document.getElementById("funLine"); if(funLine){let funIndex=Math.floor(Math.random()*funnyLines.length);funLine.textContent=funnyLines[funIndex];setInterval(()=>{funIndex=(funIndex+1)%funnyLines.length;funLine.style.opacity="0";setTimeout(()=>{funLine.textContent=funnyLines[funIndex];funLine.style.opacity="1"},180)},5000)}
 function openModal(create){
   modalCreate=!!create; modalAuth=!create;
   title.textContent=create?"Создать сессию":"Войти / Регистрация";
