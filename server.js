@@ -299,6 +299,18 @@ io.on("connection", socket => {
     socket.to(roomId).emit("sync", { playing: room.playing, position: room.position, serverTime: room.updatedAt });
     broadcastRoom(roomId);
   });
+  socket.on("request-sync", () => {
+    const roomId = socket.data.roomId; if (!roomId) return;
+    const room = roomState(roomId);
+    const position = room.playing
+      ? room.position + (Date.now() - room.updatedAt) / 1000
+      : room.position;
+    socket.emit("sync-state", {
+      playing: room.playing,
+      position: Math.max(0, position),
+      serverTime: Date.now()
+    });
+  });
   socket.on("user-progress", ({ position, playing }) => { const roomId = socket.data.roomId; if (!roomId) return; const room = roomState(roomId); const user = room.users.get(socket.id); if (!user) return; user.position = Math.max(0, Number(position) || 0); user.playing = !!playing; socket.to(roomId).emit("user-progress", { id: socket.id, position: user.position, playing: user.playing }); broadcastRoom(roomId); });
   socket.on("chat-message", ({ text }) => { const roomId = socket.data.roomId; if (!roomId) return; const clean = String(text || "").trim().slice(0, 500); if (!clean) return; io.to(roomId).emit("chat-message", { id: socket.id, name: socket.data.name || "Гость", text: clean, time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) }); });
   socket.on("disconnect", () => {
