@@ -284,7 +284,7 @@ document.getElementById('pass').addEventListener('keydown',e=>{if(e.key==='Enter
 
 const rooms = new Map();
 function roomState(roomId) {
-  if (!rooms.has(roomId)) rooms.set(roomId, { users: new Map(), hostId: null, playing: false, position: 0, updatedAt: Date.now(), mediaUrl: "", messages: [] });
+  if (!rooms.has(roomId)) rooms.set(roomId, { users: new Map(), hostId: null, playing: false, position: 0, updatedAt: Date.now(), mediaUrl: "", messages: [], emptySince: null });
   return rooms.get(roomId);
 }
 function publicUsers(room) {
@@ -304,7 +304,7 @@ io.on("connection", socket => {
     roomId = String(roomId || "").trim().toUpperCase().slice(0, 16);
     name = String(name || "Гость").trim().slice(0, 24);
     if (!roomId) return;
-    const room = roomState(roomId); socket.join(roomId); socket.data.roomId = roomId; socket.data.name = name;
+    const room = roomState(roomId); socket.join(roomId); socket.data.roomId = roomId; socket.data.name = name; room.emptySince = null;
     if (!room.hostId) room.hostId = socket.id;
     room.users.set(socket.id, { id: socket.id, name, position: room.playing ? room.position + (Date.now() - room.updatedAt) / 1000 : room.position, playing: room.playing, progressUpdatedAt: Date.now(), duration: 0 });
     socket.emit("room-state", { hostId: room.hostId, playing: room.playing, position: room.playing ? room.position + (Date.now() - room.updatedAt) / 1000 : room.position, serverTime: Date.now(), mediaUrl: room.mediaUrl });
@@ -385,9 +385,16 @@ io.on("connection", socket => {
       if (room.hostId) io.to(roomId).emit("room-host", { hostId: room.hostId });
     }
     broadcastRoom(roomId);
-    if (!room.users.size) rooms.delete(roomId);
+    if (!room.users.size) room.emptySince = Date.now();
   });
 });
+
+setInterval(()=>{
+  const cutoff=Date.now()-30*60*1000;
+  for(const [id,room] of rooms){
+    if(!room.users.size && room.emptySince && room.emptySince<cutoff)rooms.delete(id);
+  }
+},5*60*1000);
 
 const PORT = process.env.PORT || 3000;
 initDatabase()
