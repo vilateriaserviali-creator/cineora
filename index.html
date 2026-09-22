@@ -291,9 +291,14 @@ function enterRoom(){
     return;
   }
 
-  if(!r){modalStatus.textContent="Код комнаты создаётся автоматически.";return}
-  modalStatus.textContent="Создаём комнату…";
-  location.assign("/?room="+encodeURIComponent(r));
+  if(!r){
+    r=makeRoomCode();
+    roomInput.value=r;
+  }
+  modalStatus.textContent="Создаём комнату "+r+"…";
+  localStorage.setItem("cineora_room",r);
+  sessionStorage.setItem("cineora_room",r);
+  window.location.href=window.location.origin+"/?room="+encodeURIComponent(r);
 }
 document.getElementById("go").onclick=enterRoom;
 [nameInput,roomInput].forEach(el=>el.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();enterRoom()}}));
