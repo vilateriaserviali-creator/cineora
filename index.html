@@ -58,6 +58,68 @@
   .voice-toggle{font-size:10px;padding:8px 10px}
   .voice-title{font-size:16px}
 }
+<style id="cineora-home-finish">
+/* Финальная полировка главной страницы */
+.hero{min-height:760px!important;border-bottom:1px solid #d4c9d4;isolation:isolate}
+.hero>.wrap{min-height:760px;display:flex;flex-direction:column}
+.header{height:82px;flex:0 0 82px;position:relative}
+.logo{transition:transform .2s ease,letter-spacing .2s ease}
+.logo:hover{transform:translateY(-1px);letter-spacing:.24em}
+.nav a{position:relative;transition:opacity .2s ease}
+.nav a:after{content:"";position:absolute;left:0;right:100%;bottom:-8px;height:1px;background:#9f899f;transition:right .2s ease}
+.nav a:hover:after{right:0}
+.create-top,.primary,.secondary,.login{transition:transform .18s ease,box-shadow .18s ease,background .18s ease}
+.create-top:hover,.primary:hover,.secondary:hover{transform:translateY(-2px);box-shadow:0 12px 26px #81748725}
+.hero-content{max-width:760px;padding-top:72px;position:relative;z-index:3}
+.eyebrow{display:inline-flex;align-items:center;gap:9px;width:max-content;padding:7px 11px;border:1px solid #b9a9bb;background:#ffffff70;border-radius:999px;box-shadow:0 8px 25px #83768712}
+.eyebrow:before{content:"";width:7px;height:7px;border-radius:50%;background:#a98ca5;box-shadow:0 0 0 4px #a98ca520}
+.brand-big{font-size:clamp(56px,7vw,84px);text-shadow:0 8px 35px #6f647420}
+.hero h1{font-size:clamp(42px,5vw,60px);letter-spacing:-.02em}
+.lead{font-size:17px;max-width:610px}
+#funLine{display:inline-block;padding:8px 12px;border-radius:10px;background:#ffffff65;border:1px solid #ffffff90}
+.actions{margin-top:31px}
+.actions .primary{box-shadow:0 12px 30px #89748d28}
+.sources{margin-top:37px}
+.source{opacity:.86}
+.source-icon{background:#ffffff55}
+.features{margin-top:auto!important;padding-top:20px!important;backdrop-filter:blur(5px)}
+.feature{transition:transform .2s ease}
+.feature:hover{transform:translateY(-2px)}
+.home-visual{position:absolute;right:-18px;top:155px;width:min(510px,43vw);height:420px;z-index:2;pointer-events:none}
+.home-visual-glow{position:absolute;width:360px;height:360px;right:20px;top:15px;border-radius:50%;background:radial-gradient(circle,#b99bb545,transparent 68%);filter:blur(2px)}
+.mock-window{position:absolute;right:15px;top:30px;width:410px;border:1px solid #b7a8b9;background:#302b32;border-radius:22px;overflow:hidden;box-shadow:0 30px 70px #665c6d38,0 8px 25px #4f465033;transform:rotate(2deg)}
+.mock-top{height:44px;display:flex;align-items:center;gap:6px;padding:0 13px;background:#403941;color:#d9d0d8;font-size:9px}
+.mock-top b{margin-left:9px;letter-spacing:.15em;color:#f5edf4}
+.mock-dot{width:7px;height:7px;border-radius:50%;background:#857a87}
+.mock-live{margin-left:auto;color:#cfe4d1}
+.mock-screen{height:225px;background:radial-gradient(circle at 60% 35%,#665a65,#252329 55%,#151416);display:grid;place-items:center;position:relative}
+.mock-screen:before{content:"";position:absolute;inset:0;background:linear-gradient(135deg,#ffffff08,transparent 45%,#0006)}
+.mock-play{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;background:#d8c6df;color:#463b49;padding-left:3px;box-shadow:0 10px 30px #0006}
+.mock-caption{position:absolute;left:16px;bottom:14px;color:#f1eaf0;font:500 17px "Playfair Display"}
+.mock-bottom{display:flex;justify-content:space-between;gap:8px;padding:12px 14px;background:#252127;color:#aaa2ad;font-size:9px}
+.float-card{position:absolute;display:flex;align-items:center;gap:10px;padding:11px 13px;border:1px solid #ffffffb5;background:#f9f4f8e8;backdrop-filter:blur(10px);border-radius:15px;box-shadow:0 18px 40px #665c6d25;color:#4e4651;min-width:190px}
+.float-card>span{font-size:22px}
+.float-card b,.float-card small{display:block}.float-card b{font-size:11px}.float-card small{font-size:9px;color:#857987;margin-top:2px}
+.float-card-one{left:0;top:80px;transform:rotate(-4deg)}
+.float-card-two{right:-2px;bottom:45px;transform:rotate(-3deg)}
+.section{position:relative}
+.section.cream{background:linear-gradient(180deg,#e8dfe4 0%,#e3d8df 100%)}
+#about .intro{align-items:start}
+#about .about-copy{background:#f5eff3a8;border:1px solid #cfc1cd;border-radius:22px;padding:25px 28px;box-shadow:0 14px 35px #756a7520}
+#about .about-copy p:first-child{margin-top:0}
+#about .about-copy p:last-child{margin-bottom:0}
+.card,.news-card{transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease}
+.card:hover,.news-card:hover{transform:translateY(-4px);box-shadow:0 16px 35px #756a7520;border-color:#b9a9b8}
+.card .num{background:#cdb9ca;border:1px solid #b8a5b7}
+.feature-card{transition:transform .2s ease,background .2s ease}
+.feature-card:hover{transform:translateY(-3px);background:#ffffffa8}
+.platform{transition:transform .2s ease,box-shadow .2s ease}
+.platform:hover{transform:translateY(-3px);box-shadow:0 14px 30px #756a7520}
+.footer{border-top:1px solid #2d2e29}
+@media(max-width:1180px){.home-visual{opacity:.72;right:-120px}.hero-content{max-width:650px}.lead{max-width:540px}}
+@media(max-width:900px){.hero,.hero>.wrap{min-height:0}.hero{padding-bottom:0}.hero-content{padding-top:48px}.home-visual{display:none}.features{margin-top:48px!important}.header{height:auto;min-height:76px}.section-title{font-size:40px}}
+@media(max-width:600px){.wrap{width:calc(100% - 28px)}.hero-content{padding-top:38px}.brand-big{font-size:48px}.hero h1{font-size:38px}.lead{font-size:15px}.actions{gap:10px}.actions .primary,.actions .secondary{width:100%;min-width:0}.source-row{gap:13px 20px}.feature{padding:14px 0}.section{padding:56px 0}.section-title{font-size:34px}.cards,.features-grid,.platforms{gap:12px}.card,.feature-card,.platform,.news-card{padding:21px}.footer .wrap{flex-direction:column;align-items:flex-start}}
+</style>
 <style id="cineora-player-size-fix">
 /* Плеер должен занимать всю область карточки, без маленького окна по центру */
 .player-wrap{position:relative!important;overflow:hidden!important;aspect-ratio:16/9!important;height:auto!important;min-height:0!important;padding:0!important}
@@ -491,6 +553,16 @@ html.cineora-dark .room-view .person-progress i{background:linear-gradient(90deg
 <p class="lead">Смотрите фильмы и видео вместе с друзьями — в одной синхронизированной сессии, где бы вы ни были.</p><div id="funLine" style="margin-top:16px;font-size:13px;color:#6f6470;min-height:20px"></div>
 <div class="actions"><button type="button" class="primary" id="join">▶ &nbsp;Присоединиться к сессии</button><button type="button" class="secondary" id="create">＋ &nbsp;Создать сессию</button></div>
 <div class="sources"><div class="sources-title">Поддерживаем популярные источники</div><div class="source-row"><div class="source"><span class="source-icon">▶</span>YouTube</div><div class="source"><span class="source-icon">VK</span>VK Видео</div><div class="source"><span class="source-icon">R</span>RUTUBE</div><div class="source"><span class="source-icon">↗</span>Видео из интернета</div></div></div>
+</div>
+<div class="home-visual" aria-hidden="true">
+  <div class="home-visual-glow"></div>
+  <div class="mock-window">
+    <div class="mock-top"><span class="mock-dot"></span><span class="mock-dot"></span><span class="mock-dot"></span><b>CINEORA</b><span class="mock-live">● LIVE</span></div>
+    <div class="mock-screen"><div class="mock-play">▶</div><div class="mock-caption">Совместный просмотр</div></div>
+    <div class="mock-bottom"><span>👥 4 смотрят</span><span>💬 12 сообщений</span><span>● онлайн</span></div>
+  </div>
+  <div class="float-card float-card-one"><span>🍿</span><div><b>Вечер начинается</b><small>Все уже в комнате</small></div></div>
+  <div class="float-card float-card-two"><span>✨</span><div><b>Синхронно</b><small>Никто не отстал</small></div></div>
 </div>
 <div class="features"><div class="feature"><span class="feature-icon">♧</span><span>Любое количество<br>участников</span></div><div class="feature"><span class="feature-icon">ϟ</span><span>Синхронизация<br>в реальном времени</span></div><div class="feature"><span class="feature-icon">▣</span><span>Телефон, планшет<br>и компьютер</span></div></div>
 </div>
