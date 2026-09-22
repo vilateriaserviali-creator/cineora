@@ -180,6 +180,9 @@ body{background:#e8dfe4;color:var(--ink)}
 .player-wrap:fullscreen .fullscreen-chat,
 .player-wrap:fullscreen .chat-overlay{display:none!important}
 @media(max-width:700px){.watch-head-tools .room-btn{padding:8px 10px;font-size:11px}}
+</style><style id="cineora-player-clean-controls">
+.cineora-controls{opacity:0!important;visibility:hidden!important;pointer-events:none!important;transform:translateY(8px)!important;transition:opacity .2s ease,transform .2s ease,visibility .2s ease!important}
+.player-wrap:hover .cineora-controls,.player-wrap:focus-within .cineora-controls,.player-wrap:fullscreen .cineora-controls{opacity:1!important;visibility:visible!important;pointer-events:auto!important;transform:translateY(0)!important}
 </style></head>
 <body>
 
