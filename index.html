@@ -258,7 +258,7 @@ html.cineora-dark .chat{border-color:#514651!important}
  .watch-card{order:1}
 }
 @media(prefers-reduced-motion:reduce){.online-dot{animation:none}.cineora-connection-banner{transition:none}}
-</style></head>
+<style id="cineora-next-features">.hero .header,.hero-content,.features,.section,.footer{animation:cineoraFade .7s ease both}@keyframes cineoraFade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}.room-title-chip{max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.voice-user{display:flex!important;align-items:center;gap:6px}.voice-user button{border:0;background:transparent;color:inherit;cursor:pointer}.voice-user .voice-volume{width:54px;height:3px}.voice-speaking-dot{width:6px;height:6px;border-radius:50%;background:#8fcf8f;display:inline-block;opacity:.3}.voice-user.speaking .voice-speaking-dot{opacity:1;box-shadow:0 0 8px #8fcf8f}.invite-card{margin:0 0 18px;padding:18px 20px;border:1px solid #cdbdca;border-radius:20px;background:linear-gradient(135deg,#f8f1f7,#e9e3ed);display:flex;align-items:center;justify-content:space-between;gap:14px}.invite-card strong{display:block;font:500 20px "Playfair Display";color:#514657}.invite-card span{font-size:11px;color:#756b75}.invite-card button{border:0;border-radius:999px;background:#9d819b;color:#fff;padding:11px 15px;font-weight:700;white-space:nowrap}.session-countdown{display:none;margin:0 0 14px;padding:12px 16px;border-radius:14px;background:#efe4ef;color:#5c4c5d;border:1px solid #d3c1d3;font-size:12px}.session-countdown.show{display:block}.room-dark{background:linear-gradient(135deg,#242329,#17171c)!important;color:#eee!important}.room-dark .watch-card,.room-dark .side-card{background:#24242a!important;border-color:#3d3b44!important;color:#eee}.room-dark .media-bar,.room-dark .sync-note{background:#202026!important;color:#d8d4db;border-color:#3a3840}.room-dark .watch-title,.room-dark .side-title,.room-dark .voice-title{color:#f0eaf1}.room-dark .participants,.room-dark .chat-messages{background:#1c1c21}.room-dark .person-row,.room-dark .chat-msg{background:#29282f;border-color:#3d3b44}.room-dark .person-name,.room-dark .chat-msg span{color:#eee}.room-dark .chat-msg b{color:#d6b8d5}.room-dark .voice-panel{background:#28262d;border-color:#403d46}.room-dark .voice-user{background:#36323b;color:#eee}.room-dark .media-bar input{background:#2a2930;color:#eee;border-color:#48444f}.room-dark .room-btn{background:#ffffff10;color:#eee;border-color:#ffffff20}.room-dark .room-code{color:#d8efb7;background:#ffffff08}.room-dark .invite-card{background:#302a34;border-color:#4a4250}.room-dark .invite-card strong{color:#f1eaf2}.room-dark .invite-card span{color:#c5bdc8}@media(max-width:1000px){.room-layout{grid-template-columns:1fr}.side-card{order:2}.watch-card{order:1}.room-top{height:auto;min-height:72px;padding:12px 16px}.player-wrap{min-height:0}.room-title-chip{display:none}}@media(max-width:600px){.room-layout{width:calc(100% - 16px);margin:10px auto}.room-actions .room-btn{padding:8px 10px;font-size:10px}.media-bar{flex-direction:column}.media-bar input,.media-bar button{width:100%}.chat-messages{max-height:42vh}.voice-head{flex-direction:column}.voice-toggle{width:100%}.cine-volume{display:none!important}.cine-time{min-width:70px}.cineora-controls button{min-width:36px;min-height:34px}}</style></head>
 <body>
 
 
@@ -266,20 +266,20 @@ html.cineora-dark .chat{border-color:#514651!important}
   <header class="room-top">
     <a class="room-brand" href="/" aria-label="CINEORA — на главную">CINE<span class="accent">ORA</span></a>
     <div class="room-actions"><button id="roomThemeToggle" class="room-btn" type="button" title="Переключить оформление комнаты">◐ Тема</button>
-      <span class="room-code">Сессия: <b id="roomCodeLabel">—</b></span><span class="room-code">👥 Смотрят: <b id="viewerCount">0</b></span>
+      <span class="room-code">Сессия: <b id="roomCodeLabel">—</b></span><span class="room-code room-title-chip" id="roomTitleLabel">🎬 Киносеанс</span><span class="room-code">👥 Смотрят: <b id="viewerCount">0</b></span>
       <button class="room-btn" id="changeName">✎ Изменить имя</button>
-      <button class="room-btn" id="copyRoom">Скопировать ссылку</button>
+      <button class="room-btn" id="copyRoom">🔗 Пригласить</button>
       <button class="room-btn leave" id="leaveRoom">Выйти</button>
     </div>
   </header>
   <main class="room-layout">
     <section class="watch-card">
       <div class="watch-head"><div><div class="watch-title">Совместный просмотр</div><div class="source-pill" id="mediaStatus">Видео пока не добавлено</div></div><div class="watch-head-tools"><button class="room-btn" id="syncBtn" type="button">↻ Синхронизировать</button><div class="source-pill" id="myRoomName"></div></div></div>
-      <div class="player-wrap" id="playerWrap"><div id="universalPlayer"></div><div class="empty-player" id="emptyPlayer"><strong>Добавьте видео</strong><span>Вставьте ссылку на YouTube, VK Видео, RUTUBE или прямую ссылку на видео.</span></div><div class="cineora-controls" id="cineoraControls"><button type="button" id="cinePlay">▶</button><span class="cine-time" id="cineTime">0:00 / 0:00</span><input class="cine-seek" id="cineSeek" type="range" min="0" max="100" value="0" aria-label="Перемотка"><button type="button" id="cineMute">🔊</button><input class="cine-volume" id="cineVolume" type="range" min="0" max="1" step="0.01" value="1" aria-label="Громкость"><select id="cineQuality" aria-label="Качество"><option value="auto">⚙ Авто</option><option value="hd1080">1080p</option><option value="hd720">720p</option><option value="large">480p</option><option value="medium">360p</option></select><button type="button" id="cineFull">⛶</button></div></div><div class="player-tools" aria-hidden="true"></div>
+      <div class="player-wrap" id="playerWrap"><div id="universalPlayer"></div><div class="empty-player" id="emptyPlayer"><strong>Добавьте видео</strong><span>Вставьте ссылку на YouTube, VK Видео, RUTUBE или прямую ссылку на видео.</span></div><div class="cineora-controls" id="cineoraControls"><button type="button" id="cinePlay">▶</button><span class="cine-time" id="cineTime">0:00 / 0:00</span><input class="cine-seek" id="cineSeek" type="range" min="0" max="100" value="0" aria-label="Перемотка"><button type="button" id="cineMute">🔊</button><input class="cine-volume" id="cineVolume" type="range" min="0" max="1" step="0.01" value="1" aria-label="Громкость"><button type="button" id="cineFull">⛶</button></div></div><div class="player-tools" aria-hidden="true"></div>
       <div class="media-bar"><input id="mediaUrlRoom" placeholder="YouTube / VK / RUTUBE / ссылка на видео"><button class="room-btn primary" id="setMediaRoom">Загрузить</button></div>
       <div class="sync-note">YouTube и прямые видео синхронизируются по воспроизведению, паузе и перемотке. Для сайтов, которые разрешают встраивание, CINEORA откроет их плеер внутри комнаты.</div>
     </section>
-    <aside class="side-card" id="sideCard">
+    <aside class="side-card" id="sideCard"><div class="invite-card"><div><strong id="inviteTitle">🍿 Присоединяйтесь к просмотру</strong><span id="inviteSub">Отправьте ссылку друзьям — фильм уже ждёт.</span></div><button id="inviteJoin" type="button">Войти в комнату</button></div><div class="session-countdown" id="sessionCountdown"></div>
       <div class="side-title">Участники <span id="participantCount">0</span></div>
       <div class="participants" id="participants"></div>
       <div class="voice-panel" id="voicePanel">
@@ -369,7 +369,7 @@ html.cineora-dark .chat{border-color:#514651!important}
 <script>
 const modal=document.getElementById("modal"),nameInput=document.getElementById("name"),roomInput=document.getElementById("room"),title=document.getElementById("modalTitle"),text=document.getElementById("modalText");
 const modalStatus=document.getElementById("modalStatus"); const authBenefits=document.getElementById("authBenefits"); let modalCreate=false,modalAuth=false;
-function makeRoomCode(){return Math.random().toString(36).slice(2,8).toUpperCase()}
+function makeRoomCode(){return Math.random().toString(36).slice(2,10).toUpperCase()}
 const funnyLines=["🍿 Кто принёс попкорн — тот сегодня главный.","🎬 Фильм сам себя не посмотрит. К сожалению.","👀 Все пришли? Отлично. Никто не спойлерит.","🛋️ Диван виртуальный, но настроение настоящее.","😂 Если фильм плохой — хотя бы чат спасёт вечер.","🍕 Срочно собираем компанию. Пицца тоже приветствуется.","🎞️ Нажмите «Создать сессию» — приключение началось."]; 
 const funLine=document.getElementById("funLine"); if(funLine)funLine.textContent=funnyLines[Math.floor(Math.random()*funnyLines.length)];
 function openModal(create){
@@ -427,17 +427,17 @@ async function loadNews(){try{const r=await fetch("/api/news");const d=await r.j
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]))}
 loadNews();
 
-const q=new URLSearchParams(location.search).get("room");
+const pageParams=new URLSearchParams(location.search); const q=pageParams.get("room");
 if(q){
   document.querySelector(".hero").style.display="none";
   document.querySelectorAll(".section,.footer").forEach(el=>el.style.display="none");
   document.getElementById("modal").classList.add("hidden");
   document.getElementById("roomView").classList.add("show");
-  startRoom(q.toUpperCase());
+  startRoom(q.toUpperCase(),pageParams);
 }
 
-function startRoom(roomId){
-  const socket=io();
+function startRoom(roomId,pageParams){
+  const socket=io(); const roomTitle=pageParams?.get("title")||"Киносеанс"; const scheduledAt=Number(pageParams?.get("at")||0); const roomTitleLabel=document.getElementById("roomTitleLabel"),inviteTitle=document.getElementById("inviteTitle"),countdown=document.getElementById("sessionCountdown"); if(roomTitleLabel)roomTitleLabel.textContent="🎬 "+roomTitle; if(inviteTitle)inviteTitle.textContent="🍿 "+roomTitle; if(scheduledAt&&countdown){const tick=()=>{const left=Math.max(0,scheduledAt-Date.now()); if(!left){countdown.textContent="🍿 Киносеанс начинается сейчас";countdown.classList.add("show");return}const s=Math.floor(left/1000),d=Math.floor(s/86400),hh=Math.floor(s%86400/3600),mm=Math.floor(s%3600/60),ss=s%60;countdown.textContent="🍿 Сеанс начнётся через "+(d?d+" д ":"")+String(hh).padStart(2,"0")+":"+String(mm).padStart(2,"0")+":"+String(ss).padStart(2,"0");countdown.classList.add("show")};tick();setInterval(tick,1000)}
   const cookieName=(document.cookie.match(/(?:^|; )cineora_name=([^;]*)/)||[])[1];
   const myName=localStorage.getItem("cineora_name")||sessionStorage.getItem("cineora_name")||(cookieName?decodeURIComponent(cookieName):"Гость");
 
@@ -866,8 +866,8 @@ function startRoom(roomId){
     setTimeout(()=>{b.textContent="✓ Синхронизировано";setTimeout(()=>b.textContent="↻ Синхронизировать",1200)},350);
   };
   document.querySelector(".chat-close").onclick=()=>{setFullscreenChat()};
-  document.getElementById("copyRoom").onclick=async()=>{
-    const url=location.origin+"/?room="+encodeURIComponent(roomId);
+  document.getElementById("inviteJoin")?.addEventListener("click",()=>document.getElementById("copyRoom")?.click()); document.getElementById("copyRoom").onclick=async()=>{
+    const url=location.href;
     try{await navigator.clipboard.writeText(url);document.getElementById("copyRoom").textContent="Ссылка скопирована";setTimeout(()=>document.getElementById("copyRoom").textContent="Скопировать ссылку",1500)}
     catch(e){prompt("Скопируйте ссылку:",url)}
   };
@@ -981,7 +981,7 @@ function startRoom(roomId){
     }
   });
 
-  const cinePlay=document.getElementById("cinePlay"),cineTime=document.getElementById("cineTime"),cineSeek=document.getElementById("cineSeek"),cineMute=document.getElementById("cineMute"),cineVolume=document.getElementById("cineVolume"),cineQuality=document.getElementById("cineQuality"),cineFull=document.getElementById("cineFull");
+  const cinePlay=document.getElementById("cinePlay"),cineTime=document.getElementById("cineTime"),cineSeek=document.getElementById("cineSeek"),cineMute=document.getElementById("cineMute"),cineVolume=document.getElementById("cineVolume"),cineFull=document.getElementById("cineFull");
   function activeVideo(){return document.getElementById("roomVideo")}
   function updateCineoraControls(){
     const v=activeVideo();
@@ -996,19 +996,7 @@ function startRoom(roomId){
   cineMute.onclick=()=>{const v=activeVideo();if(currentType==="youtube"){const muted=player?.isMuted?.();ytCommand(muted?"unMute":"mute")}else if(v)v.muted=!v.muted;updateCineoraControls()};
   cineVolume.oninput=()=>{const val=Number(cineVolume.value);const v=activeVideo();if(currentType==="youtube"){ytCommand("setVolume",[val*100]);if(val>0)ytCommand("unMute")}else if(v){v.volume=val;v.muted=val===0}updateCineoraControls()};
   cineSeek.oninput=()=>{const t=Number(cineSeek.value);const v=activeVideo();if(currentType==="youtube")ytCommand("seekTo",[t,true]);else if(v)v.currentTime=t};
-  cineQuality.onchange=()=>{
-    const q=cineQuality.value;
-    if(currentType==="youtube"){
-      ytCommand("setPlaybackQuality",[q==="auto"?"default":q]);
-      setStatus(q==="auto"?"YouTube · качество Авто":"YouTube · качество "+(q==="large"?"480":q==="medium"?"360":q.replace("hd",""))+"p");
-    }else if(currentType==="video"){
-      setStatus("Прямое видео · качество исходного файла");
-    }else if(currentType==="rutube"||currentType==="vk"){
-      setStatus("Качество выбирается встроенным плеером сервиса");
-    }else{
-      setStatus("Качество недоступно для этого источника");
-    }
-  };
+  
   cineFull.onclick=async()=>{
   try{
     if(document.fullscreenElement===wrap){await document.exitFullscreen();return}
