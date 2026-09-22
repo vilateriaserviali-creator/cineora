@@ -369,6 +369,12 @@ io.on("connection", socket => {
     const room = roomState(roomId);
     const clean = String(payload?.text || "").trim().slice(0, 500);
     if (!clean) { if (typeof ack === "function") ack({ ok: false, error: "Пустое сообщение." }); return; }
+    const blocked = /(?:\bnazi\b|\bнацист\w*|\bнеонацист\w*|\bфашист\w*|\bгитлер\w*|\bсвастик\w*|\bss[- ]?символ\w*|\bрасист\w*|\bрасизм\w*)/iu;
+    if (blocked.test(clean)) {
+      if (typeof ack === "function") ack({ ok: false, blocked: true, error: "Сообщение заблокировано: CINEORA не пропускает нацистский, расистский и экстремистский контент." });
+      socket.emit("chat-warning", { text: "⚠️ Сообщение не отправлено. Нацистский и расистский контент в чате запрещён." });
+      return;
+    }
     const message = {
       id: socket.id + "-" + Date.now(),
       userId: socket.id,
