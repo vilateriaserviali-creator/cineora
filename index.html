@@ -34,7 +34,28 @@
 .side-title{color:#4b4550}.chat-title-row{display:flex;align-items:center;justify-content:space-between;gap:10px}.chat-title-row #chatConnection{font:500 10px "DM Sans",sans-serif;color:#9a7f98}.participants{background:#fff0}.person-row{background:#f5f1f5;border:1px solid #e5dfe5}.person-name{color:#4e4852}.person-time{color:#7c7480}.chat{border-top-color:#e1dbe1}.chat-messages{background:#fcfafc}.chat-msg{background:#f2eef3}.chat-msg b{color:#75627e}.chat-msg span{color:#4d4850}
 .fullscreen-chat{min-height:0!important;height:auto!important}
 @media(max-width:1000px){.room-top{background:#fffaf7}.player-wrap{min-height:360px}}
-</style><style id="cineora-player-size-fix">
+<style id="cineora-voice-chat">
+.voice-panel{border-top:1px solid #e1dbe1;background:#f4eef3;padding:13px 14px}
+.voice-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.voice-title{font:500 17px "Playfair Display";color:#514955}
+.voice-status{font-size:10px;color:#8b7d89;margin-top:3px}
+.voice-toggle{border:1px solid #bdaabc;background:#d8c6df;color:#403746;border-radius:999px;padding:9px 12px;font-size:11px;font-weight:700;white-space:nowrap}
+.voice-toggle.on{background:#b99bb5;color:#fff;border-color:#a989a6}
+.voice-tools{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:9px}
+.noise-option{font-size:10px;color:#665d68;display:flex;align-items:center;gap:5px}
+.noise-option input{accent-color:#9f829d}
+.voice-note{font-size:9px;color:#9a7f98}
+.voice-users{display:flex;flex-wrap:wrap;gap:5px;margin-top:9px}
+.voice-user{padding:5px 8px;border-radius:999px;background:#e5d9e2;color:#5d5260;font-size:10px}
+.voice-user.active{background:#cdb7cb;color:#3f3542}
+.voice-user.muted{opacity:.55}
+@media(max-width:700px){
+  .voice-panel{padding:11px}
+  .voice-head{align-items:flex-start}
+  .voice-toggle{font-size:10px;padding:8px 10px}
+  .voice-title{font-size:16px}
+}
+</style></style><style id="cineora-player-size-fix">
 /* Плеер должен занимать всю область карточки, без маленького окна по центру */
 .player-wrap{position:relative!important;overflow:hidden!important;aspect-ratio:16/9!important;height:auto!important;min-height:0!important;padding:0!important}
 .player-wrap > #universalPlayer{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;display:block!important}
@@ -147,6 +168,20 @@ body{background:#e8dfe4;color:var(--ink)}
     <aside class="side-card" id="sideCard">
       <div class="side-title">Участники <span id="participantCount">0</span></div>
       <div class="participants" id="participants"></div>
+      <div class="voice-panel" id="voicePanel">
+        <div class="voice-head">
+          <div>
+            <div class="voice-title">🎙 Голосовая комната</div>
+            <div class="voice-status" id="voiceStatus">Микрофон выключен</div>
+          </div>
+          <button class="voice-toggle" id="voiceToggle" type="button">🎙 Включить микрофон</button>
+        </div>
+        <div class="voice-tools">
+          <label class="noise-option"><input type="checkbox" id="noiseSuppression" checked> Шумоподавление</label>
+          <span class="voice-note" id="voiceConnection">● подключение…</span>
+        </div>
+        <div class="voice-users" id="voiceUsers"></div>
+      </div>
       <div class="chat">
         <div class="side-title chat-title-row">Чат <span id="chatConnection">● подключение…</span></div>
         <div class="chat-messages" id="chatMessages"></div>
@@ -283,6 +318,110 @@ if(q){
 function startRoom(roomId){
   const socket=io();
   const myName=localStorage.getItem("cineora_name")||sessionStorage.getItem("cineora_name")||"Гость";
+
+  // Real-time voice chat: WebRTC mesh with Socket.IO signaling.
+  const voicePeers=new Map();
+  let voiceStream=null, voiceEnabled=false, voiceNoiseEnabled=true;
+  const voiceToggle=document.getElementById("voiceToggle");
+  const noiseSuppression=document.getElementById("noiseSuppression");
+  const voiceStatus=document.getElementById("voiceStatus");
+  const voiceConnection=document.getElementById("voiceConnection");
+  const voiceUsers=document.getElementById("voiceUsers");
+
+  function updateVoiceButton(){
+    if(!voiceToggle)return;
+    voiceToggle.classList.toggle("on",voiceEnabled);
+    voiceToggle.textContent=voiceEnabled?"🎙 Выключить микрофон":"🎙 Включить микрофон";
+    if(voiceStatus)voiceStatus.textContent=voiceEnabled?(voiceNoiseEnabled?"Микрофон включён · шумоподавление":"Микрофон включён · без шумоподавления"):"Микрофон выключен";
+  }
+  function renderVoiceUsers(users){
+    if(!voiceUsers)return;
+    voiceUsers.innerHTML=(users||[]).map(u=>{
+      const name=escapeHtml(u.name||"Гость");
+      return '<span class="voice-user '+(u.voiceEnabled?"active":"muted")+'">🎙 '+name+(u.voiceEnabled?"":" · выкл.")+'</span>';
+    }).join("");
+  }
+  function removeVoicePeer(id){
+    const peer=voicePeers.get(id);
+    if(!peer)return;
+    try{peer.pc.close()}catch(e){}
+    if(peer.audio)peer.audio.remove();
+    voicePeers.delete(id);
+  }
+  function createVoicePeer(id,name,initiator){
+    if(voicePeers.has(id))return voicePeers.get(id).pc;
+    const pc=new RTCPeerConnection({
+      iceServers:[
+        {urls:"stun:stun.l.google.com:19302"},
+        {urls:"stun:stun1.l.google.com:19302"}
+      ]
+    });
+    const peer={pc,audio:null,name:name||"Гость"};
+    voicePeers.set(id,peer);
+    if(voiceStream)voiceStream.getTracks().forEach(track=>pc.addTrack(track,voiceStream));
+    pc.onicecandidate=e=>{if(e.candidate)socket.emit("voice-signal",{to:id,data:{type:"candidate",candidate:e.candidate}})};
+    pc.ontrack=e=>{
+      let audio=peer.audio;
+      if(!audio){audio=document.createElement("audio");audio.autoplay=true;audio.playsInline=true;audio.volume=.85;audio.dataset.voicePeer=id;document.body.appendChild(audio);peer.audio=audio}
+      if(e.streams&&e.streams[0])audio.srcObject=e.streams[0];
+    };
+    pc.onconnectionstatechange=()=>{
+      if(["failed","closed","disconnected"].includes(pc.connectionState)&&pc.connectionState!=="disconnected")removeVoicePeer(id);
+    };
+    if(initiator){
+      pc.createOffer().then(o=>pc.setLocalDescription(o)).then(()=>socket.emit("voice-signal",{to:id,data:{type:"offer",sdp:pc.localDescription}})).catch(()=>{});
+    }
+    return pc;
+  }
+  async function ensureVoiceStream(){
+    if(voiceStream)return voiceStream;
+    if(!navigator.mediaDevices?.getUserMedia)throw new Error("Браузер не поддерживает доступ к микрофону.");
+    voiceStream=await navigator.mediaDevices.getUserMedia({
+      audio:{
+        echoCancellation:true,
+        noiseSuppression:voiceNoiseEnabled,
+        autoGainControl:true,
+        channelCount:1
+      },
+      video:false
+    });
+    voiceStream.getAudioTracks().forEach(t=>t.enabled=voiceEnabled);
+    return voiceStream;
+  }
+  async function setVoiceEnabled(enabled){
+    try{
+      if(enabled){
+        await ensureVoiceStream();
+        voiceEnabled=true;
+        voiceStream.getAudioTracks().forEach(t=>t.enabled=true);
+        for(const peer of voicePeers.values()){
+          const sender=peer.pc.getSenders().find(s=>s.track&&s.track.kind==="audio");
+          if(sender)await sender.replaceTrack(voiceStream.getAudioTracks()[0]);
+        }
+        socket.emit("voice-state",{enabled:true});
+      }else{
+        voiceEnabled=false;
+        if(voiceStream)voiceStream.getAudioTracks().forEach(t=>t.enabled=false);
+        socket.emit("voice-state",{enabled:false});
+      }
+      updateVoiceButton();
+    }catch(e){
+      voiceEnabled=false;
+      updateVoiceButton();
+      if(voiceStatus)voiceStatus.textContent=e.name==="NotAllowedError"?"Разрешите доступ к микрофону в браузере":"Не удалось включить микрофон";
+    }
+  }
+  async function setNoiseSuppression(enabled){
+    voiceNoiseEnabled=!!enabled;
+    if(!voiceStream)return;
+    const track=voiceStream.getAudioTracks()[0];
+    try{await track.applyConstraints({noiseSuppression:voiceNoiseEnabled,echoCancellation:true,autoGainControl:true})}catch(e){}
+    updateVoiceButton();
+  }
+  voiceToggle?.addEventListener("click",()=>setVoiceEnabled(!voiceEnabled));
+  noiseSuppression?.addEventListener("change",e=>setNoiseSuppression(e.target.checked));
+  updateVoiceButton();
+
   const wrap=document.getElementById("playerWrap"), host=document.getElementById("universalPlayer"), empty=document.getElementById("emptyPlayer");
   const participants=document.getElementById("participants"), chatMessages=document.getElementById("chatMessages");
   let suppress=false,lastProgress=0,currentType="",player=null,currentUrl="",hostId="",roomPlaying=false,roomPosition=0,roomServerTime=Date.now();
@@ -541,22 +680,6 @@ function startRoom(roomId){
   document.getElementById("syncBtn").onclick=()=>{
     if(socket.connected) socket.emit("request-sync");
   };
-  const emojiToggle=document.getElementById("emojiToggle"),emojiPicker=document.getElementById("emojiPicker");
-  emojiToggle.onclick=()=>emojiPicker.classList.toggle("hidden");
-  document.querySelectorAll("#emojiPicker button").forEach(btn=>{
-    btn.addEventListener("click",()=>{
-      const input=document.getElementById("chatInput");
-      const emoji=btn.textContent;
-      const start=input.selectionStart??input.value.length,end=input.selectionEnd??input.value.length;
-      input.value=input.value.slice(0,start)+emoji+input.value.slice(end);
-      input.focus();input.setSelectionRange(start+emoji.length,start+emoji.length);
-      emojiPicker.classList.add("hidden");
-    });
-  });
-  document.addEventListener("click",e=>{
-    if(!e.target.closest(".emoji-wrap")) emojiPicker.classList.add("hidden");
-  });
-
   document.getElementById("copyRoom").onclick=async()=>{
     const url=location.origin+"/?room="+encodeURIComponent(roomId);
     try{await navigator.clipboard.writeText(url);document.getElementById("copyRoom").textContent="Ссылка скопирована";setTimeout(()=>document.getElementById("copyRoom").textContent="Скопировать ссылку",1500)}
@@ -619,6 +742,31 @@ function startRoom(roomId){
   }
   chatForm.addEventListener("submit",e=>{e.preventDefault();sendChatMessage()});
   chatInput.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendChatMessage()}});
+  socket.on("voice-signal",async({from,name,data})=>{
+    try{
+      let peer=voicePeers.get(from);
+      if(data?.type==="offer"){
+        const pc=createVoicePeer(from,name,false);
+        await pc.setRemoteDescription(new RTCSessionDescription(data.sdp));
+        const answer=await pc.createAnswer();
+        await pc.setLocalDescription(answer);
+        socket.emit("voice-signal",{to:from,data:{type:"answer",sdp:pc.localDescription}});
+      }else if(data?.type==="answer"){
+        if(!peer)peer={pc:createVoicePeer(from,name,false),name:name||"Гость"};
+        await peer.pc.setRemoteDescription(new RTCSessionDescription(data.sdp));
+      }else if(data?.type==="candidate"&&peer){
+        try{await peer.pc.addIceCandidate(data.candidate)}catch(e){}
+      }
+    }catch(e){}
+  });
+  socket.on("voice-peer-list",users=>{
+    renderVoiceUsers(users);
+    const others=(users||[]).filter(u=>u.id!==socket.id);
+    if(voiceEnabled)others.forEach(u=>createVoicePeer(u.id,u.name,true));
+  });
+  socket.on("voice-user-state",u=>renderVoiceUsers(u.users||[]));
+  socket.on("voice-peer-left",id=>removeVoicePeer(id));
+
   socket.on("connect_error",()=>{setStatus("Нет соединения с комнатой — переподключаемся…");const el=document.getElementById("chatConnection");if(el)el.textContent="● нет связи"});
   socket.on("connect",()=>{
     socket.emit("join-room",{roomId,name:localStorage.getItem("cineora_name")||sessionStorage.getItem("cineora_name")||"Гость"});
