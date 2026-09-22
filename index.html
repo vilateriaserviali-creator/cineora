@@ -307,8 +307,32 @@ function startRoom(roomId){
   }
 
   document.getElementById("setMediaRoom").onclick=()=>{
-    const url=document.getElementById("mediaUrlRoom").value.trim();
-    if(url)socket.emit("set-media",{url});
+    const input=document.getElementById("mediaUrlRoom");
+    const button=document.getElementById("setMediaRoom");
+    const url=input.value.trim();
+    if(!url){
+      setStatus("Вставьте ссылку на видео");
+      input.focus();
+      return;
+    }
+    // Сначала открываем видео у текущего пользователя, затем отправляем его комнате.
+    // Благодаря этому кнопка работает даже если Socket.IO подключается с задержкой.
+    loadMedia(url);
+    button.disabled=true;
+    const oldText=button.textContent;
+    button.textContent="Загрузка…";
+    if(socket.connected){
+      socket.emit("set-media",{url});
+      setTimeout(()=>{button.disabled=false;button.textContent=oldText},500);
+    }else{
+      setStatus("Соединение с комнатой потеряно — переподключаемся…");
+      socket.connect();
+      socket.once("connect",()=>{
+        socket.emit("set-media",{url});
+        button.disabled=false;
+        button.textContent=oldText;
+      });
+    }
   };
   document.getElementById("copyRoom").onclick=async()=>{
     const url=location.origin+"/?room="+encodeURIComponent(roomId);
