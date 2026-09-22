@@ -543,15 +543,17 @@ function startRoom(roomId){
   }
 
   function loadMedia(raw){
-    const d=detect(raw);currentUrl=raw||"";
-    if(!raw){clearPlayer();setStatus("Видео пока не добавлено");return}
+    const nextUrl=String(raw||"").trim();
+    if(nextUrl&&nextUrl===currentUrl&&currentType&&currentType!=="error")return;
+    const d=detect(nextUrl);currentUrl=nextUrl;
+    if(!nextUrl){clearPlayer();setStatus("Видео пока не добавлено");return}
     empty.style.display="none";
     if(d.type==="youtube"){loadYouTube(d.id);setStatus("YouTube");return}
     if(d.type==="rutube"){currentType="rutube";makeIframe("https://rutube.ru/play/embed/"+encodeURIComponent(d.id)+d.query);setStatus("RUTUBE");return}
     if(d.type==="vk"){currentType="vk";makeIframe(d.url);setStatus("VK Видео");return}
     if(d.type==="video"){
       currentType="video";host.innerHTML="";
-      const v=document.createElement("video");v.id="roomVideo";v.controls=true;v.playsInline=true;v.src=d.url;host.appendChild(v);
+      const v=document.createElement("video");v.id="roomVideo";v.controls=true;v.playsInline=true;v.preload="metadata";v.src=d.url;host.appendChild(v);
       setStatus("Видео из интернета");
       v.addEventListener("play",()=>{if(!suppress)socket.emit("sync",{playing:true,position:v.currentTime})});
       v.addEventListener("pause",()=>{if(!suppress)socket.emit("sync",{playing:false,position:v.currentTime})});
@@ -640,9 +642,6 @@ function startRoom(roomId){
       input.focus();
       return;
     }
-    // Сначала открываем видео у текущего пользователя, затем отправляем его комнате.
-    // Благодаря этому кнопка работает даже если Socket.IO подключается с задержкой.
-    loadMedia(url);
     button.disabled=true;
     const oldText=button.textContent;
     button.textContent="Загрузка…";
