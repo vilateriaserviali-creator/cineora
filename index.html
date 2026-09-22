@@ -84,6 +84,44 @@ body{background:#e8dfe4;color:var(--ink)}
 .go{background:#c4aac1!important;color:#403741!important}
 .empty-player{color:#b7aab5!important}.empty-player strong{color:#ddd2da!important}
 @media(max-width:900px){.hero{background:linear-gradient(135deg,#d9cbd2,#c8bfcc,#bcc7d0)!important}}
+</style><style id="cineora-mobile-room">
+@media(max-width:700px){
+  .room-view{min-height:100dvh}
+  .room-top{height:auto;min-height:64px;padding:10px 12px;align-items:flex-start}
+  .room-brand{font-size:21px;padding-top:5px}
+  .room-actions{justify-content:flex-end;gap:6px;max-width:72%}
+  .room-actions .room-code{font-size:10px;padding:7px 9px}
+  .room-actions .room-btn{font-size:11px;padding:8px 9px}
+  #changeName{display:none}
+  .room-layout{display:flex!important;flex-direction:column;width:100%;margin:10px 0;gap:10px}
+  .watch-card,.side-card{border-radius:16px;box-shadow:none}
+  .watch-head{padding:13px 14px}
+  .watch-title{font-size:20px}
+  .player-wrap{aspect-ratio:16/9!important;min-height:0!important;border-radius:0}
+  .player-tools{padding:8px;gap:6px}
+  .player-tools .room-btn,.player-tools select{font-size:11px;padding:8px 9px}
+  #syncState{width:100%;font-size:10px;padding-left:2px}
+  .media-bar{padding:9px;gap:6px}
+  .media-bar input{padding:10px;font-size:12px}
+  .media-bar .room-btn{padding:9px 11px}
+  .sync-note{font-size:10px;padding:9px 12px}
+  .side-card{min-height:0!important}
+  .participants{max-height:150px;padding:0 9px 9px}
+  .person-row{padding:8px 9px}
+  .chat{min-height:360px}
+  .side-title{padding:13px 14px 9px;font-size:19px}
+  .chat-messages{min-height:220px;padding:10px;gap:7px}
+  .chat-msg{padding:8px 9px}
+  .chat-form{position:sticky;bottom:0;padding:8px;gap:5px}
+  .emoji-toggle,.chat-form>button{height:42px!important}
+  .emoji-picker{position:fixed!important;left:8px!important;right:8px!important;bottom:62px!important;width:auto!important;max-width:none!important}
+  .sticker-grid{grid-template-columns:repeat(6,1fr)!important}
+  .sticker-grid button{height:42px!important}
+  .player-wrap:fullscreen .fullscreen-chat{right:8px!important;top:auto!important;left:8px!important;bottom:8px!important;width:auto!important;max-width:none!important;height:42vh!important}
+}
+@media(min-width:701px){
+  .chat-messages{min-height:300px}
+}
 </style></head>
 <body>
 
@@ -180,7 +218,7 @@ body{background:#e8dfe4;color:var(--ink)}
 <script src="/socket.io/socket.io.js"></script>
 <script>
 const modal=document.getElementById("modal"),nameInput=document.getElementById("name"),roomInput=document.getElementById("room"),title=document.getElementById("modalTitle"),text=document.getElementById("modalText");
-function openModal(create){title.textContent=create?"Создать сессию":"Присоединиться к сессии";text.textContent=create?"Введите имя — код сессии будет создан автоматически.":"Введите имя и код сессии, который вам отправили.";roomInput.value=create?String(Math.floor(1000+Math.random()*9000)):"";roomInput.placeholder=create?"Код создан автоматически":"Код сессии";modal.classList.remove("hidden");nameInput.focus()}
+function openModal(create){title.textContent=create?"Создать сессию":"Присоединиться к сессии";text.textContent=create?"Введите имя — код сессии будет создан автоматически.":"Введите имя и код сессии, который вам отправили.";roomInput.value=create?Math.random().toString(36).slice(2,8).toUpperCase():"";roomInput.placeholder=create?"Код создан автоматически":"Код сессии";modal.classList.remove("hidden");nameInput.focus()}
 document.getElementById("join").onclick=()=>openModal(false);document.getElementById("create").onclick=()=>openModal(true);document.getElementById("createTop").onclick=()=>openModal(true);document.getElementById("login").onclick=()=>openModal(false);document.getElementById("close").onclick=()=>modal.classList.add("hidden");
 function enterRoom(){const n=nameInput.value.trim()||"Гость",r=roomInput.value.trim().toUpperCase();if(!r){roomInput.focus();return}sessionStorage.setItem("cineora_name",n);location.href="/?room="+encodeURIComponent(r)}
 document.getElementById("go").onclick=enterRoom;
@@ -544,6 +582,7 @@ function startRoom(roomId){
   chatInput.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendChatMessage()}});
   socket.on("connect_error",()=>{setStatus("Нет соединения с комнатой — переподключаемся…");const el=document.getElementById("chatConnection");if(el)el.textContent="● нет связи"});
   socket.on("connect",()=>{
+    socket.emit("join-room",{roomId,name:localStorage.getItem("cineora_name")||sessionStorage.getItem("cineora_name")||"Гость"});
     setStatus("Комната подключена");
     const el=document.getElementById("chatConnection");if(el)el.textContent="● онлайн";
     if(pendingChat){
@@ -587,7 +626,32 @@ function startRoom(roomId){
   socket.on("room-users",renderUsers);
   socket.on("sync-state",state=>applySync(state.playing,state.position,state.serverTime));
   socket.on("chat-history",messages=>{chatMessages.innerHTML="";(messages||[]).forEach(addMessage)});
-  socket.on("chat-message",addMessage);
+  let audioContext=null;
+  function enableChatSound(){
+    try{
+      if(!audioContext)audioContext=new (window.AudioContext||window.webkitAudioContext)();
+      if(audioContext.state==="suspended")audioContext.resume();
+    }catch(e){}
+  }
+  function playChatSound(){
+    try{
+      if(!audioContext)enableChatSound();
+      if(!audioContext||audioContext.state!=="running")return;
+      const osc=audioContext.createOscillator(),gain=audioContext.createGain();
+      osc.type="sine";osc.frequency.setValueAtTime(740,audioContext.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(980,audioContext.currentTime+0.09);
+      gain.gain.setValueAtTime(0.0001,audioContext.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.045,audioContext.currentTime+0.012);
+      gain.gain.exponentialRampToValueAtTime(0.0001,audioContext.currentTime+0.14);
+      osc.connect(gain);gain.connect(audioContext.destination);osc.start();osc.stop(audioContext.currentTime+0.15);
+    }catch(e){}
+  }
+  document.addEventListener("pointerdown",enableChatSound,{once:true});
+  document.addEventListener("keydown",enableChatSound,{once:true});
+  socket.on("chat-message",message=>{
+    addMessage(message);
+    if(message?.userId!==socket.id)playChatSound();
+  });
 }
 
 /* Надёжная отправка предложений: заменяем обработчик на финальный */
