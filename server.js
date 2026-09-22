@@ -284,7 +284,7 @@ document.getElementById('pass').addEventListener('keydown',e=>{if(e.key==='Enter
 
 const rooms = new Map();
 function roomState(roomId) {
-  if (!rooms.has(roomId)) rooms.set(roomId, { users: new Map(), hostId: null, playing: false, position: 0, updatedAt: Date.now(), mediaUrl: "" });
+  if (!rooms.has(roomId)) rooms.set(roomId, { users: new Map(), hostId: null, playing: false, position: 0, updatedAt: Date.now(), mediaUrl: "", messages: [] });
   return rooms.get(roomId);
 }
 function publicUsers(room) {
@@ -308,6 +308,7 @@ io.on("connection", socket => {
     if (!room.hostId) room.hostId = socket.id;
     room.users.set(socket.id, { id: socket.id, name, position: room.playing ? room.position + (Date.now() - room.updatedAt) / 1000 : room.position, playing: room.playing, progressUpdatedAt: Date.now(), duration: 0 });
     socket.emit("room-state", { hostId: room.hostId, playing: room.playing, position: room.playing ? room.position + (Date.now() - room.updatedAt) / 1000 : room.position, serverTime: Date.now(), mediaUrl: room.mediaUrl });
+    if (room.messages.length) socket.emit("chat-history", room.messages.slice(-100));
     broadcastRoom(roomId);
   });
   socket.on("rename", ({ name }) => {
@@ -333,7 +334,6 @@ io.on("connection", socket => {
   socket.on("sync", ({ playing, position }) => {
     const roomId = socket.data.roomId; if (!roomId) return;
     const room = roomState(roomId);
-    if (room.hostId && socket.id !== room.hostId) return;
     room.playing = !!playing;
     room.position = Math.max(0, Number(position) || 0);
     room.updatedAt = Date.now();
@@ -355,7 +355,24 @@ io.on("connection", socket => {
     });
   });
   socket.on("user-progress", ({ position, playing, duration }) => { const roomId = socket.data.roomId; if (!roomId) return; const room = roomState(roomId); const user = room.users.get(socket.id); if (!user) return; user.position = Math.max(0, Number(position) || 0); user.playing = !!playing; user.progressUpdatedAt = Date.now(); user.duration = Math.max(0, Number(duration) || 0); socket.to(roomId).emit("user-progress", { id: socket.id, position: user.position, playing: user.playing }); broadcastRoom(roomId); });
-  socket.on("chat-message", payload => { const roomId = socket.data.roomId; if (!roomId) return; const clean = String(payload?.text || "").trim().slice(0, 500); if (!clean) return; io.to(roomId).emit("chat-message", { id: socket.id, name: socket.data.name || "Гость", text: clean, time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) }); });
+  socket.on("chat-message", (payload, ack) => {
+    const roomId = socket.data.roomId;
+    if (!roomId) { if (typeof ack === "function") ack({ ok: false, error: "Вы ещё не вошли в комнату." }); return; }
+    const room = roomState(roomId);
+    const clean = String(payload?.text || "").trim().slice(0, 500);
+    if (!clean) { if (typeof ack === "function") ack({ ok: false, error: "Пустое сообщение." }); return; }
+    const message = {
+      id: socket.id + "-" + Date.now(),
+      userId: socket.id,
+      name: socket.data.name || "Гость",
+      text: clean,
+      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+    };
+    room.messages.push(message);
+    if (room.messages.length > 100) room.messages.splice(0, room.messages.length - 100);
+    io.to(roomId).emit("chat-message", message);
+    if (typeof ack === "function") ack({ ok: true });
+  });
   socket.on("disconnect", () => {
     const roomId = socket.data.roomId; if (!roomId || !rooms.has(roomId)) return;
     const room = rooms.get(roomId);
