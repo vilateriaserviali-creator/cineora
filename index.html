@@ -443,6 +443,7 @@ function startRoom(roomId,pageParams){
 
   // Real-time voice chat: WebRTC mesh with Socket.IO signaling.
   const voicePeers=new Map();
+  const voiceMuted=new Map();
   let voiceStream=null, voiceEnabled=false, voiceNoiseEnabled=true;
   const voiceToggle=document.getElementById("voiceToggle");
   const noiseSuppression=document.getElementById("noiseSuppression");
@@ -460,9 +461,12 @@ function startRoom(roomId,pageParams){
     if(!voiceUsers)return;
     voiceUsers.innerHTML=(users||[]).map(u=>{
       const name=escapeHtml(u.name||"Гость");
-      return '<span class="voice-user '+(u.voiceEnabled?"active":"muted")+'">🎙 '+name+(u.voiceEnabled?"":" · выкл.")+'</span>';
+      return '<span class="voice-user '+(u.voiceEnabled?"active":"muted")+'" data-voice-id="'+escapeHtml(u.id||"")+'"><i class="voice-speaking-dot"></i><span class="voice-name">🎙 '+name+'</span><button type="button" class="voice-mute" title="Отключить звук">🔊</button><input class="voice-volume" type="range" min="0" max="1" step=".05" value="'+(voiceMuted.get(u.id)?0:.85)+'"></span>';
     }).join("");
   }
+  voiceUsers?.addEventListener("input",e=>{if(!e.target.classList.contains("voice-volume"))return;const row=e.target.closest(".voice-user"),id=row?.dataset.voiceId,p=voicePeers.get(id);if(!id||!p?.audio)return;const v=Number(e.target.value);voiceMuted.set(id,v===0);p.audio.volume=v;const b=row.querySelector(".voice-mute");if(b)b.textContent=v===0?"🔇":"🔊"});
+  voiceUsers?.addEventListener("click",e=>{const b=e.target.closest(".voice-mute");if(!b)return;const row=b.closest(".voice-user"),id=row?.dataset.voiceId,p=voicePeers.get(id);if(!id||!p?.audio)return;const v=p.audio.volume>0?0:.85;p.audio.volume=v;voiceMuted.set(id,v===0);b.textContent=v===0?"🔇":"🔊";const s=row.querySelector(".voice-volume");if(s)s.value=v});
+  function updateSpeaking(){for(const [id,p] of voicePeers){if(!p.analyser)continue;try{if(p.analyser.ctx.state==="suspended")p.analyser.ctx.resume();p.analyser.node.getByteFrequencyData(p.analyser.data);let sum=0;for(const n of p.analyser.data)sum+=n;const row=voiceUsers.querySelector('[data-voice-id="'+CSS.escape(id)+'"]');if(row)row.classList.toggle("speaking",sum/p.analyser.data.length>22)}catch(e){}}requestAnimationFrame(updateSpeaking)}
   function removeVoicePeer(id){
     const peer=voicePeers.get(id);
     if(!peer)return;
@@ -478,13 +482,13 @@ function startRoom(roomId,pageParams){
         {urls:"stun:stun1.l.google.com:19302"}
       ]
     });
-    const peer={pc,audio:null,name:name||"Гость"};
+    const peer={pc,audio:null,name:name||"Гость",analyser:null};
     voicePeers.set(id,peer);
     if(voiceStream)voiceStream.getTracks().forEach(track=>pc.addTrack(track,voiceStream));
     pc.onicecandidate=e=>{if(e.candidate)socket.emit("voice-signal",{to:id,data:{type:"candidate",candidate:e.candidate}})};
     pc.ontrack=e=>{
       let audio=peer.audio;
-      if(!audio){audio=document.createElement("audio");audio.autoplay=true;audio.playsInline=true;audio.volume=.85;audio.dataset.voicePeer=id;document.body.appendChild(audio);peer.audio=audio}
+      if(!audio){audio=document.createElement("audio");audio.autoplay=true;audio.playsInline=true;audio.volume=voiceMuted.get(id)?0:.85;audio.dataset.voicePeer=id;document.body.appendChild(audio);peer.audio=audio;try{const ctx=new (window.AudioContext||window.webkitAudioContext)();const src=ctx.createMediaElementSource(audio);const node=ctx.createAnalyser();node.fftSize=256;src.connect(node);node.connect(ctx.destination);peer.analyser={ctx,node,data:new Uint8Array(node.frequencyBinCount)}}catch(e){}}
       if(e.streams&&e.streams[0])audio.srcObject=e.streams[0];
     };
     pc.onconnectionstatechange=()=>{
@@ -541,6 +545,7 @@ function startRoom(roomId,pageParams){
     updateVoiceButton();
   }
   voiceToggle?.addEventListener("click",()=>setVoiceEnabled(!voiceEnabled));
+  updateSpeaking();
   noiseSuppression?.addEventListener("change",e=>setNoiseSuppression(e.target.checked));
   updateVoiceButton();
 
