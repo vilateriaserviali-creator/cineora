@@ -432,18 +432,32 @@ setInterval(()=>{
 },5*60*1000);
 
 const PORT = process.env.PORT || 3000;
-initDatabase()
-  .then(async () => {
-    if (mailer) {
-      try {
-        await mailer.verify();
-        console.log("SMTP connection verified.");
-      } catch (err) {
-        console.error("SMTP verification failed:", err.message);
-      }
-    } else {
-      console.warn("SMTP is not configured. Email notifications are disabled.");
+
+async function startServer() {
+  // The web server must start even when PostgreSQL is unavailable.
+  // Database-backed features will report their own errors until the DB is reachable.
+  try {
+    await initDatabase();
+    console.log("PostgreSQL initialization completed.");
+  } catch (err) {
+    console.error("PostgreSQL initialization failed. CINEORA will continue without database:", err.message);
+  }
+
+  if (mailer) {
+    try {
+      await mailer.verify();
+      console.log("SMTP connection verified.");
+    } catch (err) {
+      console.error("SMTP verification failed:", err.message);
     }
-    server.listen(PORT, "0.0.0.0", () => console.log(`CINEORA running on port ${PORT}`));
-  })
-  .catch(err => { console.error("Database initialization failed:", err); process.exit(1); });
+  } else {
+    console.warn("SMTP is not configured. Email notifications are disabled.");
+  }
+
+  server.listen(PORT, "0.0.0.0", () => console.log(`CINEORA running on port ${PORT}`));
+}
+
+startServer().catch(err => {
+  console.error("Unexpected CINEORA startup error:", err);
+  server.listen(PORT, "0.0.0.0", () => console.log(`CINEORA running on port ${PORT}`));
+});
