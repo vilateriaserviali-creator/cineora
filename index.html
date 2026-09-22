@@ -201,6 +201,12 @@ body{background:#e8dfe4;color:var(--ink)}
  .sticker-grid button{height:40px!important;font-size:22px!important}
 }
 .player-wrap:fullscreen .emoji-picker{z-index:2000!important}
+</style><style id="cineora-hide-player-controls-final">
+.cineora-controls{display:none!important}
+</style><style id="cineora-remove-player-widget">
+.player-tools{display:none!important}
+</style><style id="cineora-hide-player-controls-final">
+.cineora-controls{display:none!important}
 </style></head>
 <body>
 
@@ -613,7 +619,7 @@ function startRoom(roomId){
     if(d.type==="vk"){currentType="vk";makeIframe(d.url);setStatus("VK Видео");return}
     if(d.type==="video"){
       currentType="video";host.innerHTML="";
-      const v=document.createElement("video");v.id="roomVideo";v.controls=true;v.playsInline=true;v.preload="metadata";v.src=d.url;host.appendChild(v);
+      const v=document.createElement("video");v.id="roomVideo";v.controls=false;v.playsInline=true;v.preload="metadata";v.src=d.url;host.appendChild(v);
       setStatus("Видео из интернета");
       v.addEventListener("play",()=>{if(!suppress)socket.emit("sync",{playing:true,position:v.currentTime})});
       v.addEventListener("pause",()=>{if(!suppress)socket.emit("sync",{playing:false,position:v.currentTime})});
@@ -881,7 +887,12 @@ function startRoom(roomId){
       setStatus("Качество недоступно для этого источника");
     }
   };
-  cineFull.onclick=()=>document.getElementById("fullscreenBtn").click();
+  cineFull.onclick=async()=>{
+  try{
+    if(document.fullscreenElement===wrap){await document.exitFullscreen();return}
+    await wrap.requestFullscreen();
+  }catch(e){setStatus("Полный экран недоступен в этом браузере")}
+};
   setInterval(updateCineoraControls,500);
 
   socket.on("room-state",state=>{
