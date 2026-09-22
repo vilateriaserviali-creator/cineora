@@ -789,9 +789,19 @@ function startRoom(roomId){
       ytCommand("setPlaybackQuality",[q==="auto"?"default":q]);
       setStatus(q==="auto"?"YouTube · качество Авто":"YouTube · качество "+(q==="large"?"480":q==="medium"?"360":q.replace("hd",""))+"p");
     }else if(currentType==="video"){
-      setStatus("Качество зависит от исходного видео");
+      const v=document.getElementById("roomVideo");
+      if(v){
+        const wasPlaying=!v.paused;
+        const t=v.currentTime||0;
+        v.load();
+        v.currentTime=t;
+        if(wasPlaying)v.play().catch(()=>{});
+      }
+      setStatus("Прямое видео · качество исходного файла");
+    }else if(currentType==="rutube"||currentType==="vk"){
+      setStatus("Качество выбирается встроенным плеером сервиса");
     }else{
-      setStatus("Качество настраивается плеером сервиса");
+      setStatus("Качество недоступно для этого источника");
     }
   });
 
