@@ -355,7 +355,7 @@ io.on("connection", socket => {
     });
   });
   socket.on("user-progress", ({ position, playing, duration }) => { const roomId = socket.data.roomId; if (!roomId) return; const room = roomState(roomId); const user = room.users.get(socket.id); if (!user) return; user.position = Math.max(0, Number(position) || 0); user.playing = !!playing; user.progressUpdatedAt = Date.now(); user.duration = Math.max(0, Number(duration) || 0); socket.to(roomId).emit("user-progress", { id: socket.id, position: user.position, playing: user.playing }); broadcastRoom(roomId); });
-  socket.on("chat-message", ({ text }) => { const roomId = socket.data.roomId; if (!roomId) return; const clean = String(text || "").trim().slice(0, 500); if (!clean) return; io.to(roomId).emit("chat-message", { id: socket.id, name: socket.data.name || "Гость", text: clean, time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) }); });
+  socket.on("chat-message", payload => { const roomId = socket.data.roomId; if (!roomId) return; const clean = String(payload?.text || "").trim().slice(0, 500); if (!clean) return; io.to(roomId).emit("chat-message", { id: socket.id, name: socket.data.name || "Гость", text: clean, time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) }); });
   socket.on("disconnect", () => {
     const roomId = socket.data.roomId; if (!roomId || !rooms.has(roomId)) return;
     const room = rooms.get(roomId);
