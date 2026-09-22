@@ -245,47 +245,224 @@ app.delete("/api/admin/suggestions/:id", async (req, res) => {
   }
 });
 
-app.get("/admin", (req, res) => {
-  res.type("html").send(`<!doctype html>
-<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>CINEORA — Админ-панель</title>
-<style>
-:root{--bg:#f3efe5;--paper:#fffdf8;--ink:#25251f;--muted:#77736b;--line:#e2dbcf;--lime:#d8efb7;--dark:#292a23;--red:#a94d4d;--green:#65804e}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Arial,sans-serif}.wrap{width:min(1180px,calc(100% - 36px));margin:34px auto}.top{display:flex;justify-content:space-between;align-items:center;gap:20px}.logo{font:500 32px Georgia;letter-spacing:.12em}.logo span{color:#7c9560}.top a{color:#555;text-decoration:none}.login,.dashboard{margin-top:24px;background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:25px}.login{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.login input{padding:13px 14px;border:1px solid #cfc7b8;border-radius:11px;min-width:280px}.btn{padding:12px 18px;border:0;border-radius:999px;background:var(--lime);cursor:pointer;font-weight:700}.error{color:var(--red);margin:12px 0 0}.dashboard{display:none}.dashboard.show{display:block}.tabs{display:flex;gap:8px;margin:20px 0;border-bottom:1px solid var(--line);padding-bottom:10px}.tab{border:1px solid var(--line);background:white;border-radius:999px;padding:10px 16px;cursor:pointer}.tab.active{background:var(--dark);color:white}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:20px 0}.stat{background:#f7f3ea;border:1px solid var(--line);border-radius:16px;padding:18px}.stat b{display:block;font-size:28px;margin-top:5px}.stat span{font-size:12px;color:var(--muted)}.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:20px 0}.toolbar input,.toolbar select{padding:12px 14px;border:1px solid var(--line);border-radius:11px;background:white}.toolbar input{flex:1;min-width:220px}.cards{display:grid;gap:12px}.idea,.news{border:1px solid var(--line);border-radius:17px;padding:19px;background:white}.idea-head,.news-head{display:flex;justify-content:space-between;gap:15px;align-items:flex-start}.person{font-weight:700}.date{font-size:12px;color:var(--muted);margin-top:5px}.idea-text,.news-text{font-size:16px;line-height:1.6;margin:15px 0;white-space:pre-wrap;overflow-wrap:anywhere}.idea-actions,.news-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.status{padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:#faf8f2}.delete{border:0;background:#f2e8e1;color:#8c4848;padding:9px 13px;border-radius:999px;cursor:pointer}.empty{text-align:center;padding:45px;color:var(--muted)}.count{font-size:13px;color:var(--muted)}.editor{border:1px solid var(--line);background:#f7f3ea;border-radius:18px;padding:18px;margin:20px 0}.editor h2{font:500 25px Georgia;margin:0 0 12px}.editor input,.editor textarea{width:100%;padding:13px;border:1px solid var(--line);border-radius:11px;background:white;margin:5px 0 10px}.editor textarea{min-height:120px;resize:vertical}.editor-row{display:flex;justify-content:space-between;gap:15px;align-items:center;flex-wrap:wrap}.check{font-size:14px;color:var(--muted)}.published{font-size:12px;color:var(--green);font-weight:700}.unpublished{font-size:12px;color:#8c6f45;font-weight:700}.news-edit{display:grid;gap:8px;margin-top:14px}.news-edit input,.news-edit textarea{width:100%;padding:11px;border:1px solid var(--line);border-radius:10px;background:#faf8f2}.news-edit textarea{min-height:100px;resize:vertical}.smallbtn{padding:9px 13px;border:1px solid var(--line);border-radius:999px;background:white;cursor:pointer}.smallbtn.primary{background:var(--lime);border-color:var(--lime);font-weight:700}.smallbtn.danger{color:#8c4848;background:#f2e8e1;border:0}
-@media(max-width:800px){.stats{grid-template-columns:repeat(2,1fr)}.wrap{width:calc(100% - 24px)}}@media(max-width:500px){.stats{grid-template-columns:1fr}.idea-head,.news-head{display:block}.tabs{overflow:auto}}
-</style></head>
-<body><div class="wrap">
-<div class="top"><div class="logo">CINE<span>ORA</span></div><a href="/">На сайт →</a></div>
-<div class="login" id="loginBox"><input id="pass" type="password" placeholder="Пароль администратора"><button class="btn" onclick="openAdmin()">Открыть админ-панель</button><div id="loginStatus"></div></div>
-<section class="dashboard" id="dashboard">
-<div style="display:flex;justify-content:space-between;gap:20px;align-items:end;flex-wrap:wrap"><div><h1 style="font:500 36px Georgia;margin:0 0 7px">Панель управления CINEORA</h1><div class="count">Предложения пользователей и новости сервиса</div></div><button class="btn" onclick="refreshAll()">↻ Обновить</button></div>
-<div class="tabs"><button class="tab active" id="tabIdeas" onclick="showTab('ideas')">Предложения</button><button class="tab" id="tabNews" onclick="showTab('news')">Обновления сайта</button></div>
-<div id="ideasPanel">
-<div class="stats"><div class="stat"><span>Всего</span><b id="all">0</b></div><div class="stat"><span>Новые</span><b id="new">0</b></div><div class="stat"><span>В работе</span><b id="progress">0</b></div><div class="stat"><span>Добавлено</span><b id="done">0</b></div></div>
-<div class="toolbar"><input id="search" placeholder="Поиск по имени или предложению..." oninput="renderIdeas()"><select id="filter" onchange="renderIdeas()"><option value="all">Все предложения</option><option value="new">Новые</option><option value="in_progress">В работе</option><option value="done">Добавлено</option><option value="rejected">Отклонено</option></select></div>
-<div class="cards" id="list"></div></div>
-<div id="newsPanel" style="display:none">
-<div class="editor"><h2>Опубликовать обновление</h2><input id="newsTitle" maxlength="140" placeholder="Заголовок, например: «Добавили RUTUBE»"><textarea id="newsText" maxlength="3000" placeholder="Расскажите пользователям, что нового появилось в CINEORA."></textarea><div class="editor-row"><label class="check"><input type="checkbox" id="newsPublished" checked> Показывать на главной странице</label><button class="btn" onclick="createNews()">Опубликовать</button></div><div id="newsStatus" class="count"></div></div>
-<div class="cards" id="newsList"></div></div>
-</section></div>
-<script>
-let password="",items=[],newsItems=[];
-const labels={new:'Новое',in_progress:'В работе',done:'Добавлено',rejected:'Отклонено'};
-function esc(s){return String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
-async function openAdmin(){password=document.getElementById('pass').value;await refreshAll()}
-async function api(path,options={}){options.headers={...(options.headers||{}),'x-admin-password':password};const r=await fetch(path,options);const d=await r.json();if(!r.ok)throw new Error(d.error||'Ошибка');return d}
-async function refreshAll(){if(!password){document.getElementById('loginStatus').className='error';document.getElementById('loginStatus').textContent='Введите пароль.';return}try{const [a,b]=await Promise.all([api('/api/admin/suggestions'),api('/api/admin/news')]);items=a.suggestions||[];newsItems=b.news||[];document.getElementById('loginStatus').textContent='';document.getElementById('dashboard').classList.add('show');renderIdeas();renderNews()}catch(e){document.getElementById('loginStatus').className='error';document.getElementById('loginStatus').textContent=e.message}}
-function showTab(tab){document.getElementById('ideasPanel').style.display=tab==='ideas'?'block':'none';document.getElementById('newsPanel').style.display=tab==='news'?'block':'none';document.getElementById('tabIdeas').classList.toggle('active',tab==='ideas');document.getElementById('tabNews').classList.toggle('active',tab==='news')}
-function renderIdeas(){const filter=document.getElementById('filter').value,term=document.getElementById('search').value.trim().toLowerCase();const filtered=items.filter(x=>(filter==='all'||x.status===filter)&&(!term||(x.name+' '+x.text).toLowerCase().includes(term)));document.getElementById('all').textContent=items.length;document.getElementById('new').textContent=items.filter(x=>x.status==='new').length;document.getElementById('progress').textContent=items.filter(x=>x.status==='in_progress').length;document.getElementById('done').textContent=items.filter(x=>x.status==='done').length;const list=document.getElementById('list');if(!filtered.length){list.innerHTML='<div class="empty">По выбранному фильтру предложений нет.</div>';return}list.innerHTML=filtered.map(x=>\`<article class="idea"><div class="idea-head"><div><div class="person">\${esc(x.name||'Гость')}</div><div class="date">\${new Date(x.createdAt).toLocaleString('ru-RU')}</div></div><strong>\${esc(labels[x.status]||x.status)}</strong></div><div class="idea-text">\${esc(x.text)}</div><div class="idea-actions"><select class="status" onchange="changeStatus('\${x.id}',this.value)">\${Object.entries(labels).map(([k,v])=>\`<option value="\${k}" \${x.status===k?'selected':''}>\${v}</option>\`).join('')}</select><button class="delete" onclick="removeItem('\${x.id}')">Удалить</button></div></article>\`).join('')}
-async function changeStatus(id,status){try{await api('/api/admin/suggestions/'+encodeURIComponent(id),{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({status})});const x=items.find(i=>i.id===id);if(x)x.status=status;renderIdeas()}catch(e){alert(e.message)}}
-async function removeItem(id){if(!confirm('Удалить это предложение?'))return;try{await api('/api/admin/suggestions/'+encodeURIComponent(id),{method:'DELETE'});items=items.filter(x=>x.id!==id);renderIdeas()}catch(e){alert(e.message)}}
-async function createNews(){const title=document.getElementById('newsTitle').value.trim(),text=document.getElementById('newsText').value.trim(),published=document.getElementById('newsPublished').checked;const status=document.getElementById('newsStatus');if(!title||!text){status.textContent='Заполните заголовок и текст.';return}status.textContent='Сохраняем...';try{const d=await api('/api/admin/news',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({title,text,published})});newsItems.unshift(d.item);document.getElementById('newsTitle').value='';document.getElementById('newsText').value='';status.textContent='Обновление опубликовано.';renderNews()}catch(e){status.textContent=e.message}}
-function renderNews(){const list=document.getElementById('newsList');if(!newsItems.length){list.innerHTML='<div class="empty">Пока нет обновлений. Создайте первое выше.</div>';return}list.innerHTML=newsItems.map(x=>\`<article class="news"><div class="news-head"><div><div class="date">\${new Date(x.createdAt).toLocaleString('ru-RU')}</div></div><span class="\${x.published?'published':'unpublished'}">\${x.published?'Опубликовано':'Скрыто'}</span></div><div class="news-edit"><input id="nt-\${x.id}" value="\${esc(x.title)}" maxlength="140"><textarea id="nx-\${x.id}" maxlength="3000">\${esc(x.text)}</textarea><div class="news-actions"><label class="check"><input id="np-\${x.id}" type="checkbox" \${x.published?'checked':''}> Показывать на сайте</label><button class="smallbtn primary" onclick="saveNews('\${x.id}')">Сохранить</button><button class="smallbtn danger" onclick="deleteNews('\${x.id}')">Удалить</button></div></div></article>\`).join('')}
-async function saveNews(id){try{const item={title:document.getElementById('nt-'+id).value.trim(),text:document.getElementById('nx-'+id).value.trim(),published:document.getElementById('np-'+id).checked};const d=await api('/api/admin/news/'+encodeURIComponent(id),{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(item)});const i=newsItems.findIndex(x=>x.id===id);if(i>=0)newsItems[i]=d.item;renderNews()}catch(e){alert(e.message)}}
-async function deleteNews(id){if(!confirm('Удалить это обновление?'))return;try{await api('/api/admin/news/'+encodeURIComponent(id),{method:'DELETE'});newsItems=newsItems.filter(x=>x.id!==id);renderNews()}catch(e){alert(e.message)}}
-document.getElementById('pass').addEventListener('keydown',e=>{if(e.key==='Enter')openAdmin()});
-</script></body></html>`);
+
+app.get("/api/admin/stats", async (req, res) => {
+  if (!adminAllowed(req)) return res.status(401).json({ ok: false, error: "Неверный пароль администратора." });
+  try {
+    const activeRooms = [...rooms.entries()]
+      .filter(([, room]) => room.users.size > 0)
+      .map(([id, room]) => ({
+        id,
+        users: publicUsers(room),
+        userCount: room.users.size,
+        mediaUrl: room.mediaUrl || "",
+        playing: !!room.playing,
+        position: Number(room.position) || 0,
+        updatedAt: room.updatedAt || Date.now()
+      }))
+      .sort((a,b) => b.userCount - a.userCount);
+    let suggestionCount = 0;
+    let newsCount = 0;
+    if (pool) {
+      const [s,n] = await Promise.all([
+        pool.query("SELECT COUNT(*)::int AS count FROM suggestions"),
+        pool.query("SELECT COUNT(*)::int AS count FROM news")
+      ]);
+      suggestionCount = s.rows[0]?.count || 0;
+      newsCount = n.rows[0]?.count || 0;
+    } else {
+      suggestionCount = fallbackSuggestions.length;
+    }
+    res.json({
+      ok: true,
+      stats: {
+        activeRooms: activeRooms.length,
+        onlineUsers: activeRooms.reduce((sum, room) => sum + room.userCount, 0),
+        suggestions: suggestionCount,
+        news: newsCount
+      },
+      rooms: activeRooms
+    });
+  } catch (err) {
+    console.error("Admin stats error:", err);
+    res.status(500).json({ ok: false, error: "Не удалось загрузить статистику." });
+  }
 });
 
+app.get("/admin", (req, res) => {
+  res.type("html").send(String.raw\`<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#15151c">
+<title>CINEORA — Админ-панель</title>
+<style>
+:root{--bg:#101016;--panel:#171720;--panel2:#1d1d28;--line:#2d2d3a;--text:#f4f2f7;--muted:#9a97a5;--pink:#f1b8cf;--lilac:#cbbcf5;--green:#9edc9d;--danger:#ef9caa;--shadow:0 18px 50px rgba(0,0,0,.25)}
+*{box-sizing:border-box}html{background:var(--bg)}body{margin:0;min-height:100vh;background:radial-gradient(circle at 15% 0%,rgba(203,188,245,.12),transparent 32%),radial-gradient(circle at 90% 10%,rgba(241,184,207,.1),transparent 30%),var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.wrap{width:min(1280px,calc(100% - 32px));margin:0 auto;padding:26px 0 44px}.top{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:4px 2px 22px}.brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--text)}.brand-mark{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,var(--pink),var(--lilac));color:#15151c;display:grid;place-items:center;font-weight:900;box-shadow:0 10px 28px rgba(203,188,245,.16)}.brand-name{font-weight:850;letter-spacing:.12em;font-size:20px}.brand-name span{opacity:.75}.site-link{color:var(--muted);text-decoration:none;border:1px solid var(--line);background:rgba(255,255,255,.03);padding:10px 14px;border-radius:999px}.site-link:hover{color:var(--text);background:rgba(255,255,255,.06)}.login{background:rgba(23,23,32,.86);border:1px solid var(--line);border-radius:24px;padding:22px;box-shadow:var(--shadow);display:flex;gap:10px;align-items:center;flex-wrap:wrap}.login input{flex:1;min-width:220px;padding:13px 15px;border-radius:13px;border:1px solid var(--line);background:#111119;color:var(--text);outline:none}.login input:focus{border-color:var(--lilac);box-shadow:0 0 0 3px rgba(203,188,245,.1)}button{font:inherit}.btn{border:1px solid transparent;border-radius:13px;padding:12px 16px;background:linear-gradient(135deg,var(--pink),var(--lilac));color:#181720;font-weight:800;cursor:pointer}.btn:hover{transform:translateY(-1px);filter:brightness(1.04)}.btn.secondary{background:var(--panel2);border-color:var(--line);color:var(--text)}.status{font-size:13px;color:var(--muted)}.error{color:var(--danger);margin-top:10px}.dashboard{display:none}.dashboard.show{display:block}.hero{display:flex;align-items:end;justify-content:space-between;gap:20px;margin:28px 0 18px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);margin-bottom:8px}.hero h1{font-size:clamp(30px,5vw,46px);line-height:1.05;margin:0;letter-spacing:-.04em}.hero p{margin:10px 0 0;color:var(--muted)}.hero-actions{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.updated{font-size:12px;color:var(--muted)}.nav{display:flex;gap:7px;overflow:auto;padding:6px;background:rgba(23,23,32,.8);border:1px solid var(--line);border-radius:16px;margin:18px 0}.nav button{white-space:nowrap;border:0;background:transparent;color:var(--muted);padding:11px 15px;border-radius:11px;cursor:pointer;font-weight:700}.nav button.active{background:#292937;color:var(--text);box-shadow:inset 0 0 0 1px #3a3a4b}.view{display:none}.view.active{display:block}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.stat{background:linear-gradient(145deg,rgba(29,29,40,.98),rgba(23,23,32,.98));border:1px solid var(--line);border-radius:20px;padding:19px;min-height:120px}.stat-icon{font-size:20px}.stat b{display:block;font-size:34px;letter-spacing:-.04em;margin-top:10px}.stat span{color:var(--muted);font-size:13px}.grid{display:grid;grid-template-columns:1.2fr .8fr;gap:14px;margin-top:14px}.card{background:rgba(23,23,32,.94);border:1px solid var(--line);border-radius:20px;padding:20px;box-shadow:0 12px 34px rgba(0,0,0,.14)}.card h2{font-size:18px;margin:0}.card-head{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:15px}.room-list,.cards{display:grid;gap:10px}.room,.idea,.news{background:#13131b;border:1px solid #292936;border-radius:16px;padding:15px}.room-head,.idea-head,.news-head{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}.room-code{font-weight:850;letter-spacing:.08em}.pill{display:inline-flex;align-items:center;gap:6px;padding:6px 9px;border-radius:999px;background:#20202b;color:var(--muted);font-size:12px}.pill.live{color:var(--green);background:rgba(158,220,157,.09)}.room-meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:11px}.people{margin-top:11px;color:var(--muted);font-size:13px;line-height:1.6}.person-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--green);margin-right:6px;box-shadow:0 0 10px rgba(158,220,157,.7)}.toolbar{display:flex;gap:9px;flex-wrap:wrap;margin:15px 0}.toolbar input,.toolbar select{padding:12px 13px;border-radius:12px;border:1px solid var(--line);background:#111119;color:var(--text);outline:none}.toolbar input{flex:1;min-width:220px}.toolbar input:focus,.toolbar select:focus{border-color:var(--lilac)}.idea-text,.news-text{margin:13px 0;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.6;color:#ddd9e3}.person{font-weight:800}.date{font-size:12px;color:var(--muted);margin-top:4px}.actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.select{padding:9px 11px;border-radius:10px;border:1px solid var(--line);background:#1a1a24;color:var(--text)}.smallbtn{border:1px solid var(--line);background:#1a1a24;color:var(--text);border-radius:10px;padding:9px 12px;cursor:pointer}.smallbtn:hover{background:#242432}.smallbtn.primary{background:rgba(241,184,207,.14);border-color:rgba(241,184,207,.28)}.smallbtn.danger{color:var(--danger);background:rgba(239,156,170,.07)}.editor{background:#13131b;border:1px solid #292936;border-radius:18px;padding:17px;margin-bottom:14px}.editor h2{font-size:18px;margin:0 0 13px}.editor input,.editor textarea{width:100%;padding:12px 13px;border-radius:11px;border:1px solid var(--line);background:#0f0f16;color:var(--text);margin-bottom:9px;outline:none}.editor textarea{min-height:125px;resize:vertical}.editor-row{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.check{color:var(--muted);font-size:13px}.published{color:var(--green);font-size:12px;font-weight:800}.unpublished{color:#d8b679;font-size:12px;font-weight:800}.empty{text-align:center;padding:42px 15px;color:var(--muted);border:1px dashed var(--line);border-radius:16px}.danger-note{color:var(--danger);font-size:12px}.footer-note{margin-top:16px;color:var(--muted);font-size:12px;text-align:center}@media(max-width:900px){.stats{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}}@media(max-width:600px){.wrap{width:calc(100% - 20px);padding-top:14px}.top{padding-bottom:12px}.brand-mark{width:38px;height:38px}.brand-name{font-size:17px}.site-link{padding:8px 11px}.login{padding:15px}.login input{min-width:100%;flex-basis:100%}.hero{align-items:flex-start;flex-direction:column}.hero-actions{width:100%}.hero-actions .btn{flex:1}.stats{grid-template-columns:1fr 1fr;gap:8px}.stat{padding:14px;min-height:105px}.stat b{font-size:28px}.card{padding:14px}.room-head,.idea-head,.news-head{display:block}.actions{margin-top:10px}.toolbar input{min-width:100%}}\n</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <a class="brand" href="/">
+      <span class="brand-mark">C</span><span class="brand-name">CINE<span>ORA</span></span>
+    </a>
+    <a class="site-link" href="/">← На сайт</a>
+  </div>
+
+  <div class="login" id="loginBox">
+    <input id="pass" type="password" autocomplete="current-password" placeholder="Пароль администратора">
+    <button class="btn" onclick="openAdmin()">Войти в администрацию</button>
+    <span id="loginStatus" class="status"></span>
+  </div>
+
+  <section class="dashboard" id="dashboard">
+    <div class="hero">
+      <div>
+        <div class="eyebrow">CINEORA / CONTROL CENTER</div>
+        <h1>Администрация</h1>
+        <p>Комнаты, пользователи, предложения и обновления — в одном месте.</p>
+      </div>
+      <div class="hero-actions">
+        <span id="updated" class="updated">Обновление…</span>
+        <button class="btn secondary" onclick="refreshAll()">↻ Обновить</button>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <button class="active" data-view="overview" onclick="showView('overview')">Обзор</button>
+      <button data-view="rooms" onclick="showView('rooms')">Комнаты</button>
+      <button data-view="ideas" onclick="showView('ideas')">Предложения</button>
+      <button data-view="news" onclick="showView('news')">Обновления</button>
+    </nav>
+
+    <section class="view active" id="view-overview">
+      <div class="stats">
+        <div class="stat"><div class="stat-icon">🎬</div><span>Активные комнаты</span><b id="statRooms">0</b></div>
+        <div class="stat"><div class="stat-icon">🟢</div><span>Пользователи онлайн</span><b id="statUsers">0</b></div>
+        <div class="stat"><div class="stat-icon">💡</div><span>Предложения</span><b id="statIdeas">0</b></div>
+        <div class="stat"><div class="stat-icon">📰</div><span>Обновления</span><b id="statNews">0</b></div>
+      </div>
+      <div class="grid">
+        <div class="card"><div class="card-head"><h2>Сейчас в комнатах</h2><span class="pill live">● LIVE</span></div><div id="overviewRooms" class="room-list"></div></div>
+        <div class="card"><div class="card-head"><h2>Быстрые действия</h2></div><div class="room-list">
+          <button class="btn secondary" onclick="showView('rooms')">🎬 Открыть комнаты</button>
+          <button class="btn secondary" onclick="showView('ideas')">💡 Проверить предложения</button>
+          <button class="btn secondary" onclick="showView('news')">📰 Управлять обновлениями</button>
+        </div></div>
+      </div>
+    </section>
+
+    <section class="view" id="view-rooms">
+      <div class="card"><div class="card-head"><h2>Активные комнаты</h2><span id="roomsCount" class="pill">0 комнат</span></div><div id="roomsList" class="room-list"></div></div>
+    </section>
+
+    <section class="view" id="view-ideas">
+      <div class="card">
+        <div class="card-head"><h2>Предложения пользователей</h2><span id="ideasCount" class="pill">0</span></div>
+        <div class="toolbar"><input id="search" placeholder="Поиск по имени или тексту..." oninput="renderIdeas()"><select id="filter" onchange="renderIdeas()"><option value="all">Все</option><option value="new">Новые</option><option value="in_progress">В работе</option><option value="done">Добавлено</option><option value="rejected">Отклонено</option></select></div>
+        <div id="list" class="cards"></div>
+      </div>
+    </section>
+
+    <section class="view" id="view-news">
+      <div class="editor">
+        <h2>Новое обновление</h2>
+        <input id="newsTitle" maxlength="140" placeholder="Заголовок">
+        <textarea id="newsText" maxlength="3000" placeholder="Что нового появилось в CINEORA?"></textarea>
+        <div class="editor-row">
+          <label class="check"><input type="checkbox" id="newsPublished" checked> Показывать на главной</label>
+          <button class="btn" onclick="createNews()">Опубликовать</button>
+        </div>
+        <div id="newsStatus" class="status"></div>
+      </div>
+      <div class="card"><div class="card-head"><h2>Все обновления</h2><span id="newsCount" class="pill">0</span></div><div id="newsList" class="cards"></div></div>
+    </section>
+
+    <div class="footer-note">Автообновление каждые 10 секунд · пароль хранится только в текущей вкладке</div>
+  </section>
+</div>
+
+<script>
+let password="",items=[],newsItems=[],rooms=[];
+const labels={new:"Новое",in_progress:"В работе",done:"Добавлено",rejected:"Отклонено"};
+function esc(s){return String(s).replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;","\"":"&quot;"}[c]));}
+function fmtDate(v){try{return new Date(v).toLocaleString("ru-RU",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"})}catch(e){return ""}}
+function showView(view){
+  document.querySelectorAll(".view").forEach(x=>x.classList.remove("active"));
+  document.querySelectorAll(".nav button").forEach(x=>x.classList.toggle("active",x.dataset.view===view));
+  const el=document.getElementById("view-"+view);if(el)el.classList.add("active");
+}
+async function openAdmin(){password=document.getElementById("pass").value.trim();if(!password){document.getElementById("loginStatus").textContent="Введите пароль";return}await refreshAll()}
+async function api(path,options={}){
+  options.headers={...(options.headers||{}),"x-admin-password":password};
+  const r=await fetch(path,options);let d={};try{d=await r.json()}catch(e){}
+  if(!r.ok)throw new Error(d.error||"Ошибка запроса");
+  return d;
+}
+function roomMarkup(room){
+  const names=(room.users||[]).map(u=>"<span class='person-dot'></span>"+esc(u.name||"Гость")).join(" · ");
+  const media=room.mediaUrl?"▶ видео загружено":"○ без видео";
+  return "<article class='room'><div class='room-head'><div><div class='room-code'>"+esc(room.id)+"</div><div class='date'>Последняя активность: "+fmtDate(room.updatedAt)+"</div></div><span class='pill "+(room.playing?"live":"")+"\">"+(room.playing?"▶ воспроизводится":"Ⅱ пауза")+"</span></div><div class='room-meta'><span class='pill'>👥 "+room.userCount+"</span><span class='pill'>"+media+"</span></div><div class='people'>"+(names||"Участников нет")+"</div></article>";
+}
+function renderRooms(){
+  const html=rooms.length?rooms.map(roomMarkup).join(""):"<div class='empty'>Сейчас активных комнат нет.</div>";
+  document.getElementById("roomsList").innerHTML=html;
+  document.getElementById("overviewRooms").innerHTML=rooms.slice(0,6).map(roomMarkup).join("")||"<div class='empty'>Пока никто не смотрит.</div>";
+  document.getElementById("roomsCount").textContent=rooms.length+" "+(rooms.length===1?"комната":"комнат");
+}
+function renderIdeas(){
+  const q=(document.getElementById("search").value||"").toLowerCase().trim();
+  const f=document.getElementById("filter").value;
+  const visible=items.filter(x=>(f==="all"||x.status===f)&&((x.name||"").toLowerCase().includes(q)||(x.text||"").toLowerCase().includes(q)));
+  document.getElementById("ideasCount").textContent=visible.length+" из "+items.length;
+  document.getElementById("list").innerHTML=visible.length?visible.map(x=>"<article class='idea'><div class='idea-head'><div><div class='person'>"+esc(x.name||"Гость")+"</div><div class='date'>"+fmtDate(x.createdAt)+"</div></div><span class='pill'>"+labels[x.status]+"</span></div><div class='idea-text'>"+esc(x.text)+"</div><div class='actions'><select class='select' onchange='setStatus(\""+esc(x.id)+"\",this.value)'><option value='new' "+(x.status==="new"?"selected":"")+">Новое</option><option value='in_progress' "+(x.status==="in_progress"?"selected":"")+">В работе</option><option value='done' "+(x.status==="done"?"selected":"")+">Добавлено</option><option value='rejected' "+(x.status==="rejected"?"selected":"")+">Отклонено</option></select><button class='smallbtn danger' onclick='deleteIdea(\""+esc(x.id)+"\")'>Удалить</button></div></article>").join(""):"<div class='empty'>По этому фильтру ничего нет.</div>";
+}
+async function loadIdeas(){const d=await api("/api/admin/suggestions");items=d.suggestions||[];renderIdeas()}
+async function setStatus(id,status){try{await api("/api/admin/suggestions/"+encodeURIComponent(id),{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({status})});const x=items.find(i=>i.id===id);if(x)x.status=status;renderIdeas()}catch(e){alert(e.message)}}
+async function deleteIdea(id){if(!confirm("Удалить предложение?"))return;try{await api("/api/admin/suggestions/"+encodeURIComponent(id),{method:"DELETE"});await loadIdeas();loadStats()}catch(e){alert(e.message)}}
+function renderNews(){
+  document.getElementById("newsCount").textContent=newsItems.length;
+  document.getElementById("newsList").innerHTML=newsItems.length?newsItems.map(x=>"<article class='news'><div class='news-head'><div><div class='person'>"+esc(x.title)+"</div><div class='date'>"+fmtDate(x.createdAt)+"</div></div><span class='"+(x.published?"published":"unpublished")+"'>"+(x.published?"● Опубликовано":"○ Скрыто")+"</span></div><div class='news-edit'><input id='nt-"+esc(x.id)+"' value='"+esc(x.title)+"'><textarea id='nx-"+esc(x.id)+"'>"+esc(x.text)+"</textarea><div class='actions'><label class='check'><input type='checkbox' id='np-"+esc(x.id)+"' "+(x.published?"checked":"")+"> Показывать</label><button class='smallbtn primary' onclick='saveNews(\""+esc(x.id)+"\")'>Сохранить</button><button class='smallbtn danger' onclick='deleteNews(\""+esc(x.id)+"\")'>Удалить</button></div></div></article>").join(""):"<div class='empty'>Обновлений пока нет.</div>";
+}
+async function loadNews(){const d=await api("/api/admin/news");newsItems=d.news||[];renderNews()}
+async function createNews(){
+  const title=document.getElementById("newsTitle").value.trim(),text=document.getElementById("newsText").value.trim(),published=document.getElementById("newsPublished").checked;
+  if(title.length<2||text.length<2){document.getElementById("newsStatus").textContent="Заполните заголовок и текст.";return}
+  try{await api("/api/admin/news",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({title,text,published})});document.getElementById("newsTitle").value="";document.getElementById("newsText").value="";document.getElementById("newsStatus").textContent="✓ Опубликовано";await loadNews();await loadStats()}catch(e){document.getElementById("newsStatus").textContent=e.message}
+}
+async function saveNews(id){
+  const title=document.getElementById("nt-"+id).value.trim(),text=document.getElementById("nx-"+id).value.trim(),published=document.getElementById("np-"+id).checked;
+  try{await api("/api/admin/news/"+encodeURIComponent(id),{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({title,text,published})});await loadNews();await loadStats()}catch(e){alert(e.message)}
+}
+async function deleteNews(id){if(!confirm("Удалить обновление?"))return;try{await api("/api/admin/news/"+encodeURIComponent(id),{method:"DELETE"});await loadNews();await loadStats()}catch(e){alert(e.message)}}
+async function loadStats(){
+  const d=await api("/api/admin/stats");rooms=d.rooms||[];
+  document.getElementById("statRooms").textContent=d.stats?.activeRooms||0;
+  document.getElementById("statUsers").textContent=d.stats?.onlineUsers||0;
+  document.getElementById("statIdeas").textContent=d.stats?.suggestions||0;
+  document.getElementById("statNews").textContent=d.stats?.news||0;
+  renderRooms();
+  document.getElementById("updated").textContent="Обновлено в "+new Date().toLocaleTimeString("ru-RU",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
+}
+async function refreshAll(){
+  if(!password)return;
+  try{
+    await Promise.all([loadStats(),loadIdeas(),loadNews()]);
+    document.getElementById("dashboard").classList.add("show");
+    document.getElementById("loginBox").style.display="none";
+    document.getElementById("loginStatus").textContent="";
+  }catch(e){
+    document.getElementById("loginStatus").innerHTML="<span class='error'>"+esc(e.message)+"</span>";
+    document.getElementById("dashboard").classList.remove("show");
+  }
+}
+document.getElementById("pass").addEventListener("keydown",e=>{if(e.key==="Enter")openAdmin()});
+setInterval(()=>{if(password&&document.getElementById("dashboard").classList.contains("show"))refreshAll()},10000);
+</script>
+</body>
+</html>\`);
+});
 const rooms = new Map();
 function roomState(roomId) {
   if (!rooms.has(roomId)) rooms.set(roomId, { users: new Map(), hostId: null, playing: false, position: 0, updatedAt: Date.now(), mediaUrl: "", messages: [], emptySince: null });
