@@ -361,7 +361,8 @@ io.on("connection", socket => {
   socket.on("sync", ({ playing, position }) => {
     const roomId = socket.data.roomId; if (!roomId) return;
     const room = roomState(roomId);
-    room.hostId = socket.id;
+    // Keep the existing room host. Any participant may control playback,
+    // but a normal sync event must not silently transfer the internal host state.
     room.playing = !!playing;
     room.position = Math.max(0, Number(position) || 0);
     room.updatedAt = Date.now();
