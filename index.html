@@ -122,7 +122,8 @@ body{background:#e8dfe4;color:var(--ink)}
 @media(min-width:701px){
   .chat-messages{min-height:300px}
 }
-</style></head>
+</style><style id="cineora-funny-ui">#funLine{font-weight:600;letter-spacing:.01em}#modalStatus{line-height:1.4}</style>
+</head>
 <body>
 
 
@@ -160,13 +161,13 @@ body{background:#e8dfe4;color:var(--ink)}
 <header class="header">
 <a class="logo" href="/">CINE<span>ORA</span></a>
 <nav class="nav"><a href="#about">О сервисе</a><a href="#features">Возможности</a><a href="#how">Как это работает</a></nav>
-<div><button class="login" id="login">Войти</button><button class="create-top" id="createTop">Создать сессию</button></div>
+<div><button class="login" id="login">Войти в комнату</button><button class="create-top" id="createTop">Создать сессию</button></div>
 </header>
 <div class="hero-content">
-<div class="eyebrow">Совместный просмотр фильмов и видео</div>
+<div class="eyebrow" id="funEyebrow">Совместный просмотр фильмов и видео</div>
 <div class="brand-big">CINE<span class="accent">O</span>RA</div>
 <h1>Кино становится <em class="accent">ближе.</em></h1>
-<p class="lead">Смотрите фильмы и видео вместе с друзьями — в одной синхронизированной сессии, где бы вы ни были.</p>
+<p class="lead">Смотрите фильмы и видео вместе с друзьями — в одной синхронизированной сессии, где бы вы ни были.</p><div id="funLine" style="margin-top:16px;font-size:13px;color:#6f6470;min-height:20px"></div>
 <div class="actions"><button class="primary" id="join">▶ &nbsp;Присоединиться к сессии</button><button class="secondary" id="create">＋ &nbsp;Создать сессию</button></div>
 <div class="sources"><div class="sources-title">Поддерживаем популярные источники</div><div class="source-row"><div class="source"><span class="source-icon">▶</span>YouTube</div><div class="source"><span class="source-icon">VK</span>VK Видео</div><div class="source"><span class="source-icon">R</span>RUTUBE</div><div class="source"><span class="source-icon">↗</span>Видео из интернета</div></div></div>
 </div>
@@ -220,6 +221,8 @@ body{background:#e8dfe4;color:var(--ink)}
 const modal=document.getElementById("modal"),nameInput=document.getElementById("name"),roomInput=document.getElementById("room"),title=document.getElementById("modalTitle"),text=document.getElementById("modalText");
 const modalStatus=document.getElementById("modalStatus"); let modalCreate=false;
 function makeRoomCode(){return Math.random().toString(36).slice(2,8).toUpperCase()}
+const funnyLines=["🍿 Кто принёс попкорн — тот сегодня главный.","🎬 Фильм сам себя не посмотрит. К сожалению.","👀 Все пришли? Отлично. Никто не спойлерит.","🛋️ Диван виртуальный, но настроение настоящее.","😂 Если фильм плохой — хотя бы чат спасёт вечер.","🍕 Срочно собираем компанию. Пицца тоже приветствуется.","🎞️ Нажмите «Создать сессию» — приключение началось."]; 
+const funLine=document.getElementById("funLine"); if(funLine)funLine.textContent=funnyLines[Math.floor(Math.random()*funnyLines.length)];
 function openModal(create){
   modalCreate=!!create;
   title.textContent=create?"Создать сессию":"Войти в CINEORA";
@@ -239,12 +242,9 @@ function enterRoom(){
   localStorage.setItem("cineora_name",n);sessionStorage.setItem("cineora_name",n);
   modalStatus.textContent=modalCreate?"Создаём комнату…":"Открываем комнату…";
   if(modalCreate){
-    const s=io();
-    const go=()=>s.emit("create-room",{roomId:r,name:n},ack=>{
-      if(!ack?.ok){modalStatus.textContent=ack?.error||"Не удалось создать комнату.";return}
-      location.href="/?room="+encodeURIComponent(r)
-    });
-    if(s.connected)go();else{s.once("connect",go);setTimeout(()=>{if(!s.connected)modalStatus.textContent="Сервер не отвечает. Попробуйте ещё раз.";},7000)}
+    // Для создания не ждём Socket.IO: код комнаты создаётся сразу,
+    // а сервер создаст состояние комнаты в момент первого подключения.
+    location.href="/?room="+encodeURIComponent(r);
     return
   }
   location.href="/?room="+encodeURIComponent(r)
@@ -653,7 +653,7 @@ function startRoom(roomId){
   });
   socket.on("room-users",renderUsers);
   socket.on("sync-state",state=>applySync(state.playing,state.position,state.serverTime));
-  socket.on("chat-history",messages=>{chatMessages.innerHTML="";(messages||[]).forEach(addMessage)});
+  socket.on("chat-history",messages=>{chatMessages.innerHTML="";(messages||[]).forEach(addMessage)});socket.on("chat-warning",data=>{setStatus(data?.text||"Сообщение заблокировано.");const el=document.getElementById("chatConnection");if(el)el.textContent="⚠️ сообщение заблокировано";setTimeout(()=>{if(el)el.textContent="● онлайн"},3000)});
   let audioContext=null;
   function enableChatSound(){
     try{
