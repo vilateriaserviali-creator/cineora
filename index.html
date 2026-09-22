@@ -71,7 +71,7 @@
 .cine-seek{height:4px;cursor:pointer}
 .cine-volume{height:4px;cursor:pointer}
 .cineora-controls select{font-size:11px;min-width:78px}
-</style></style></style><style id="cineora-player-size-fix">
+</style><style id="cineora-player-size-fix">
 /* Плеер должен занимать всю область карточки, без маленького окна по центру */
 .player-wrap{position:relative!important;overflow:hidden!important;aspect-ratio:16/9!important;height:auto!important;min-height:0!important;padding:0!important}
 .player-wrap > #universalPlayer{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;display:block!important}
@@ -160,6 +160,60 @@ body{background:#e8dfe4;color:var(--ink)}
   .chat-messages{min-height:300px}
 }
 </style><style id="cineora-funny-ui">#funLine{font-weight:600;letter-spacing:.01em}#modalStatus{line-height:1.4}</style>
+<style id="cineora-full-player-fix">
+/* Видео заполняет всю область плеера — без маленького центрального окна */
+.player-wrap{
+  display:block!important;
+  place-items:unset!important;
+  align-items:stretch!important;
+  justify-items:stretch!important;
+  position:relative!important;
+  overflow:hidden!important;
+  width:100%!important;
+  height:auto!important;
+  min-height:0!important;
+  aspect-ratio:16/9!important;
+  padding:0!important;
+}
+.player-wrap > #universalPlayer,
+.player-wrap > #universalPlayer > *,
+.player-wrap #universalPlayer iframe,
+.player-wrap #universalPlayer video,
+.player-wrap #universalPlayer > .universal-player,
+.player-wrap #ytPlayer,
+.player-wrap #ytPlayer > iframe{
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  max-width:none!important;
+  max-height:none!important;
+  min-width:0!important;
+  min-height:0!important;
+  margin:0!important;
+  border:0!important;
+}
+.player-wrap #universalPlayer > video,
+.player-wrap video{
+  object-fit:contain!important;
+  background:#000!important;
+}
+.player-wrap #universalPlayer iframe{display:block!important}
+.player-wrap .empty-player{
+  position:absolute!important;
+  inset:0!important;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  text-align:center;
+  z-index:2;
+}
+.cineora-controls{z-index:20!important}
+@media(max-width:700px){
+  .player-wrap{aspect-ratio:16/9!important;min-height:0!important}
+}
+</style>
 </head>
 <body>
 
@@ -834,28 +888,6 @@ function startRoom(roomId){
   };
   cineFull.onclick=()=>document.getElementById("fullscreenBtn").click();
   setInterval(updateCineoraControls,500);
-
-  document.getElementById("qualitySelect").addEventListener("change",e=>{
-    const q=e.target.value;
-    if(currentType==="youtube"){
-      ytCommand("setPlaybackQuality",[q==="auto"?"default":q]);
-      setStatus(q==="auto"?"YouTube · качество Авто":"YouTube · качество "+(q==="large"?"480":q==="medium"?"360":q.replace("hd",""))+"p");
-    }else if(currentType==="video"){
-      const v=document.getElementById("roomVideo");
-      if(v){
-        const wasPlaying=!v.paused;
-        const t=v.currentTime||0;
-        v.load();
-        v.currentTime=t;
-        if(wasPlaying)v.play().catch(()=>{});
-      }
-      setStatus("Прямое видео · качество исходного файла");
-    }else if(currentType==="rutube"||currentType==="vk"){
-      setStatus("Качество выбирается встроенным плеером сервиса");
-    }else{
-      setStatus("Качество недоступно для этого источника");
-    }
-  });
 
   socket.on("room-state",state=>{
     hostId=state.hostId||"";
