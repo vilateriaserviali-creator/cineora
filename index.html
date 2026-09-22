@@ -31,7 +31,7 @@
 .section.dark{background:#e7e1e9;color:#3d3940}.dark .section-text{color:#68616c}.feature-card{background:#ffffff80;border-color:#d3cbd4}.feature-card p{color:#69626d}.platform{background:#ffffffaa;border-color:#d5ced7}
 .room-top{background:rgba(255,252,248,.78);border-bottom-color:#d9d2d7}.room-brand{color:#49434d}.room-actions .room-code{color:#675d6c;background:#fff;border-color:#d7cfd8}.room-btn{background:#fff;color:#514b55;border-color:#d5ced7}.room-btn.primary{background:#d8c6df;color:#403746;border-color:#d8c6df}
 .watch-head{border-bottom-color:#e1dbe1}.watch-title{color:#45404a}.source-pill{color:#766e79}.media-bar{border-top-color:#e1dbe1;background:#f8f5f2}.media-bar input{background:#fff;color:#413d44;border-color:#d7d0d8}.sync-note{border-top-color:#e1dbe1;background:#f8f5f2}
-.side-title{color:#4b4550}.participants{background:#fff0}.person-row{background:#f5f1f5;border:1px solid #e5dfe5}.person-name{color:#4e4852}.person-time{color:#7c7480}.chat{border-top-color:#e1dbe1}.chat-messages{background:#fcfafc}.chat-msg{background:#f2eef3}.chat-msg b{color:#75627e}.chat-msg span{color:#4d4850}
+.side-title{color:#4b4550}.chat-title-row{display:flex;align-items:center;justify-content:space-between;gap:10px}.chat-title-row #chatConnection{font:500 10px "DM Sans",sans-serif;color:#9a7f98}.participants{background:#fff0}.person-row{background:#f5f1f5;border:1px solid #e5dfe5}.person-name{color:#4e4852}.person-time{color:#7c7480}.chat{border-top-color:#e1dbe1}.chat-messages{background:#fcfafc}.chat-msg{background:#f2eef3}.chat-msg b{color:#75627e}.chat-msg span{color:#4d4850}
 .fullscreen-chat{min-height:0!important;height:auto!important}
 @media(max-width:1000px){.room-top{background:#fffaf7}.player-wrap{min-height:360px}}
 </style><style id="cineora-player-size-fix">
@@ -101,7 +101,7 @@ body{background:#e8dfe4;color:var(--ink)}
   <main class="room-layout">
     <section class="watch-card">
       <div class="watch-head"><div><div class="watch-title">Совместный просмотр</div><div class="source-pill" id="mediaStatus">Видео пока не добавлено</div></div><div class="source-pill" id="myRoomName"></div></div>
-      <div class="player-wrap" id="playerWrap"><div id="universalPlayer"></div><div class="empty-player" id="emptyPlayer"><strong>Добавьте видео</strong><span>Вставьте ссылку на YouTube, VK Видео, RUTUBE или прямую ссылку на видео.</span></div></div><div class="player-tools"><button class="room-btn" id="fullscreenBtn" type="button">⛶ На весь экран</button><button class="room-btn" id="syncBtn" type="button">↻ Синхронизировать</button><span id="syncState">Видео синхронизируется между участниками</span></div>
+      <div class="player-wrap" id="playerWrap"><div id="universalPlayer"></div><div class="empty-player" id="emptyPlayer"><strong>Добавьте видео</strong><span>Вставьте ссылку на YouTube, VK Видео, RUTUBE или прямую ссылку на видео.</span></div></div><div class="player-tools"><button class="room-btn" id="fullscreenBtn" type="button">⛶ На весь экран</button><button class="room-btn" id="syncBtn" type="button">↻ Синхронизировать</button><select class="room-btn" id="qualitySelect" aria-label="Качество видео"><option value="auto">Качество: Авто</option><option value="hd1080">1080p</option><option value="hd720">720p</option><option value="large">480p</option><option value="medium">360p</option></select><span id="syncState">Видео синхронизируется между участниками</span></div>
       <div class="media-bar"><input id="mediaUrlRoom" placeholder="YouTube / VK / RUTUBE / ссылка на видео"><button class="room-btn primary" id="setMediaRoom">Загрузить</button></div>
       <div class="sync-note">YouTube и прямые видео синхронизируются по воспроизведению, паузе и перемотке. Для сайтов, которые разрешают встраивание, CINEORA откроет их плеер внутри комнаты.</div>
     </section>
@@ -109,7 +109,7 @@ body{background:#e8dfe4;color:var(--ink)}
       <div class="side-title">Участники <span id="participantCount">0</span></div>
       <div class="participants" id="participants"></div>
       <div class="chat">
-        <div class="side-title">Чат</div>
+        <div class="side-title chat-title-row">Чат <span id="chatConnection">● подключение…</span></div>
         <div class="chat-messages" id="chatMessages"></div>
         <form class="chat-form" id="chatForm"><div class="emoji-wrap"><button class="emoji-toggle" id="emojiToggle" type="button" aria-label="Смайлики">😊</button><div class="emoji-picker hidden" id="emojiPicker"><div class="sticker-title">Стикеры и эмоции</div><div class="sticker-grid"><button type="button">😂</button><button type="button">😍</button><button type="button">🥰</button><button type="button">😎</button><button type="button">🤭</button><button type="button">🥹</button><button type="button">😭</button><button type="button">😡</button><button type="button">🤯</button><button type="button">🤍</button><button type="button">❤️</button><button type="button">💜</button><button type="button">🔥</button><button type="button">✨</button><button type="button">🎉</button><button type="button">🍿</button><button type="button">👍</button><button type="button">👏</button><button type="button">💀</button><button type="button">👀</button><button type="button">💅</button><button type="button">🫶</button><button type="button">☕</button><button type="button">🎬</button></div></div></div><input id="chatInput" maxlength="500" placeholder="Напишите сообщение..."><button type="submit">→</button></form>
       </div>
@@ -302,7 +302,7 @@ function startRoom(roomId){
       player=new YT.Player("ytPlayer",{width:"100%",height:"100%",videoId:id,playerVars:{playsinline:1,rel:0,origin:location.origin,enablejsapi:1},events:{
         onReady:()=>setStatus("YouTube · готово к просмотру"),
         onStateChange:e=>{
-          if(suppress||!isHost())return;
+          if(suppress)return;
           if(e.data===1)socket.emit("sync",{playing:true,position:player.getCurrentTime()});
           if(e.data===2||e.data===0)socket.emit("sync",{playing:false,position:player.getCurrentTime()});
         },
@@ -332,9 +332,9 @@ function startRoom(roomId){
       currentType="video";host.innerHTML="";
       const v=document.createElement("video");v.id="roomVideo";v.controls=true;v.playsInline=true;v.src=d.url;host.appendChild(v);
       setStatus("Видео из интернета");
-      v.addEventListener("play",()=>{if(!suppress&&isHost())socket.emit("sync",{playing:true,position:v.currentTime})});
-      v.addEventListener("pause",()=>{if(!suppress&&isHost())socket.emit("sync",{playing:false,position:v.currentTime})});
-      v.addEventListener("seeked",()=>{if(!suppress&&isHost())socket.emit("sync",{playing:!v.paused,position:v.currentTime})});
+      v.addEventListener("play",()=>{if(!suppress)socket.emit("sync",{playing:true,position:v.currentTime})});
+      v.addEventListener("pause",()=>{if(!suppress)socket.emit("sync",{playing:false,position:v.currentTime})});
+      v.addEventListener("seeked",()=>{if(!suppress)socket.emit("sync",{playing:!v.paused,position:v.currentTime})});
       v.addEventListener("error",()=>{
         if(d.type==="video"){
           currentType="iframe";makeIframe(d.url);setStatus("Сайт открылся во встроенном окне");
@@ -524,22 +524,46 @@ function startRoom(roomId){
   document.addEventListener("click",e=>{
     if(!e.target.closest(".emoji-wrap")) emojiPicker.classList.add("hidden");
   });
-  chatForm.addEventListener("submit",e=>{
-    e.preventDefault();
+  let pendingChat="";
+  function sendChatMessage(){
     const msg=chatInput.value.trim();
     if(!msg)return;
     if(!socket.connected){
-      setStatus("Соединение с комнатой восстанавливается…");
+      pendingChat=msg;
+      setStatus("Сообщение отправится после восстановления соединения…");
       socket.connect();
-      socket.once("connect",()=>socket.emit("chat-message",{text:msg}));
-    }else{
-      socket.emit("chat-message",{text:msg});
+      return;
     }
+    socket.emit("chat-message",{text:msg},ack=>{
+      if(!ack?.ok)setStatus(ack?.error||"Не удалось отправить сообщение");
+    });
     chatInput.value="";
     chatInput.focus();
+  }
+  chatForm.addEventListener("submit",e=>{e.preventDefault();sendChatMessage()});
+  chatInput.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendChatMessage()}});
+  socket.on("connect_error",()=>{setStatus("Нет соединения с комнатой — переподключаемся…");const el=document.getElementById("chatConnection");if(el)el.textContent="● нет связи"});
+  socket.on("connect",()=>{
+    setStatus("Комната подключена");
+    const el=document.getElementById("chatConnection");if(el)el.textContent="● онлайн";
+    if(pendingChat){
+      const msg=pendingChat;pendingChat="";
+      socket.emit("chat-message",{text:msg},ack=>{if(!ack?.ok)setStatus(ack?.error||"Не удалось отправить сообщение")});
+      chatInput.value="";chatInput.focus();
+    }
   });
-  socket.on("connect_error",()=>setStatus("Нет соединения с комнатой — переподключаемся…"));
-  socket.on("connect",()=>setStatus("Комната подключена"));
+
+  document.getElementById("qualitySelect").addEventListener("change",e=>{
+    const q=e.target.value;
+    if(currentType==="youtube"){
+      ytCommand("setPlaybackQuality",[q==="auto"?"default":q]);
+      setStatus(q==="auto"?"YouTube · качество Авто":"YouTube · качество "+(q==="large"?"480":q==="medium"?"360":q.replace("hd",""))+"p");
+    }else if(currentType==="video"){
+      setStatus("Качество зависит от исходного видео");
+    }else{
+      setStatus("Качество настраивается плеером сервиса");
+    }
+  });
 
   socket.on("room-state",state=>{
     hostId=state.hostId||"";
@@ -562,6 +586,7 @@ function startRoom(roomId){
   });
   socket.on("room-users",renderUsers);
   socket.on("sync-state",state=>applySync(state.playing,state.position,state.serverTime));
+  socket.on("chat-history",messages=>{chatMessages.innerHTML="";(messages||[]).forEach(addMessage)});
   socket.on("chat-message",addMessage);
 }
 
