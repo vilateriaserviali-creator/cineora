@@ -1440,5 +1440,73 @@ function startRoom(roomId,pageParams){
   window.addEventListener("cineora:connected",connected);
   window.addEventListener("cineora:disconnected",disconnected);
 })();
+</script><script id="cineora-chat-hard-fix">
+(function(){
+  const form=document.getElementById("chatForm");
+  const input=document.getElementById("chatInput");
+  const toggle=document.getElementById("emojiToggle");
+  const picker=document.getElementById("emojiPicker");
+  if(!form||!input||!toggle||!picker)return;
+
+  function insertEmoji(emoji){
+    const start=Number.isInteger(input.selectionStart)?input.selectionStart:input.value.length;
+    const end=Number.isInteger(input.selectionEnd)?input.selectionEnd:input.value.length;
+    input.value=input.value.slice(0,start)+emoji+input.value.slice(end);
+    input.focus();
+    const cursor=start+emoji.length;
+    try{input.setSelectionRange(cursor,cursor)}catch(_){}
+    picker.classList.add("hidden");
+  }
+
+  document.addEventListener("click",function(e){
+    const button=e.target.closest("#emojiToggle");
+    if(button){
+      e.preventDefault();
+      e.stopPropagation();
+      picker.classList.toggle("hidden");
+      input.focus();
+      return;
+    }
+    const emojiButton=e.target.closest("#emojiPicker button");
+    if(emojiButton){
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      const emoji=emojiButton.textContent.trim();
+      if(emoji)insertEmoji(emoji);
+      return;
+    }
+    if(!e.target.closest(".emoji-wrap"))picker.classList.add("hidden");
+  },true);
+
+  document.addEventListener("keydown",function(e){
+    if(e.target!==input||e.key!=="Enter"||e.shiftKey)return;
+    e.preventDefault();
+    e.stopPropagation();
+    e.stopImmediatePropagation();
+    const msg=input.value.trim();
+    if(!msg)return;
+    const s=window.socket;
+    if(!s)return;
+    if(!s.connected){
+      try{s.connect()}catch(_){}
+      return;
+    }
+    const saved=localStorage.getItem("cineora_name")||sessionStorage.getItem("cineora_name")||"Гость";
+    s.emit("chat-message",{text:msg},function(ack){
+      if(ack&&!ack.ok){
+        const status=document.getElementById("chatConnection");
+        if(status)status.textContent="⚠️ "+(ack.error||"не отправлено");
+      }
+    });
+    input.value="";
+    input.focus();
+  },true);
+
+  form.addEventListener("submit",function(e){
+    e.preventDefault();
+    e.stopImmediatePropagation();
+  },true);
+})();
 </script></body>
 </html>
