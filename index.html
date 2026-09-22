@@ -183,6 +183,14 @@ body{background:#e8dfe4;color:var(--ink)}
 </style><style id="cineora-player-clean-controls">
 .cineora-controls{opacity:0!important;visibility:hidden!important;pointer-events:none!important;transform:translateY(8px)!important;transition:opacity .2s ease,transform .2s ease,visibility .2s ease!important}
 .player-wrap:hover .cineora-controls,.player-wrap:focus-within .cineora-controls,.player-wrap:fullscreen .cineora-controls{opacity:1!important;visibility:visible!important;pointer-events:auto!important;transform:translateY(0)!important}
+</style><style id="cineora-fullscreen-chat-toggle">
+.fullscreen-chat-toggle{display:none!important;position:absolute!important;right:14px!important;top:14px!important;z-index:60!important;width:34px!important;height:34px!important;border:0!important;border-radius:50%!important;background:rgba(20,18,24,.35)!important;color:#fff!important;cursor:pointer!important;font-size:15px!important;opacity:.45!important}
+.fullscreen-chat-toggle:hover{opacity:.9!important;background:rgba(20,18,24,.65)!important}
+.player-wrap:fullscreen .fullscreen-chat-toggle{display:block!important}
+.player-wrap:fullscreen .fullscreen-chat{display:none!important}
+.player-wrap:fullscreen .fullscreen-chat.is-open{display:flex!important;right:14px!important;top:14px!important;bottom:14px!important;width:340px!important;max-width:34vw!important;height:auto!important}
+.fullscreen-chat .chat-close{position:absolute;right:10px;top:10px;z-index:5;border:0;background:#ffffff22;color:#fff;border-radius:50%;width:28px;height:28px;cursor:pointer}
+@media(max-width:700px){.player-wrap:fullscreen .fullscreen-chat.is-open{left:8px!important;right:8px!important;top:48px!important;bottom:8px!important;width:auto!important;max-width:none!important}.fullscreen-chat-toggle{right:8px!important;top:8px!important}}
 </style></head>
 <body>
 
@@ -200,12 +208,12 @@ body{background:#e8dfe4;color:var(--ink)}
   <main class="room-layout">
     <section class="watch-card">
       <div class="watch-head"><div><div class="watch-title">Совместный просмотр</div><div class="source-pill" id="mediaStatus">Видео пока не добавлено</div></div><div class="watch-head-tools"><button class="room-btn" id="syncBtn" type="button">↻ Синхронизировать</button><div class="source-pill" id="myRoomName"></div></div></div>
-      <div class="player-wrap" id="playerWrap"><div id="universalPlayer"></div><div class="empty-player" id="emptyPlayer"><strong>Добавьте видео</strong><span>Вставьте ссылку на YouTube, VK Видео, RUTUBE или прямую ссылку на видео.</span></div><div class="cineora-controls" id="cineoraControls"><button type="button" id="cinePlay">▶</button><span class="cine-time" id="cineTime">0:00 / 0:00</span><input class="cine-seek" id="cineSeek" type="range" min="0" max="100" value="0" aria-label="Перемотка"><button type="button" id="cineMute">🔊</button><input class="cine-volume" id="cineVolume" type="range" min="0" max="1" step="0.01" value="1" aria-label="Громкость"><select id="cineQuality" aria-label="Качество"><option value="auto">⚙ Авто</option><option value="hd1080">1080p</option><option value="hd720">720p</option><option value="large">480p</option><option value="medium">360p</option></select><button type="button" id="cineFull">⛶</button></div></div><div class="player-tools" aria-hidden="true"></div>
+      <div class="player-wrap" id="playerWrap"><div id="universalPlayer"></div><div class="empty-player" id="emptyPlayer"><strong>Добавьте видео</strong><span>Вставьте ссылку на YouTube, VK Видео, RUTUBE или прямую ссылку на видео.</span></div><button type="button" id="fullscreenChatToggle" class="fullscreen-chat-toggle" aria-label="Открыть чат">💬</button><div class="cineora-controls" id="cineoraControls"><button type="button" id="cinePlay">▶</button><span class="cine-time" id="cineTime">0:00 / 0:00</span><input class="cine-seek" id="cineSeek" type="range" min="0" max="100" value="0" aria-label="Перемотка"><button type="button" id="cineMute">🔊</button><input class="cine-volume" id="cineVolume" type="range" min="0" max="1" step="0.01" value="1" aria-label="Громкость"><select id="cineQuality" aria-label="Качество"><option value="auto">⚙ Авто</option><option value="hd1080">1080p</option><option value="hd720">720p</option><option value="large">480p</option><option value="medium">360p</option></select><button type="button" id="cineFull">⛶</button></div></div><div class="player-tools" aria-hidden="true"></div>
       <div class="media-bar"><input id="mediaUrlRoom" placeholder="YouTube / VK / RUTUBE / ссылка на видео"><button class="room-btn primary" id="setMediaRoom">Загрузить</button></div>
       <div class="sync-note">YouTube и прямые видео синхронизируются по воспроизведению, паузе и перемотке. Для сайтов, которые разрешают встраивание, CINEORA откроет их плеер внутри комнаты.</div>
     </section>
     <aside class="side-card" id="sideCard">
-      <div class="side-title">Участники <span id="participantCount">0</span></div>
+      <div class="side-title">Участники <span id="participantCount">0</span></div><button type="button" class="chat-close" aria-label="Закрыть чат">×</button>
       <div class="participants" id="participants"></div>
       <div class="voice-panel" id="voicePanel">
         <div class="voice-head">
@@ -702,7 +710,11 @@ function startRoom(roomId){
   };
   document.getElementById("setMediaRoom").onclick=submitMedia;
   document.getElementById("mediaUrlRoom").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();submitMedia()}});
-  const roomLayout=document.querySelector(".room-layout"),sideCard=document.getElementById("sideCard");
+  const roomLayout=document.querySelector(".room-layout"),sideCard=document.getElementById("sideCard"),sideParent=sideCard.parentNode,sideNext=sideCard.nextSibling;
+  const fullscreenChatToggle=document.getElementById("fullscreenChatToggle");
+  let fullscreenChatOpen=false;
+  const setFullscreenChat=(open)=>{fullscreenChatOpen=!!open;sideCard.classList.toggle("is-open",fullscreenChatOpen);fullscreenChatToggle.textContent=fullscreenChatOpen?"×":"💬";fullscreenChatToggle.setAttribute("aria-label",fullscreenChatOpen?"Закрыть чат":"Открыть чат")};
+  fullscreenChatToggle.onclick=()=>{if(document.fullscreenElement===wrap)setFullscreenChat(!fullscreenChatOpen)};
   document.getElementById("fullscreenBtn").onclick=async()=>{
     try{
       if(document.fullscreenElement){await document.exitFullscreen();return}
@@ -715,6 +727,7 @@ function startRoom(roomId){
     const b=document.getElementById("fullscreenBtn");
     const full=document.fullscreenElement===wrap;
     if(b)b.textContent=full?"⛶ Выйти из полного экрана":"⛶ На весь экран";
+    if(full){wrap.appendChild(sideCard);setFullscreenChat(false)}else{sideCard.classList.remove("fullscreen-chat","is-open");setFullscreenChat(false);sideParent.insertBefore(sideCard,sideNext)}
   });
   document.getElementById("syncBtn").onclick=()=>{
     const b=document.getElementById("syncBtn");
@@ -728,6 +741,7 @@ function startRoom(roomId){
     socket.emit("request-sync");
     setTimeout(()=>{b.textContent="✓ Синхронизировано";setTimeout(()=>b.textContent="↻ Синхронизировать",1200)},350);
   };
+  document.querySelector(".chat-close").onclick=()=>{if(document.fullscreenElement===wrap)setFullscreenChat(false)};
   document.getElementById("copyRoom").onclick=async()=>{
     const url=location.origin+"/?room="+encodeURIComponent(roomId);
     try{await navigator.clipboard.writeText(url);document.getElementById("copyRoom").textContent="Ссылка скопирована";setTimeout(()=>document.getElementById("copyRoom").textContent="Скопировать ссылку",1500)}
