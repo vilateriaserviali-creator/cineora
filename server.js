@@ -334,12 +334,14 @@ io.on("connection", socket => {
   socket.on("sync", ({ playing, position }) => {
     const roomId = socket.data.roomId; if (!roomId) return;
     const room = roomState(roomId);
+    room.hostId = socket.id;
     room.playing = !!playing;
     room.position = Math.max(0, Number(position) || 0);
     room.updatedAt = Date.now();
     const user = room.users.get(socket.id);
     if (user) { user.position = room.position; user.playing = room.playing; user.progressUpdatedAt = Date.now(); }
     socket.to(roomId).emit("sync", { playing: room.playing, position: room.position, serverTime: room.updatedAt });
+    io.to(roomId).emit("room-host", { hostId: room.hostId });
     broadcastRoom(roomId);
   });
   socket.on("request-sync", () => {
