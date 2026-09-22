@@ -379,6 +379,58 @@ html.cineora-dark .room-view .empty-player strong{color:#f1eaf2!important}
   .room-view .room-btn{padding:8px 10px;font-size:11px}
 }
 </style>
+<style id="cineora-room-finish">
+.room-view{position:relative;isolation:isolate}
+.room-view:before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(circle at 10% 10%,rgba(221,196,222,.35),transparent 28%),radial-gradient(circle at 90% 80%,rgba(192,213,226,.28),transparent 30%)}
+.room-layout{align-items:start}
+.watch-card,.side-card{transition:transform .2s ease,box-shadow .25s ease,border-color .25s ease}
+.watch-card:hover,.side-card:hover{box-shadow:0 20px 55px rgba(82,68,82,.15)}
+.watch-head{min-height:70px}
+.watch-title{letter-spacing:.01em}
+.source-pill{padding:7px 10px;border-radius:999px;background:#f1ebf2;border:1px solid #e0d6e2}
+.invite-card{margin:14px 14px 4px!important;border-radius:18px!important;padding:16px!important;box-shadow:0 8px 25px rgba(87,66,91,.08)}
+.invite-card strong{font-size:15px}
+.invite-card span{font-size:12px}
+.invite-card button{margin-top:12px!important;width:100%;border-radius:12px!important;padding:11px 13px!important;font-weight:700}
+.session-countdown{margin:10px 14px 2px}
+.side-title{padding-top:16px}
+.person-row{min-height:58px;transition:background .18s ease,transform .18s ease}
+.person-row:hover{transform:translateX(2px);background:#eee6ef!important}
+.online-status{margin-top:2px}
+.person-progress{height:4px!important;margin-top:7px!important;background:#e0d9e2!important;border-radius:99px!important;overflow:hidden}
+.person-progress i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#9d7fa0,#c5a7c5)!important}
+.chat-title-row{padding:16px 18px 11px!important}
+.chat-title-row .side-title{padding:0!important}
+.chat-form{align-items:center}
+.chat-form button{min-height:42px}
+.media-bar{padding:14px 16px!important}
+.media-bar input{min-height:42px}
+.media-bar .room-btn{min-height:42px}
+.sync-note{line-height:1.5}
+.room-btn:disabled,.invite-card button:disabled{opacity:.6;cursor:wait;transform:none!important}
+.room-view.connection-lost .room-top{opacity:.9}
+.room-view.connection-lost .chat-online{color:#c57b78!important}
+html.cineora-dark .room-view:before{background:radial-gradient(circle at 10% 10%,rgba(126,91,132,.2),transparent 30%),radial-gradient(circle at 90% 80%,rgba(74,105,123,.14),transparent 32%)}
+html.cineora-dark .room-view .source-pill{background:#302934;border-color:#4a3e4d;color:#bcaebf}
+html.cineora-dark .room-view .person-row:hover{background:#342c38!important}
+html.cineora-dark .room-view .person-progress{background:#463b49!important}
+html.cineora-dark .room-view .person-progress i{background:linear-gradient(90deg,#9c7b9b,#c5a1c3)!important}
+@media(max-width:1000px){
+ .room-layout{margin:12px auto;gap:12px}
+ .watch-head{padding:14px 15px}
+ .watch-title{font-size:21px}
+ .side-card{border-radius:18px}
+}
+@media(max-width:600px){
+ .room-layout{width:calc(100% - 14px)}
+ .watch-card,.side-card{border-radius:16px}
+ .player-wrap{min-height:220px}
+ .media-bar{display:grid;grid-template-columns:1fr auto}
+ .media-bar input{grid-column:1/-1}
+ .media-bar .room-btn{width:auto}
+ .invite-card{margin:10px!important}
+}
+</style>
 </head>
 <body>
 
