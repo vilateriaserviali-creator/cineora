@@ -933,10 +933,7 @@ function startRoom(roomId,pageParams){
   };
   document.querySelector(".chat-close").onclick=()=>{setFullscreenChat()};
   document.getElementById("inviteJoin")?.addEventListener("click",async()=>{const url=location.href;try{await navigator.clipboard.writeText(url);document.getElementById("inviteJoin").textContent="✓ Ссылка скопирована";setTimeout(()=>document.getElementById("inviteJoin").textContent="🔗 Скопировать приглашение",1500)}catch(e){prompt("Скопируйте ссылку:",url)}});
-    const url=location.href;
-    try{await navigator.clipboard.writeText(url);document.getElementById("copyRoom").textContent="Ссылка скопирована";setTimeout(()=>document.getElementById("copyRoom").textContent="🔗 Пригласить",1500)}
-    catch(e){prompt("Скопируйте ссылку:",url)}
-  };
+
   document.getElementById("leaveRoom").onclick=()=>{location.href="/"};
 
   setInterval(()=>{
