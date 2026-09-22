@@ -213,14 +213,26 @@ body{background:#e8dfe4;color:var(--ink)}
 
 <footer class="footer"><div class="wrap"><span>CINEORA</span><button class="idea-link" id="ideaBtn">Предложить идею для сервиса</button><span>Кино становится ближе.</span></div></footer>
 
-<div class="modal hidden" id="modal"><div class="modal-box"><button class="close" id="close">×</button><h2 id="modalTitle">Присоединиться к сессии</h2><p id="modalText">Введите имя и код сессии.</p><input id="name" placeholder="Ваше имя" maxlength="24"><input id="room" placeholder="Код сессии" maxlength="16"><button class="go" id="go">Войти</button></div></div><div class="modal hidden" id="ideaModal"><div class="modal-box suggestion-box"><button class="close" id="ideaClose">×</button><h2>Предложить идею</h2><p>Расскажите, что стоит добавить или улучшить в CINEORA.</p><input id="ideaName" placeholder="Ваше имя (необязательно)" maxlength="40"><textarea id="ideaText" placeholder="Например: хочу совместные реакции, список фильмов, голосование..."></textarea><div class="suggestion-status" id="ideaStatus"></div><button class="go" id="ideaSend">Отправить предложение</button></div></div>
+<div class="modal hidden" id="modal"><div class="modal-box"><button class="close" id="close">×</button><h2 id="modalTitle">Войти в CINEORA</h2><p id="modalText">Введите имя. Для входа в существующую комнату укажите её код.</p><input id="name" placeholder="Ваше имя" maxlength="24" autocomplete="nickname"><input id="room" placeholder="Код сессии" maxlength="16" autocomplete="off"><div id="modalStatus" style="min-height:20px;color:#dbc5d8;font-size:13px;margin:6px 0"></div><button class="go" id="go">Войти</button></div></div><div class="modal hidden" id="ideaModal"><div class="modal-box suggestion-box"><button class="close" id="ideaClose">×</button><h2>Предложить идею</h2><p>Расскажите, что стоит добавить или улучшить в CINEORA.</p><input id="ideaName" placeholder="Ваше имя (необязательно)" maxlength="40"><textarea id="ideaText" placeholder="Например: хочу совместные реакции, список фильмов, голосование..."></textarea><div class="suggestion-status" id="ideaStatus"></div><button class="go" id="ideaSend">Отправить предложение</button></div></div>
 
 <script src="/socket.io/socket.io.js"></script>
 <script>
 const modal=document.getElementById("modal"),nameInput=document.getElementById("name"),roomInput=document.getElementById("room"),title=document.getElementById("modalTitle"),text=document.getElementById("modalText");
-function openModal(create){title.textContent=create?"Создать сессию":"Присоединиться к сессии";text.textContent=create?"Введите имя — код сессии будет создан автоматически.":"Введите имя и код сессии, который вам отправили.";roomInput.value=create?Math.random().toString(36).slice(2,8).toUpperCase():"";roomInput.placeholder=create?"Код создан автоматически":"Код сессии";modal.classList.remove("hidden");nameInput.focus()}
+const modalStatus=document.getElementById("modalStatus");
+function makeRoomCode(){return Math.random().toString(36).slice(2,8).toUpperCase()}
+function openModal(create){
+  title.textContent=create?"Создать сессию":"Войти в CINEORA";
+  text.textContent=create?"Введите имя — мы создадим новую комнату и сразу откроем её.":"Введите имя и код сессии, который вам отправили.";
+  roomInput.value=create?makeRoomCode():"";
+  roomInput.readOnly=!!create;
+  roomInput.placeholder=create?"Код новой комнаты":"Код сессии";
+  document.getElementById("go").textContent=create?"Создать комнату":"Войти";
+  modalStatus.textContent="";
+  modal.classList.remove("hidden");
+  nameInput.focus()
+}
 document.getElementById("join").onclick=()=>openModal(false);document.getElementById("create").onclick=()=>openModal(true);document.getElementById("createTop").onclick=()=>openModal(true);document.getElementById("login").onclick=()=>openModal(false);document.getElementById("close").onclick=()=>modal.classList.add("hidden");
-function enterRoom(){const n=nameInput.value.trim()||"Гость",r=roomInput.value.trim().toUpperCase();if(!r){roomInput.focus();return}sessionStorage.setItem("cineora_name",n);location.href="/?room="+encodeURIComponent(r)}
+function enterRoom(){const n=nameInput.value.trim()||"Гость",r=roomInput.value.trim().toUpperCase();if(!r){modalStatus.textContent="Укажите код комнаты.";roomInput.focus();return}localStorage.setItem("cineora_name",n);sessionStorage.setItem("cineora_name",n);modalStatus.textContent="Открываем комнату…";location.href="/?room="+encodeURIComponent(r)}
 document.getElementById("go").onclick=enterRoom;
 [nameInput,roomInput].forEach(el=>el.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();enterRoom()}}));
 
