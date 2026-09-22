@@ -64,6 +64,13 @@
 .cine-seek{flex:1;min-width:70px;accent-color:#d8c6df}
 .cine-volume{width:82px;accent-color:#d8c6df}
 @media(max-width:700px){.cineora-controls{left:6px;right:6px;bottom:6px;gap:5px;padding:7px}.cineora-controls button,.cineora-controls select{height:32px;padding:0 7px;font-size:11px}.cine-volume{width:58px}.cine-time{min-width:70px;font-size:9px}}
+</style><style id="cineora-player-controls-polish">
+.cineora-controls{height:48px;box-sizing:border-box}
+.cineora-controls button{font-size:15px;min-width:36px}
+.cineora-controls button:hover{background:#ffffff2b}
+.cine-seek{height:4px;cursor:pointer}
+.cine-volume{height:4px;cursor:pointer}
+.cineora-controls select{font-size:11px;min-width:78px}
 </style></style></style><style id="cineora-player-size-fix">
 /* Плеер должен занимать всю область карточки, без маленького окна по центру */
 .player-wrap{position:relative!important;overflow:hidden!important;aspect-ratio:16/9!important;height:auto!important;min-height:0!important;padding:0!important}
@@ -274,6 +281,8 @@ function openModal(create){
   roomInput.value=create?makeRoomCode():"";
   roomInput.readOnly=!!create;
   roomInput.style.display=create?"":"block";
+  const savedName=localStorage.getItem("cineora_name")||sessionStorage.getItem("cineora_name")||"";
+  if(savedName)nameInput.value=savedName;
   roomInput.placeholder=create?"Код новой комнаты":"Код сессии (необязательно)";
   document.getElementById("go").textContent=create?"Создать комнату":"Продолжить";
   authBenefits.innerHTML=create?"":"✨ <b>Что даёт регистрация:</b><br>• имя запоминается на этом устройстве;<br>• не нужно каждый раз вводить его заново;<br>• имя отображается в комнатах и чате.<br><br>🔓 Регистрация необязательна — можно заходить как гость.";
@@ -284,8 +293,8 @@ function openModal(create){
 document.getElementById("join").onclick=()=>openModal(false);document.getElementById("create").onclick=()=>openModal(true);document.getElementById("createTop").onclick=()=>openModal(true);document.getElementById("login").onclick=()=>openModal(false);document.getElementById("close").onclick=()=>modal.classList.add("hidden");
 function enterRoom(){
   const n=nameInput.value.trim()||"Гость",r=roomInput.value.trim().toUpperCase();
-  localStorage.setItem("cineora_name",n);
-  sessionStorage.setItem("cineora_name",n);
+  try{localStorage.setItem("cineora_name",n);sessionStorage.setItem("cineora_name",n)}catch(e){}
+  document.cookie="cineora_name="+encodeURIComponent(n)+"; Max-Age=31536000; Path=/; SameSite=Lax";
 
   // Вход/регистрация — самостоятельное действие. Код комнаты здесь необязателен.
   if(modalAuth){
@@ -331,7 +340,8 @@ if(q){
 
 function startRoom(roomId){
   const socket=io();
-  const myName=localStorage.getItem("cineora_name")||sessionStorage.getItem("cineora_name")||"Гость";
+  const cookieName=(document.cookie.match(/(?:^|; )cineora_name=([^;]*)/)||[])[1];
+  const myName=localStorage.getItem("cineora_name")||sessionStorage.getItem("cineora_name")||(cookieName?decodeURIComponent(cookieName):"Гость");
 
   // Real-time voice chat: WebRTC mesh with Socket.IO signaling.
   const voicePeers=new Map();
@@ -782,7 +792,9 @@ function startRoom(roomId){
 
   socket.on("connect_error",()=>{setStatus("Нет соединения с комнатой — переподключаемся…");const el=document.getElementById("chatConnection");if(el)el.textContent="● нет связи"});
   socket.on("connect",()=>{
-    socket.emit("join-room",{roomId,name:localStorage.getItem("cineora_name")||sessionStorage.getItem("cineora_name")||"Гость"});
+    const cookieName=(document.cookie.match(/(?:^|; )cineora_name=([^;]*)/)||[])[1];
+    const saved=localStorage.getItem("cineora_name")||sessionStorage.getItem("cineora_name")||(cookieName?decodeURIComponent(cookieName):"Гость");
+    socket.emit("join-room",{roomId,name:saved||"Гость"});
     setStatus("Комната подключена");
     const el=document.getElementById("chatConnection");if(el)el.textContent="● онлайн";
     if(pendingChat){
