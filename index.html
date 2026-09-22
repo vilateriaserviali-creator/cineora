@@ -123,6 +123,18 @@ body{background:#e8dfe4;color:var(--ink)}
 .go{background:#c4aac1!important;color:#403741!important}
 .empty-player{color:#b7aab5!important}.empty-player strong{color:#ddd2da!important}
 @media(max-width:900px){.hero{background:linear-gradient(135deg,#d9cbd2,#c8bfcc,#bcc7d0)!important}}
+</style><style id="cineora-dark-theme">
+html.cineora-dark .room-view{background:linear-gradient(135deg,#28242a,#312b33,#252a30)!important;color:#eee}
+html.cineora-dark .room-top{background:#302a32ee!important;border-color:#4b414d!important}
+html.cineora-dark .room-brand,.cineora-dark .watch-title,.cineora-dark .side-title{color:#eee!important}
+html.cineora-dark .room-btn,html.cineora-dark .room-code{background:#3b343e!important;color:#eee!important;border-color:#594d5a!important}
+html.cineora-dark .watch-card,html.cineora-dark .side-card{background:#38313aee!important;border-color:#574b58!important}
+html.cineora-dark .watch-head,html.cineora-dark .media-bar,html.cineora-dark .chat-form{background:#342e36!important;border-color:#514651!important}
+html.cineora-dark .media-bar input,html.cineora-dark .chat-form input{background:#29242b!important;color:#eee!important;border-color:#564b58!important}
+html.cineora-dark .person-row,html.cineora-dark .chat-msg{background:#302a33!important;border-color:#4a3f4c!important}
+html.cineora-dark .person-name,html.cineora-dark .chat-msg span{color:#eee!important}
+html.cineora-dark .person-time,html.cineora-dark .source-pill,html.cineora-dark .sync-note{color:#aaa0ad!important}
+html.cineora-dark .chat{border-color:#514651!important}
 </style><style id="cineora-mobile-room">
 @media(max-width:700px){
   .room-view{min-height:100dvh}
@@ -221,14 +233,34 @@ body{background:#e8dfe4;color:var(--ink)}
 .cineora-wakeup-loader{width:34px;height:34px;margin:18px auto 0;border:3px solid #d8c6df;border-top-color:#8e7598;border-radius:50%;animation:cineoraSpin .8s linear infinite}
 @keyframes cineoraSpin{to{transform:rotate(360deg)}}
 </style>
-</head>
+<style id="cineora-final-polish">
+/* CINEORA — финальная полировка */
+.room-view{--room-bg:#e8dfe4;--room-card:#d8ccd3ee;--room-border:#b9aab5;--room-accent:#bda4bb}
+.room-view.connection-lost .watch-card,.room-view.connection-lost .side-card{filter:saturate(.78);transition:filter .2s}
+.cineora-connection-banner{display:none;position:fixed;left:50%;top:86px;transform:translateX(-50%);z-index:10000;padding:10px 16px;border:1px solid #b9aab5;border-radius:999px;background:#eadfe6ee;color:#5d5260;box-shadow:0 10px 30px #51465322;font-size:12px;backdrop-filter:blur(10px)}
+.room-view.connection-lost .cineora-connection-banner{display:block}
+.cineora-connection-banner b{font-weight:700}
+.online-dot{box-shadow:0 0 0 0 rgba(105,170,110,.45);animation:cineoraOnlinePulse 1.8s infinite}
+@keyframes cineoraOnlinePulse{0%{box-shadow:0 0 0 0 rgba(105,170,110,.4)}70%{box-shadow:0 0 0 5px rgba(105,170,110,0)}100%{box-shadow:0 0 0 0 rgba(105,170,110,0)}}
+.person-progress i{will-change:width}
+.sync-note{display:flex;align-items:center;justify-content:space-between;gap:12px}
+#syncState{transition:color .2s}
+.cineora-sync-ok{color:#657c66!important}
+@media(max-width:700px){
+ .cineora-connection-banner{top:70px;max-width:calc(100% - 24px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ .room-layout{padding-bottom:8px}
+ .side-card{order:2}
+ .watch-card{order:1}
+}
+@media(prefers-reduced-motion:reduce){.online-dot{animation:none}.cineora-connection-banner{transition:none}}
+</style></head>
 <body>
 
 
 <section class="room-view" id="roomView">
   <header class="room-top">
     <a class="room-brand" href="/" aria-label="CINEORA — на главную">CINE<span class="accent">ORA</span></a>
-    <div class="room-actions">
+    <div class="room-actions"><button id="roomThemeToggle" class="room-btn" type="button" title="Переключить оформление комнаты">◐ Тема</button>
       <span class="room-code">Сессия: <b id="roomCodeLabel">—</b></span><span class="room-code">👥 Смотрят: <b id="viewerCount">0</b></span>
       <button class="room-btn" id="changeName">✎ Изменить имя</button>
       <button class="room-btn" id="copyRoom">Скопировать ссылку</button>
@@ -973,6 +1005,7 @@ function startRoom(roomId){
 /* Надёжная отправка предложений: заменяем обработчик на финальный */
 (function(){const btn=document.getElementById("ideaSend");if(!btn)return;btn.onclick=async function(){const text=ideaText.value.trim();const name=ideaName.value.trim()||"Гость";if(text.length<3){ideaStatus.textContent="Напишите предложение чуть подробнее.";ideaText.focus();return}btn.disabled=true;ideaStatus.textContent="Отправляем...";try{const response=await fetch("/api/suggestions",{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify({name,text})});const raw=await response.text();let data={};try{data=raw?JSON.parse(raw):{}}catch(e){throw new Error("Сервер вернул некорректный ответ.")}if(!response.ok||data.ok===false)throw new Error(data.error||"Не удалось сохранить предложение.");ideaStatus.textContent="✓ Предложение отправлено. Спасибо!";ideaText.value="";ideaName.value="";setTimeout(()=>ideaModal.classList.add("hidden"),1200)}catch(e){console.error(e);ideaStatus.textContent=e.message||"Не удалось отправить предложение."}finally{btn.disabled=false}}})();
 </script>
+<div id="cineoraConnectionBanner" class="cineora-connection-banner">● <b>Связь прервалась</b> — CINEORA переподключается…</div>
 <div id="cineoraWakeup" aria-live="polite">
   <div class="cineora-wakeup-card">
     <div class="cineora-wakeup-logo">CINEORA</div>
@@ -1039,5 +1072,79 @@ function startRoom(roomId){
   });
 })();
 </script>
-</body>
+<script id="cineora-final-reliability">
+(function(){
+  const roomView=document.querySelector(".room-view");
+  const banner=document.getElementById("cineoraConnectionBanner");
+  const syncBtn=document.getElementById("syncBtn");
+  const syncState=document.getElementById("syncState");
+  if(!roomView || !window.socket)return;
+
+  let reconnectAttempts=0;
+  let syncTimer=null;
+  let lastServerState=0;
+
+  function markConnected(){
+    reconnectAttempts=0;
+    roomView.classList.remove("connection-lost");
+    if(banner)banner.textContent="● CINEORA снова онлайн";
+    setTimeout(()=>{if(banner && roomView.classList.contains("connection-lost")===false) banner.style.display="none"},1200);
+    window.dispatchEvent(new Event("cineora:connected"));
+  }
+  function markDisconnected(){
+    roomView.classList.add("connection-lost");
+    if(banner){banner.style.display="block";banner.textContent="● Связь прервалась — CINEORA переподключается…";}
+    reconnectAttempts++;
+    clearTimeout(syncTimer);
+    syncTimer=setTimeout(()=>{
+      try{if(!socket.connected)socket.connect()}catch(e){}
+    },Math.min(1000+reconnectAttempts*700,5000));
+  }
+  socket.on("connect",()=>{
+    markConnected();
+    setTimeout(()=>{
+      try{socket.emit("request-room-state")}catch(e){}
+      try{socket.emit("request-sync")}catch(e){}
+    },120);
+  });
+  socket.on("disconnect",markDisconnected);
+  socket.on("connect_error",()=>{roomView.classList.add("connection-lost")});
+  socket.on("room-state",state=>{lastServerState=Date.now(); if(syncState)syncState.classList.remove("cineora-sync-ok")});
+  socket.on("sync-state",state=>{
+    lastServerState=Date.now();
+    if(syncState){syncState.textContent="✓ Синхронизировано";syncState.classList.add("cineora-sync-ok");setTimeout(()=>{syncState.classList.remove("cineora-sync-ok")},1200)}
+  });
+
+  if(syncBtn){
+    syncBtn.addEventListener("click",()=>{
+      if(!socket.connected){markDisconnected();try{socket.connect()}catch(e){};return}
+      syncBtn.classList.add("cineora-sync-busy");
+      if(syncState)syncState.textContent="Синхронизация…";
+      socket.emit("request-room-state");
+      socket.emit("request-sync");
+      setTimeout(()=>syncBtn.classList.remove("cineora-sync-busy"),500);
+    });
+  }
+
+  // If the tab returns from sleep, ask the server for a fresh authoritative state.
+  document.addEventListener("visibilitychange",()=>{
+    if(document.visibilityState==="visible" && socket.connected){
+      setTimeout(()=>{socket.emit("request-room-state");socket.emit("request-sync")},150);
+    }
+  });
+
+  window.addEventListener("online",()=>{
+    if(!socket.connected)try{socket.connect()}catch(e){}
+  });
+})();
+</script><script id="cineora-theme-toggle">
+(function(){
+ const b=document.getElementById("roomThemeToggle"); const root=document.documentElement;
+ if(!b)return;
+ const saved=localStorage.getItem("cineora_theme");
+ function apply(v){root.classList.toggle("cineora-dark",v==="dark");b.textContent=v==="dark"?"☼ Светлая":"◐ Тема";localStorage.setItem("cineora_theme",v)}
+ apply(saved==="dark"?"dark":"soft");
+ b.onclick=()=>apply(root.classList.contains("cineora-dark")?"soft":"dark");
+})();
+</script></body>
 </html>
