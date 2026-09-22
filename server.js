@@ -310,6 +310,17 @@ io.on("connection", socket => {
     socket.emit("room-state", { hostId: room.hostId, playing: room.playing, position: room.playing ? room.position + (Date.now() - room.updatedAt) / 1000 : room.position, serverTime: Date.now(), mediaUrl: room.mediaUrl });
     broadcastRoom(roomId);
   });
+  socket.on("rename", ({ name }) => {
+    const roomId = socket.data.roomId;
+    if (!roomId) return;
+    const room = roomState(roomId);
+    const clean = String(name || "").trim().slice(0, 24);
+    if (!clean) return;
+    socket.data.name = clean;
+    const user = room.users.get(socket.id);
+    if (user) user.name = clean;
+    broadcastRoom(roomId);
+  });
   socket.on("set-media", ({ url }) => {
     const roomId = socket.data.roomId; if (!roomId) return;
     const room = roomState(roomId);
