@@ -328,7 +328,12 @@ io.on("connection", socket => {
     roomId = String(roomId || "").trim().toUpperCase().slice(0, 16);
     name = String(name || "Гость").trim().slice(0, 24);
     if (!roomId) return;
-    const room = roomState(roomId);\n    if (socket.data.roomId && socket.data.roomId !== roomId) socket.leave(socket.data.roomId);\n    socket.join(roomId);\n    socket.data.roomId = roomId;\n    socket.data.name = name;\n    room.emptySince = null;\n    if (!room.hostId) room.hostId = socket.id;
+    const room = roomState(roomId);
+    if (socket.data.roomId && socket.data.roomId !== roomId) socket.leave(socket.data.roomId);
+    socket.join(roomId);
+    socket.data.roomId = roomId;
+    socket.data.name = name;
+    room.emptySince = null;\n    if (!room.hostId) room.hostId = socket.id;
     room.users.set(socket.id, { id: socket.id, name, position: room.playing ? room.position + (Date.now() - room.updatedAt) / 1000 : room.position, playing: room.playing, progressUpdatedAt: Date.now(), duration: 0, voiceEnabled: false });
     socket.emit("voice-peer-list", [...room.users.values()].map(u => ({ id:u.id, name:u.name, voiceEnabled:!!u.voiceEnabled })));
     socket.emit("room-state", { hostId: room.hostId, playing: room.playing, position: room.playing ? room.position + (Date.now() - room.updatedAt) / 1000 : room.position, serverTime: Date.now(), mediaUrl: room.mediaUrl });
