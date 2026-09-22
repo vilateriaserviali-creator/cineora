@@ -37,7 +37,7 @@
 .side-title{color:#4b4550}.chat-title-row{display:flex;align-items:center;justify-content:space-between;gap:10px}.chat-title-row #chatConnection{font:500 10px "DM Sans",sans-serif;color:#9a7f98}.participants{background:#fff0}.person-row{background:#f5f1f5;border:1px solid #e5dfe5}.person-name{color:#4e4852}.person-time{color:#7c7480}.chat{border-top-color:#e1dbe1}.chat-messages{background:#fcfafc}.chat-msg{background:#f2eef3}.chat-msg b{color:#75627e}.chat-msg span{color:#4d4850}
 .fullscreen-chat{min-height:0!important;height:auto!important}
 @media(max-width:1000px){.room-top{background:#fffaf7}.player-wrap{min-height:360px}}
-<style id="cineora-voice-chat">
+
 .voice-panel{border-top:1px solid #e1dbe1;background:#f4eef3;padding:13px 14px}
 .voice-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .voice-title{font:500 17px "Playfair Display";color:#514955}
@@ -58,23 +58,7 @@
   .voice-toggle{font-size:10px;padding:8px 10px}
   .voice-title{font-size:16px}
 }
-<style id="cineora-custom-controls">
-.cineora-controls{position:absolute;left:10px;right:10px;bottom:10px;z-index:30;display:flex;align-items:center;gap:8px;padding:9px 10px;border:1px solid #ffffff38;border-radius:14px;background:#302b31d9;backdrop-filter:blur(10px);color:#fff;opacity:0;transform:translateY(5px);transition:.2s;pointer-events:none}
-.player-wrap:hover .cineora-controls,.player-wrap:focus-within .cineora-controls{opacity:1;transform:none;pointer-events:auto}
-.cineora-controls button,
-
-.cine-time{font-size:11px;min-width:82px;text-align:center;font-variant-numeric:tabular-nums}
-.cine-seek{flex:1;min-width:70px;accent-color:#d8c6df}
-.cine-volume{width:82px;accent-color:#d8c6df}
-@media(max-width:700px){.cineora-controls{left:6px;right:6px;bottom:6px;gap:5px;padding:7px}.cineora-controls button,.cine-volume{width:58px}.cine-time{min-width:70px;font-size:9px}}
-</style><style id="cineora-player-controls-polish">
-.cineora-controls{height:48px;box-sizing:border-box}
-.cineora-controls button{font-size:15px;min-width:36px}
-.cineora-controls button:hover{background:#ffffff2b}
-.cine-seek{height:4px;cursor:pointer}
-.cine-volume{height:4px;cursor:pointer}
-
-</style><style id="cineora-player-size-fix">
+<style id="cineora-player-size-fix">
 /* Плеер должен занимать всю область карточки, без маленького окна по центру */
 .player-wrap{position:relative!important;overflow:hidden!important;aspect-ratio:16/9!important;height:auto!important;min-height:0!important;padding:0!important}
 .player-wrap > #universalPlayer{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;display:block!important}
@@ -305,6 +289,37 @@ html.cineora-dark .chat{border-color:#514651!important}
 html.cineora-dark .room-view{background:linear-gradient(135deg,#242128,#2d2830,#252b31)!important}
 html.cineora-dark .room-top{background:rgba(43,38,46,.90)!important;border-color:#4d4350!important}
 html.cineora-dark .invite-card{background:linear-gradient(135deg,#332c36,#3b3340)!important;border-color:#514553!important}
+</style><style id="cineora-final-visual-polish">
+:root{--co-border:#ded4df;--co-shadow:0 18px 55px rgba(76,60,76,.10)}
+.room-view{background:linear-gradient(135deg,#f1ebf0 0%,#ece8ed 48%,#e8edf0 100%)}
+.room-top{height:72px;padding:0 30px;background:rgba(255,250,252,.9);backdrop-filter:blur(18px);border-bottom:1px solid var(--co-border);position:sticky;top:0;z-index:40}
+.room-brand{font-size:25px;letter-spacing:.14em}.room-actions{gap:8px}
+.room-code,.room-btn{height:38px;display:inline-flex;align-items:center;justify-content:center;border-radius:11px;padding:0 13px;background:#fff;border:1px solid var(--co-border);box-shadow:0 2px 8px rgba(70,55,70,.04);transition:transform .16s ease,box-shadow .16s ease,background .16s ease}
+.room-code{font-size:12px;color:#706774}.room-code b{color:#49434d}.room-btn{font-size:12px;font-weight:600;color:#554e58}
+.room-btn:hover{transform:translateY(-1px);box-shadow:0 7px 18px rgba(70,55,70,.08);background:#fff}.room-btn:active{transform:translateY(0)}
+.room-btn.primary{background:#cbb4ca;border-color:#cbb4ca;color:#3f3540}.room-btn.leave{color:#a56f76!important;background:#fff8f9}
+.room-layout{width:min(1480px,calc(100% - 48px));margin:24px auto 30px;grid-template-columns:minmax(0,1fr) 390px;gap:20px}
+.watch-card,.side-card{background:rgba(255,252,253,.93);border:1px solid var(--co-border);border-radius:24px;box-shadow:var(--co-shadow)}
+.watch-head{min-height:70px;padding:17px 22px;background:#fffafd}.watch-title{font-size:24px;color:#443e47}
+.source-pill{padding:5px 9px;border-radius:999px;background:#f1e9f1;color:#817585}
+.player-wrap{background:#0c0c0d;min-height:0;cursor:default}
+.empty-player{padding:55px 28px;color:#a8a1a9}.empty-player strong{font-size:26px}
+.media-bar{padding:13px 15px;background:#faf7f9;border-top:1px solid #e3dbe3}.media-bar input{height:42px;border-radius:12px;padding:0 13px;background:#fff;border-color:#d8cdd9}
+.media-bar input:focus{outline:none;border-color:#bca5bb;box-shadow:0 0 0 3px #bca5bb22}.media-bar .room-btn.primary{height:42px;padding:0 19px}
+.side-card{overflow:hidden}.invite-card{margin:15px;padding:16px;border:1px solid #dfd2df;border-radius:17px;background:linear-gradient(135deg,#f6edf5,#f4eef4)}
+.invite-card strong{font-size:14px;color:#4b4350}.invite-card span{display:block;margin-top:5px;color:#857987;font-size:11px;line-height:1.45}
+.invite-card button{margin-top:13px;width:100%;height:40px;border:1px solid #c8b0c7;border-radius:11px;background:#fff;color:#594d5a;font-weight:700;font-size:12px;transition:.16s}
+.invite-card button:hover{background:#efe3ee;transform:translateY(-1px)}
+.side-title{padding:16px 18px 10px;font-size:20px}.participants{padding:0 15px 14px;gap:6px;max-height:205px}
+.person-row{padding:9px 11px;border-radius:11px;background:#f8f3f7;border-color:#e6dce6}.person-name{font-size:13px}
+.chat{min-height:330px;background:#fffafd}.chat-title-row{padding-right:17px}.chat-messages{padding:14px;background:#fffafd}
+.chat-msg{padding:10px 12px;border:1px solid #eee6ee;background:#f5f0f4;border-radius:13px}.chat-msg b{font-size:11px}.chat-msg span{font-size:13px}
+.chat-form{padding:11px;background:#f2ebf0}.chat-form input{height:42px;border-radius:12px}.chat-form>button{height:42px;border-radius:12px;min-width:46px}
+.emoji-toggle{height:42px!important;width:42px!important;min-width:42px!important;border-radius:12px!important}
+.voice-panel{background:#f6eef4;border-top:1px solid #e1d7e1}.voice-toggle{height:36px;padding:0 13px}
+.session-countdown{margin:0 15px 10px;padding:9px 11px;border-radius:11px;background:#f4edf3;color:#756b77;font-size:11px}
+@media(max-width:1000px){.room-top{height:auto;min-height:64px;padding:10px 12px;position:relative;align-items:flex-start}.room-brand{font-size:21px;line-height:38px}.room-actions{justify-content:flex-end;gap:6px}.room-actions .room-code{display:none}.room-btn{height:36px;padding:0 10px}.room-layout{width:calc(100% - 20px);margin:10px auto 20px;gap:10px}.watch-card,.side-card{border-radius:18px}.watch-head{min-height:58px;padding:13px 15px}.watch-title{font-size:20px}.source-pill{font-size:10px}.player-wrap{aspect-ratio:16/9!important}.media-bar{padding:10px}.media-bar input{height:40px}.media-bar .room-btn.primary{height:40px;padding:0 14px}.side-card{min-height:0}.invite-card{margin:10px;padding:13px}.participants{max-height:180px}.chat{min-height:320px}}
+@media(max-width:560px){.room-top{display:flex}.room-brand{font-size:19px;letter-spacing:.1em}.room-actions{margin-left:auto}.room-actions .room-btn:not(.leave):not(#roomThemeToggle){display:none}.room-actions #roomThemeToggle{font-size:0;width:36px;padding:0}.room-actions #roomThemeToggle:after{content:"◐";font-size:16px}.room-actions .leave{font-size:0;width:36px;padding:0}.room-actions .leave:after{content:"×";font-size:20px}.room-layout{width:100%;margin:0;display:flex;flex-direction:column}.watch-card,.side-card{border-radius:0;border-left:0;border-right:0}.watch-head{padding:12px 13px}.watch-title{font-size:18px}.media-bar{gap:7px}.media-bar .room-btn.primary{font-size:0;width:42px;padding:0}.media-bar .room-btn.primary:after{content:"↑";font-size:17px}.invite-card{margin:9px}.chat{min-height:300px}}
 </style></head>
 <body>
 
@@ -322,8 +337,7 @@ html.cineora-dark .invite-card{background:linear-gradient(135deg,#332c36,#3b3340
   <main class="room-layout">
     <section class="watch-card">
       <div class="watch-head"><div><div class="watch-title">Совместный просмотр</div><div class="source-pill" id="mediaStatus">Видео пока не добавлено</div></div><div class="watch-head-tools"><button class="room-btn" id="syncBtn" type="button">↻ Синхронизировать</button><div class="source-pill" id="myRoomName"></div></div></div>
-      <div class="player-wrap" id="playerWrap"><div id="universalPlayer"></div><div class="empty-player" id="emptyPlayer"><strong>Добавьте видео</strong><span>Вставьте ссылку на YouTube, VK Видео, RUTUBE или прямую ссылку на видео.</span></div><div class="cineora-controls" id="cineoraControls"><button type="button" id="cinePlay">▶</button><span class="cine-time" id="cineTime">0:00 / 0:00</span><input class="cine-seek" id="cineSeek" type="range" min="0" max="100" value="0" aria-label="Перемотка"><input class="cine-volume" id="cineVolume" type="range" min="0" max="1" step="0.01" value="1" aria-label="Громкость"><button type="button" id="cineFull">⛶</button></div></div><div class="player-tools" aria-hidden="true"></div>
-      <div class="media-bar"><input id="mediaUrlRoom" placeholder="YouTube / VK / RUTUBE / ссылка на видео"><button class="room-btn primary" id="setMediaRoom">Загрузить</button></div>
+      <div class="player-wrap" id="playerWrap"><div id="universalPlayer"></div><div class="empty-player" id="emptyPlayer"><strong>Добавьте видео</strong><span>Вставьте ссылку на YouTube, VK Видео, RUTUBE или прямую ссылку на видео.</span></div><div class="media-bar"><input id="mediaUrlRoom" placeholder="YouTube / VK / RUTUBE / ссылка на видео"><button class="room-btn primary" id="setMediaRoom">Загрузить</button></div>
       <div class="sync-note">YouTube и прямые видео синхронизируются по воспроизведению, паузе и перемотке. Для сайтов, которые разрешают встраивание, CINEORA откроет их плеер внутри комнаты.</div>
     </section>
     <aside class="side-card" id="sideCard"><div class="invite-card"><div><strong id="inviteTitle">🍿 Присоединяйтесь к просмотру</strong><span id="inviteSub">Отправьте ссылку друзьям — фильм уже ждёт.</span></div><button id="inviteJoin" type="button">🔗 Скопировать приглашение</button></div><div class="session-countdown" id="sessionCountdown"></div>
@@ -1032,28 +1046,6 @@ function startRoom(roomId,pageParams){
       chatInput.value="";chatInput.focus();
     }
   });
-
-  const cinePlay=document.getElementById("cinePlay"),cineTime=document.getElementById("cineTime"),cineSeek=document.getElementById("cineSeek"),cineVolume=document.getElementById("cineVolume"),cineFull=document.getElementById("cineFull");
-  function activeVideo(){return document.getElementById("roomVideo")}
-  function updateCineoraControls(){
-    const v=activeVideo();
-    let pos=0,dur=0,playing=false;
-    try{if(currentType==="youtube"&&player){pos=player.getCurrentTime()||0;dur=player.getDuration()||0;playing=player.getPlayerState()===1}else if(v){pos=v.currentTime||0;dur=v.duration||0;playing=!v.paused}}catch(e){}
-    cineTime.textContent=fmt(pos)+" / "+fmt(dur);
-    cineSeek.max=dur||100;cineSeek.value=dur?Math.min(dur,pos):0;
-    cinePlay.textContent=playing?"Ⅱ":"▶";
-  }
-  cinePlay.onclick=()=>{const v=activeVideo();if(currentType==="youtube")ytCommand(player?.getPlayerState?.()===1?"pauseVideo":"playVideo");else if(v)v.paused?v.play():v.pause();updateCineoraControls()};
-  cineVolume.oninput=()=>{const val=Number(cineVolume.value);const v=activeVideo();if(currentType==="youtube"){ytCommand("setVolume",[val*100]);if(val>0)ytCommand("unMute")}else if(v){v.volume=val;v.muted=val===0}updateCineoraControls()};
-  cineSeek.oninput=()=>{const t=Number(cineSeek.value);const v=activeVideo();if(currentType==="youtube")ytCommand("seekTo",[t,true]);else if(v)v.currentTime=t};
-  
-  cineFull.onclick=async()=>{
-  try{
-    if(document.fullscreenElement===wrap){await document.exitFullscreen();return}
-    await wrap.requestFullscreen();
-  }catch(e){setStatus("Полный экран недоступен в этом браузере")}
-};
-  setInterval(updateCineoraControls,500);
 
   socket.on("room-state",state=>{
     hostId=state.hostId||"";
