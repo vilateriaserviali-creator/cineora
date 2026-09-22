@@ -45,7 +45,7 @@
 .player-wrap #ytPlayer > iframe{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;min-width:100%!important;min-height:100%!important;border:0!important;display:block!important}
 .player-wrap video{width:100%!important;height:100%!important;object-fit:contain!important}
 @media(max-width:1000px){.player-wrap{aspect-ratio:16/9!important;min-height:0!important}}
-</style><style id="cineora-participant-progress-fix">.person-progress{height:4px!important;background:#b7aab5!important;border-radius:99px!important;overflow:hidden!important;margin-top:6px!important}.person-progress i{display:block!important;height:100%!important;background:#8f748f!important;border-radius:99px!important;transition:width .25s linear!important}</style><style id="cineora-soft-theme">
+</style><style id="cineora-participant-progress-fix">.person-progress{height:4px!important;background:#b7aab5!important;border-radius:99px!important;overflow:hidden!important;margin-top:6px!important}.person-progress i{display:block!important;height:100%!important;background:#8f748f!important;border-radius:99px!important;transition:width .25s linear!important}</style><style id="cineora-name-button-fix">#changeName{white-space:nowrap}#myRoomName{cursor:default}</style><style id="cineora-soft-theme">
 :root{--ink:#403943;--paper:#e8dfe4;--cream:#ddd1d9;--soft:#cdbdc9;--line:#bdaeb9;--accent:#b99bb5;--accent2:#aebbc8;--muted:#756b75}
 body{background:#e8dfe4;color:var(--ink)}
 .hero{color:#403943!important;background:radial-gradient(circle at 78% 28%,#cdb9cc 0%,transparent 34%),linear-gradient(125deg,#d9cbd2 0%,#c9bdc9 48%,#b9c4cf 100%)!important}
@@ -79,6 +79,7 @@ body{background:#e8dfe4;color:var(--ink)}
     <a class="room-brand" href="/" aria-label="CINEORA — на главную">CINE<span class="accent">ORA</span></a>
     <div class="room-actions">
       <span class="room-code">Сессия: <b id="roomCodeLabel">—</b></span><span class="room-code">👥 Смотрят: <b id="viewerCount">0</b></span>
+      <button class="room-btn" id="changeName">✎ Изменить имя</button>
       <button class="room-btn" id="copyRoom">Скопировать ссылку</button>
       <button class="room-btn leave" id="leaveRoom">Выйти</button>
     </div>
@@ -190,14 +191,25 @@ if(q){
 
 function startRoom(roomId){
   const socket=io();
-  const myName=sessionStorage.getItem("cineora_name")||"Гость";
+  const myName=localStorage.getItem("cineora_name")||sessionStorage.getItem("cineora_name")||"Гость";
   const wrap=document.getElementById("playerWrap"), host=document.getElementById("universalPlayer"), empty=document.getElementById("emptyPlayer");
   const participants=document.getElementById("participants"), chatMessages=document.getElementById("chatMessages");
   let suppress=false,lastProgress=0,currentType="",player=null,currentUrl="",hostId="",roomPlaying=false,roomPosition=0,roomServerTime=Date.now();
 
   document.getElementById("roomCodeLabel").textContent=roomId;
-  document.getElementById("myRoomName").textContent=myName;
+  document.getElementById("myRoomName").textContent="Имя: "+myName;
   socket.emit("join-room",{roomId,name:myName});
+  document.getElementById("changeName").onclick=()=>{
+    const current=localStorage.getItem("cineora_name")||myName||"Гость";
+    const next=prompt("Введите новое имя",current);
+    if(next===null)return;
+    const clean=next.trim().slice(0,24);
+    if(!clean)return;
+    localStorage.setItem("cineora_name",clean);
+    sessionStorage.setItem("cineora_name",clean);
+    document.getElementById("myRoomName").textContent="Имя: "+clean;
+    socket.emit("rename",{name:clean});
+  };
 
   function fmt(sec){
     sec=Math.max(0,Math.floor(Number(sec)||0));
