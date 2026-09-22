@@ -36,7 +36,7 @@
   <main class="room-layout">
     <section class="watch-card">
       <div class="watch-head"><div><div class="watch-title">Совместный просмотр</div><div class="source-pill" id="mediaStatus">Видео пока не добавлено</div></div><div class="source-pill" id="myRoomName"></div></div>
-      <div class="player-wrap" id="playerWrap"><div id="universalPlayer"></div><div class="empty-player" id="emptyPlayer"><strong>Добавьте видео</strong><span>Вставьте ссылку на YouTube, VK Видео, RUTUBE или прямую ссылку на видео.</span></div></div>
+      <div class="player-wrap" id="playerWrap"><div id="universalPlayer"></div><div class="empty-player" id="emptyPlayer"><strong>Добавьте видео</strong><span>Вставьте ссылку на YouTube, VK Видео, RUTUBE или прямую ссылку на видео.</span></div></div><div class="player-tools"><button class="room-btn" id="fullscreenBtn" type="button">⛶ На весь экран</button><span id="syncState">Синхронизация включена</span></div>
       <div class="media-bar"><input id="mediaUrlRoom" placeholder="YouTube / VK / RUTUBE / ссылка на видео"><button class="room-btn primary" id="setMediaRoom">Загрузить</button></div>
       <div class="sync-note">YouTube и прямые видео синхронизируются по воспроизведению, паузе и перемотке. Для сайтов, которые разрешают встраивание, CINEORA откроет их плеер внутри комнаты.</div>
     </section>
@@ -140,7 +140,7 @@ function startRoom(roomId){
   const myName=sessionStorage.getItem("cineora_name")||"Гость";
   const wrap=document.getElementById("playerWrap"), host=document.getElementById("universalPlayer"), empty=document.getElementById("emptyPlayer");
   const participants=document.getElementById("participants"), chatMessages=document.getElementById("chatMessages");
-  let suppress=false,lastProgress=0,currentType="",player=null,currentUrl="";
+  let suppress=false,lastProgress=0,currentType="",player=null,currentUrl="",hostId="",roomPlaying=false,roomPosition=0,roomServerTime=Date.now();
 
   document.getElementById("roomCodeLabel").textContent=roomId;
   document.getElementById("myRoomName").textContent=myName;
@@ -201,8 +201,7 @@ function startRoom(roomId){
     const yt=getYouTubeId(url);if(yt)return {type:"youtube",id:yt};
     const rt=getRutube(url);if(rt)return {type:"rutube",...rt};
     const vk=getVkEmbed(url);if(vk)return {type:"vk",url:vk};
-    if(/\.(mp4|webm|ogg|m4v)(\?|#|$)/i.test(url))return {type:"video",url};
-    return {type:"iframe",url};
+    return {type:"video",url};
   }
 
   function clearPlayer(){player=null;currentType="";currentUrl="";host.innerHTML="";empty.style.display="grid"}
@@ -221,13 +220,14 @@ function startRoom(roomId){
     host.innerHTML='<div id="ytPlayer" class="universal-player"></div>';
     const build=()=>{
       if(!window.YT||!YT.Player){setTimeout(build,100);return}
-      player=new YT.Player("ytPlayer",{width:"100%",height:"100%",videoId:id,playerVars:{playsinline:1,rel:0,origin:location.origin},events:{
-        onReady:()=>setStatus("YouTube · готово к воспроизведению"),
+      player=new YT.Player("ytPlayer",{width:"100%",height:"100%",videoId:id,playerVars:{playsinline:1,rel:0,origin:location.origin,enablejsapi:1},events:{
+        onReady:()=>setStatus(isHost()?"YouTube · вы ведущий":"YouTube · синхронизация с ведущим"),
         onStateChange:e=>{
-          if(suppress)return;
+          if(suppress||!isHost())return;
           if(e.data===1)socket.emit("sync",{playing:true,position:player.getCurrentTime()});
           if(e.data===2||e.data===0)socket.emit("sync",{playing:false,position:player.getCurrentTime()});
         },
+        onAutoplayBlocked:()=>setStatus("Нажмите ▶ в плеере — браузер заблокировал автозапуск"),
         onError:e=>showError("YouTube не разрешил этот ролик во встроенном плеере. Код ошибки: "+e.data)
       }});
     };
@@ -253,10 +253,16 @@ function startRoom(roomId){
       currentType="video";host.innerHTML="";
       const v=document.createElement("video");v.id="roomVideo";v.controls=true;v.playsInline=true;v.src=d.url;host.appendChild(v);
       setStatus("Видео из интернета");
-      v.addEventListener("play",()=>{if(!suppress)socket.emit("sync",{playing:true,position:v.currentTime})});
-      v.addEventListener("pause",()=>{if(!suppress)socket.emit("sync",{playing:false,position:v.currentTime})});
-      v.addEventListener("seeked",()=>{if(!suppress)socket.emit("sync",{playing:!v.paused,position:v.currentTime})});
-      v.addEventListener("error",()=>showError("Ссылка не ведёт на доступный видеофайл. Попробуйте прямой .mp4/.webm или ссылку на YouTube, VK Видео или RUTUBE."));
+      v.addEventListener("play",()=>{if(!suppress&&isHost())socket.emit("sync",{playing:true,position:v.currentTime})});
+      v.addEventListener("pause",()=>{if(!suppress&&isHost())socket.emit("sync",{playing:false,position:v.currentTime})});
+      v.addEventListener("seeked",()=>{if(!suppress&&isHost())socket.emit("sync",{playing:!v.paused,position:v.currentTime})});
+      v.addEventListener("error",()=>{
+        if(d.type==="video"){
+          currentType="iframe";makeIframe(d.url);setStatus("Сайт открылся во встроенном окне");
+        }else{
+          showError("Ссылка не ведёт на доступный видеофайл. Попробуйте прямую ссылку на MP4/WebM или ссылку на поддерживаемый видеосервис.");
+        }
+      });
       return;
     }
     currentType="iframe";makeIframe(d.url);setStatus("Видео с сайта");
@@ -278,24 +284,34 @@ function startRoom(roomId){
     return false;
   }
 
-  function applySync(playing,pos){
+  function isHost(){return !!socket&&socket.id===hostId}
+  function targetPosition(pos,serverTime,playing){
+    const base=Number(pos)||0;
+    if(!playing)return base;
+    const stamp=Number(serverTime)||Date.now();
+    return base+Math.max(0,(Date.now()-stamp)/1000);
+  }
+
+  function applySync(playing,pos,serverTime){
+    roomPlaying=!!playing;roomPosition=Number(pos)||0;roomServerTime=Number(serverTime)||Date.now();
     suppress=true;
     try{
       if(currentType==="youtube"){
-        ytCommand("seekTo",[Number(pos)||0,true]);
+        ytCommand("seekTo",[targetPosition(pos,serverTime,playing),true]);
         ytCommand(playing?"playVideo":"pauseVideo");
       }else if(currentType==="video"){
         const v=document.getElementById("roomVideo");
-        if(v){if(Math.abs((v.currentTime||0)-pos)>0.6)v.currentTime=pos;if(playing)v.play().catch(()=>{});else v.pause()}
+        if(v){const target=targetPosition(pos,serverTime,playing);if(Math.abs((v.currentTime||0)-target)>0.7)v.currentTime=target;if(playing)v.play().catch(()=>setStatus("Нажмите ▶ в плеере — браузер заблокировал автозапуск"));else v.pause()}
       }else if(currentType==="rutube"){
         const iframe=host.querySelector("iframe");
         if(iframe){
+          const target=targetPosition(pos,serverTime,playing);
           iframe.contentWindow.postMessage(JSON.stringify({type:playing?"player:play":"player:pause",data:{}}),"*");
-          iframe.contentWindow.postMessage(JSON.stringify({type:"player:setCurrentTime",data:{time:pos}}),"*");
+          iframe.contentWindow.postMessage(JSON.stringify({type:"player:setCurrentTime",data:{time:target}}),"*");
         }
       }
     }catch(e){}
-    setTimeout(()=>suppress=false,220);
+    setTimeout(()=>suppress=false,350);
   }
 
   function renderUsers(users){
@@ -366,9 +382,17 @@ function startRoom(roomId){
   document.getElementById("leaveRoom").onclick=()=>{location.href="/"};
 
   setInterval(()=>{
-    if(!suppress&&currentType&&(currentType==="youtube"||currentType==="video")&&Date.now()-lastProgress>1000){
-      lastProgress=Date.now();socket.emit("user-progress",{position:getPosition(),playing:isPlaying()});
+    if(!socket.connected||suppress)return;
+    if(isHost()&&currentType&&(currentType==="youtube"||currentType==="video")&&Date.now()-lastProgress>900){
+      lastProgress=Date.now();
+      socket.emit("sync",{playing:isPlaying(),position:getPosition()});
+    }else if(!isHost()&&roomPlaying&&currentType&&(currentType==="youtube"||currentType==="video")&&Date.now()-lastProgress>1400){
+      lastProgress=Date.now();
+      const target=targetPosition(roomPosition,roomServerTime,true);
+      const now=getPosition();
+      if(Math.abs(now-target)>1.2) applySync(true,roomPosition,roomServerTime);
     }
+    if(currentType) socket.emit("user-progress",{position:getPosition(),playing:isPlaying()});
   },500);
 
   document.getElementById("chatForm").addEventListener("submit",e=>{
@@ -377,14 +401,24 @@ function startRoom(roomId){
   });
 
   socket.on("room-state",state=>{
+    hostId=state.hostId||"";
+    roomPlaying=!!state.playing;roomPosition=Number(state.position)||0;roomServerTime=Number(state.serverTime)||Date.now();
     document.getElementById("mediaUrlRoom").value=state.mediaUrl||"";
-    loadMedia(state.mediaUrl);setTimeout(()=>applySync(state.playing,state.position),1200);
+    document.getElementById("syncState").textContent=isHost()?"Вы ведущий · управление воспроизведением":"Смотрите за ведущим · синхронизация";
+    loadMedia(state.mediaUrl);
+    setTimeout(()=>applySync(state.playing,state.position,state.serverTime),1200);
   });
-  socket.on("media-changed",url=>{
-    document.getElementById("mediaUrlRoom").value=url||"";
-    loadMedia(url);setTimeout(()=>applySync(false,0),1200);
+  socket.on("media-changed",state=>{
+    const data=typeof state==="string"?{url:state,playing:false,position:0,serverTime:Date.now()}:state;
+    document.getElementById("mediaUrlRoom").value=data.url||"";
+    loadMedia(data.url);
+    setTimeout(()=>applySync(!!data.playing,Number(data.position)||0,data.serverTime),1200);
   });
-  socket.on("sync",state=>applySync(state.playing,state.position));
+  socket.on("sync",state=>applySync(state.playing,state.position,state.serverTime));
+  socket.on("room-host",state=>{
+    hostId=state.hostId||"";
+    document.getElementById("syncState").textContent=isHost()?"Вы ведущий · управление воспроизведением":"Смотрите за ведущим · синхронизация";
+  });
   socket.on("room-users",renderUsers);
   socket.on("chat-message",addMessage);
 }
