@@ -361,7 +361,18 @@ io.on("connection", socket => {
     room.playing = false;
     room.position = 0;
     room.updatedAt = Date.now();
-    io.to(roomId).emit("media-changed", { url: room.mediaUrl, playing: false, position: 0, serverTime: Date.now() });
+    for (const u of room.users.values()) {
+      u.position = 0;
+      u.playing = false;
+      u.progressUpdatedAt = room.updatedAt;
+    }
+    io.to(roomId).emit("media-changed", {
+      url: room.mediaUrl,
+      playing: false,
+      position: 0,
+      serverTime: room.updatedAt
+    });
+    broadcastRoom(roomId);
   });
   socket.on("sync", ({ playing, position }) => {
     const roomId = socket.data.roomId; if (!roomId) return;
@@ -371,11 +382,25 @@ io.on("connection", socket => {
     room.playing = !!playing;
     room.position = Math.max(0, Number(position) || 0);
     room.updatedAt = Date.now();
+    room.emptySince = null;
     const user = room.users.get(socket.id);
     if (user) { user.position = room.position; user.playing = room.playing; user.progressUpdatedAt = Date.now(); }
     socket.to(roomId).emit("sync", { playing: room.playing, position: room.position, serverTime: room.updatedAt });
     io.to(roomId).emit("room-host", { hostId: room.hostId });
     broadcastRoom(roomId);
+  });
+  socket.on("request-room-state", () => {
+    const roomId = socket.data.roomId; if (!roomId) return;
+    const room = roomState(roomId);
+    const now = Date.now();
+    const position = room.playing ? room.position + (now - room.updatedAt) / 1000 : room.position;
+    socket.emit("room-state", {
+      hostId: room.hostId,
+      playing: room.playing,
+      position: Math.max(0, position),
+      serverTime: now,
+      mediaUrl: room.mediaUrl
+    });
   });
   socket.on("request-sync", () => {
     const roomId = socket.data.roomId; if (!roomId) return;
