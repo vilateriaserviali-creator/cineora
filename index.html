@@ -5,47 +5,92 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>CINEORA — Кино становится ближе</title>
 <style>
-:root{--bg:#171318;--text:#fffaf8;--muted:#e4d9d7;--line:#ffffff2b;--accent:#d9f58a}
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif}button,input{font:inherit}button{cursor:pointer}
-.hidden{display:none!important}.landing{min-height:100vh;position:relative;overflow:hidden;background:linear-gradient(90deg,#171218e8 0%,#171218b5 38%,#17121820 78%,#17121855),url("cineora-hero.png") center/cover no-repeat}.landing:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,#0002,transparent 50%,#0007);pointer-events:none}.wrap{width:min(1280px,calc(100% - 42px));margin:auto;position:relative;z-index:1}
-.top{height:82px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}.logo{font-size:25px;font-weight:900;letter-spacing:.18em}.logo span{color:var(--accent)}.nav{display:flex;gap:32px}.nav a{color:#fff;text-decoration:none;font-size:14px}.login{border:0;background:none;color:#fff;font-size:14px}.heart{font-size:24px;margin-left:20px}
-.hero{min-height:calc(100vh - 82px);display:flex;align-items:center;padding:55px 0 75px}.copy{max-width:575px}.kicker{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:#eee2e0;margin-bottom:20px}h1{font-size:clamp(55px,7vw,88px);letter-spacing:.08em;line-height:.9;margin:0 0 22px}.accent{color:var(--accent)}.tagline{font-size:clamp(30px,3.4vw,46px);font-weight:750;line-height:1;margin-bottom:20px}.desc{max-width:520px;font-size:17px;line-height:1.65;color:#f0e6e3;margin-bottom:30px}
-.actions{display:flex;gap:14px;flex-wrap:wrap}.primary,.secondary{border-radius:999px;padding:16px 25px;min-width:205px;transition:.2s}.primary{border:1px solid var(--accent);background:var(--accent);color:#202415;font-weight:850;box-shadow:0 10px 35px #d9f58a33}.secondary{border:1px solid var(--accent);background:#19151c66;color:#fff}.primary:hover,.secondary:hover{transform:translateY(-2px)}
-.platforms{margin-top:42px}.platform-title{font-size:12px;text-transform:uppercase;letter-spacing:.1em;margin-bottom:11px;color:#ded4d2}.platform-row{display:flex;gap:9px;flex-wrap:wrap}.platform{padding:11px 15px;border:1px solid var(--line);background:#17151b99;backdrop-filter:blur(10px);border-radius:13px;font-size:14px}
-.features{display:flex;margin-top:42px;padding-top:19px;border-top:1px solid var(--line);gap:24px}.feature{font-size:13px;color:#f1e8e5;padding-right:24px;border-right:1px solid var(--line)}.feature:last-child{border:0}.feature b{color:var(--accent);font-size:20px;margin-right:7px}
-.modal{position:fixed;inset:0;z-index:10;background:#0c090dcc;backdrop-filter:blur(12px);display:grid;place-items:center;padding:20px}.card{width:min(430px,100%);background:#211c22;border:1px solid var(--line);border-radius:24px;padding:27px;box-shadow:0 30px 90px #0009}.card h2{margin:0 0 8px}.card p{color:var(--muted);line-height:1.5;margin:0 0 20px}.card input{width:100%;padding:13px 14px;margin-bottom:10px;background:#151217;border:1px solid var(--line);border-radius:11px;color:#fff}.card button{padding:13px;border-radius:11px;border:1px solid var(--line);background:#29232a;color:#fff}.card .go{background:var(--accent);color:#202415;border:0;font-weight:800;width:100%}.close{float:right;background:none!important;border:0!important;font-size:22px!important;color:#aaa;padding:0!important}
-@media(max-width:800px){.nav{display:none}.hero{align-items:flex-end;padding-bottom:30px}.features{display:none}.desc{font-size:15px}.actions{display:grid}.primary,.secondary{width:100%}.landing{background-position:center}.wrap{width:calc(100% - 28px)}}
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;1,500&display=swap');
+:root{--ink:#171616;--cream:#f2eee5;--paper:#f8f5ee;--line:#d9d2c4;--white:#fbfaf7;--lime:#d8efb7;--muted:#716e68}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--paper);color:var(--ink);font-family:"DM Sans",sans-serif}button,input{font:inherit}button{cursor:pointer}a{text-decoration:none;color:inherit}
+.wrap{width:min(1320px,calc(100% - 72px));margin:auto}.hero{min-height:780px;color:#fff;position:relative;background:linear-gradient(90deg,#0c0d0beF 0%,#0c0d0bd9 32%,#0c0d0b66 64%,#0c0d0b22),url("cineora-hero.png") center/cover no-repeat}.hero:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,#0003,transparent 55%,#0008);pointer-events:none}.hero>.wrap{position:relative;z-index:1}
+.header{height:88px;border-bottom:1px solid #ffffff35;display:flex;align-items:center;justify-content:space-between}.logo{font:500 33px "Playfair Display";letter-spacing:.2em}.logo span,.accent{color:#d8efb7}.nav{display:flex;gap:46px}.nav a,.login{font-size:14px;color:#fff}.login{background:none;border:0}.create-top{border:1px solid #d8efb7;background:transparent;color:#fff;border-radius:999px;padding:13px 24px}
+.hero-content{padding:70px 0 0;max-width:680px}.eyebrow{font-size:12px;letter-spacing:.18em;text-transform:uppercase;margin-bottom:20px}.brand-big{font:500 70px/1 "Playfair Display";letter-spacing:.18em}.hero h1{font:500 56px/1 "Playfair Display";margin:14px 0 20px}.lead{font-size:16px;line-height:1.65;max-width:600px;color:#eeeae3}.actions{display:flex;gap:15px;margin-top:28px;flex-wrap:wrap}.primary,.secondary{border-radius:999px;padding:16px 25px;min-width:240px}.primary{background:var(--lime);border:1px solid var(--lime);color:#1b2115;font-weight:700}.secondary{background:#0002;border:1px solid #d8efb7;color:#fff}.sources{margin-top:32px}.sources-title,.section-kicker{font-size:11px;letter-spacing:.17em;text-transform:uppercase}.source-row{display:flex;gap:30px;margin-top:14px;flex-wrap:wrap}.source{display:flex;align-items:center;gap:8px;font-size:14px}.source-icon{width:25px;height:25px;border:1px solid #fff9;border-radius:7px;display:grid;place-items:center;font-size:11px}.features{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid #fff4;margin-top:40px;padding:23px 0 28px}.feature{display:flex;gap:13px;align-items:center;border-right:1px solid #fff4;padding:0 25px;font-size:14px}.feature:first-child{padding-left:0}.feature:last-child{border:0}.feature-icon{font-size:25px}
+.section{padding:90px 0}.cream{background:var(--paper)}.dark{background:#292a23;color:#fff}.intro{display:grid;grid-template-columns:1fr 2fr;gap:80px}.section-title{font:500 47px/1.05 "Playfair Display";margin:12px 0 18px}.section-text{color:var(--muted);line-height:1.7;max-width:600px}.dark .section-text{color:#d6d3cb}.about-copy{font-size:17px;line-height:1.8;color:#4f4c47}.about-copy strong{color:#20201d}.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:35px}.card{border:1px solid var(--line);border-radius:18px;padding:28px;background:#fff9}.card .num{width:31px;height:31px;border-radius:50%;background:#e2e7c9;display:grid;place-items:center;font-size:13px;margin-bottom:22px}.card h3{font:500 22px "Playfair Display";margin:0 0 10px}.card p{color:var(--muted);line-height:1.55;font-size:14px;margin:0}.features-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-top:35px}.feature-card{border:1px solid #ffffff25;border-radius:18px;padding:27px;background:#ffffff08}.feature-card h3{font:500 22px "Playfair Display";margin:0 0 9px}.feature-card p{color:#d6d3cb;line-height:1.6;margin:0;font-size:14px}.platforms{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:35px}.platform{border:1px solid var(--line);border-radius:15px;padding:22px;background:#fff8;display:flex;align-items:center;gap:13px}.platform b{font-size:14px}.platform span{font-size:25px}
+.footer{background:#151612;color:#bdbbb4;padding:27px 0;font-size:12px}.footer .wrap{display:flex;justify-content:space-between;gap:20px;align-items:center}.idea-link{border:0;background:none;color:#d8efb7;padding:0;cursor:pointer}.suggestion-box{width:min(520px,100%)}.suggestion-box textarea{width:100%;min-height:150px;resize:vertical;padding:13px;background:#171814;border:1px solid #fff2;border-radius:10px;color:#fff;box-sizing:border-box}.suggestion-status{min-height:22px;font-size:13px;color:#d8efb7}.news-card{border:1px solid var(--line);border-radius:18px;padding:28px;background:#fff9}.news-card h3{font:500 25px "Playfair Display";margin:0 0 8px}.news-card .news-date{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}.news-card p{color:#5f5b55;line-height:1.65;margin:0;white-space:pre-wrap}
+.modal{position:fixed;inset:0;background:#090909c9;backdrop-filter:blur(12px);z-index:10;display:grid;place-items:center;padding:20px}.modal.hidden{display:none}.modal-box{width:min(430px,100%);background:#24241f;color:#fff;border:1px solid #fff2;border-radius:22px;padding:28px}.modal-box h2{font:500 30px "Playfair Display";margin:0 0 8px}.modal-box p{color:#c9c5bd}.modal-box input{width:100%;padding:13px;margin:5px 0;background:#171814;border:1px solid #fff2;border-radius:10px;color:#fff}.go{width:100%;margin-top:8px;padding:14px;border:0;border-radius:999px;background:var(--lime);font-weight:700}.close{float:right;background:none;border:0;color:#aaa;font-size:25px}
+@media(max-width:900px){.wrap{width:calc(100% - 32px)}.nav{display:none}.hero{min-height:auto}.hero-content{padding:55px 0 0}.brand-big{font-size:50px}.hero h1{font-size:43px}.features{grid-template-columns:1fr}.feature{padding:15px 0;border-right:0;border-bottom:1px solid #fff3}.feature:last-child{border:0}.intro,.cards,.features-grid,.platforms{grid-template-columns:1fr}.section{padding:65px 0}}
 </style>
 </head>
 <body>
-<section class="landing">
+
+<section class="hero" id="about">
 <div class="wrap">
-<header class="top">
-<div class="logo">CINE<span>ORA</span></div>
+<header class="header">
+<a class="logo" href="#">CINE<span>ORA</span></a>
 <nav class="nav"><a href="#about">О сервисе</a><a href="#features">Возможности</a><a href="#how">Как это работает</a></nav>
-<button class="login" id="login">Войти <span class="heart">♡</span></button>
+<div><button class="login" id="login">Войти</button><button class="create-top" id="createTop">Создать сессию</button></div>
 </header>
-<main class="hero" id="about"><div class="copy">
-<div class="kicker">Совместный просмотр видео и фильмов</div>
-<h1>CINE<span class="accent">O</span>RA</h1>
-<div class="tagline">Кино становится <span class="accent">ближе.</span></div>
-<p class="desc">Смотрите фильмы и видео вместе с друзьями — в одной синхронизированной сессии, где бы вы ни были.</p>
-<div class="actions"><button class="primary" id="join">▶&nbsp; Присоединиться к сессии</button><button class="secondary" id="create">＋&nbsp; Создать сессию</button></div>
-<div class="platforms"><div class="platform-title">Поддерживаем популярные источники</div><div class="platform-row"><span class="platform">▶ YouTube</span><span class="platform">VK Видео</span><span class="platform">RUTUBE</span><span class="platform">↗ Видео из интернета</span></div></div>
-<div class="features" id="features"><div class="feature"><b>♧</b>Любое количество участников</div><div class="feature"><b>ϟ</b>Синхронизация в реальном времени</div><div class="feature"><b>▣</b>На любом устройстве</div></div>
-</div></main>
+<div class="hero-content">
+<div class="eyebrow">Совместный просмотр фильмов и видео</div>
+<div class="brand-big">CINE<span class="accent">O</span>RA</div>
+<h1>Кино становится <em class="accent">ближе.</em></h1>
+<p class="lead">Смотрите фильмы и видео вместе с друзьями — в одной синхронизированной сессии, где бы вы ни были.</p>
+<div class="actions"><button class="primary" id="join">▶ &nbsp;Присоединиться к сессии</button><button class="secondary" id="create">＋ &nbsp;Создать сессию</button></div>
+<div class="sources"><div class="sources-title">Поддерживаем популярные источники</div><div class="source-row"><div class="source"><span class="source-icon">▶</span>YouTube</div><div class="source"><span class="source-icon">VK</span>VK Видео</div><div class="source"><span class="source-icon">R</span>RUTUBE</div><div class="source"><span class="source-icon">↗</span>Видео из интернета</div></div></div>
+</div>
+<div class="features"><div class="feature"><span class="feature-icon">♧</span><span>Любое количество<br>участников</span></div><div class="feature"><span class="feature-icon">ϟ</span><span>Синхронизация<br>в реальном времени</span></div><div class="feature"><span class="feature-icon">▣</span><span>На любом устройстве</span></div></div>
 </div>
 </section>
 
-<div class="modal hidden" id="modal"><div class="card"><button class="close" id="close">×</button><h2 id="title">Присоединиться к сессии</h2><p id="text">Введите имя и код сессии.</p><input id="name" placeholder="Ваше имя" maxlength="24"><input id="room" placeholder="Код сессии" maxlength="16"><button class="go" id="go">Войти</button></div></div>
+<section class="section cream">
+<div class="wrap intro">
+<div><div class="section-kicker">О сервисе</div><h2 class="section-title">Смотрите вместе, даже если вы далеко</h2></div>
+<div class="about-copy"><p><strong>CINEORA</strong> — сервис для совместного просмотра фильмов и видео в одной онлайн-сессии.</p><p>Создайте комнату, отправьте друзьям ссылку или код и подключайтесь к просмотру вместе. Видео синхронизируется для участников, а чат позволяет общаться прямо во время сеанса.</p><p>Сервис рассчитан на компании, друзей и близких — неважно, сколько человек подключается к одной комнате.</p></div>
+</div>
+</section>
+
+<section class="section dark" id="features">
+<div class="wrap">
+<div class="section-kicker">Возможности</div>
+<h2 class="section-title">Всё необходимое для общего просмотра</h2>
+<div class="features-grid">
+<div class="feature-card"><h3>Синхронный просмотр</h3><p>Воспроизведение, пауза и перемотка передаются участникам комнаты, чтобы все оставались на одном моменте.</p></div>
+<div class="feature-card"><h3>Комнаты для компании</h3><p>В одну сессию могут подключаться несколько участников. Каждый видит список людей, находящихся в комнате.</p></div>
+<div class="feature-card"><h3>Общий чат</h3><p>Обсуждайте происходящее, отправляйте реакции и общайтесь, не покидая страницу просмотра.</p></div>
+<div class="feature-card"><h3>Подключение по коду</h3><p>Создайте короткий код комнаты и передайте его друзьям. Подключиться можно с любого устройства с браузером.</p></div>
+</div>
+<div class="platforms">
+<div class="platform"><span>▶</span><b>YouTube</b></div><div class="platform"><span>VK</span><b>VK Видео</b></div><div class="platform"><span>R</span><b>RUTUBE</b></div><div class="platform"><span>↗</span><b>Видео из интернета</b></div>
+</div>
+</div>
+</section>
+
+<section class="section cream" id="how">
+<div class="wrap">
+<div class="section-kicker">Как это работает</div>
+<h2 class="section-title">Три простых шага до совместного просмотра</h2>
+<div class="cards">
+<article class="card"><div class="num">1</div><h3>Создайте сессию</h3><p>Нажмите «Создать сессию», укажите имя и получите код комнаты.</p></article>
+<article class="card"><div class="num">2</div><h3>Пригласите друзей</h3><p>Отправьте друзьям код комнаты или ссылку на сессию.</p></article>
+<article class="card"><div class="num">3</div><h3>Смотрите вместе</h3><p>Добавьте видео, запускайте просмотр и оставайтесь синхронизированными.</p></article>
+</div>
+</div>
+</section>
+
+<section class="section cream" id="updates"><div class="wrap"><div class="section-kicker">Обновления CINEORA</div><h2 class="section-title">Что нового в сервисе</h2><div id="newsFeed" class="cards"><div class="card"><h3>Мы развиваем CINEORA вместе с вами</h3><p>Здесь будут появляться новые возможности, улучшения и важные новости сервиса.</p></div></div></div></section>
+
+<footer class="footer"><div class="wrap"><span>CINEORA</span><button class="idea-link" id="ideaBtn">Предложить идею для сервиса</button><span>Кино становится ближе.</span></div></footer>
+
+<div class="modal hidden" id="modal"><div class="modal-box"><button class="close" id="close">×</button><h2 id="modalTitle">Присоединиться к сессии</h2><p id="modalText">Введите имя и код сессии.</p><input id="name" placeholder="Ваше имя" maxlength="24"><input id="room" placeholder="Код сессии" maxlength="16"><button class="go" id="go">Войти</button></div></div><div class="modal hidden" id="ideaModal"><div class="modal-box suggestion-box"><button class="close" id="ideaClose">×</button><h2>Предложить идею</h2><p>Расскажите, что стоит добавить или улучшить в CINEORA.</p><input id="ideaName" placeholder="Ваше имя (необязательно)" maxlength="40"><textarea id="ideaText" placeholder="Например: хочу совместные реакции, список фильмов, голосование..."></textarea><div class="suggestion-status" id="ideaStatus"></div><button class="go" id="ideaSend">Отправить предложение</button></div></div>
 
 <script>
-const modal=document.getElementById("modal"),name=document.getElementById("name"),room=document.getElementById("room"),title=document.getElementById("title"),text=document.getElementById("text");let creating=false;
-function code(){return String(Math.floor(1000+Math.random()*9000))}
-function openModal(make){creating=make;title.textContent=make?"Создать сессию":"Присоединиться к сессии";text.textContent=make?"Введите имя — код сессии будет создан автоматически.":"Введите имя и код сессии, который вам отправили.";room.value=make?code():"";room.placeholder=make?"Код создан автоматически":"Код сессии";modal.classList.remove("hidden");name.focus()}
-document.getElementById("join").onclick=()=>openModal(false);document.getElementById("create").onclick=()=>openModal(true);document.getElementById("login").onclick=()=>openModal(false);document.getElementById("close").onclick=()=>modal.classList.add("hidden");
-document.getElementById("go").onclick=()=>{const n=name.value.trim()||"Гость",r=room.value.trim().toUpperCase();if(!r)return;location.href="/?room="+encodeURIComponent(r);sessionStorage.setItem("cineora_name",n)};
-const q=new URLSearchParams(location.search).get("room");if(q){openModal(false);room.value=q.toUpperCase()}
+const modal=document.getElementById("modal"),nameInput=document.getElementById("name"),roomInput=document.getElementById("room"),title=document.getElementById("modalTitle"),text=document.getElementById("modalText");
+function openModal(create){title.textContent=create?"Создать сессию":"Присоединиться к сессии";text.textContent=create?"Введите имя — код сессии будет создан автоматически.":"Введите имя и код сессии, который вам отправили.";roomInput.value=create?String(Math.floor(1000+Math.random()*9000)):"";roomInput.placeholder=create?"Код создан автоматически":"Код сессии";modal.classList.remove("hidden");nameInput.focus()}
+document.getElementById("join").onclick=()=>openModal(false);document.getElementById("create").onclick=()=>openModal(true);document.getElementById("createTop").onclick=()=>openModal(true);document.getElementById("login").onclick=()=>openModal(false);document.getElementById("close").onclick=()=>modal.classList.add("hidden");
+document.getElementById("go").onclick=()=>{const n=nameInput.value.trim()||"Гость",r=roomInput.value.trim().toUpperCase();if(!r)return;sessionStorage.setItem("cineora_name",n);location.href="/?room="+encodeURIComponent(r)};
+const ideaModal=document.getElementById("ideaModal"),ideaText=document.getElementById("ideaText"),ideaName=document.getElementById("ideaName"),ideaStatus=document.getElementById("ideaStatus");document.getElementById("ideaBtn").onclick=()=>{ideaStatus.textContent="";ideaModal.classList.remove("hidden");ideaText.focus()};document.getElementById("ideaClose").onclick=()=>ideaModal.classList.add("hidden");document.getElementById("ideaSend").onclick=async()=>{const text=ideaText.value.trim();if(text.length<3){ideaStatus.textContent="Напишите предложение чуть подробнее.";return}const btn=document.getElementById("ideaSend");btn.disabled=true;ideaStatus.textContent="Отправляем...";try{const r=await fetch("/api/suggestions",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({name:ideaName.value.trim()||"Гость",text})});const d=await r.json();if(!r.ok)throw new Error(d.error||"Не удалось отправить");ideaStatus.textContent="Спасибо! Предложение отправлено администратору.";ideaText.value="";setTimeout(()=>ideaModal.classList.add("hidden"),1200)}catch(e){ideaStatus.textContent=e.message||"Не удалось отправить предложение."}finally{btn.disabled=false}};
+const q=new URLSearchParams(location.search).get("room");if(q){openModal(false);roomInput.value=q.toUpperCase()}
+
+const newsFeed=document.getElementById("newsFeed");
+async function loadNews(){try{const r=await fetch("/api/news");const d=await r.json();if(!r.ok||!d.news?.length)return;newsFeed.innerHTML=d.news.map(x=>`<article class="news-card"><div class="news-date">${new Date(x.createdAt).toLocaleDateString("ru-RU")}</div><h3>${escapeHtml(x.title)}</h3><p>${escapeHtml(x.text)}</p></article>`).join("")}catch(e){}}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]))}
+loadNews();
 </script>
 </body>
 </html>
