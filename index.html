@@ -462,6 +462,9 @@ function startRoom(roomId){
   socket.on("sync-state",state=>applySync(state.playing,state.position,state.serverTime));
   socket.on("chat-message",addMessage);
 }
+
+/* Надёжная отправка предложений: заменяем обработчик на финальный */
+(function(){const btn=document.getElementById("ideaSend");if(!btn)return;btn.onclick=async function(){const text=ideaText.value.trim();const name=ideaName.value.trim()||"Гость";if(text.length<3){ideaStatus.textContent="Напишите предложение чуть подробнее.";ideaText.focus();return}btn.disabled=true;ideaStatus.textContent="Отправляем...";try{const response=await fetch("/api/suggestions",{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify({name,text})});const raw=await response.text();let data={};try{data=raw?JSON.parse(raw):{}}catch(e){throw new Error("Сервер вернул некорректный ответ.")}if(!response.ok||data.ok===false)throw new Error(data.error||"Не удалось сохранить предложение.");ideaStatus.textContent="✓ Предложение отправлено. Спасибо!";ideaText.value="";ideaName.value="";setTimeout(()=>ideaModal.classList.add("hidden"),1200)}catch(e){console.error(e);ideaStatus.textContent=e.message||"Не удалось отправить предложение."}finally{btn.disabled=false}}})();
 </script>
 </body>
 </html>
