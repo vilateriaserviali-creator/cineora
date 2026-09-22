@@ -333,7 +333,8 @@ io.on("connection", socket => {
     socket.join(roomId);
     socket.data.roomId = roomId;
     socket.data.name = name;
-    room.emptySince = null;\n    if (!room.hostId) room.hostId = socket.id;
+    room.emptySince = null;
+    if (!room.hostId) room.hostId = socket.id;
     room.users.set(socket.id, { id: socket.id, name, position: room.playing ? room.position + (Date.now() - room.updatedAt) / 1000 : room.position, playing: room.playing, progressUpdatedAt: Date.now(), duration: 0, voiceEnabled: false });
     socket.emit("voice-peer-list", [...room.users.values()].map(u => ({ id:u.id, name:u.name, voiceEnabled:!!u.voiceEnabled })));
     socket.emit("room-state", { hostId: room.hostId, playing: room.playing, position: room.playing ? room.position + (Date.now() - room.updatedAt) / 1000 : room.position, serverTime: Date.now(), mediaUrl: room.mediaUrl });
