@@ -923,7 +923,7 @@ function startRoom(roomId,pageParams){
     setTimeout(()=>{b.textContent="✓ Синхронизировано";setTimeout(()=>b.textContent="↻ Синхронизировать",1200)},350);
   };
   document.querySelector(".chat-close").onclick=()=>{setFullscreenChat()};
-  document.getElementById("inviteJoin")?.addEventListener("click",async()=>{const url=location.href;try{await navigator.clipboard.writeText(url);document.getElementById("inviteJoin").textContent="✓ Ссылка скопирована";setTimeout(()=>document.getElementById("inviteJoin").textContent="🔗 Скопировать приглашение",1500)}catch(e){prompt("Скопируйте ссылку:",url)}});
+  document.getElementById("inviteJoin")?.addEventListener("click",async()=>{const button=document.getElementById("inviteJoin");const url=location.href;let copied=false;try{if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(url);copied=true}}catch(e){}if(!copied){try{const ta=document.createElement("textarea");ta.value=url;ta.setAttribute("readonly","");ta.style.position="fixed";ta.style.left="-9999px";ta.style.top="0";document.body.appendChild(ta);ta.focus();ta.select();copied=document.execCommand("copy");ta.remove()}catch(e){}}if(copied){button.textContent="✓ Ссылка скопирована";setTimeout(()=>button.textContent="🔗 Скопировать приглашение",1800)}else{button.textContent="Ссылка готова — скопируйте из адресной строки";setTimeout(()=>button.textContent="🔗 Скопировать приглашение",2600)}});
 
   document.getElementById("leaveRoom").onclick=()=>{location.href="/"};
 
