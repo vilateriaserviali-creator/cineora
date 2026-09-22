@@ -18,6 +18,7 @@ const { Pool } = require("pg");
 
 const smtpUser = String(process.env.SMTP_USER || "").trim();
 const smtpPass = String(process.env.SMTP_PASS || "").replace(/\s+/g, "");
+const fallbackSuggestions = [];
 const mailer = smtpUser && smtpPass
   ? nodemailer.createTransport({
       host: "smtp.gmail.com",
@@ -63,7 +64,19 @@ async function initDatabase() {
 
 app.post("/api/suggestions", async (req, res) => {
   try {
-    if (!pool) return res.status(503).json({ ok: false, error: "Хранилище предложений пока не подключено." });
+    if (!pool) {
+      const name = String(req.body?.name || "Гость").trim().slice(0, 40);
+      const text = String(req.body?.text || "").trim().slice(0, 1000);
+      if (text.length < 3) return res.status(400).json({ ok: false, error: "Напишите предложение чуть подробнее." });
+      const item = { id: Date.now().toString(36) + Math.random().toString(36).slice(2, 7), name: name || "Гость", text, status: "new", createdAt: new Date().toISOString() };
+      fallbackSuggestions.unshift(item);
+      if (mailer) {
+        try {
+          await mailer.sendMail({ from: smtpUser, to: String(process.env.ADMIN_EMAIL || smtpUser).trim(), subject: "Новое предложение для CINEORA", text: ["Новое предложение для CINEORA", "", `Имя: ${item.name}`, "", item.text].join("\n") });
+        } catch (mailErr) { console.error("Suggestion email failed:", mailErr); }
+      }
+      return res.json({ ok: true, stored: "memory" });
+    }
     const name = String(req.body?.name || "Гость").trim().slice(0, 40);
     const text = String(req.body?.text || "").trim().slice(0, 1000);
     if (text.length < 3) return res.status(400).json({ ok: false, error: "Напишите предложение чуть подробнее." });
@@ -181,7 +194,7 @@ app.delete("/api/admin/news/:id", async (req, res) => {
 
 app.get("/api/admin/suggestions", async (req, res) => {
   if (!adminAllowed(req)) return res.status(401).json({ ok: false, error: "Неверный пароль администратора." });
-  if (!pool) return res.status(503).json({ ok: false, error: "PostgreSQL не подключён." });
+  if (!pool) return res.json({ ok: true, suggestions: fallbackSuggestions });
   try {
     const result = await pool.query(`SELECT id, name, text, status, created_at AS "createdAt" FROM suggestions ORDER BY created_at DESC`);
     res.json({ ok: true, suggestions: result.rows });
@@ -193,10 +206,15 @@ app.get("/api/admin/suggestions", async (req, res) => {
 
 app.patch("/api/admin/suggestions/:id", async (req, res) => {
   if (!adminAllowed(req)) return res.status(401).json({ ok: false, error: "Неверный пароль администратора." });
-  if (!pool) return res.status(503).json({ ok: false, error: "PostgreSQL не подключён." });
   const allowed = new Set(["new", "in_progress", "done", "rejected"]);
   const status = String(req.body?.status || "");
   if (!allowed.has(status)) return res.status(400).json({ ok: false, error: "Недопустимый статус." });
+  if (!pool) {
+    const item = fallbackSuggestions.find(x => x.id === req.params.id);
+    if (!item) return res.status(404).json({ ok: false, error: "Предложение не найдено." });
+    item.status = status;
+    return res.json({ ok: true });
+  }
   try {
     await pool.query("UPDATE suggestions SET status = $1 WHERE id = $2", [status, req.params.id]);
     res.json({ ok: true });
@@ -208,7 +226,12 @@ app.patch("/api/admin/suggestions/:id", async (req, res) => {
 
 app.delete("/api/admin/suggestions/:id", async (req, res) => {
   if (!adminAllowed(req)) return res.status(401).json({ ok: false, error: "Неверный пароль администратора." });
-  if (!pool) return res.status(503).json({ ok: false, error: "PostgreSQL не подключён." });
+  if (!pool) {
+    const index = fallbackSuggestions.findIndex(x => x.id === req.params.id);
+    if (index < 0) return res.status(404).json({ ok: false, error: "Предложение не найдено." });
+    fallbackSuggestions.splice(index, 1);
+    return res.json({ ok: true });
+  }
   try {
     await pool.query("DELETE FROM suggestions WHERE id = $1", [req.params.id]);
     res.json({ ok: true });
