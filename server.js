@@ -290,7 +290,7 @@ app.get("/api/admin/stats", async (req, res) => {
 });
 
 app.get("/admin", (req, res) => {
-  res.type("html").send(String.raw\`<!doctype html>
+  res.type("html").send(String.raw`<!doctype html>
 <html lang="ru">
 <head>
 <meta charset="utf-8">
@@ -461,7 +461,7 @@ document.getElementById("pass").addEventListener("keydown",e=>{if(e.key==="Enter
 setInterval(()=>{if(password&&document.getElementById("dashboard").classList.contains("show"))refreshAll()},10000);
 </script>
 </body>
-</html>\`);
+</html>`);
 });
 const rooms = new Map();
 function roomState(roomId) {
