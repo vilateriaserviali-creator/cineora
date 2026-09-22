@@ -740,7 +740,8 @@ function startRoom(roomId){
   let fullscreenChatOpen=false;
   const setFullscreenChat=(open)=>{fullscreenChatOpen=!!open;sideCard.classList.toggle("is-open",fullscreenChatOpen);fullscreenChatToggle.textContent=fullscreenChatOpen?"×":"💬";fullscreenChatToggle.setAttribute("aria-label",fullscreenChatOpen?"Закрыть чат":"Открыть чат")};
   fullscreenChatToggle.onclick=()=>{if(document.fullscreenElement===wrap)setFullscreenChat(!fullscreenChatOpen)};
-  document.getElementById("fullscreenBtn").onclick=async()=>{
+  const fullscreenBtn=document.getElementById("fullscreenBtn");
+  if(fullscreenBtn) fullscreenBtn.onclick=async()=>{
     try{
       if(document.fullscreenElement){await document.exitFullscreen();return}
       await wrap.requestFullscreen();
