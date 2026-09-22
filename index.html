@@ -210,7 +210,17 @@ body{background:#e8dfe4;color:var(--ink)}
 .emoji-picker{z-index:1001!important;pointer-events:auto!important}
 .emoji-picker.hidden{display:none!important}
 .emoji-picker:not(.hidden){display:block!important}
-</style></head>
+</style><style id="cineora-wakeup-style">
+#cineoraWakeup{position:fixed;inset:0;z-index:99999;display:none;align-items:center;justify-content:center;padding:24px;background:rgba(238,229,235,.94);backdrop-filter:blur(10px)}
+#cineoraWakeup.show{display:flex}
+.cineora-wakeup-card{width:min(420px,100%);padding:28px 24px;border:1px solid #d4c4d2;border-radius:24px;background:#f8f2f6;box-shadow:0 20px 60px rgba(92,77,92,.16);text-align:center;color:#514657}
+.cineora-wakeup-logo{font:700 24px Georgia,serif;letter-spacing:.12em;margin-bottom:12px}
+.cineora-wakeup-title{font-size:19px;font-weight:700;margin-bottom:8px}
+.cineora-wakeup-text{font-size:14px;line-height:1.55;color:#746878}
+.cineora-wakeup-loader{width:34px;height:34px;margin:18px auto 0;border:3px solid #d8c6df;border-top-color:#8e7598;border-radius:50%;animation:cineoraSpin .8s linear infinite}
+@keyframes cineoraSpin{to{transform:rotate(360deg)}}
+</style>
+</head>
 <body>
 
 
@@ -961,6 +971,53 @@ function startRoom(roomId){
 
 /* Надёжная отправка предложений: заменяем обработчик на финальный */
 (function(){const btn=document.getElementById("ideaSend");if(!btn)return;btn.onclick=async function(){const text=ideaText.value.trim();const name=ideaName.value.trim()||"Гость";if(text.length<3){ideaStatus.textContent="Напишите предложение чуть подробнее.";ideaText.focus();return}btn.disabled=true;ideaStatus.textContent="Отправляем...";try{const response=await fetch("/api/suggestions",{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify({name,text})});const raw=await response.text();let data={};try{data=raw?JSON.parse(raw):{}}catch(e){throw new Error("Сервер вернул некорректный ответ.")}if(!response.ok||data.ok===false)throw new Error(data.error||"Не удалось сохранить предложение.");ideaStatus.textContent="✓ Предложение отправлено. Спасибо!";ideaText.value="";ideaName.value="";setTimeout(()=>ideaModal.classList.add("hidden"),1200)}catch(e){console.error(e);ideaStatus.textContent=e.message||"Не удалось отправить предложение."}finally{btn.disabled=false}}})();
+</script>
+<div id="cineoraWakeup" aria-live="polite">
+  <div class="cineora-wakeup-card">
+    <div class="cineora-wakeup-logo">CINEORA</div>
+    <div class="cineora-wakeup-title">🌙 CINEORA просыпается…</div>
+    <div class="cineora-wakeup-text">Сервер немного отдыхал. Ещё секундочку — возвращаем комнату.</div>
+    <div class="cineora-wakeup-loader"></div>
+  </div>
+</div>
+<script id="cineora-wakeup-script">
+(function(){
+  const overlay=document.getElementById("cineoraWakeup");
+  if(!overlay)return;
+  let lastOk=Date.now();
+  let checking=false;
+  async function checkServer(showOverlay){
+    if(checking)return;
+    checking=true;
+    if(showOverlay)overlay.classList.add("show");
+    const started=Date.now();
+    try{
+      const controller=new AbortController();
+      const timer=setTimeout(()=>controller.abort(),12000);
+      const r=await fetch("/health?ts="+Date.now(),{cache:"no-store",signal:controller.signal});
+      clearTimeout(timer);
+      if(!r.ok)throw new Error("health");
+      lastOk=Date.now();
+      overlay.classList.remove("show");
+    }catch(e){
+      if(Date.now()-started<12000 && !showOverlay)overlay.classList.add("show");
+      setTimeout(()=>checkServer(true),1200);
+      return;
+    }finally{
+      checking=false;
+    }
+  }
+  document.addEventListener("visibilitychange",()=>{
+    if(document.visibilityState==="visible"){
+      if(Date.now()-lastOk>120000)checkServer(true);
+      else checkServer(false);
+    }
+  });
+  window.addEventListener("pageshow",()=>checkServer(false));
+  setInterval(()=>{
+    if(document.visibilityState==="visible")checkServer(false);
+  },10*60*1000);
+})();
 </script>
 </body>
 </html>
