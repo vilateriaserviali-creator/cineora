@@ -261,7 +261,7 @@ document.getElementById('pass').addEventListener('keydown',e=>{if(e.key==='Enter
 
 const rooms = new Map();
 function roomState(roomId) {
-  if (!rooms.has(roomId)) rooms.set(roomId, { users: new Map(), playing: false, position: 0, updatedAt: Date.now(), mediaUrl: "" });
+  if (!rooms.has(roomId)) rooms.set(roomId, { users: new Map(), hostId: null, playing: false, position: 0, updatedAt: Date.now(), mediaUrl: "" });
   return rooms.get(roomId);
 }
 function publicUsers(room) { return [...room.users.values()].map(u => ({ id: u.id, name: u.name, position: u.position, playing: u.playing })); }
@@ -273,15 +273,46 @@ io.on("connection", socket => {
     name = String(name || "Гость").trim().slice(0, 24);
     if (!roomId) return;
     const room = roomState(roomId); socket.join(roomId); socket.data.roomId = roomId; socket.data.name = name;
+    if (!room.hostId) room.hostId = socket.id;
     room.users.set(socket.id, { id: socket.id, name, position: room.playing ? room.position + (Date.now() - room.updatedAt) / 1000 : room.position, playing: room.playing });
-    socket.emit("room-state", { playing: room.playing, position: room.playing ? room.position + (Date.now() - room.updatedAt) / 1000 : room.position, mediaUrl: room.mediaUrl });
+    socket.emit("room-state", { hostId: room.hostId, playing: room.playing, position: room.playing ? room.position + (Date.now() - room.updatedAt) / 1000 : room.position, serverTime: Date.now(), mediaUrl: room.mediaUrl });
     broadcastRoom(roomId);
   });
-  socket.on("set-media", ({ url }) => { const roomId = socket.data.roomId; if (!roomId) return; const room = roomState(roomId); room.mediaUrl = String(url || "").trim(); io.to(roomId).emit("media-changed", room.mediaUrl); });
-  socket.on("sync", ({ playing, position }) => { const roomId = socket.data.roomId; if (!roomId) return; const room = roomState(roomId); room.playing = !!playing; room.position = Math.max(0, Number(position) || 0); room.updatedAt = Date.now(); const user = room.users.get(socket.id); if (user) { user.position = room.position; user.playing = room.playing; } socket.to(roomId).emit("sync", { playing: room.playing, position: room.position }); broadcastRoom(roomId); });
+  socket.on("set-media", ({ url }) => {
+    const roomId = socket.data.roomId; if (!roomId) return;
+    const room = roomState(roomId);
+    room.mediaUrl = String(url || "").trim();
+    room.playing = false;
+    room.position = 0;
+    room.updatedAt = Date.now();
+    io.to(roomId).emit("media-changed", { url: room.mediaUrl, playing: false, position: 0, serverTime: Date.now() });
+  });
+  socket.on("sync", ({ playing, position }) => {
+    const roomId = socket.data.roomId; if (!roomId) return;
+    const room = roomState(roomId);
+    if (room.hostId && socket.id !== room.hostId) return;
+    room.playing = !!playing;
+    room.position = Math.max(0, Number(position) || 0);
+    room.updatedAt = Date.now();
+    const user = room.users.get(socket.id);
+    if (user) { user.position = room.position; user.playing = room.playing; }
+    socket.to(roomId).emit("sync", { playing: room.playing, position: room.position, serverTime: room.updatedAt });
+    broadcastRoom(roomId);
+  });
   socket.on("user-progress", ({ position, playing }) => { const roomId = socket.data.roomId; if (!roomId) return; const room = roomState(roomId); const user = room.users.get(socket.id); if (!user) return; user.position = Math.max(0, Number(position) || 0); user.playing = !!playing; socket.to(roomId).emit("user-progress", { id: socket.id, position: user.position, playing: user.playing }); broadcastRoom(roomId); });
   socket.on("chat-message", ({ text }) => { const roomId = socket.data.roomId; if (!roomId) return; const clean = String(text || "").trim().slice(0, 500); if (!clean) return; io.to(roomId).emit("chat-message", { id: socket.id, name: socket.data.name || "Гость", text: clean, time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) }); });
-  socket.on("disconnect", () => { const roomId = socket.data.roomId; if (!roomId || !rooms.has(roomId)) return; const room = rooms.get(roomId); room.users.delete(socket.id); broadcastRoom(roomId); if (!room.users.size) rooms.delete(roomId); });
+  socket.on("disconnect", () => {
+    const roomId = socket.data.roomId; if (!roomId || !rooms.has(roomId)) return;
+    const room = rooms.get(roomId);
+    room.users.delete(socket.id);
+    if (room.hostId === socket.id) {
+      const next = room.users.values().next().value;
+      room.hostId = next ? next.id : null;
+      if (room.hostId) io.to(roomId).emit("room-host", { hostId: room.hostId });
+    }
+    broadcastRoom(roomId);
+    if (!room.users.size) rooms.delete(roomId);
+  });
 });
 
 const PORT = process.env.PORT || 3000;
