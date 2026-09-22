@@ -45,6 +45,20 @@
 .player-wrap #ytPlayer > iframe{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;min-width:100%!important;min-height:100%!important;border:0!important;display:block!important}
 .player-wrap video{width:100%!important;height:100%!important;object-fit:contain!important}
 @media(max-width:1000px){.player-wrap{aspect-ratio:16/9!important;min-height:0!important}}
+</style><style id="cineora-stickers-chat-fix">
+.emoji-wrap{position:relative!important}
+.emoji-toggle{width:44px!important;min-width:44px!important;height:44px!important;border-radius:14px!important;background:#d8c6df!important;border:1px solid #b9a8bd!important;cursor:pointer!important;transition:transform .15s ease,background .15s ease!important}
+.emoji-toggle:hover{transform:translateY(-1px)!important;background:#ccb7d3!important}
+.emoji-picker{position:absolute!important;left:0!important;bottom:54px!important;width:292px!important;padding:12px!important;background:#eee5eb!important;border:1px solid #c9bac6!important;border-radius:20px!important;box-shadow:0 18px 45px #5c4d5c35!important;display:block!important;z-index:100!important}
+.emoji-picker.hidden{display:none!important}
+.sticker-title{font-size:12px!important;font-weight:700!important;color:#665968!important;padding:2px 4px 10px!important}
+.sticker-grid{display:grid!important;grid-template-columns:repeat(6,1fr)!important;gap:5px!important}
+.sticker-grid button{height:40px!important;border:0!important;background:transparent!important;border-radius:12px!important;font-size:24px!important;cursor:pointer!important}
+.sticker-grid button:hover{background:#d9c9d7!important;transform:scale(1.08)!important}
+.chat-form{background:#eee7eb!important;border-top:1px solid #d6c9d3!important}
+.chat-form input{background:#f8f3f6!important;color:#403943!important;border:1px solid #cfc1cc!important}
+.chat-form input:focus{outline:2px solid #cdb7ce!important;border-color:#b49eb8!important}
+.chat-form>button{min-width:44px!important;height:44px!important;background:#c8aec6!important;color:#403746!important;cursor:pointer!important}
 </style><style id="cineora-participant-progress-fix">.person-progress{height:4px!important;background:#b7aab5!important;border-radius:99px!important;overflow:hidden!important;margin-top:6px!important}.person-progress i{display:block!important;height:100%!important;background:#8f748f!important;border-radius:99px!important;transition:width .25s linear!important}</style><style id="cineora-name-button-fix">#changeName{white-space:nowrap}#myRoomName{cursor:default}</style><style id="cineora-soft-theme">
 :root{--ink:#403943;--paper:#e8dfe4;--cream:#ddd1d9;--soft:#cdbdc9;--line:#bdaeb9;--accent:#b99bb5;--accent2:#aebbc8;--muted:#756b75}
 body{background:#e8dfe4;color:var(--ink)}
@@ -97,7 +111,7 @@ body{background:#e8dfe4;color:var(--ink)}
       <div class="chat">
         <div class="side-title">Чат</div>
         <div class="chat-messages" id="chatMessages"></div>
-        <form class="chat-form" id="chatForm"><div class="emoji-wrap"><button class="emoji-toggle" id="emojiToggle" type="button" aria-label="Смайлики">😊</button><div class="emoji-picker hidden" id="emojiPicker"><button type="button">😀</button><button type="button">😂</button><button type="button">😍</button><button type="button">❤️</button><button type="button">🔥</button><button type="button">👍</button><button type="button">😢</button><button type="button">😡</button><button type="button">🎉</button><button type="button">🍿</button><button type="button">🥰</button><button type="button">😎</button><button type="button">👏</button><button type="button">✨</button></div></div><input id="chatInput" maxlength="500" placeholder="Напишите сообщение..."><button type="submit">→</button></form>
+        <form class="chat-form" id="chatForm"><div class="emoji-wrap"><button class="emoji-toggle" id="emojiToggle" type="button" aria-label="Смайлики">😊</button><div class="emoji-picker hidden" id="emojiPicker"><div class="sticker-title">Стикеры и эмоции</div><div class="sticker-grid"><button type="button">😂</button><button type="button">😍</button><button type="button">🥰</button><button type="button">😎</button><button type="button">🤭</button><button type="button">🥹</button><button type="button">😭</button><button type="button">😡</button><button type="button">🤯</button><button type="button">🤍</button><button type="button">❤️</button><button type="button">💜</button><button type="button">🔥</button><button type="button">✨</button><button type="button">🎉</button><button type="button">🍿</button><button type="button">👍</button><button type="button">👏</button><button type="button">💀</button><button type="button">👀</button><button type="button">💅</button><button type="button">🫶</button><button type="button">☕</button><button type="button">🎬</button></div></div></div><input id="chatInput" maxlength="500" placeholder="Напишите сообщение..."><button type="submit">→</button></form>
       </div>
     </aside>
   </main>
@@ -492,10 +506,40 @@ function startRoom(roomId){
     }
   },500);
 
-  document.getElementById("chatForm").addEventListener("submit",e=>{
-    e.preventDefault();const input=document.getElementById("chatInput"),msg=input.value.trim();
-    if(!msg)return;socket.emit("chat-message",{text:msg});input.value="";
+  const chatForm=document.getElementById("chatForm");
+  const chatInput=document.getElementById("chatInput");
+  const emojiToggle=document.getElementById("emojiToggle");
+  const emojiPicker=document.getElementById("emojiPicker");
+  emojiToggle.onclick=(e)=>{e.stopPropagation();emojiPicker.classList.toggle("hidden")};
+  emojiPicker.addEventListener("click",e=>{
+    const b=e.target.closest("button"); if(!b)return;
+    const emoji=b.textContent.trim();
+    const start=chatInput.selectionStart||chatInput.value.length;
+    const end=chatInput.selectionEnd||chatInput.value.length;
+    chatInput.value=chatInput.value.slice(0,start)+emoji+chatInput.value.slice(end);
+    chatInput.focus();
+    chatInput.setSelectionRange(start+emoji.length,start+emoji.length);
+    emojiPicker.classList.add("hidden");
   });
+  document.addEventListener("click",e=>{
+    if(!e.target.closest(".emoji-wrap")) emojiPicker.classList.add("hidden");
+  });
+  chatForm.addEventListener("submit",e=>{
+    e.preventDefault();
+    const msg=chatInput.value.trim();
+    if(!msg)return;
+    if(!socket.connected){
+      setStatus("Соединение с комнатой восстанавливается…");
+      socket.connect();
+      socket.once("connect",()=>socket.emit("chat-message",{text:msg}));
+    }else{
+      socket.emit("chat-message",{text:msg});
+    }
+    chatInput.value="";
+    chatInput.focus();
+  });
+  socket.on("connect_error",()=>setStatus("Нет соединения с комнатой — переподключаемся…"));
+  socket.on("connect",()=>setStatus("Комната подключена"));
 
   socket.on("room-state",state=>{
     hostId=state.hostId||"";
