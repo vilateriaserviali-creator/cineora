@@ -233,6 +233,17 @@ html.cineora-dark .chat{border-color:#514651!important}
 .cineora-wakeup-loader{width:34px;height:34px;margin:18px auto 0;border:3px solid #d8c6df;border-top-color:#8e7598;border-radius:50%;animation:cineoraSpin .8s linear infinite}
 @keyframes cineoraSpin{to{transform:rotate(360deg)}}
 </style>
+<style id="cineora-connection-fix">
+#chatConnection{display:inline-flex!important;align-items:center;gap:5px;min-width:58px;justify-content:center;padding:4px 8px;border-radius:999px;background:#ded3dc;color:#766a76!important;font:600 10px "DM Sans",sans-serif!important}
+#chatConnection.chat-online{background:#d9eadb!important;color:#54705a!important}
+#chatConnection.chat-offline{background:#ead9dc!important;color:#855f66!important}
+#chatConnection.chat-connecting{background:#e7e0d6!important;color:#766b59!important}
+.participants-title-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.online-status{font-size:9px;color:#638067;margin-top:2px}
+.online-dot{display:inline-block!important;width:7px;height:7px;border-radius:50%;background:#73a878;margin-right:5px;vertical-align:middle}
+.cineora-connection-banner{display:none;position:fixed;left:50%;top:86px;transform:translateX(-50%);z-index:10000;padding:10px 16px;border:1px solid #b9aab5;border-radius:999px;background:#eadfe6ee;color:#5d5260;box-shadow:0 10px 30px #51465322;font-size:12px;backdrop-filter:blur(10px)}
+.room-view.connection-lost .cineora-connection-banner{display:block}
+</style>
 <style id="cineora-final-polish">
 /* CINEORA — финальная полировка */
 .room-view{--room-bg:#e8dfe4;--room-card:#d8ccd3ee;--room-border:#b9aab5;--room-accent:#bda4bb}
@@ -275,7 +286,7 @@ html.cineora-dark .chat{border-color:#514651!important}
       <div class="sync-note">YouTube и прямые видео синхронизируются по воспроизведению, паузе и перемотке. Для сайтов, которые разрешают встраивание, CINEORA откроет их плеер внутри комнаты.</div>
     </section>
     <aside class="side-card" id="sideCard">
-      <div class="side-title">Участники <span id="participantCount">0</span></div><button type="button" class="chat-close" aria-label="Закрыть чат">×</button>
+      <div class="side-title">Участники <span id="participantCount">0</span></div>
       <div class="participants" id="participants"></div>
       <div class="voice-panel" id="voicePanel">
         <div class="voice-head">
@@ -1145,6 +1156,32 @@ function startRoom(roomId){
  function apply(v){root.classList.toggle("cineora-dark",v==="dark");b.textContent=v==="dark"?"☼ Светлая":"◐ Тема";localStorage.setItem("cineora_theme",v)}
  apply(saved==="dark"?"dark":"soft");
  b.onclick=()=>apply(root.classList.contains("cineora-dark")?"soft":"dark");
+})();
+</script><script id="cineora-connection-state-fix">
+(function(){
+  const el=()=>document.getElementById("chatConnection");
+  const room=document.querySelector(".room-view");
+  function set(state){
+    const e=el(); if(!e)return;
+    e.classList.remove("chat-online","chat-offline","chat-connecting");
+    if(state==="online"){e.classList.add("chat-online");e.textContent="● онлайн";}
+    else if(state==="offline"){e.classList.add("chat-offline");e.textContent="● нет связи";}
+    else{e.classList.add("chat-connecting");e.textContent="● подключение…";}
+  }
+  function connected(){set("online");room&&room.classList.remove("connection-lost")}
+  function disconnected(){set("offline");room&&room.classList.add("connection-lost")}
+  function connecting(){set("connecting")}
+  set("connecting");
+  if(window.socket){
+    if(socket.connected)connected();
+    socket.on("connect",connected);
+    socket.on("disconnect",disconnected);
+    socket.on("connect_error",connecting);
+    socket.io&&socket.io.on("reconnect_attempt",connecting);
+    socket.io&&socket.io.on("reconnect",connected);
+  }
+  window.addEventListener("cineora:connected",connected);
+  window.addEventListener("cineora:disconnected",disconnected);
 })();
 </script></body>
 </html>
