@@ -472,7 +472,12 @@ function startRoom(roomId){
       const now=getPosition();
       if(Math.abs(now-target)>1.2) applySync(true,roomPosition,roomServerTime);
     }
-    if(currentType) const currentVideo=document.getElementById("roomVideo"); let duration=0; try{duration=currentType==="youtube"&&player?.getDuration?player.getDuration():(currentVideo?.duration||0)}catch(e){} socket.emit("user-progress",{position:getPosition(),playing:isPlaying(),duration});
+    if(currentType){
+      const currentVideo=document.getElementById("roomVideo");
+      let duration=0;
+      try{duration=currentType==="youtube"&&player?.getDuration?player.getDuration():(currentVideo?.duration||0)}catch(e){}
+      socket.emit("user-progress",{position:getPosition(),playing:isPlaying(),duration});
+    }
   },500);
 
   document.getElementById("chatForm").addEventListener("submit",e=>{
