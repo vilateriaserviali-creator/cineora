@@ -311,7 +311,75 @@ html.cineora-dark .invite-card{background:linear-gradient(135deg,#332c36,#3b3340
 .session-countdown{margin:0 15px 10px;padding:9px 11px;border-radius:11px;background:#f4edf3;color:#756b77;font-size:11px}
 @media(max-width:1000px){.room-top{height:auto;min-height:64px;padding:10px 12px;position:relative;align-items:flex-start}.room-brand{font-size:21px;line-height:38px}.room-actions{justify-content:flex-end;gap:6px}.room-actions .room-code{display:none}.room-btn{height:36px;padding:0 10px}.room-layout{width:calc(100% - 20px);margin:10px auto 20px;gap:10px}.watch-card,.side-card{border-radius:18px}.watch-head{min-height:58px;padding:13px 15px}.watch-title{font-size:20px}.source-pill{font-size:10px}.player-wrap{aspect-ratio:16/9!important}.media-bar{padding:10px}.media-bar input{height:40px}.media-bar .room-btn.primary{height:40px;padding:0 14px}.side-card{min-height:0}.invite-card{margin:10px;padding:13px}.participants{max-height:180px}.chat{min-height:320px}}
 @media(max-width:560px){.room-top{display:flex}.room-brand{font-size:19px;letter-spacing:.1em}.room-actions{margin-left:auto}.room-actions .room-btn:not(.leave):not(#roomThemeToggle){display:none}.room-actions #roomThemeToggle{font-size:0;width:36px;padding:0}.room-actions #roomThemeToggle:after{content:"◐";font-size:16px}.room-actions .leave{font-size:0;width:36px;padding:0}.room-actions .leave:after{content:"×";font-size:20px}.room-layout{width:100%;margin:0;display:flex;flex-direction:column}.watch-card,.side-card{border-radius:0;border-left:0;border-right:0}.watch-head{padding:12px 13px}.watch-title{font-size:18px}.media-bar{gap:7px}.media-bar .room-btn.primary{font-size:0;width:42px;padding:0}.media-bar .room-btn.primary:after{content:"↑";font-size:17px}.invite-card{margin:9px}.chat{min-height:300px}}
-</style></head>
+</style><style id="cineora-theme-final">
+/* Финальная светлая/тёмная тема CINEORA */
+html{color-scheme:light}
+body{transition:background .25s ease,color .25s ease}
+.room-view{background:linear-gradient(135deg,#eee7eb 0%,#e5e1e8 48%,#dfe6eb 100%)!important;color:#403943!important}
+.room-view .watch-card,.room-view .side-card{background:rgba(255,252,255,.92)!important;border-color:#d3cad5!important;box-shadow:0 16px 45px rgba(82,68,82,.12)!important}
+.room-view .watch-head,.room-view .media-bar,.room-view .sync-note,.room-view .chat,.room-view .chat-form{border-color:#ddd4de!important}
+.room-view .room-top{background:rgba(250,247,250,.9)!important}
+.room-view .room-brand{color:#403943!important}
+.room-view .room-btn,.room-view .room-code{background:#fdfafd!important;color:#4b4350!important;border-color:#d5cbd7!important}
+.room-view .room-btn:hover{background:#f1e9f2!important;transform:translateY(-1px)}
+.room-view .room-btn.primary{background:#c9aec9!important;color:#342d37!important;border-color:#c9aec9!important}
+.room-view .media-bar input{background:#fff!important;color:#403943!important}
+.room-view .participants .person-row{background:#f4eef4!important;border-color:#e0d6e1!important}
+.room-view .chat-messages{background:#fbf8fb!important}
+.room-view .chat-msg{background:#f1ebf2!important}
+.room-view .chat-form{background:#eee6ec!important}
+.room-view .chat-form input{background:#faf7fa!important;color:#403943!important}
+.room-view .voice-panel{background:#eee5ed!important}
+html.cineora-dark{color-scheme:dark}
+html.cineora-dark .room-view{background:radial-gradient(circle at 80% 15%,#3a3040 0%,transparent 35%),linear-gradient(135deg,#17151b 0%,#211c25 52%,#17191e 100%)!important;color:#eee8f0!important}
+html.cineora-dark .room-view .watch-card,html.cineora-dark .room-view .side-card{background:rgba(31,27,34,.96)!important;border-color:#403844!important;box-shadow:0 18px 55px rgba(0,0,0,.35)!important}
+html.cineora-dark .room-view .room-top{background:rgba(24,21,28,.94)!important;border-color:#3b3440!important}
+html.cineora-dark .room-view .room-brand{color:#f1eaf2!important}
+html.cineora-dark .room-view .room-btn,html.cineora-dark .room-view .room-code{background:#29232e!important;color:#e8dfea!important;border-color:#49404e!important}
+html.cineora-dark .room-view .room-btn:hover{background:#352d3a!important}
+html.cineora-dark .room-view .room-btn.primary{background:#b695b3!important;color:#211b23!important;border-color:#b695b3!important}
+html.cineora-dark .room-view .watch-head{border-color:#403844!important}
+html.cineora-dark .room-view .watch-title{color:#f1eaf2!important}
+html.cineora-dark .room-view .source-pill{color:#aaa0ad!important}
+html.cineora-dark .room-view .media-bar,html.cineora-dark .room-view .sync-note{background:#211d25!important;border-color:#403844!important;color:#aaa0ad!important}
+html.cineora-dark .room-view .media-bar input{background:#17141a!important;color:#f0e9f1!important;border-color:#4a404d!important}
+html.cineora-dark .room-view .side-title{color:#f1eaf2!important}
+html.cineora-dark .room-view .participants .person-row{background:#29232e!important;border-color:#403844!important}
+html.cineora-dark .room-view .person-name{color:#eee6ef!important}
+html.cineora-dark .room-view .person-time{color:#aaa0ad!important}
+html.cineora-dark .room-view .chat{border-color:#403844!important}
+html.cineora-dark .room-view .chat-messages{background:#1d1920!important}
+html.cineora-dark .room-view .chat-msg{background:#29232e!important}
+html.cineora-dark .room-view .chat-msg b{color:#d1b5cf!important}
+html.cineora-dark .room-view .chat-msg span{color:#eee6ef!important}
+html.cineora-dark .room-view .chat-msg small{color:#938995!important}
+html.cineora-dark .room-view .chat-form{background:#241f28!important;border-color:#403844!important}
+html.cineora-dark .room-view .chat-form input{background:#17141a!important;color:#eee6ef!important;border-color:#4a404d!important}
+html.cineora-dark .room-view .emoji-toggle{background:#b695b3!important;color:#241f28!important;border-color:#70596d!important}
+html.cineora-dark .room-view .emoji-picker{background:#2a2430!important;border-color:#4a404d!important}
+html.cineora-dark .room-view .sticker-title{color:#d5c6d7!important}
+html.cineora-dark .room-view .sticker-grid button:hover{background:#403445!important}
+html.cineora-dark .room-view .voice-panel{background:#251f29!important;border-color:#403844!important}
+html.cineora-dark .room-view .voice-title{color:#eee6ef!important}
+html.cineora-dark .room-view .voice-status,html.cineora-dark .room-view .voice-note{color:#a79ba9!important}
+html.cineora-dark .room-view .voice-toggle{background:#b695b3!important;color:#241f28!important;border-color:#70596d!important}
+html.cineora-dark .room-view .voice-user{background:#352d3a!important;color:#ded2df!important}
+html.cineora-dark .room-view .sync-note{color:#aaa0ad!important}
+html.cineora-dark .room-view .invite-card{background:linear-gradient(135deg,#342a38,#2c2530)!important;border-color:#514455!important}
+html.cineora-dark .room-view .invite-card button{background:#9f819d!important;color:#241e25!important}
+html.cineora-dark .room-view .empty-player{color:#aaa0ad!important}
+html.cineora-dark .room-view .empty-player strong{color:#f1eaf2!important}
+.room-view .room-btn,.room-view .invite-card button,.room-view .media-bar button{transition:transform .15s ease,background .2s ease,box-shadow .2s ease}
+.room-view .room-btn:hover,.room-view .invite-card button:hover,.room-view .media-bar button:hover{box-shadow:0 8px 22px rgba(86,69,90,.14)}
+.room-view .room-btn:active,.room-view .invite-card button:active,.room-view .media-bar button:active{transform:scale(.98)}
+@media(max-width:700px){
+  .room-view .room-top{height:auto;min-height:66px;padding:10px 12px}
+  .room-view .room-actions{gap:6px}
+  .room-view .room-actions .room-code{padding:7px 9px;font-size:11px}
+  .room-view .room-btn{padding:8px 10px;font-size:11px}
+}
+</style>
+</head>
 <body>
 
 
@@ -924,7 +992,47 @@ function startRoom(roomId,pageParams){
     setTimeout(()=>{b.textContent="✓ Синхронизировано";setTimeout(()=>b.textContent="↻ Синхронизировать",1200)},350);
   };
   document.querySelector(".chat-close").onclick=()=>{setFullscreenChat()};
-  document.getElementById("inviteJoin")?.addEventListener("click",async()=>{const button=document.getElementById("inviteJoin");const url=location.href;let copied=false;try{if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(url);copied=true}}catch(e){}if(!copied){try{const ta=document.createElement("textarea");ta.value=url;ta.setAttribute("readonly","");ta.style.position="fixed";ta.style.left="-9999px";ta.style.top="0";document.body.appendChild(ta);ta.focus();ta.select();copied=document.execCommand("copy");ta.remove()}catch(e){}}if(copied){button.textContent="✓ Ссылка скопирована";setTimeout(()=>button.textContent="🔗 Скопировать приглашение",1800)}else{button.textContent="Ссылка готова — скопируйте из адресной строки";setTimeout(()=>button.textContent="🔗 Скопировать приглашение",2600)}});
+  document.getElementById("inviteJoin")?.addEventListener("click",async()=>{
+    const button=document.getElementById("inviteJoin");
+    const url=location.href;
+    const original=button.innerHTML;
+    button.disabled=true;
+    try{
+      if(navigator.share && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)){
+        await navigator.share({title:"CINEORA — приглашение",text:"Присоединяйся к нашему просмотру в CINEORA 🍿",url});
+        button.textContent="✓ Приглашение открыто";
+      }else{
+        const ta=document.createElement("textarea");
+        ta.value=url;
+        ta.setAttribute("readonly","");
+        ta.style.position="fixed";
+        ta.style.opacity="0";
+        ta.style.pointerEvents="none";
+        document.body.appendChild(ta);
+        ta.focus();ta.select();ta.setSelectionRange(0,ta.value.length);
+        let copied=false;
+        try{copied=document.execCommand("copy")}catch(e){}
+        ta.remove();
+        if(!copied && navigator.clipboard){
+          try{await navigator.clipboard.writeText(url);copied=true}catch(e){}
+        }
+        if(copied){
+          button.textContent="✓ Ссылка скопирована";
+          if(navigator.vibrate)try{navigator.vibrate(30)}catch(e){}
+        }else{
+          window.prompt("Скопируйте ссылку на комнату:",url);
+          button.textContent="✓ Ссылка показана";
+        }
+      }
+    }catch(e){
+      if(e?.name!=="AbortError"){
+        try{window.prompt("Скопируйте ссылку на комнату:",url)}catch(_){}
+        button.textContent="Скопируйте ссылку";
+      }
+    }finally{
+      setTimeout(()=>{button.innerHTML=original;button.disabled=false},2200);
+    }
+  });
 
   document.getElementById("leaveRoom").onclick=()=>{location.href="/"};
 
@@ -1158,12 +1266,17 @@ function startRoom(roomId,pageParams){
 })();
 </script><script id="cineora-home-theme-toggle">(function(){const b=document.getElementById("homeThemeToggle");if(!b)return;const k="cineora_home_theme";function a(v){document.body.classList.toggle("cineora-home-dark",v==="dark");b.textContent=v==="dark"?"☀️":"🌙";localStorage.setItem(k,v)}a(localStorage.getItem(k)==="dark"?"dark":"soft");b.onclick=()=>a(document.body.classList.contains("cineora-home-dark")?"soft":"dark")})();</script><script id="cineora-theme-toggle">
 (function(){
- const b=document.getElementById("roomThemeToggle"); const root=document.documentElement;
+ const b=document.getElementById("roomThemeToggle"),root=document.documentElement;
  if(!b)return;
- const saved=localStorage.getItem("cineora_theme");
- function apply(v){root.classList.toggle("cineora-dark",v==="dark");b.textContent=v==="dark"?"☼ Светлая":"◐ Тема";localStorage.setItem("cineora_theme",v)}
- apply(saved==="dark"?"dark":"soft");
- b.onclick=()=>apply(root.classList.contains("cineora-dark")?"soft":"dark");
+ const key="cineora_theme";
+ function apply(v){
+   root.classList.toggle("cineora-dark",v==="dark");
+   b.textContent=v==="dark"?"☀ Светлая":"◐ Тёмная";
+   b.title=v==="dark"?"Переключить на светлую тему":"Переключить на тёмную тему";
+   localStorage.setItem(key,v);
+ }
+ apply(localStorage.getItem(key)==="dark"?"dark":"light");
+ b.onclick=()=>apply(root.classList.contains("cineora-dark")?"light":"dark");
 })();
 </script><script id="cineora-connection-state-fix">
 (function(){
