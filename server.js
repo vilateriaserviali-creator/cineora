@@ -300,6 +300,12 @@ function publicUsers(room) {
 function broadcastRoom(roomId) { const room = rooms.get(roomId); if (room) io.to(roomId).emit("room-users", publicUsers(room)); }
 
 io.on("connection", socket => {
+  socket.on("create-room", ({ roomId }, ack) => {
+    const cleanRoom = String(roomId || "").trim().toUpperCase().slice(0, 16);
+    if (!cleanRoom) { if (typeof ack === "function") ack({ ok: false, error: "Не удалось создать комнату." }); return; }
+    roomState(cleanRoom);
+    if (typeof ack === "function") ack({ ok: true, roomId: cleanRoom });
+  });
   socket.on("join-room", ({ roomId, name }) => {
     roomId = String(roomId || "").trim().toUpperCase().slice(0, 16);
     name = String(name || "Гость").trim().slice(0, 24);
