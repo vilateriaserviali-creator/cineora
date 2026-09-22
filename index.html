@@ -512,7 +512,6 @@ function startRoom(roomId){
 
   document.getElementById("roomCodeLabel").textContent=roomId;
   document.getElementById("myRoomName").textContent="Имя: "+myName;
-  socket.emit("join-room",{roomId,name:myName});
   document.getElementById("changeName").onclick=()=>{
     const current=localStorage.getItem("cineora_name")||myName||"Гость";
     const next=prompt("Введите новое имя",current);
@@ -869,6 +868,7 @@ function startRoom(roomId){
   socket.on("voice-user-state",u=>renderVoiceUsers(u.users||[]));
   socket.on("voice-peer-left",id=>removeVoicePeer(id));
 
+  socket.on("disconnect",()=>{setStatus("Соединение потеряно — переподключаемся…");const el=document.getElementById("chatConnection");if(el)el.textContent="● нет связи"});
   socket.on("connect_error",()=>{setStatus("Нет соединения с комнатой — переподключаемся…");const el=document.getElementById("chatConnection");if(el)el.textContent="● нет связи"});
   socket.on("connect",()=>{
     const cookieName=(document.cookie.match(/(?:^|; )cineora_name=([^;]*)/)||[])[1];
@@ -936,7 +936,7 @@ function startRoom(roomId){
   socket.on("sync",state=>applySync(state.playing,state.position,state.serverTime));
   socket.on("room-host",state=>{
     hostId=state.hostId||"";
-    document.getElementById("syncState").textContent="Видео синхронизируется между участниками";
+    const syncStateEl=document.getElementById("syncState"); if(syncStateEl) syncStateEl.textContent="Видео синхронизируется между участниками";
   });
   socket.on("room-users",renderUsers);
   socket.on("sync-state",state=>applySync(state.playing,state.position,state.serverTime));
