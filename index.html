@@ -831,6 +831,7 @@ function startRoom(roomId){
     socket.emit("chat-message",{text:msg},ack=>{
       if(!ack?.ok)setStatus(ack?.error||"Не удалось отправить сообщение");
     });
+    playChatSound();
     chatInput.value="";
     chatInput.focus();
   }
