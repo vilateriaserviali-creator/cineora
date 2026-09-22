@@ -61,19 +61,19 @@
 <style id="cineora-custom-controls">
 .cineora-controls{position:absolute;left:10px;right:10px;bottom:10px;z-index:30;display:flex;align-items:center;gap:8px;padding:9px 10px;border:1px solid #ffffff38;border-radius:14px;background:#302b31d9;backdrop-filter:blur(10px);color:#fff;opacity:0;transform:translateY(5px);transition:.2s;pointer-events:none}
 .player-wrap:hover .cineora-controls,.player-wrap:focus-within .cineora-controls{opacity:1;transform:none;pointer-events:auto}
-.cineora-controls button,.cineora-controls select{border:0;background:#ffffff18;color:#fff;border-radius:9px;height:34px;padding:0 10px;cursor:pointer}
-.cineora-controls select option{color:#302b31;background:#fff}
+.cineora-controls button,
+
 .cine-time{font-size:11px;min-width:82px;text-align:center;font-variant-numeric:tabular-nums}
 .cine-seek{flex:1;min-width:70px;accent-color:#d8c6df}
 .cine-volume{width:82px;accent-color:#d8c6df}
-@media(max-width:700px){.cineora-controls{left:6px;right:6px;bottom:6px;gap:5px;padding:7px}.cineora-controls button,.cineora-controls select{height:32px;padding:0 7px;font-size:11px}.cine-volume{width:58px}.cine-time{min-width:70px;font-size:9px}}
+@media(max-width:700px){.cineora-controls{left:6px;right:6px;bottom:6px;gap:5px;padding:7px}.cineora-controls button,.cine-volume{width:58px}.cine-time{min-width:70px;font-size:9px}}
 </style><style id="cineora-player-controls-polish">
 .cineora-controls{height:48px;box-sizing:border-box}
 .cineora-controls button{font-size:15px;min-width:36px}
 .cineora-controls button:hover{background:#ffffff2b}
 .cine-seek{height:4px;cursor:pointer}
 .cine-volume{height:4px;cursor:pointer}
-.cineora-controls select{font-size:11px;min-width:78px}
+
 </style><style id="cineora-player-size-fix">
 /* Плеер должен занимать всю область карточки, без маленького окна по центру */
 .player-wrap{position:relative!important;overflow:hidden!important;aspect-ratio:16/9!important;height:auto!important;min-height:0!important;padding:0!important}
@@ -275,7 +275,7 @@ html.cineora-dark .chat{border-color:#514651!important}
   <main class="room-layout">
     <section class="watch-card">
       <div class="watch-head"><div><div class="watch-title">Совместный просмотр</div><div class="source-pill" id="mediaStatus">Видео пока не добавлено</div></div><div class="watch-head-tools"><button class="room-btn" id="syncBtn" type="button">↻ Синхронизировать</button><div class="source-pill" id="myRoomName"></div></div></div>
-      <div class="player-wrap" id="playerWrap"><div id="universalPlayer"></div><div class="empty-player" id="emptyPlayer"><strong>Добавьте видео</strong><span>Вставьте ссылку на YouTube, VK Видео, RUTUBE или прямую ссылку на видео.</span></div><div class="cineora-controls" id="cineoraControls"><button type="button" id="cinePlay">▶</button><span class="cine-time" id="cineTime">0:00 / 0:00</span><input class="cine-seek" id="cineSeek" type="range" min="0" max="100" value="0" aria-label="Перемотка"><button type="button" id="cineMute">🔊</button><input class="cine-volume" id="cineVolume" type="range" min="0" max="1" step="0.01" value="1" aria-label="Громкость"><button type="button" id="cineFull">⛶</button></div></div><div class="player-tools" aria-hidden="true"></div>
+      <div class="player-wrap" id="playerWrap"><div id="universalPlayer"></div><div class="empty-player" id="emptyPlayer"><strong>Добавьте видео</strong><span>Вставьте ссылку на YouTube, VK Видео, RUTUBE или прямую ссылку на видео.</span></div><div class="cineora-controls" id="cineoraControls"><button type="button" id="cinePlay">▶</button><span class="cine-time" id="cineTime">0:00 / 0:00</span><input class="cine-seek" id="cineSeek" type="range" min="0" max="100" value="0" aria-label="Перемотка"><input class="cine-volume" id="cineVolume" type="range" min="0" max="1" step="0.01" value="1" aria-label="Громкость"><button type="button" id="cineFull">⛶</button></div></div><div class="player-tools" aria-hidden="true"></div>
       <div class="media-bar"><input id="mediaUrlRoom" placeholder="YouTube / VK / RUTUBE / ссылка на видео"><button class="room-btn primary" id="setMediaRoom">Загрузить</button></div>
       <div class="sync-note">YouTube и прямые видео синхронизируются по воспроизведению, паузе и перемотке. Для сайтов, которые разрешают встраивание, CINEORA откроет их плеер внутри комнаты.</div>
     </section>
@@ -986,7 +986,7 @@ function startRoom(roomId,pageParams){
     }
   });
 
-  const cinePlay=document.getElementById("cinePlay"),cineTime=document.getElementById("cineTime"),cineSeek=document.getElementById("cineSeek"),cineMute=document.getElementById("cineMute"),cineVolume=document.getElementById("cineVolume"),cineFull=document.getElementById("cineFull");
+  const cinePlay=document.getElementById("cinePlay"),cineTime=document.getElementById("cineTime"),cineSeek=document.getElementById("cineSeek"), cineMute=document.getElementById("cineMute"),cineVolume=document.getElementById("cineVolume"),cineFull=document.getElementById("cineFull");
   function activeVideo(){return document.getElementById("roomVideo")}
   function updateCineoraControls(){
     const v=activeVideo();
@@ -995,10 +995,8 @@ function startRoom(roomId,pageParams){
     cineTime.textContent=fmt(pos)+" / "+fmt(dur);
     cineSeek.max=dur||100;cineSeek.value=dur?Math.min(dur,pos):0;
     cinePlay.textContent=playing?"Ⅱ":"▶";
-    cineMute.textContent=(v&&v.muted)||(!v&&cineVolume.value==="0")?"🔇":"🔊";
   }
   cinePlay.onclick=()=>{const v=activeVideo();if(currentType==="youtube")ytCommand(player?.getPlayerState?.()===1?"pauseVideo":"playVideo");else if(v)v.paused?v.play():v.pause();updateCineoraControls()};
-  cineMute.onclick=()=>{const v=activeVideo();if(currentType==="youtube"){const muted=player?.isMuted?.();ytCommand(muted?"unMute":"mute")}else if(v)v.muted=!v.muted;updateCineoraControls()};
   cineVolume.oninput=()=>{const val=Number(cineVolume.value);const v=activeVideo();if(currentType==="youtube"){ytCommand("setVolume",[val*100]);if(val>0)ytCommand("unMute")}else if(v){v.volume=val;v.muted=val===0}updateCineoraControls()};
   cineSeek.oninput=()=>{const t=Number(cineSeek.value);const v=activeVideo();if(currentType==="youtube")ytCommand("seekTo",[t,true]);else if(v)v.currentTime=t};
   
