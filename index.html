@@ -292,7 +292,7 @@ function openModal(create){
 }
 document.getElementById("join").onclick=()=>openModal(false);document.getElementById("create").onclick=()=>openModal(true);document.getElementById("createTop").onclick=()=>openModal(true);document.getElementById("login").onclick=()=>openModal(false);document.getElementById("close").onclick=()=>modal.classList.add("hidden");
 function enterRoom(){
-  const n=nameInput.value.trim()||"Гость",r=roomInput.value.trim().toUpperCase();
+  const n=nameInput.value.trim()||"Гость"; let r=roomInput.value.trim().toUpperCase();
   try{localStorage.setItem("cineora_name",n);sessionStorage.setItem("cineora_name",n)}catch(e){}
   document.cookie="cineora_name="+encodeURIComponent(n)+"; Max-Age=31536000; Path=/; SameSite=Lax";
 
@@ -819,7 +819,19 @@ function startRoom(roomId){
   cineMute.onclick=()=>{const v=activeVideo();if(currentType==="youtube"){const muted=player?.isMuted?.();ytCommand(muted?"unMute":"mute")}else if(v)v.muted=!v.muted;updateCineoraControls()};
   cineVolume.oninput=()=>{const val=Number(cineVolume.value);const v=activeVideo();if(currentType==="youtube"){ytCommand("setVolume",[val*100]);if(val>0)ytCommand("unMute")}else if(v){v.volume=val;v.muted=val===0}updateCineoraControls()};
   cineSeek.oninput=()=>{const t=Number(cineSeek.value);const v=activeVideo();if(currentType==="youtube")ytCommand("seekTo",[t,true]);else if(v)v.currentTime=t};
-  cineQuality.onchange=()=>{document.getElementById("qualitySelect").value=cineQuality.value;document.getElementById("qualitySelect").dispatchEvent(new Event("change"));};
+  cineQuality.onchange=()=>{
+    const q=cineQuality.value;
+    if(currentType==="youtube"){
+      ytCommand("setPlaybackQuality",[q==="auto"?"default":q]);
+      setStatus(q==="auto"?"YouTube · качество Авто":"YouTube · качество "+(q==="large"?"480":q==="medium"?"360":q.replace("hd",""))+"p");
+    }else if(currentType==="video"){
+      setStatus("Прямое видео · качество исходного файла");
+    }else if(currentType==="rutube"||currentType==="vk"){
+      setStatus("Качество выбирается встроенным плеером сервиса");
+    }else{
+      setStatus("Качество недоступно для этого источника");
+    }
+  };
   cineFull.onclick=()=>document.getElementById("fullscreenBtn").click();
   setInterval(updateCineoraControls,500);
 
