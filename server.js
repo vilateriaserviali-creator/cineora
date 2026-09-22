@@ -10,6 +10,9 @@ const io = new Server(server);
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
+app.get("/cineora-hero.png", (req, res) => {
+  res.sendFile(path.join(__dirname, "cineora-hero.png"));
+});
 
 const rooms = new Map();
 
