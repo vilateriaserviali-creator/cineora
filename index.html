@@ -1118,41 +1118,35 @@ function startRoom(roomId,pageParams){
   document.querySelector(".chat-close").onclick=()=>{setFullscreenChat()};
   document.getElementById("inviteJoin")?.addEventListener("click",async()=>{
     const button=document.getElementById("inviteJoin");
-    const url=location.href;
+    const url=window.location.href;
     const original=button.innerHTML;
     button.disabled=true;
+    button.textContent="Копируем…";
+    let copied=false;
     try{
-      if(navigator.share && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)){
-        await navigator.share({title:"CINEORA — приглашение",text:"Присоединяйся к нашему просмотру в CINEORA 🍿",url});
-        button.textContent="✓ Приглашение открыто";
-      }else{
+      if(navigator.clipboard && window.isSecureContext){
+        try{await navigator.clipboard.writeText(url);copied=true}catch(e){}
+      }
+      if(!copied){
         const ta=document.createElement("textarea");
         ta.value=url;
         ta.setAttribute("readonly","");
-        ta.style.position="fixed";
-        ta.style.opacity="0";
-        ta.style.pointerEvents="none";
+        ta.style.cssText="position:fixed;left:-9999px;top:0;width:1px;height:1px;opacity:0;";
         document.body.appendChild(ta);
         ta.focus();ta.select();ta.setSelectionRange(0,ta.value.length);
-        let copied=false;
         try{copied=document.execCommand("copy")}catch(e){}
         ta.remove();
-        if(!copied && navigator.clipboard){
-          try{await navigator.clipboard.writeText(url);copied=true}catch(e){}
-        }
-        if(copied){
-          button.textContent="✓ Ссылка скопирована";
-          if(navigator.vibrate)try{navigator.vibrate(30)}catch(e){}
-        }else{
-          window.prompt("Скопируйте ссылку на комнату:",url);
-          button.textContent="✓ Ссылка показана";
-        }
+      }
+      if(copied){
+        button.textContent="✓ Ссылка скопирована";
+        if(navigator.vibrate)try{navigator.vibrate(30)}catch(e){}
+      }else{
+        window.prompt("Скопируйте ссылку на комнату:",url);
+        button.textContent="✓ Ссылка готова";
       }
     }catch(e){
-      if(e?.name!=="AbortError"){
-        try{window.prompt("Скопируйте ссылку на комнату:",url)}catch(_){}
-        button.textContent="Скопируйте ссылку";
-      }
+      try{window.prompt("Скопируйте ссылку на комнату:",url)}catch(_){}
+      button.textContent="Скопируйте ссылку";
     }finally{
       setTimeout(()=>{button.innerHTML=original;button.disabled=false},2200);
     }
