@@ -207,6 +207,10 @@ body{background:#e8dfe4;color:var(--ink)}
 .player-tools{display:none!important}
 </style><style id="cineora-hide-player-controls-final">
 .cineora-controls{display:none!important}
+</style><style id="cineora-emoji-final-fix">
+.emoji-picker.hidden{display:none!important}
+.emoji-picker:not(.hidden){display:block!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important}
+.emoji-picker{pointer-events:auto!important}
 </style></head>
 <body>
 
@@ -788,7 +792,13 @@ function startRoom(roomId){
   const chatInput=document.getElementById("chatInput");
   const emojiToggle=document.getElementById("emojiToggle");
   const emojiPicker=document.getElementById("emojiPicker");
-  emojiToggle.onclick=(e)=>{e.stopPropagation();emojiPicker.classList.toggle("hidden")};
+  emojiToggle.addEventListener("click",(e)=>{
+    e.preventDefault();
+    e.stopPropagation();
+    const open=emojiPicker.classList.contains("hidden");
+    emojiPicker.classList.toggle("hidden",!open);
+    emojiPicker.style.display=open?"block":"none";
+  });
   emojiPicker.addEventListener("click",e=>{
     const b=e.target.closest("button"); if(!b)return;
     const emoji=b.textContent.trim();
