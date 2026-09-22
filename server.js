@@ -306,16 +306,32 @@ io.on("connection", socket => {
     roomState(cleanRoom);
     if (typeof ack === "function") ack({ ok: true, roomId: cleanRoom });
   });
-  socket.on("join-room", ({ roomId, name }) => {
+  socket.on("voice-state", ({ enabled }) => {
+    const roomId = socket.data.roomId; if (!roomId) return;
+    const room = rooms.get(roomId); if (!room) return;
+    const user = room.users.get(socket.id); if (!user) return;
+    user.voiceEnabled = !!enabled;
+    io.to(roomId).emit("voice-user-state", { users: [...room.users.values()].map(u => ({ id:u.id, name:u.name, voiceEnabled:!!u.voiceEnabled })) });
+  });
+  socket.on("voice-signal", ({ to, data }) => {
+    const roomId = socket.data.roomId;
+    const target = io.sockets.sockets.get(String(to || ""));
+    if (!roomId || !target || target.data.roomId !== roomId || !data) return;
+    socket.to(target.id).emit("voice-signal", { from: socket.id, name: socket.data.name || "Гость", data });
+  });
+
+  socket.on("join-room", ({ roomId, name }) =>
     roomId = String(roomId || "").trim().toUpperCase().slice(0, 16);
     name = String(name || "Гость").trim().slice(0, 24);
     if (!roomId) return;
     const room = roomState(roomId); socket.join(roomId); socket.data.roomId = roomId; socket.data.name = name; room.emptySince = null;
     if (!room.hostId) room.hostId = socket.id;
-    room.users.set(socket.id, { id: socket.id, name, position: room.playing ? room.position + (Date.now() - room.updatedAt) / 1000 : room.position, playing: room.playing, progressUpdatedAt: Date.now(), duration: 0 });
+    room.users.set(socket.id, { id: socket.id, name, position: room.playing ? room.position + (Date.now() - room.updatedAt) / 1000 : room.position, playing: room.playing, progressUpdatedAt: Date.now(), duration: 0, voiceEnabled: false });
+    socket.emit("voice-peer-list", [...room.users.values()].map(u => ({ id:u.id, name:u.name, voiceEnabled:!!u.voiceEnabled })));
     socket.emit("room-state", { hostId: room.hostId, playing: room.playing, position: room.playing ? room.position + (Date.now() - room.updatedAt) / 1000 : room.position, serverTime: Date.now(), mediaUrl: room.mediaUrl });
     if (room.messages.length) socket.emit("chat-history", room.messages.slice(-100));
     broadcastRoom(roomId);
+    io.to(roomId).emit("voice-user-state", { users: [...room.users.values()].map(u => ({ id:u.id, name:u.name, voiceEnabled:!!u.voiceEnabled })) });
   });
   socket.on("rename", ({ name }) => {
     const roomId = socket.data.roomId;
@@ -327,6 +343,7 @@ io.on("connection", socket => {
     const user = room.users.get(socket.id);
     if (user) user.name = clean;
     broadcastRoom(roomId);
+    io.to(roomId).emit("voice-user-state", { users: [...room.users.values()].map(u => ({ id:u.id, name:u.name, voiceEnabled:!!u.voiceEnabled })) });
   });
   socket.on("set-media", ({ url }) => {
     const roomId = socket.data.roomId; if (!roomId) return;
@@ -391,6 +408,8 @@ io.on("connection", socket => {
     const roomId = socket.data.roomId; if (!roomId || !rooms.has(roomId)) return;
     const room = rooms.get(roomId);
     room.users.delete(socket.id);
+    socket.to(roomId).emit("voice-peer-left", socket.id);
+    io.to(roomId).emit("voice-user-state", { users: [...room.users.values()].map(u => ({ id:u.id, name:u.name, voiceEnabled:!!u.voiceEnabled })) });
     if (room.hostId === socket.id) {
       const next = room.users.values().next().value;
       room.hostId = next ? next.id : null;
