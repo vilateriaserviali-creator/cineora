@@ -2120,5 +2120,39 @@ function startRoom(roomId,pageParams){
   else ready();
 })();
 </script>
-</style></body></body>
+</style><script id="cineora-room-recovery">
+(function(){
+  function boot(){
+    const s=window.socket;
+    if(!s)return false;
+    let timer=null;
+    const ask=()=>{
+      if(!window.cineoraRoomJoined){
+        if(s.connected){
+          try{s.emit("join-room",{
+            roomId:new URLSearchParams(location.search).get("room")||"",
+            name:localStorage.getItem("cineora_name")||"Гость",
+            privateRoom:new URLSearchParams(location.search).get("private")==="1",
+            accessToken:new URLSearchParams(location.search).get("key")||""
+          },function(a){
+            if(a&&a.ok){window.cineoraRoomJoined=true;}
+          })}catch(e){}
+        }
+      } else if(s.connected){
+        try{s.emit("request-room-users")}catch(e){}
+      }
+    };
+    s.on("connect",ask);
+    s.on("disconnect",()=>{window.cineoraRoomJoined=false});
+    ask();
+    timer=setInterval(ask,3000);
+    window.addEventListener("beforeunload",()=>clearInterval(timer),{once:true});
+    return true;
+  }
+  if(!boot()){
+    window.addEventListener("cineora:socket-ready",boot,{once:true});
+  }
+})();
+</script>
+</body></body>
 </html>
