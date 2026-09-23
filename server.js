@@ -513,9 +513,16 @@ io.on("connection", socket => {
         if (typeof ack === "function") ack({ok:false,error:"Эта комната приватная. Нужна персональная ссылка-приглашение."});
         return;
       }
-    } else if (privateRoom && room.users.size === 0) {
+    } else if (room.users.size > 0 && privateRoom) {
+      if (typeof ack === "function") ack({ok:false,error:"Эта комната уже создана как обычная."});
+      return;
+    } else if (privateRoom) {
+      if (!accessToken) {
+        if (typeof ack === "function") ack({ok:false,error:"Не найден ключ приватного приглашения."});
+        return;
+      }
       room.isPrivate = true;
-      room.accessToken = accessToken || require("crypto").randomBytes(24).toString("hex");
+      room.accessToken = accessToken;
     }
     if (typeof ack === "function") ack({ok:true});
     if (socket.data.roomId && socket.data.roomId !== roomId) socket.leave(socket.data.roomId);
