@@ -69,7 +69,7 @@ app.get("/api/lordfilm-embed", async (req, res) => {
 
     const html = await response.text();
     const candidates = [];
-    const pushCandidate = value => {
+    const addCandidate = (value, score = 0) => {
       if (!value) return;
       let clean = String(value)
         .replace(/\\\//g, "/")
@@ -78,32 +78,50 @@ app.get("/api/lordfilm-embed", async (req, res) => {
         .replace(/\\u003d/g, "=")
         .replace(/^["']|["']$/g, "")
         .trim();
-      if (clean) candidates.push(clean);
+      if (!clean || clean.startsWith("javascript:") || clean.startsWith("data:")) return;
+      try {
+        const u = new URL(clean, finalUrl.href);
+        const lower = u.href.toLowerCase();
+        if (/\.(?:js|css|png|jpe?g|gif|svg|webp|ico)(?:[?#]|$)/i.test(lower)) return;
+        candidates.push({ url: u.href, score });
+      } catch {}
     };
 
     let m;
-    const attrRe = /<(?:iframe|video|source|embed)[^>]+(?:src|data-src|data-url|data-video|data-player)=["']([^"']+)["']/gi;
-    while ((m = attrRe.exec(html))) pushCandidate(m[1]);
 
-    // Lordfilm templates often keep the player URL inside JS/data attributes.
-    const urlRe = /(?:https?:)?\\?\/\\?\/[^"'\\s<>]+/gi;
-    while ((m = urlRe.exec(html))) pushCandidate(m[0]);
+    // Highest priority: the actual iframe/player tags used by Lordfilm templates.
+    const iframeRe = /<(?:iframe|embed)[^>]+(?:src|data-src|data-url|data-player)=["']([^"']+)["']/gi;
+    while ((m = iframeRe.exec(html))) addCandidate(m[1], 100);
 
+    const videoRe = /<(?:video|source)[^>]+(?:src|data-src|data-url)=["']([^"']+)["']/gi;
+    while ((m = videoRe.exec(html))) addCandidate(m[1], 90);
+
+    // Player URLs stored in common data attributes.
+    const dataPlayerRe = /(?:data-(?:video|player|src|url))=["']([^"']+)["']/gi;
+    while ((m = dataPlayerRe.exec(html))) addCandidate(m[1], 80);
+
+    // JS/JSON values near player-related keys.
     const playerContextRe = /(?:iframe|player|video|embed|kinobox|kodik|alloha|cdn|stream|file|src|url)[^]{0,500}?((?:https?:)?\\?\/\\?\/[^"'\\s<>]+)/gi;
-    while ((m = playerContextRe.exec(html))) pushCandidate(m[1]);
+    while ((m = playerContextRe.exec(html))) addCandidate(m[1], 60);
 
-    const urls = candidates.map(value => {
-      try {
-        return new URL(value, finalUrl.href).href;
-      } catch { return ""; }
-    }).filter(Boolean);
+    // Last resort: URLs in the page, but never prefer scripts/assets/analytics.
+    const urlRe = /(?:https?:)?\\?\/\\?\/[^"'\\s<>]+/gi;
+    while ((m = urlRe.exec(html))) addCandidate(m[0], 10);
 
-    const preferred = urls.find(u => {
-      try {
-        const h = new URL(u).hostname.toLowerCase();
-        return /^(iframe|player|embed|video)/i.test(new URL(u).pathname) || h !== finalHost;
-      } catch { return false; }
-    }) || urls[0] || "";
+    const preferred = candidates
+      .map(item => {
+        let score = item.score;
+        try {
+          const u = new URL(item.url);
+          const h = u.hostname.toLowerCase();
+          const p = u.pathname.toLowerCase();
+          if (/(?:embed|player|video|iframe|stream|alloha|kodik|cdn)/i.test(h + p)) score += 25;
+          if (h === finalHost || h.endsWith("." + finalHost)) score -= 5;
+          if (/(?:google-analytics|googletagmanager|doubleclick|mc\.yandex|vk\.com\/rtrg|stats\.)/i.test(item.url)) score -= 100;
+        } catch {}
+        return { ...item, score };
+      })
+      .sort((a, b) => b.score - a.score)[0]?.url || "";
 
     if (!preferred) {
       return res.status(404).json({ ok: false, error: "На этой странице не найден встроенный плеер." });
