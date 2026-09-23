@@ -69,17 +69,32 @@ app.get("/api/lordfilm-embed", async (req, res) => {
 
     const html = await response.text();
     const candidates = [];
-    const attrRe = /<(?:iframe|video|source)[^>]+(?:src|data-src|data-url)=["']([^"']+)["']/gi;
-    let m;
-    while ((m = attrRe.exec(html))) candidates.push(m[1]);
+    const pushCandidate = value => {
+      if (!value) return;
+      let clean = String(value)
+        .replace(/\\\//g, "/")
+        .replace(/&amp;/g, "&")
+        .replace(/\\u0026/g, "&")
+        .replace(/\\u003d/g, "=")
+        .replace(/^["']|["']$/g, "")
+        .trim();
+      if (clean) candidates.push(clean);
+    };
 
-    const playerRe = /(?:file|iframe|player|video|embed)[^"'<>]{0,80}(?:https?:)?\/\/[^"'<>\s]+/gi;
-    while ((m = playerRe.exec(html))) candidates.push(m[0].replace(/^[^h]*(https?:\/\/)/i, "$1"));
+    let m;
+    const attrRe = /<(?:iframe|video|source|embed)[^>]+(?:src|data-src|data-url|data-video|data-player)=["']([^"']+)["']/gi;
+    while ((m = attrRe.exec(html))) pushCandidate(m[1]);
+
+    // Lordfilm templates often keep the player URL inside JS/data attributes.
+    const urlRe = /(?:https?:)?\\?\/\\?\/[^"'\\s<>]+/gi;
+    while ((m = urlRe.exec(html))) pushCandidate(m[0]);
+
+    const playerContextRe = /(?:iframe|player|video|embed|kinobox|kodik|alloha|cdn|stream|file|src|url)[^]{0,500}?((?:https?:)?\\?\/\\?\/[^"'\\s<>]+)/gi;
+    while ((m = playerContextRe.exec(html))) pushCandidate(m[1]);
 
     const urls = candidates.map(value => {
       try {
-        const clean = String(value).replace(/&amp;/g, "&").trim();
-        return new URL(clean, finalUrl.href).href;
+        return new URL(value, finalUrl.href).href;
       } catch { return ""; }
     }).filter(Boolean);
 
