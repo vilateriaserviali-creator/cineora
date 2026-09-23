@@ -491,7 +491,80 @@ function publicUsers(room) {
 }
 function broadcastRoom(roomId) { const room = rooms.get(roomId); if (room) io.to(roomId).emit("room-users", publicUsers(room)); }
 
+function joinRoomForSocket(socket, { roomId, name, privateRoom, accessToken } = {}) {
+  roomId = String(roomId || "").trim().toUpperCase().slice(0, 16);
+  name = String(name || "Гость").trim().slice(0, 24);
+  privateRoom = !!privateRoom;
+  accessToken = String(accessToken || "").trim().slice(0, 96);
+
+  if (!roomId) return { ok:false, error:"Не указан код комнаты." };
+
+  const room = roomState(roomId);
+  if (room.isPrivate) {
+    if (!accessToken || accessToken !== room.accessToken) {
+      return { ok:false, error:"Эта комната приватная. Нужна персональная ссылка-приглашение." };
+    }
+  } else if (privateRoom) {
+    if (!accessToken) return { ok:false, error:"Не найден ключ приватного приглашения." };
+    room.isPrivate = true;
+    room.accessToken = accessToken;
+  }
+
+  if (socket.data.roomId && socket.data.roomId !== roomId) socket.leave(socket.data.roomId);
+  socket.join(roomId);
+  socket.data.roomId = roomId;
+  socket.data.name = name;
+  room.emptySince = null;
+
+  if (!room.hostId) room.hostId = socket.id;
+  const existing = room.users.get(socket.id);
+  room.users.set(socket.id, {
+    id: socket.id,
+    name,
+    position: existing?.position ?? (room.playing ? room.position + (Date.now() - room.updatedAt) / 1000 : room.position),
+    playing: existing?.playing ?? room.playing,
+    progressUpdatedAt: Date.now(),
+    duration: existing?.duration || 0,
+    voiceEnabled: !!existing?.voiceEnabled
+  });
+
+  socket.emit("voice-peer-list", [...room.users.values()].map(u => ({
+    id:u.id, name:u.name, voiceEnabled:!!u.voiceEnabled
+  })));
+  socket.emit("room-state", {
+    hostId: room.hostId,
+    playing: room.playing,
+    position: room.playing ? room.position + (Date.now() - room.updatedAt) / 1000 : room.position,
+    serverTime: Date.now(),
+    mediaUrl: room.mediaUrl
+  });
+  if (room.messages.length) socket.emit("chat-history", room.messages.slice(-100));
+  broadcastRoom(roomId);
+  socket.emit("room-users", publicUsers(room));
+  io.to(roomId).emit("voice-user-state", {
+    users: [...room.users.values()].map(u => ({
+      id:u.id, name:u.name, voiceEnabled:!!u.voiceEnabled
+    }))
+  });
+
+  return { ok:true, roomId };
+}
+
 io.on("connection", socket => {
+  const initialRoom = socket.handshake.auth?.roomId || socket.handshake.query?.roomId;
+  if (initialRoom) {
+    const result = joinRoomForSocket(socket, {
+      roomId: initialRoom,
+      name: socket.handshake.auth?.name || socket.handshake.query?.name || "Гость",
+      privateRoom: socket.handshake.auth?.privateRoom === true || socket.handshake.query?.privateRoom === "1",
+      accessToken: socket.handshake.auth?.accessToken || socket.handshake.query?.accessToken || ""
+    });
+    if (result.ok) {
+      socket.emit("room-joined", result);
+    } else {
+      socket.emit("room-access-denied", result);
+    }
+  }
   socket.on("create-room", ({ roomId }, ack) => {
     const cleanRoom = String(roomId || "").trim().toUpperCase().slice(0, 16);
     if (!cleanRoom) { if (typeof ack === "function") ack({ ok: false, error: "Не удалось создать комнату." }); return; }
@@ -513,42 +586,9 @@ io.on("connection", socket => {
   });
 
   socket.on("join-room", ({ roomId, name, privateRoom, accessToken }, ack) => {
-    roomId = String(roomId || "").trim().toUpperCase().slice(0, 16);
-    name = String(name || "Гость").trim().slice(0, 24);
-    privateRoom = !!privateRoom;
-    accessToken = String(accessToken || "").trim().slice(0, 96);
-    if (!roomId) { if (typeof ack === "function") ack({ok:false,error:"Не указан код комнаты."}); return; }
-    const room = roomState(roomId);
-    if (room.isPrivate) {
-      if (!accessToken || accessToken !== room.accessToken) {
-        if (typeof ack === "function") ack({ok:false,error:"Эта комната приватная. Нужна персональная ссылка-приглашение."});
-        return;
-      }
-    } else if (privateRoom) {
-      // A private invitation is allowed to recreate an in-memory room after a server restart.
-      // The invitation key itself is the credential for the room.
-      if (!accessToken) {
-        if (typeof ack === "function") ack({ok:false,error:"Не найден ключ приватного приглашения."});
-        return;
-      }
-      room.isPrivate = true;
-      room.accessToken = accessToken;
-    }
-    if (socket.data.roomId && socket.data.roomId !== roomId) socket.leave(socket.data.roomId);
-    socket.join(roomId);
-    socket.data.roomId = roomId;
-    socket.data.name = name;
-    room.emptySince = null;
-    if (!room.hostId) room.hostId = socket.id;
-    room.users.set(socket.id, { id: socket.id, name, position: room.playing ? room.position + (Date.now() - room.updatedAt) / 1000 : room.position, playing: room.playing, progressUpdatedAt: Date.now(), duration: 0, voiceEnabled: false });
-    socket.emit("voice-peer-list", [...room.users.values()].map(u => ({ id:u.id, name:u.name, voiceEnabled:!!u.voiceEnabled })));
-    socket.emit("room-state", { hostId: room.hostId, playing: room.playing, position: room.playing ? room.position + (Date.now() - room.updatedAt) / 1000 : room.position, serverTime: Date.now(), mediaUrl: room.mediaUrl });
-    if (room.messages.length) socket.emit("chat-history", room.messages.slice(-100));
-    broadcastRoom(roomId);
-    socket.emit("room-users", publicUsers(room));
-    io.to(roomId).emit("voice-user-state", { users: [...room.users.values()].map(u => ({ id:u.id, name:u.name, voiceEnabled:!!u.voiceEnabled })) });
-    // Confirm only after socket.join() and socket.data.roomId are set.
-    if (typeof ack === "function") ack({ok:true, roomId});
+    const result = joinRoomForSocket(socket, { roomId, name, privateRoom, accessToken });
+    if (typeof ack === "function") ack(result);
+    if (result.ok) socket.emit("room-joined", result);
   });
   socket.on("rename", ({ name }) => {
     const roomId = socket.data.roomId;
