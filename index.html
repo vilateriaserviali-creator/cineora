@@ -662,6 +662,7 @@ body.cineora-home-dark .modal-box{background:#29252d;border-color:#514754}
  .invite-card button{width:100%;flex:1 1 100%}
 }
 </style>
+</style><style id="cineora-private-room-ui">.room-access-denied .room-layout{filter:blur(1px);pointer-events:none}.room-access-denied:after{content:"🔒 Приватная комната\A Для входа нужна персональная ссылка-приглашение.";white-space:pre-line;position:fixed;z-index:99999;left:50%;top:50%;transform:translate(-50%,-50%);width:min(420px,calc(100% - 32px));box-sizing:border-box;padding:28px;border-radius:22px;background:#2a2530;color:#f4edf5;border:1px solid #6d5a72;box-shadow:0 24px 80px #0008;text-align:center;font:600 16px/1.55 Manrope,sans-serif} .room-private .invite-card{background:linear-gradient(135deg,#eee3f5,#ded0e6)!important;border-color:#bfa5c8!important}.room-private .invite-card button{background:#7d5c87!important}.room-public .invite-card{background:linear-gradient(135deg,#eef5ef,#dfece2)!important;border-color:#bfd2c3!important}.room-public .invite-card button{background:#62866a!important}</style>
 </head>
 <body>
 
@@ -827,7 +828,7 @@ function enterRoom(){
   modalStatus.textContent="Создаём комнату "+r+"…";
   localStorage.setItem("cineora_room",r);
   sessionStorage.setItem("cineora_room",r);
-  const params=new URLSearchParams({room:r}); const rt=(document.getElementById("roomTitleInput")?.value||"").trim(); const at=document.getElementById("scheduleInput")?.value; if(rt)params.set("title",rt); if(at){const ts=Date.parse(at);if(Number.isFinite(ts))params.set("at",String(ts))} params.set("private",document.getElementById("privateRoom")?.checked?"1":"0"); window.location.href=window.location.origin+"/?"+params.toString();
+  const isPrivate=document.getElementById("privateRoom")?.checked===true; const accessToken=isPrivate?Array.from(crypto.getRandomValues(new Uint8Array(24)),b=>b.toString(16).padStart(2,"0")).join(""):""; const params=new URLSearchParams({room:r}); const rt=(document.getElementById("roomTitleInput")?.value||"").trim(); const at=document.getElementById("scheduleInput")?.value; if(rt)params.set("title",rt); if(at){const ts=Date.parse(at);if(Number.isFinite(ts))params.set("at",String(ts))} params.set("private",isPrivate?"1":"0"); if(accessToken)params.set("key",accessToken); window.location.href=window.location.origin+"/?"+params.toString();
 }
 document.getElementById("go").onclick=enterRoom;
 [nameInput,roomInput].forEach(el=>el.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();enterRoom()}}));
@@ -1252,7 +1253,7 @@ function startRoom(roomId,pageParams){
       });
     }
   };
-  {const roomParams=new URLSearchParams(location.search);const isPrivateRoom=roomParams.get("private")==="1";document.body.classList.toggle("room-private",isPrivateRoom);document.body.classList.toggle("room-public",!isPrivateRoom);const modeLabel=document.getElementById("roomModeLabel");if(modeLabel){modeLabel.className="room-code room-mode-chip "+(isPrivateRoom?"private":"public");modeLabel.textContent=isPrivateRoom?"🔒 Приватная":"🌐 Обычная"}const inviteTitleMode=document.getElementById("inviteTitle"),inviteSub=document.getElementById("inviteSub");if(isPrivateRoom){if(inviteTitleMode)inviteTitleMode.textContent="🔒 Приватное приглашение";if(inviteSub)inviteSub.textContent="Эта ссылка ведёт прямо в закрытую комнату."}else{if(inviteTitleMode)inviteTitleMode.textContent="🍿 Присоединяйтесь к просмотру";if(inviteSub)inviteSub.textContent="Отправьте ссылку друзьям — фильм уже ждёт."}}
+  {const roomParams=new URLSearchParams(location.search);const isPrivateRoom=roomParams.get("private")==="1";const hasPrivateKey=!!roomParams.get("key");document.body.classList.toggle("room-private",isPrivateRoom);document.body.classList.toggle("room-public",!isPrivateRoom);const modeLabel=document.getElementById("roomModeLabel");if(modeLabel){modeLabel.className="room-code room-mode-chip "+(isPrivateRoom?"private":"public");modeLabel.textContent=isPrivateRoom?"🔒 Приватная":"🌐 Обычная"}const inviteTitleMode=document.getElementById("inviteTitle"),inviteSub=document.getElementById("inviteSub");if(isPrivateRoom){if(inviteTitleMode)inviteTitleMode.textContent="🔒 Приватное приглашение";if(inviteSub)inviteSub.textContent="Эта ссылка ведёт прямо в закрытую комнату."}else{if(inviteTitleMode)inviteTitleMode.textContent="🍿 Присоединяйтесь к просмотру";if(inviteSub)inviteSub.textContent="Отправьте ссылку друзьям — фильм уже ждёт."}}
   document.getElementById("setMediaRoom").onclick=submitMedia;
   document.getElementById("mediaUrlRoom").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();submitMedia()}});
   const roomLayout=document.querySelector(".room-layout"),sideCard=document.getElementById("sideCard");
@@ -1293,7 +1294,7 @@ function startRoom(roomId,pageParams){
     const roomCode=(params.get("room")||"").trim().toUpperCase();
     if(!roomCode)return;
 
-    const inviteUrl=window.location.origin+"/?room="+encodeURIComponent(roomCode)+(params.get("private")==="1"?"&private=1":"");
+    const inviteUrl=window.location.origin+"/?room="+encodeURIComponent(roomCode)+(params.get("private")==="1"?"&private=1&key="+encodeURIComponent(params.get("key")||""):"");
     const existing=document.getElementById("cineoraInviteDialog");
     if(existing)existing.remove();
 
@@ -1459,7 +1460,7 @@ function startRoom(roomId,pageParams){
   socket.on("connect",()=>{
     const cookieName=(document.cookie.match(/(?:^|; )cineora_name=([^;]*)/)||[])[1];
     const saved=localStorage.getItem("cineora_name")||sessionStorage.getItem("cineora_name")||(cookieName?decodeURIComponent(cookieName):"Гость");
-    socket.emit("join-room",{roomId,name:saved||"Гость"});
+    const roomAccessKey=new URLSearchParams(location.search).get("key")||""; const roomPrivate=new URLSearchParams(location.search).get("private")==="1"; socket.emit("join-room",{roomId,name:saved||"Гость",privateRoom:roomPrivate,accessToken:roomAccessKey},ack=>{if(ack&&!ack.ok){setStatus("🔒 "+(ack.error||"Нет доступа к комнате")); document.body.classList.add("room-access-denied"); setTimeout(()=>{try{socket.disconnect()}catch(e){}},200);}});
     setStatus("Комната подключена");
     const el=document.getElementById("chatConnection");if(el)el.textContent="● онлайн";
     window.dispatchEvent(new Event("cineora:connected"));
