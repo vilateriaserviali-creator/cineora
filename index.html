@@ -663,6 +663,119 @@ body.cineora-home-dark .modal-box{background:#29252d;border-color:#514754}
 }
 </style>
 </style><style id="cineora-private-room-ui">.room-access-denied .room-layout{filter:blur(1px);pointer-events:none}.room-access-denied:after{content:"🔒 Приватная комната\A Для входа нужна персональная ссылка-приглашение.";white-space:pre-line;position:fixed;z-index:99999;left:50%;top:50%;transform:translate(-50%,-50%);width:min(420px,calc(100% - 32px));box-sizing:border-box;padding:28px;border-radius:22px;background:#2a2530;color:#f4edf5;border:1px solid #6d5a72;box-shadow:0 24px 80px #0008;text-align:center;font:600 16px/1.55 Manrope,sans-serif} .room-private .invite-card{background:linear-gradient(135deg,#eee3f5,#ded0e6)!important;border-color:#bfa5c8!important}.room-private .invite-card button{background:#7d5c87!important}.room-public .invite-card{background:linear-gradient(135deg,#eef5ef,#dfece2)!important;border-color:#bfd2c3!important}.room-public .invite-card button{background:#62866a!important}</style>
+<style id="cineora-lira-redesign">
+/* Новый визуальный слой CINEORA + анимированная Лира */
+.hero{
+  min-height:760px!important;
+  color:#f7eff8!important;
+  background:
+    radial-gradient(circle at 74% 34%,rgba(151,105,184,.30),transparent 28%),
+    radial-gradient(circle at 92% 80%,rgba(89,119,170,.22),transparent 28%),
+    linear-gradient(135deg,#0b0a18 0%,#141125 48%,#11182a 100%)!important;
+  overflow:hidden;
+}
+.hero:before{
+  width:720px;height:720px;right:-170px;top:30px;
+  background:radial-gradient(circle,rgba(198,151,218,.14),transparent 67%);
+  box-shadow:none;filter:blur(2px);transform:none;
+}
+.hero:after{
+  background:
+    radial-gradient(circle at 68% 35%,rgba(255,255,255,.05),transparent 30%),
+    linear-gradient(90deg,#070714aa 0%,transparent 60%,#0b0b18aa 100%)!important;
+}
+.header{
+  border-bottom:1px solid rgba(214,190,231,.13)!important;
+}
+.logo,.brand-big,.hero h1{color:#f7eff8!important}
+.logo span,.accent{color:#d9a9ef!important}
+.nav a,.login{color:#d9cde0!important}
+.create-top{
+  background:linear-gradient(135deg,#dba7ef,#a985c9)!important;
+  border-color:#dcb3ee!important;color:#24192b!important;
+  box-shadow:0 8px 25px rgba(163,111,191,.22);
+}
+.home-head-actions{display:flex;align-items:center;gap:12px}
+.home-theme-toggle{
+  width:40px;height:40px;border-radius:50%;border:1px solid #ffffff18;
+  background:#ffffff09;color:#eadcf0;cursor:pointer;
+}
+.hero-content{max-width:700px!important;padding-top:78px!important}
+.eyebrow{
+  background:#ffffff08!important;border-color:#c9a6d92b!important;color:#cbb9d2!important;
+  box-shadow:none!important;
+}
+.eyebrow:before{background:#d39beb!important;box-shadow:0 0 0 4px #d39beb22!important}
+.lead{color:#c8bdcf!important}
+#funLine{
+  background:#ffffff08!important;border-color:#ffffff10!important;color:#c9b9d0!important;
+}
+.primary{
+  background:linear-gradient(135deg,#dca8ef,#b58bd4)!important;
+  border-color:#dca8ef!important;color:#27182f!important;
+  box-shadow:0 12px 30px rgba(172,116,202,.22)!important;
+}
+.secondary{
+  background:#ffffff08!important;border-color:#bca0ca!important;color:#eee4f1!important;
+}
+.sources-title{color:#9f91a8!important}.source{color:#c6bacb!important}.source-icon{border-color:#8d7897!important;background:#ffffff08}
+.features{border-color:#ffffff12!important}.feature{border-color:#ffffff12!important;color:#bdb1c5!important}
+.section.cream{
+  background:linear-gradient(135deg,#171324 0%,#21192a 55%,#172032 100%)!important;color:#eee7f1;
+}
+.section.dark{
+  background:linear-gradient(135deg,#0e0d18,#171126,#111a29)!important;color:#eee7f1;
+}
+.section-title{color:#f3eaf6}.section-kicker{color:#a995af}.about-copy{background:#ffffff08!important;border-color:#ffffff12!important;color:#cfc3d4!important;box-shadow:none!important}.about-copy strong{color:#f4eaf7!important}
+.card,.platform,.news-card{background:#ffffff08!important;border-color:#ffffff12!important;color:#eee7f1}.card p,.section-text,.news-card p{color:#b9aebf!important}.card .num{background:#8e6aa0!important;color:#fff;border-color:#a981b8!important}
+.feature-card{background:#ffffff08!important;border-color:#ffffff12!important}.feature-card p{color:#b9aebf!important}.platform span{color:#d9a9ef}
+.footer{background:#090812!important;border-top-color:#ffffff10!important}
+.home-visual{display:none!important}
+.lira-stage{
+  position:absolute;right:-5px;top:118px;width:min(560px,45vw);height:560px;z-index:3;pointer-events:none;
+}
+.lira-aura{
+  position:absolute;inset:45px 20px 35px 20px;border-radius:50%;
+  background:radial-gradient(circle,rgba(212,165,236,.24),rgba(104,123,188,.10) 45%,transparent 72%);
+  filter:blur(5px);animation:liraAura 5s ease-in-out infinite;
+}
+.lira-mascot{
+  position:absolute;right:45px;top:0;width:min(390px,34vw);height:auto;
+  filter:drop-shadow(0 25px 40px rgba(4,3,12,.55));
+  transform-origin:50% 80%;
+  animation:liraFloat 4.8s ease-in-out infinite;
+}
+.lira-bubble{
+  position:absolute;right:0;top:55px;max-width:210px;padding:13px 16px;border-radius:18px 18px 4px 18px;
+  background:rgba(247,233,250,.95);color:#55435d;border:1px solid #d8b8df;
+  box-shadow:0 14px 30px rgba(0,0,0,.22);font-weight:700;font-size:13px;
+  animation:liraBubble 5s ease-in-out infinite;
+}
+.lira-bubble small{display:block;margin-top:4px;color:#8b738f;font-weight:500}
+.lira-float-card{
+  position:absolute;left:10px;bottom:70px;display:flex;align-items:center;gap:10px;
+  padding:11px 14px;border:1px solid #ffffff1f;background:rgba(30,22,37,.82);
+  backdrop-filter:blur(14px);border-radius:15px;color:#eee4f1;
+  box-shadow:0 18px 45px rgba(0,0,0,.28);animation:liraCard 4.2s ease-in-out infinite;
+}
+.lira-float-card>span{font-size:23px}.lira-float-card b,.lira-float-card small{display:block}.lira-float-card b{font-size:12px}.lira-float-card small{font-size:10px;color:#bbaac1;margin-top:2px}
+.lira-stars{position:absolute;right:275px;top:40px;color:#e7c7f2;font-size:20px;letter-spacing:7px;animation:liraStars 3.5s ease-in-out infinite}
+@keyframes liraFloat{0%,100%{transform:translate3d(0,0,0) rotate(-1deg)}50%{transform:translate3d(0,-15px,0) rotate(1.5deg)}}
+@keyframes liraAura{0%,100%{transform:scale(.96);opacity:.72}50%{transform:scale(1.05);opacity:1}}
+@keyframes liraBubble{0%,100%{transform:translateY(0) rotate(1deg)}50%{transform:translateY(-7px) rotate(-1deg)}}
+@keyframes liraCard{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-8px) rotate(1deg)}}
+@keyframes liraStars{0%,100%{opacity:.55;transform:translateY(0)}50%{opacity:1;transform:translateY(-8px)}}
+@media(max-width:1180px){
+  .lira-stage{right:-120px;opacity:.9}.hero-content{max-width:610px!important}
+}
+@media(max-width:900px){
+  .lira-stage{display:none}.hero-content{max-width:100%!important;padding-top:48px!important}.hero{min-height:0!important}
+  .home-head-actions{gap:6px}.home-theme-toggle{display:none}
+}
+@media(prefers-reduced-motion:reduce){
+  .lira-mascot,.lira-aura,.lira-bubble,.lira-float-card,.lira-stars{animation:none!important}
+}
+</style>
 </head>
 <body>
 
@@ -723,6 +836,13 @@ body.cineora-home-dark .modal-box{background:#29252d;border-color:#514754}
 <p class="lead">Смотрите фильмы и видео вместе с друзьями — в одной синхронизированной сессии, где бы вы ни были.</p><div id="funLine" style="margin-top:16px;font-size:13px;color:#6f6470;min-height:20px"></div>
 <div class="actions"><button type="button" class="primary" id="join">▶ &nbsp;Присоединиться к сессии</button><button type="button" class="secondary" id="create">＋ &nbsp;Создать сессию</button></div>
 <div class="sources"><div class="sources-title">Поддерживаем популярные источники</div><div class="source-row"><div class="source"><span class="source-icon">▶</span>YouTube</div><div class="source"><span class="source-icon">VK</span>VK Видео</div><div class="source"><span class="source-icon">R</span>RUTUBE</div><div class="source"><span class="source-icon">↗</span>Видео из интернета</div></div></div>
+</div>
+<div class="lira-stage" aria-hidden="true">
+  <div class="lira-aura"></div>
+  <div class="lira-stars">✦　·　✧　　✦</div>
+  <div class="lira-bubble">Привет! Я Лира ♡<small>Готова смотреть вместе</small></div>
+  <img class="lira-mascot" src="/lira.svg" alt="">
+  <div class="lira-float-card"><span>🍿</span><div><b>Все собрались?</b><small>Тогда начинаем!</small></div></div>
 </div>
 <div class="home-visual" aria-hidden="true">
   <div class="home-visual-glow"></div>
