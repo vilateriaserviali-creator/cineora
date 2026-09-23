@@ -551,12 +551,12 @@ function joinRoomForSocket(socket, { roomId, name, privateRoom, accessToken } = 
 }
 
 io.on("connection", socket => {
-  const initialRoom = socket.handshake.auth?.roomId || socket.handshake.query?.roomId;
+  const initialRoom = String(socket.handshake.auth?.roomId || socket.handshake.query?.roomId || "").trim();
   if (initialRoom) {
     const result = joinRoomForSocket(socket, {
       roomId: initialRoom,
       name: socket.handshake.auth?.name || socket.handshake.query?.name || "Гость",
-      privateRoom: socket.handshake.auth?.privateRoom === true || socket.handshake.query?.privateRoom === "1",
+      privateRoom: socket.handshake.auth?.privateRoom === true || socket.handshake.auth?.privateRoom === "1" || socket.handshake.query?.privateRoom === "1",
       accessToken: socket.handshake.auth?.accessToken || socket.handshake.query?.accessToken || ""
     });
     if (result.ok) {
