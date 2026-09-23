@@ -665,6 +665,19 @@ io.on("connection", socket => {
     io.to(roomId).emit("room-host", { hostId: room.hostId });
     broadcastRoom(roomId);
   });
+  socket.on("request-room-users", () => {
+    const roomId = socket.data.roomId;
+    if (!roomId) return;
+    const room = rooms.get(roomId);
+    if (!room) return;
+    socket.emit("room-users", publicUsers(room));
+    socket.emit("voice-user-state", {
+      users: [...room.users.values()].map(u => ({
+        id:u.id, name:u.name, voiceEnabled:!!u.voiceEnabled
+      }))
+    });
+  });
+
   socket.on("request-room-state", () => {
     const roomId = socket.data.roomId; if (!roomId) return;
     const room = roomState(roomId);
