@@ -32,7 +32,7 @@ app.get("/health", (req, res) => {
 const { Pool } = require("pg");
 
 const smtpUser = String(process.env.SMTP_USER || "").trim();
-const smtpPass = String(process.env.SMTP_PASS || "").replace(/s+/g, "");
+const smtpPass = String(process.env.SMTP_PASS || "").replace(/\s+/g, "");
 const fallbackSuggestions = [];
 const mailer = smtpUser && smtpPass
   ? nodemailer.createTransport({
@@ -98,13 +98,20 @@ app.post("/api/suggestions", async (req, res) => {
     const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
     await pool.query("INSERT INTO suggestions (id, name, text) VALUES ($1, $2, $3)", [id, name || "Гость", text]);
 
+    // Email notification is secondary: a mail failure must not undo the saved suggestion.
     if (mailer) {
       try {
         await mailer.sendMail({
           from: smtpUser,
           to: String(process.env.ADMIN_EMAIL || smtpUser).trim(),
           subject: "Новое предложение для CINEORA",
-          text: ["Новое предложение для CINEORA", "", `Имя: ${name || "Гость"}`, "", text].join("\n")
+          text: [
+            "Новое предложение для CINEORA",
+            "",
+            `Имя: ${name || "Гость"}`,
+            "",
+            text
+          ].join("\n")
         });
       } catch (mailErr) {
         console.error("Suggestion email failed:", mailErr);
@@ -303,43 +310,164 @@ app.get("/admin", (req, res) => {
 <title>CINEORA — Админ-панель</title>
 <style>
 :root{--bg:#101016;--panel:#171720;--panel2:#1d1d28;--line:#2d2d3a;--text:#f4f2f7;--muted:#9a97a5;--pink:#f1b8cf;--lilac:#cbbcf5;--green:#9edc9d;--danger:#ef9caa;--shadow:0 18px 50px rgba(0,0,0,.25)}
-*{box-sizing:border-box}html{background:var(--bg)}body{margin:0;min-height:100vh;background:radial-gradient(circle at 15% 0%,rgba(203,188,245,.12),transparent 32%),radial-gradient(circle at 90% 10%,rgba(241,184,207,.1),transparent 30%),var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.wrap{width:min(1280px,calc(100% - 32px));margin:0 auto;padding:26px 0 44px}.top{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:4px 2px 22px}.brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--text)}.brand-mark{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,var(--pink),var(--lilac));color:#15151c;display:grid;place-items:center;font-weight:900;box-shadow:0 10px 28px rgba(203,188,245,.16)}.brand-name{font-weight:850;letter-spacing:.12em;font-size:20px}.brand-name span{opacity:.75}.site-link{color:var(--muted);text-decoration:none;border:1px solid var(--line);background:rgba(255,255,255,.03);padding:10px 14px;border-radius:999px}.site-link:hover{color:var(--text);background:rgba(255,255,255,.06)}.login{background:rgba(23,23,32,.86);border:1px solid var(--line);border-radius:24px;padding:22px;box-shadow:var(--shadow);display:flex;gap:10px;align-items:center;flex-wrap:wrap}.login input{flex:1;min-width:220px;padding:13px 15px;border-radius:13px;border:1px solid var(--line);background:#111119;color:var(--text);outline:none}.login input:focus{border-color:var(--lilac);box-shadow:0 0 0 3px rgba(203,188,245,.1)}button{font:inherit}.btn{border:1px solid transparent;border-radius:13px;padding:12px 16px;background:linear-gradient(135deg,var(--pink),var(--lilac));color:#181720;font-weight:800;cursor:pointer}.btn:hover{transform:translateY(-1px);filter:brightness(1.04)}.btn.secondary{background:var(--panel2);border-color:var(--line);color:var(--text)}.status{font-size:13px;color:var(--muted)}.error{color:var(--danger);margin-top:10px}.dashboard{display:none}.dashboard.show{display:block}.hero{display:flex;align-items:end;justify-content:space-between;gap:20px;margin:28px 0 18px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);margin-bottom:8px}.hero h1{font-size:clamp(30px,5vw,46px);line-height:1.05;margin:0;letter-spacing:-.04em}.hero p{margin:10px 0 0;color:var(--muted)}.hero-actions{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.updated{font-size:12px;color:var(--muted)}.nav{display:flex;gap:7px;overflow:auto;padding:6px;background:rgba(23,23,32,.8);border:1px solid var(--line);border-radius:16px;margin:18px 0}.nav button{white-space:nowrap;border:0;background:transparent;color:var(--muted);padding:11px 15px;border-radius:11px;cursor:pointer;font-weight:700}.nav button.active{background:#292937;color:var(--text);box-shadow:inset 0 0 0 1px #3a3a4b}.view{display:none}.view.active{display:block}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.stat{background:linear-gradient(145deg,rgba(29,29,40,.98),rgba(23,23,32,.98));border:1px solid var(--line);border-radius:20px;padding:19px;min-height:120px}.stat-icon{font-size:20px}.stat b{display:block;font-size:34px;letter-spacing:-.04em;margin-top:10px}.stat span{color:var(--muted);font-size:13px}.grid{display:grid;grid-template-columns:1.2fr .8fr;gap:14px;margin-top:14px}.card{background:rgba(23,23,32,.94);border:1px solid var(--line);border-radius:20px;padding:20px;box-shadow:0 12px 34px rgba(0,0,0,.14)}.card h2{font-size:18px;margin:0}.card-head{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:15px}.room-list,.cards{display:grid;gap:10px}.room,.idea,.news{background:#13131b;border:1px solid #292936;border-radius:16px;padding:15px}.room-head,.idea-head,.news-head{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}.room-code{font-weight:850;letter-spacing:.08em}.pill{display:inline-flex;align-items:center;gap:6px;padding:6px 9px;border-radius:999px;background:#20202b;color:var(--muted);font-size:12px}.pill.live{color:var(--green);background:rgba(158,220,157,.09)}.room-meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:11px}.people{margin-top:11px;color:var(--muted);font-size:13px;line-height:1.6}.person-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--green);margin-right:6px;box-shadow:0 0 10px rgba(158,220,157,.7)}.toolbar{display:flex;gap:9px;flex-wrap:wrap;margin:15px 0}.toolbar input,.toolbar select{padding:12px 13px;border-radius:12px;border:1px solid var(--line);background:#111119;color:var(--text);outline:none}.toolbar input{flex:1;min-width:220px}.toolbar input:focus,.toolbar select:focus{border-color:var(--lilac)}.idea-text,.news-text{margin:13px 0;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.6;color:#ddd9e3}.person{font-weight:800}.date{font-size:12px;color:var(--muted);margin-top:4px}.empty{padding:22px;text-align:center;color:var(--muted);border:1px dashed #30303d;border-radius:14px}.actions{display:flex;gap:8px;flex-wrap:wrap}.smallbtn{border:1px solid var(--line);background:#1b1b25;color:var(--text);border-radius:10px;padding:8px 11px;cursor:pointer;font-weight:700}.smallbtn.primary{background:linear-gradient(135deg,var(--pink),var(--lilac));color:#181720;border-color:transparent}.smallbtn.danger{color:var(--danger)}.select{padding:8px 10px;border-radius:10px;border:1px solid var(--line);background:#111119;color:var(--text)}.news-edit{display:grid;gap:9px;margin-top:13px}.news-edit input,.news-edit textarea{width:100%;padding:11px 12px;border-radius:10px;border:1px solid var(--line);background:#111119;color:var(--text);outline:none;font:inherit}.news-edit textarea{min-height:100px;resize:vertical}.check{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:7px}.published{font-size:12px;color:var(--green)}.unpublished{font-size:12px;color:var(--muted)}@media(max-width:900px){.stats{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}}@media(max-width:600px){.wrap{width:min(100% - 20px,1280px)}.stats{grid-template-columns:1fr}.hero{align-items:flex-start;flex-direction:column}}
-</style>
+*{box-sizing:border-box}html{background:var(--bg)}body{margin:0;min-height:100vh;background:radial-gradient(circle at 15% 0%,rgba(203,188,245,.12),transparent 32%),radial-gradient(circle at 90% 10%,rgba(241,184,207,.1),transparent 30%),var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.wrap{width:min(1280px,calc(100% - 32px));margin:0 auto;padding:26px 0 44px}.top{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:4px 2px 22px}.brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--text)}.brand-mark{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,var(--pink),var(--lilac));color:#15151c;display:grid;place-items:center;font-weight:900;box-shadow:0 10px 28px rgba(203,188,245,.16)}.brand-name{font-weight:850;letter-spacing:.12em;font-size:20px}.brand-name span{opacity:.75}.site-link{color:var(--muted);text-decoration:none;border:1px solid var(--line);background:rgba(255,255,255,.03);padding:10px 14px;border-radius:999px}.site-link:hover{color:var(--text);background:rgba(255,255,255,.06)}.login{background:rgba(23,23,32,.86);border:1px solid var(--line);border-radius:24px;padding:22px;box-shadow:var(--shadow);display:flex;gap:10px;align-items:center;flex-wrap:wrap}.login input{flex:1;min-width:220px;padding:13px 15px;border-radius:13px;border:1px solid var(--line);background:#111119;color:var(--text);outline:none}.login input:focus{border-color:var(--lilac);box-shadow:0 0 0 3px rgba(203,188,245,.1)}button{font:inherit}.btn{border:1px solid transparent;border-radius:13px;padding:12px 16px;background:linear-gradient(135deg,var(--pink),var(--lilac));color:#181720;font-weight:800;cursor:pointer}.btn:hover{transform:translateY(-1px);filter:brightness(1.04)}.btn.secondary{background:var(--panel2);border-color:var(--line);color:var(--text)}.status{font-size:13px;color:var(--muted)}.error{color:var(--danger);margin-top:10px}.dashboard{display:none}.dashboard.show{display:block}.hero{display:flex;align-items:end;justify-content:space-between;gap:20px;margin:28px 0 18px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);margin-bottom:8px}.hero h1{font-size:clamp(30px,5vw,46px);line-height:1.05;margin:0;letter-spacing:-.04em}.hero p{margin:10px 0 0;color:var(--muted)}.hero-actions{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.updated{font-size:12px;color:var(--muted)}.nav{display:flex;gap:7px;overflow:auto;padding:6px;background:rgba(23,23,32,.8);border:1px solid var(--line);border-radius:16px;margin:18px 0}.nav button{white-space:nowrap;border:0;background:transparent;color:var(--muted);padding:11px 15px;border-radius:11px;cursor:pointer;font-weight:700}.nav button.active{background:#292937;color:var(--text);box-shadow:inset 0 0 0 1px #3a3a4b}.view{display:none}.view.active{display:block}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.stat{background:linear-gradient(145deg,rgba(29,29,40,.98),rgba(23,23,32,.98));border:1px solid var(--line);border-radius:20px;padding:19px;min-height:120px}.stat-icon{font-size:20px}.stat b{display:block;font-size:34px;letter-spacing:-.04em;margin-top:10px}.stat span{color:var(--muted);font-size:13px}.grid{display:grid;grid-template-columns:1.2fr .8fr;gap:14px;margin-top:14px}.card{background:rgba(23,23,32,.94);border:1px solid var(--line);border-radius:20px;padding:20px;box-shadow:0 12px 34px rgba(0,0,0,.14)}.card h2{font-size:18px;margin:0}.card-head{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:15px}.room-list,.cards{display:grid;gap:10px}.room,.idea,.news{background:#13131b;border:1px solid #292936;border-radius:16px;padding:15px}.room-head,.idea-head,.news-head{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}.room-code{font-weight:850;letter-spacing:.08em}.pill{display:inline-flex;align-items:center;gap:6px;padding:6px 9px;border-radius:999px;background:#20202b;color:var(--muted);font-size:12px}.pill.live{color:var(--green);background:rgba(158,220,157,.09)}.room-meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:11px}.people{margin-top:11px;color:var(--muted);font-size:13px;line-height:1.6}.person-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--green);margin-right:6px;box-shadow:0 0 10px rgba(158,220,157,.7)}.toolbar{display:flex;gap:9px;flex-wrap:wrap;margin:15px 0}.toolbar input,.toolbar select{padding:12px 13px;border-radius:12px;border:1px solid var(--line);background:#111119;color:var(--text);outline:none}.toolbar input{flex:1;min-width:220px}.toolbar input:focus,.toolbar select:focus{border-color:var(--lilac)}.idea-text,.news-text{margin:13px 0;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.6;color:#ddd9e3}.person{font-weight:800}.date{font-size:12px;color:var(--muted);margin-top:4px}.actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.select{padding:9px 11px;border-radius:10px;border:1px solid var(--line);background:#1a1a24;color:var(--text)}.smallbtn{border:1px solid var(--line);background:#1a1a24;color:var(--text);border-radius:10px;padding:9px 12px;cursor:pointer}.smallbtn:hover{background:#242432}.smallbtn.primary{background:rgba(241,184,207,.14);border-color:rgba(241,184,207,.28)}.smallbtn.danger{color:var(--danger);background:rgba(239,156,170,.07)}.editor{background:#13131b;border:1px solid #292936;border-radius:18px;padding:17px;margin-bottom:14px}.editor h2{font-size:18px;margin:0 0 13px}.editor input,.editor textarea{width:100%;padding:12px 13px;border-radius:11px;border:1px solid var(--line);background:#0f0f16;color:var(--text);margin-bottom:9px;outline:none}.editor textarea{min-height:125px;resize:vertical}.editor-row{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.check{color:var(--muted);font-size:13px}.published{color:var(--green);font-size:12px;font-weight:800}.unpublished{color:#d8b679;font-size:12px;font-weight:800}.empty{text-align:center;padding:42px 15px;color:var(--muted);border:1px dashed var(--line);border-radius:16px}.danger-note{color:var(--danger);font-size:12px}.footer-note{margin-top:16px;color:var(--muted);font-size:12px;text-align:center}@media(max-width:900px){.stats{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}}@media(max-width:600px){.wrap{width:calc(100% - 20px);padding-top:14px}.top{padding-bottom:12px}.brand-mark{width:38px;height:38px}.brand-name{font-size:17px}.site-link{padding:8px 11px}.login{padding:15px}.login input{min-width:100%;flex-basis:100%}.hero{align-items:flex-start;flex-direction:column}.hero-actions{width:100%}.hero-actions .btn{flex:1}.stats{grid-template-columns:1fr 1fr;gap:8px}.stat{padding:14px;min-height:105px}.stat b{font-size:28px}.card{padding:14px}.room-head,.idea-head,.news-head{display:block}.actions{margin-top:10px}.toolbar input{min-width:100%}}\n</style>
 </head>
 <body>
 <div class="wrap">
-<header class="top"><a class="brand" href="/"><span class="brand-mark">C</span><span class="brand-name">CINE<span>ORA</span></span></a><a class="site-link" href="/">← На сайт</a></header>
-<section class="login" id="loginBox"><input id="pass" type="password" placeholder="Пароль администратора"><button class="btn" onclick="openAdmin()">Войти</button><span class="status" id="loginStatus">Пароль не сохраняется.</span></section>
-<section class="dashboard" id="dashboard">
-<div class="hero"><div><div class="eyebrow">CINEORA control</div><h1>Панель управления</h1><p>Комнаты, предложения пользователей и новости.</p></div><div class="hero-actions"><span class="updated" id="updated"></span><button class="btn secondary" onclick="refreshAll()">Обновить</button></div></div>
-<nav class="nav"><button class="active" data-view="overview">Обзор</button><button data-view="rooms">Комнаты</button><button data-view="ideas">Предложения</button><button data-view="news">Обновления</button></nav>
-<section class="view active" id="view-overview"><div class="stats"><article class="stat"><div class="stat-icon">🎬</div><b id="statRooms">0</b><span>Активные комнаты</span></article><article class="stat"><div class="stat-icon">👥</div><b id="statUsers">0</b><span>Онлайн</span></article><article class="stat"><div class="stat-icon">💡</div><b id="statIdeas">0</b><span>Предложения</span></article><article class="stat"><div class="stat-icon">📰</div><b id="statNews">0</b><span>Обновления</span></article></div><div class="grid"><section class="card"><div class="card-head"><h2>Сейчас смотрят</h2></div><div id="overviewRooms" class="room-list"></div></section><section class="card"><div class="card-head"><h2>Быстрые действия</h2></div><div class="actions"><button class="smallbtn" onclick="switchView('ideas')">Предложения</button><button class="smallbtn" onclick="switchView('news')">Обновления</button><button class="smallbtn" onclick="loadStats()">Обновить статистику</button></div></section></div></section>
-<section class="view" id="view-rooms"><section class="card"><div class="card-head"><h2>Активные комнаты</h2><span class="status" id="roomsCount">0 комнат</span></div><div id="roomsList" class="room-list"></div></section></section>
-<section class="view" id="view-ideas"><section class="card"><div class="card-head"><h2>Предложения пользователей</h2><span class="status" id="ideasCount">0</span></div><div class="toolbar"><input id="search" placeholder="Поиск по имени и тексту"><select id="filter"><option value="all">Все</option><option value="new">Новые</option><option value="in_progress">В работе</option><option value="done">Добавлено</option><option value="rejected">Отклонено</option></select></div><div id="list" class="cards"></div></section></section>
-<section class="view" id="view-news"><section class="card"><div class="card-head"><h2>Новое обновление</h2><span class="status" id="newsStatus"></span></div><div class="news-edit"><input id="newsTitle" placeholder="Заголовок"><textarea id="newsText" placeholder="Текст обновления"></textarea><label class="check"><input id="newsPublished" type="checkbox" checked> Показывать на сайте</label><button class="btn" onclick="createNews()">Опубликовать</button></div></section><section class="card" style="margin-top:14px"><div class="card-head"><h2>Все обновления</h2><span class="status" id="newsCount">0</span></div><div id="newsList" class="cards"></div></section></section>
-</section>
+  <div class="top">
+    <a class="brand" href="/">
+      <span class="brand-mark">C</span><span class="brand-name">CINE<span>ORA</span></span>
+    </a>
+    <a class="site-link" href="/">← На сайт</a>
+  </div>
+
+  <div class="login" id="loginBox">
+    <input id="pass" type="password" autocomplete="current-password" placeholder="Пароль администратора">
+    <button class="btn" onclick="openAdmin()">Войти в администрацию</button>
+    <span id="loginStatus" class="status"></span>
+  </div>
+
+  <section class="dashboard" id="dashboard">
+    <div class="hero">
+      <div>
+        <div class="eyebrow">CINEORA / CONTROL CENTER</div>
+        <h1>Администрация</h1>
+        <p>Комнаты, пользователи, предложения и обновления — в одном месте.</p>
+      </div>
+      <div class="hero-actions">
+        <span id="updated" class="updated">Обновление…</span>
+        <button class="btn secondary" onclick="refreshAll()">↻ Обновить</button>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <button class="active" data-view="overview" onclick="showView('overview')">Обзор</button>
+      <button data-view="rooms" onclick="showView('rooms')">Комнаты</button>
+      <button data-view="ideas" onclick="showView('ideas')">Предложения</button>
+      <button data-view="news" onclick="showView('news')">Обновления</button>
+    </nav>
+
+    <section class="view active" id="view-overview">
+      <div class="stats">
+        <div class="stat"><div class="stat-icon">🎬</div><span>Активные комнаты</span><b id="statRooms">0</b></div>
+        <div class="stat"><div class="stat-icon">🟢</div><span>Пользователи онлайн</span><b id="statUsers">0</b></div>
+        <div class="stat"><div class="stat-icon">💡</div><span>Предложения</span><b id="statIdeas">0</b></div>
+        <div class="stat"><div class="stat-icon">📰</div><span>Обновления</span><b id="statNews">0</b></div>
+      </div>
+      <div class="grid">
+        <div class="card"><div class="card-head"><h2>Сейчас в комнатах</h2><span class="pill live">● LIVE</span></div><div id="overviewRooms" class="room-list"></div></div>
+        <div class="card"><div class="card-head"><h2>Быстрые действия</h2></div><div class="room-list">
+          <button class="btn secondary" onclick="showView('rooms')">🎬 Открыть комнаты</button>
+          <button class="btn secondary" onclick="showView('ideas')">💡 Проверить предложения</button>
+          <button class="btn secondary" onclick="showView('news')">📰 Управлять обновлениями</button>
+        </div></div>
+      </div>
+    </section>
+
+    <section class="view" id="view-rooms">
+      <div class="card"><div class="card-head"><h2>Активные комнаты</h2><span id="roomsCount" class="pill">0 комнат</span></div><div id="roomsList" class="room-list"></div></div>
+    </section>
+
+    <section class="view" id="view-ideas">
+      <div class="card">
+        <div class="card-head"><h2>Предложения пользователей</h2><span id="ideasCount" class="pill">0</span></div>
+        <div class="toolbar"><input id="search" placeholder="Поиск по имени или тексту..." oninput="renderIdeas()"><select id="filter" onchange="renderIdeas()"><option value="all">Все</option><option value="new">Новые</option><option value="in_progress">В работе</option><option value="done">Добавлено</option><option value="rejected">Отклонено</option></select></div>
+        <div id="list" class="cards"></div>
+      </div>
+    </section>
+
+    <section class="view" id="view-news">
+      <div class="editor">
+        <h2>Новое обновление</h2>
+        <input id="newsTitle" maxlength="140" placeholder="Заголовок">
+        <textarea id="newsText" maxlength="3000" placeholder="Что нового появилось в CINEORA?"></textarea>
+        <div class="editor-row">
+          <label class="check"><input type="checkbox" id="newsPublished" checked> Показывать на главной</label>
+          <button class="btn" onclick="createNews()">Опубликовать</button>
+        </div>
+        <div id="newsStatus" class="status"></div>
+      </div>
+      <div class="card"><div class="card-head"><h2>Все обновления</h2><span id="newsCount" class="pill">0</span></div><div id="newsList" class="cards"></div></div>
+    </section>
+
+    <div class="footer-note">Автообновление каждые 10 секунд · пароль хранится только в текущей вкладке</div>
+  </section>
 </div>
+
 <script>
-let password="",rooms=[],items=[],newsItems=[];
-async function api(path,options={}){const res=await fetch(path,{...options,headers:{...(options.headers||{}),"x-admin-password":password}});const data=await res.json().catch(()=>({}));if(!res.ok||data.ok===false)throw new Error(data.error||("HTTP "+res.status));return data}
-function openAdmin(){password=document.getElementById("pass").value.trim();refreshAll()}
-function switchView(name){document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("active",b.dataset.view===name));document.querySelectorAll(".view").forEach(v=>v.classList.toggle("active",v.id==="view-"+name))}
-document.querySelectorAll(".nav button").forEach(b=>b.addEventListener("click",()=>switchView(b.dataset.view)));
-function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
-function fmtDate(v){const d=new Date(v);return Number.isNaN(d.getTime())?"":d.toLocaleString("ru-RU",{dateStyle:"medium",timeStyle:"short"})}
-function roomMarkup(room){const media=room.mediaUrl?esc(room.mediaUrl.length>72?room.mediaUrl.slice(0,72)+"…":room.mediaUrl):"без видео";const names=(room.users||[]).map(u=>"<span class='person-dot'></span>"+esc(u.name)+" <span class='date'>"+Math.floor(Number(u.position)||0)+"с</span>").join(" · ");return "<article class='room'><div class='room-head'><div><div class='room-code'>"+esc(room.id)+"</div><div class='date'>Последняя активность: "+fmtDate(room.updatedAt)+"</div></div><span class='pill "+(room.playing?"live":"")+"\">"+(room.playing?"▶ воспроизводится":"Ⅱ пауза")+"</span></div><div class='room-meta'><span class='pill'>👥 "+room.userCount+"</span><span class='pill'>"+media+"</span></div><div class='people'>"+(names||"Участников нет")+"</div></article>"}
-function renderRooms(){const html=rooms.length?rooms.map(roomMarkup).join(""):"<div class='empty'>Сейчас активных комнат нет.</div>";document.getElementById("roomsList").innerHTML=html;document.getElementById("overviewRooms").innerHTML=rooms.slice(0,6).map(roomMarkup).join("")||"<div class='empty'>Пока никто не смотрит.</div>";document.getElementById("roomsCount").textContent=rooms.length+" "+(rooms.length===1?"комната":"комнат")}
-function renderIdeas(){const q=(document.getElementById("search").value||"").toLowerCase().trim();const f=document.getElementById("filter").value;const visible=items.filter(x=>(f==="all"||x.status===f)&&((x.name||"").toLowerCase().includes(q)||(x.text||"").toLowerCase().includes(q)));document.getElementById("ideasCount").textContent=visible.length+" из "+items.length;document.getElementById("list").innerHTML=visible.length?visible.map(x=>"<article class='idea'><div class='idea-head'><div><div class='person'>"+esc(x.name||"Гость")+"</div><div class='date'>"+fmtDate(x.createdAt)+"</div></div><span class='pill'>"+labels[x.status]+"</span></div><div class='idea-text'>"+esc(x.text)+"</div><div class='actions'><select class='select' onchange='setStatus(\\\""+esc(x.id)+"\\\",this.value)'><option value='new' "+(x.status==="new"?"selected":"")+">Новое</option><option value='in_progress' "+(x.status==="in_progress"?"selected":"")+">В работе</option><option value='done' "+(x.status==="done"?"selected":"")+">Добавлено</option><option value='rejected' "+(x.status==="rejected"?"selected":"")+">Отклонено</option></select><button class='smallbtn danger' onclick='deleteIdea(\\\""+esc(x.id)+"\\\")'>Удалить</button></div></article>").join(""):"<div class='empty'>По этому фильтру ничего нет.</div>"}
+let password="",items=[],newsItems=[],rooms=[];
+const labels={new:"Новое",in_progress:"В работе",done:"Добавлено",rejected:"Отклонено"};
+function esc(s){return String(s).replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;","\"":"&quot;"}[c]));}
+function fmtDate(v){try{return new Date(v).toLocaleString("ru-RU",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"})}catch(e){return ""}}
+function showView(view){
+  document.querySelectorAll(".view").forEach(x=>x.classList.remove("active"));
+  document.querySelectorAll(".nav button").forEach(x=>x.classList.toggle("active",x.dataset.view===view));
+  const el=document.getElementById("view-"+view);if(el)el.classList.add("active");
+}
+async function openAdmin(){password=document.getElementById("pass").value.trim();if(!password){document.getElementById("loginStatus").textContent="Введите пароль";return}await refreshAll()}
+async function api(path,options={}){
+  options.headers={...(options.headers||{}),"x-admin-password":password};
+  const r=await fetch(path,options);let d={};try{d=await r.json()}catch(e){}
+  if(!r.ok)throw new Error(d.error||"Ошибка запроса");
+  return d;
+}
+function roomMarkup(room){
+  const names=(room.users||[]).map(u=>"<span class='person-dot'></span>"+esc(u.name||"Гость")).join(" · ");
+  const media=room.mediaUrl?"▶ видео загружено":"○ без видео";
+  return "<article class='room'><div class='room-head'><div><div class='room-code'>"+esc(room.id)+"</div><div class='date'>Последняя активность: "+fmtDate(room.updatedAt)+"</div></div><span class='pill "+(room.playing?"live":"")+"\">"+(room.playing?"▶ воспроизводится":"Ⅱ пауза")+"</span></div><div class='room-meta'><span class='pill'>👥 "+room.userCount+"</span><span class='pill'>"+media+"</span></div><div class='people'>"+(names||"Участников нет")+"</div></article>";
+}
+function renderRooms(){
+  const html=rooms.length?rooms.map(roomMarkup).join(""):"<div class='empty'>Сейчас активных комнат нет.</div>";
+  document.getElementById("roomsList").innerHTML=html;
+  document.getElementById("overviewRooms").innerHTML=rooms.slice(0,6).map(roomMarkup).join("")||"<div class='empty'>Пока никто не смотрит.</div>";
+  document.getElementById("roomsCount").textContent=rooms.length+" "+(rooms.length===1?"комната":"комнат");
+}
+function renderIdeas(){
+  const q=(document.getElementById("search").value||"").toLowerCase().trim();
+  const f=document.getElementById("filter").value;
+  const visible=items.filter(x=>(f==="all"||x.status===f)&&((x.name||"").toLowerCase().includes(q)||(x.text||"").toLowerCase().includes(q)));
+  document.getElementById("ideasCount").textContent=visible.length+" из "+items.length;
+  document.getElementById("list").innerHTML=visible.length?visible.map(x=>"<article class='idea'><div class='idea-head'><div><div class='person'>"+esc(x.name||"Гость")+"</div><div class='date'>"+fmtDate(x.createdAt)+"</div></div><span class='pill'>"+labels[x.status]+"</span></div><div class='idea-text'>"+esc(x.text)+"</div><div class='actions'><select class='select' onchange='setStatus(\""+esc(x.id)+"\",this.value)'><option value='new' "+(x.status==="new"?"selected":"")+">Новое</option><option value='in_progress' "+(x.status==="in_progress"?"selected":"")+">В работе</option><option value='done' "+(x.status==="done"?"selected":"")+">Добавлено</option><option value='rejected' "+(x.status==="rejected"?"selected":"")+">Отклонено</option></select><button class='smallbtn danger' onclick='deleteIdea(\""+esc(x.id)+"\")'>Удалить</button></div></article>").join(""):"<div class='empty'>По этому фильтру ничего нет.</div>";
+}
 async function loadIdeas(){const d=await api("/api/admin/suggestions");items=d.suggestions||[];renderIdeas()}
 async function setStatus(id,status){try{await api("/api/admin/suggestions/"+encodeURIComponent(id),{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({status})});const x=items.find(i=>i.id===id);if(x)x.status=status;renderIdeas()}catch(e){alert(e.message)}}
 async function deleteIdea(id){if(!confirm("Удалить предложение?"))return;try{await api("/api/admin/suggestions/"+encodeURIComponent(id),{method:"DELETE"});await loadIdeas();loadStats()}catch(e){alert(e.message)}}
-function renderNews(){document.getElementById("newsCount").textContent=newsItems.length;document.getElementById("newsList").innerHTML=newsItems.length?newsItems.map(x=>"<article class='news'><div class='news-head'><div><div class='person'>"+esc(x.title)+"</div><div class='date'>"+fmtDate(x.createdAt)+"</div></div><span class='"+(x.published?"published":"unpublished")+"'>"+(x.published?"● Опубликовано":"○ Скрыто")+"</span></div><div class='news-edit'><input id='nt-"+esc(x.id)+"' value='"+esc(x.title)+"'><textarea id='nx-"+esc(x.id)+"'>"+esc(x.text)+"</textarea><div class='actions'><label class='check'><input type='checkbox' id='np-"+esc(x.id)+"' "+(x.published?"checked":"")+"> Показывать</label><button class='smallbtn primary' onclick='saveNews(\\\""+esc(x.id)+"\\\")'>Сохранить</button><button class='smallbtn danger' onclick='deleteNews(\\\""+esc(x.id)+"\\\")'>Удалить</button></div></div></article>").join(""):"<div class='empty'>Обновлений пока нет.</div>"}
+function renderNews(){
+  document.getElementById("newsCount").textContent=newsItems.length;
+  document.getElementById("newsList").innerHTML=newsItems.length?newsItems.map(x=>"<article class='news'><div class='news-head'><div><div class='person'>"+esc(x.title)+"</div><div class='date'>"+fmtDate(x.createdAt)+"</div></div><span class='"+(x.published?"published":"unpublished")+"'>"+(x.published?"● Опубликовано":"○ Скрыто")+"</span></div><div class='news-edit'><input id='nt-"+esc(x.id)+"' value='"+esc(x.title)+"'><textarea id='nx-"+esc(x.id)+"'>"+esc(x.text)+"</textarea><div class='actions'><label class='check'><input type='checkbox' id='np-"+esc(x.id)+"' "+(x.published?"checked":"")+"> Показывать</label><button class='smallbtn primary' onclick='saveNews(\""+esc(x.id)+"\")'>Сохранить</button><button class='smallbtn danger' onclick='deleteNews(\""+esc(x.id)+"\")'>Удалить</button></div></div></article>").join(""):"<div class='empty'>Обновлений пока нет.</div>";
+}
 async function loadNews(){const d=await api("/api/admin/news");newsItems=d.news||[];renderNews()}
-async function createNews(){const title=document.getElementById("newsTitle").value.trim(),text=document.getElementById("newsText").value.trim(),published=document.getElementById("newsPublished").checked;if(title.length<2||text.length<2){document.getElementById("newsStatus").textContent="Заполните заголовок и текст.";return}try{await api("/api/admin/news",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({title,text,published})});document.getElementById("newsTitle").value="";document.getElementById("newsText").value="";document.getElementById("newsStatus").textContent="✓ Опубликовано";await loadNews();await loadStats()}catch(e){document.getElementById("newsStatus").textContent=e.message}}
-async function saveNews(id){const title=document.getElementById("nt-"+id).value.trim(),text=document.getElementById("nx-"+id).value.trim(),published=document.getElementById("np-"+id).checked;try{await api("/api/admin/news/"+encodeURIComponent(id),{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({title,text,published})});await loadNews();await loadStats()}catch(e){alert(e.message)}}
+async function createNews(){
+  const title=document.getElementById("newsTitle").value.trim(),text=document.getElementById("newsText").value.trim(),published=document.getElementById("newsPublished").checked;
+  if(title.length<2||text.length<2){document.getElementById("newsStatus").textContent="Заполните заголовок и текст.";return}
+  try{await api("/api/admin/news",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({title,text,published})});document.getElementById("newsTitle").value="";document.getElementById("newsText").value="";document.getElementById("newsStatus").textContent="✓ Опубликовано";await loadNews();await loadStats()}catch(e){document.getElementById("newsStatus").textContent=e.message}
+}
+async function saveNews(id){
+  const title=document.getElementById("nt-"+id).value.trim(),text=document.getElementById("nx-"+id).value.trim(),published=document.getElementById("np-"+id).checked;
+  try{await api("/api/admin/news/"+encodeURIComponent(id),{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({title,text,published})});await loadNews();await loadStats()}catch(e){alert(e.message)}
+}
 async function deleteNews(id){if(!confirm("Удалить обновление?"))return;try{await api("/api/admin/news/"+encodeURIComponent(id),{method:"DELETE"});await loadNews();await loadStats()}catch(e){alert(e.message)}}
-async function loadStats(){const d=await api("/api/admin/stats");rooms=d.rooms||[];document.getElementById("statRooms").textContent=d.stats?.activeRooms||0;document.getElementById("statUsers").textContent=d.stats?.onlineUsers||0;document.getElementById("statIdeas").textContent=d.stats?.suggestions||0;document.getElementById("statNews").textContent=d.stats?.news||0;renderRooms();document.getElementById("updated").textContent="Обновлено в "+new Date().toLocaleTimeString("ru-RU",{hour:"2-digit",minute:"2-digit",second:"2-digit"})}
-async function refreshAll(){if(!password)return;try{await Promise.all([loadStats(),loadIdeas(),loadNews()]);document.getElementById("dashboard").classList.add("show");document.getElementById("loginBox").style.display="none";document.getElementById("loginStatus").textContent=""}catch(e){document.getElementById("loginStatus").innerHTML="<span class='error'>"+esc(e.message)+"</span>";document.getElementById("dashboard").classList.remove("show")}}
+async function loadStats(){
+  const d=await api("/api/admin/stats");rooms=d.rooms||[];
+  document.getElementById("statRooms").textContent=d.stats?.activeRooms||0;
+  document.getElementById("statUsers").textContent=d.stats?.onlineUsers||0;
+  document.getElementById("statIdeas").textContent=d.stats?.suggestions||0;
+  document.getElementById("statNews").textContent=d.stats?.news||0;
+  renderRooms();
+  document.getElementById("updated").textContent="Обновлено в "+new Date().toLocaleTimeString("ru-RU",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
+}
+async function refreshAll(){
+  if(!password)return;
+  try{
+    await Promise.all([loadStats(),loadIdeas(),loadNews()]);
+    document.getElementById("dashboard").classList.add("show");
+    document.getElementById("loginBox").style.display="none";
+    document.getElementById("loginStatus").textContent="";
+  }catch(e){
+    document.getElementById("loginStatus").innerHTML="<span class='error'>"+esc(e.message)+"</span>";
+    document.getElementById("dashboard").classList.remove("show");
+  }
+}
 document.getElementById("pass").addEventListener("keydown",e=>{if(e.key==="Enter")openAdmin()});
 setInterval(()=>{if(password&&document.getElementById("dashboard").classList.contains("show"))refreshAll()},10000);
 </script>
@@ -497,6 +625,8 @@ io.on("connection", socket => {
   socket.on("sync", ({ playing, position }) => {
     const roomId = socket.data.roomId; if (!roomId) return;
     const room = roomState(roomId);
+    // Keep the existing room host. Any participant may control playback,
+    // but a normal sync event must not silently transfer the internal host state.
     room.playing = !!playing;
     room.position = Math.max(0, Number(position) || 0);
     room.updatedAt = Date.now();
@@ -582,6 +712,8 @@ setInterval(()=>{
 
 const PORT = process.env.PORT || 3000;
 
+// Open the HTTP port before any optional startup work.
+// Render must be able to detect the listener even if DB or SMTP is slow/unavailable.
 server.listen(PORT, "0.0.0.0", () => {
   console.log(`CINEORA running on port ${PORT}`);
 });
@@ -594,12 +726,11 @@ async function startServer() {
     console.error("PostgreSQL initialization failed. CINEORA will continue without database:", err.message);
   }
 
-  // Nodemailer v7 can throw when the callback-style verify API is used
-  // with an options object. SMTP verification is not required for CINEORA
-  // to serve pages or rooms, and sendMail already has its own error handling.
-  // Keep startup independent from SMTP availability.
+  // SMTP is optional. Do not run transporter.verify() during startup:
+  // the installed Nodemailer version can crash asynchronously when the
+  // callback-style overload receives a timeout/error.
   if (mailer) {
-    console.log("SMTP configured; email notifications will be checked when a message is sent.");
+    console.log("SMTP configured; email notifications will be attempted when needed.");
   } else {
     console.warn("SMTP is not configured. Email notifications are disabled.");
   }
