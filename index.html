@@ -1755,5 +1755,65 @@ function startRoom(roomId,pageParams){
   window.addEventListener("cineora:disconnected",offline);
 })();
 </script>
+<style id="cineora-join-toast">
+.cineora-join-toast{
+  position:fixed;right:22px;top:88px;z-index:100001;
+  display:flex;align-items:center;gap:10px;
+  max-width:min(360px,calc(100% - 30px));
+  padding:12px 16px;border-radius:15px;
+  background:rgba(54,45,57,.94);color:#fff;
+  border:1px solid rgba(216,198,223,.45);
+  box-shadow:0 14px 40px rgba(45,35,50,.22);
+  backdrop-filter:blur(12px);
+  font:600 13px/1.35 "DM Sans",sans-serif;
+  opacity:0;transform:translateY(-10px);
+  transition:opacity .22s ease,transform .22s ease;
+  pointer-events:none;
+}
+.cineora-join-toast.show{opacity:1;transform:translateY(0)}
+.cineora-join-toast .join-icon{
+  width:30px;height:30px;min-width:30px;border-radius:50%;
+  display:grid;place-items:center;background:#b99bb5;color:#fff;font-size:14px;
+}
+.cineora-join-toast b{color:#eadcf0}
+@media(max-width:700px){
+  .cineora-join-toast{top:72px;right:12px;left:12px;max-width:none}
+}
+</style>
+<script id="cineora-join-notification">
+(function(){
+  if(!window.socket)return;
+  let initialized=false;
+  let previousUsers=new Map();
+
+  function showJoin(name){
+    let toast=document.getElementById("cineoraJoinToast");
+    if(!toast){
+      toast=document.createElement("div");
+      toast.id="cineoraJoinToast";
+      toast.className="cineora-join-toast";
+      toast.innerHTML='<span class="join-icon">👋</span><span></span>';
+      document.body.appendChild(toast);
+    }
+    const text=toast.querySelector("span:last-child");
+    if(text)text.innerHTML="<b>"+escapeHtml(name)+"</b> присоединился(ась) к комнате";
+    toast.classList.add("show");
+    clearTimeout(toast._timer);
+    toast._timer=setTimeout(()=>toast.classList.remove("show"),3200);
+  }
+
+  socket.on("room-users",function(users){
+    users=Array.isArray(users)?users:[];
+    const current=new Map(users.map(u=>[String(u.id),u]));
+    if(initialized){
+      current.forEach((u,id)=>{
+        if(!previousUsers.has(id) && id!==socket.id)showJoin(u.name||"Гость");
+      });
+    }
+    previousUsers=current;
+    initialized=true;
+  });
+})();
+</script>
 </body>
 </html>
