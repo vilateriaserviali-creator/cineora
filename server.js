@@ -476,7 +476,7 @@ setInterval(()=>{if(password&&document.getElementById("dashboard").classList.con
 });
 const rooms = new Map();
 function roomState(roomId) {
-  if (!rooms.has(roomId)) rooms.set(roomId, { users: new Map(), hostId: null, playing: false, position: 0, updatedAt: Date.now(), mediaUrl: "", messages: [], emptySince: null });
+  if (!rooms.has(roomId)) rooms.set(roomId, { users: new Map(), hostId: null, playing: false, position: 0, updatedAt: Date.now(), mediaUrl: "", messages: [], emptySince: null, isPrivate: false, accessToken: null });
   return rooms.get(roomId);
 }
 function publicUsers(room) {
@@ -524,10 +524,9 @@ io.on("connection", socket => {
         if (typeof ack === "function") ack({ok:false,error:"Эта комната приватная. Нужна персональная ссылка-приглашение."});
         return;
       }
-    } else if (room.users.size > 0 && privateRoom) {
-      if (typeof ack === "function") ack({ok:false,error:"Эта комната уже создана как обычная."});
-      return;
     } else if (privateRoom) {
+      // A private invitation is allowed to recreate an in-memory room after a server restart.
+      // The invitation key itself is the credential for the room.
       if (!accessToken) {
         if (typeof ack === "function") ack({ok:false,error:"Не найден ключ приватного приглашения."});
         return;
