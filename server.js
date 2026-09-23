@@ -504,6 +504,9 @@ io.on("connection", socket => {
     const user = room.users.get(socket.id); if (!user) return;
     user.voiceEnabled = !!enabled;
     io.to(roomId).emit("voice-user-state", { users: [...room.users.values()].map(u => ({ id:u.id, name:u.name, voiceEnabled:!!u.voiceEnabled })) });
+    // Acknowledge only after the socket is actually attached to the room.
+    // This prevents the client from sending chat/media events during the join race.
+    if (typeof ack === "function") ack({ok:true, roomId});
   });
   socket.on("voice-signal", ({ to, data }) => {
     const roomId = socket.data.roomId;
@@ -517,7 +520,7 @@ io.on("connection", socket => {
     name = String(name || "Гость").trim().slice(0, 24);
     privateRoom = !!privateRoom;
     accessToken = String(accessToken || "").trim().slice(0, 96);
-    if (!roomId) return;
+    if (!roomId) { if (typeof ack === "function") ack({ok:false,error:"Не указан код комнаты."}); return; }
     const room = roomState(roomId);
     if (room.isPrivate) {
       if (!accessToken || accessToken !== room.accessToken) {
@@ -534,7 +537,6 @@ io.on("connection", socket => {
       room.isPrivate = true;
       room.accessToken = accessToken;
     }
-    if (typeof ack === "function") ack({ok:true});
     if (socket.data.roomId && socket.data.roomId !== roomId) socket.leave(socket.data.roomId);
     socket.join(roomId);
     socket.data.roomId = roomId;
