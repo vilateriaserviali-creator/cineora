@@ -551,20 +551,9 @@ function joinRoomForSocket(socket, { roomId, name, privateRoom, accessToken } = 
 }
 
 io.on("connection", socket => {
-  const initialRoom = String(socket.handshake.auth?.roomId || socket.handshake.query?.roomId || "").trim();
-  if (initialRoom) {
-    const result = joinRoomForSocket(socket, {
-      roomId: initialRoom,
-      name: socket.handshake.auth?.name || socket.handshake.query?.name || "Гость",
-      privateRoom: socket.handshake.auth?.privateRoom === true || socket.handshake.auth?.privateRoom === "1" || socket.handshake.query?.privateRoom === "1",
-      accessToken: socket.handshake.auth?.accessToken || socket.handshake.query?.accessToken || ""
-    });
-    if (result.ok) {
-      socket.emit("room-joined", result);
-    } else {
-      socket.emit("room-access-denied", result);
-    }
-  }
+  // Room membership is established only by the explicit join-room event after
+  // the client receives the Socket.IO connect event. This avoids a handshake
+  // race where room-state/room-users could arrive before client listeners.
   socket.on("create-room", ({ roomId }, ack) => {
     const cleanRoom = String(roomId || "").trim().toUpperCase().slice(0, 16);
     if (!cleanRoom) { if (typeof ack === "function") ack({ ok: false, error: "Не удалось создать комнату." }); return; }
