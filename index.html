@@ -883,8 +883,8 @@ body.cineora-home-dark .modal-box{background:#29252d;border-color:#514754}
 
 <!-- CINEORA LIRA DESIGN LOCK -->
 <style id="cineora-lira-design-lock">
-/* Единый канонический образ Лиры. Источник внешности: /lira.svg?v=3 */
-#cineoraLiraWalker img[src="/lira.svg?v=3"]{object-fit:contain;image-rendering:auto}
+/* Единый канонический образ Лиры. Источник внешности: /lira.svg?v=4 */
+#cineoraLiraWalker img[src="/lira.svg?v=4"]{object-fit:contain;image-rendering:auto}
 #cineoraLiraWalker .lira-walker-body{transform-origin:50% 85%}
 </style>
 <script id="cineora-lira-design-data">
@@ -2099,7 +2099,7 @@ function startRoom(roomId,pageParams){
   const bubble=walker.querySelector(".lira-walker-bubble");
   const bubbleText=bubble.querySelector("span");
   const bubbleSmall=bubble.querySelector("small");
-  const isRoom=!!document.querySelector(".room-view");
+  function isRoom(){const el=document.getElementById("roomView");return !!(el&&el.classList.contains("show"))}
   const reduce=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   const homePoints=[
@@ -2114,8 +2114,7 @@ function startRoom(roomId,pageParams){
     [74,43,"Синхронно ✨","Никто не отстал."],
     [8,76,"Попкорн доставлен 🍿","Продолжаем сеанс."]
   ];
-  const points=isRoom?roomPoints:homePoints;
-  let index=Math.floor(Math.random()*points.length),timer=null,hideTimer=null;
+  let index=Math.floor(Math.random()*4),timer=null,hideTimer=null;
 
   function speak(title,small,duration){
     clearTimeout(hideTimer);
@@ -2151,6 +2150,7 @@ function startRoom(roomId,pageParams){
   }
 
   function patrol(){
+    const points=isRoom()?roomPoints:homePoints;
     const p=points[index];
     moveTo(p[0],p[1],p[2],p[3]);
     index=(index+1)%points.length;
@@ -2180,7 +2180,7 @@ function startRoom(roomId,pageParams){
 
   walker.addEventListener("click",function(e){
     e.stopPropagation();
-    if(isRoom){
+    if(isRoom()){
       const sync=document.getElementById("syncBtn");
       if(sync){moveToElement(sync,"Проверяю синхронизацию ✨","Сейчас всё сверю.","left");return}
     }else{
