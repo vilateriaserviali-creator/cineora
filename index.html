@@ -1945,7 +1945,10 @@ function startRoom(roomId,pageParams){
     }
     const syncStateEl=document.getElementById("syncState"); if(syncStateEl) syncStateEl.textContent="Видео синхронизируется между участниками";
     loadMedia(mediaUrl);
-    setTimeout(()=>applySync(state.playing,state.position,state.serverTime),1200);
+    setTimeout(()=>{
+      applySync(state.playing,state.position,state.serverTime);
+      setTimeout(()=>restoreSavedProgress(),350);
+    },1200);
   });
   socket.on("media-changed",state=>{
     const data=typeof state==="string"?{url:state,playing:false,position:0,serverTime:Date.now()}:state;
@@ -1953,7 +1956,10 @@ function startRoom(roomId,pageParams){
     document.getElementById("mediaUrlRoom").value=mediaUrl;
     saveRoomMedia(roomId,mediaUrl);
     loadMedia(mediaUrl);
-    setTimeout(()=>applySync(!!data.playing,Number(data.position)||0,data.serverTime),1200);
+    setTimeout(()=>{
+      applySync(!!data.playing,Number(data.position)||0,data.serverTime);
+      setTimeout(()=>restoreSavedProgress(),350);
+    },1200);
   });
   socket.on("sync",state=>applySync(state.playing,state.position,state.serverTime));
   socket.on("room-host",state=>{
