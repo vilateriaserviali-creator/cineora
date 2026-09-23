@@ -1681,6 +1681,25 @@ function startRoom(roomId,pageParams){
   socket.on("connect",()=>{
     setStatus("Соединение установлено — подключаем комнату…");
     const el=document.getElementById("chatConnection");if(el)el.textContent="● подключение…";
+    // Compatibility fallback: explicitly join after connect as well.
+    // This also makes the client work against an older server deployment.
+    socket.emit("join-room",{
+      roomId:String(roomId||""),
+      name:localStorage.getItem("cineora_name")||myName||"Гость",
+      privateRoom,
+      accessToken:roomAccessKey
+    },ack=>{
+      if(ack?.ok){
+        roomJoined=true;
+        window.cineoraRoomJoined=true;
+        setStatus("Комната подключена");
+        if(el)el.textContent="● онлайн";
+        window.dispatchEvent(new Event("cineora:connected"));
+      }else if(ack&&!ack.ok){
+        setStatus("🔒 "+(ack.error||"Не удалось войти в комнату"));
+        if(el)el.textContent="● нет связи";
+      }
+    });
   });
 
   socket.on("room-joined",result=>{
