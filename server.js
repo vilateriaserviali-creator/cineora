@@ -7,7 +7,25 @@ const nodemailer = require("nodemailer");
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server);
+const io = new Server(server, {
+  transports: ["polling", "websocket"],
+  cors: {
+    origin: true,
+    credentials: true
+  },
+  connectionStateRecovery: {
+    maxDisconnectionDuration: 2 * 60 * 1000,
+    skipMiddlewares: true
+  }
+});
+
+io.engine.on("connection_error", err => {
+  console.error("[socket] engine connection error", {
+    message: err.message,
+    code: err.code,
+    context: err.context || null
+  });
+});
 
 app.use(express.json({ limit: "20kb" }));
 app.get("/", (req, res) => { res.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate"); res.sendFile(path.join(__dirname, "index.html")); });
