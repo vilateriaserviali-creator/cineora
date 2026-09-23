@@ -57,7 +57,7 @@
   .voice-head{align-items:flex-start}
   .voice-toggle{font-size:10px;padding:8px 10px}
   .voice-title{font-size:16px}
-}
+}</style>
 <style id="cineora-room-like-home">
 /* Комната в том же визуальном языке, что и превью комнаты на главной */
 .room-view{
@@ -592,6 +592,76 @@ html.cineora-dark .room-view .person-progress i{background:linear-gradient(90deg
  .invite-card{margin:10px!important}
 }
 </style>
+<style id="cineora-home-final-theme">
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:wght@500;600&display=swap');
+body:not(.room-page){font-family:"Manrope","DM Sans",sans-serif}
+body:not(.room-page) .logo,
+body:not(.room-page) .brand-big,
+body:not(.room-page) .hero h1,
+body:not(.room-page) .section-title,
+body:not(.room-page) .card h3,
+body:not(.room-page) .feature-card h3,
+body:not(.room-page) .news-card h3{font-family:"Playfair Display",serif}
+.home-head-actions{display:flex;align-items:center;gap:9px}
+.home-theme-toggle{width:42px;height:42px;padding:0;border:1px solid #bfb1c3;border-radius:50%;background:#ffffff9c;color:#514958;display:grid;place-items:center;font-size:17px;transition:.18s ease}
+.home-theme-toggle:hover{transform:translateY(-2px);box-shadow:0 9px 22px rgba(90,72,96,.14)}
+body.cineora-home-dark .hero{
+ background:radial-gradient(circle at 80% 30%,#403747 0%,transparent 38%),linear-gradient(120deg,#17151a 0%,#211e25 48%,#302936 100%)!important;
+ color:#f2edf3;
+ border-bottom-color:#443b48;
+}
+body.cineora-home-dark .hero:after{background:linear-gradient(90deg,#08070b80 0%,transparent 60%,#08070b55 100%),linear-gradient(180deg,#0005,transparent 55%,#0009)}
+body.cineora-home-dark .nav a,body.cineora-home-dark .login{color:#eee8ef}
+body.cineora-home-dark .create-top{color:#eee;border-color:#8f7896;background:#ffffff08}
+body.cineora-home-dark .hero h1{color:#f3edf4}
+body.cineora-home-dark .lead{color:#d2cad4}
+body.cineora-home-dark .eyebrow{color:#e1d7e3;background:#ffffff0d;border-color:#67586c}
+body.cineora-home-dark .sources-title,body.cineora-home-dark .source{color:#d8d0da}
+body.cineora-home-dark .source-icon{border-color:#766a7a;background:#ffffff08}
+body.cineora-home-dark .secondary{background:#ffffff0d;border-color:#88758f;color:#eee}
+body.cineora-home-dark .features{border-color:#ffffff18}
+body.cineora-home-dark .feature{color:#d9d1db;border-color:#ffffff18}
+body.cineora-home-dark #funLine{background:#ffffff0d;border-color:#ffffff16;color:#cfc4d2!important}
+body.cineora-home-dark .section.cream{background:#252129!important;color:#eee}
+body.cineora-home-dark .section.dark{background:#1c1920!important;color:#eee}
+body.cineora-home-dark .section-text,body.cineora-home-dark .about-copy{color:#cfc7d1!important}
+body.cineora-home-dark .card,body.cineora-home-dark .platform{background:#302b34!important;border-color:#48404d!important;color:#eee}
+body.cineora-home-dark .card p,body.cineora-home-dark .platform b{color:#cbc3ce}
+body.cineora-home-dark .card .num{background:#4b4050;color:#eee}
+body.cineora-home-dark .feature-card{background:#2b2630!important;border-color:#49414d!important}
+body.cineora-home-dark .feature-card h3{color:#f0eaf2}
+body.cineora-home-dark .feature-card p{color:#c8c0cb}
+body.cineora-home-dark .news-card{background:#302b34!important;border-color:#49414d!important}
+body.cineora-home-dark .news-card h3{color:#f0eaf2}
+body.cineora-home-dark .news-card .news-date{color:#a99eaa}
+body.cineora-home-dark .news-card p{color:#cfc7d1!important}
+body.cineora-home-dark .home-theme-toggle{background:#332d37;color:#f2eaf4;border-color:#62566a}
+body.cineora-home-dark .footer{background:#141217!important}
+body.cineora-home-dark .footer,body.cineora-home-dark .footer a,body.cineora-home-dark .footer span{color:#d2cbd5}
+body.cineora-home-dark .modal-box{background:#29252d;border-color:#514754}
+.invite-card{
+ margin:0 0 18px!important;
+ min-height:94px;
+ padding:16px 18px!important;
+ display:flex!important;
+ align-items:center!important;
+ justify-content:space-between!important;
+ gap:16px!important;
+ flex-wrap:wrap;
+ box-sizing:border-box;
+}
+.invite-card>div{min-width:0;flex:1 1 190px}
+.invite-card strong{display:block;line-height:1.25}
+.invite-card span{display:block;line-height:1.45}
+.invite-card button{flex:0 0 auto;position:relative;z-index:2}
+@media(max-width:700px){
+ .home-head-actions{gap:6px}
+ .home-theme-toggle{width:38px;height:38px}
+ .header>div{display:flex;align-items:center;gap:7px}
+ .invite-card{align-items:flex-start!important}
+ .invite-card button{width:100%;flex:1 1 100%}
+}
+</style>
 </head>
 <body>
 
@@ -643,7 +713,7 @@ html.cineora-dark .room-view .person-progress i{background:linear-gradient(90deg
 <header class="header">
 <a class="logo" href="/">CINE<span>ORA</span></a>
 <nav class="nav"><a href="#about">О сервисе</a><a href="#features">Возможности</a><a href="#how">Как это работает</a></nav>
-<div><button type="button" class="login" id="login">Войти / Регистрация</button><button type="button" class="create-top" id="createTop">Создать сессию</button></div>
+<div class="home-head-actions"><button type="button" class="home-theme-toggle" id="homeThemeToggle" aria-label="Переключить тему" title="Тёмная тема">🌙</button><button type="button" class="login" id="login">Войти / Регистрация</button><button type="button" class="create-top" id="createTop">Создать сессию</button></div>
 </header>
 <div class="hero-content">
 <div class="eyebrow" id="funEyebrow">Совместный просмотр фильмов и видео</div>
@@ -1520,7 +1590,7 @@ function startRoom(roomId,pageParams){
     if(!socket.connected)try{socket.connect()}catch(e){}
   });
 })();
-</script><script id="cineora-home-theme-toggle">(function(){const b=document.getElementById("homeThemeToggle");if(!b)return;const k="cineora_home_theme";function a(v){document.body.classList.toggle("cineora-home-dark",v==="dark");b.textContent=v==="dark"?"☀️":"🌙";localStorage.setItem(k,v)}a(localStorage.getItem(k)==="dark"?"dark":"soft");b.onclick=()=>a(document.body.classList.contains("cineora-home-dark")?"soft":"dark")})();</script><script id="cineora-theme-toggle">
+</script><script id="cineora-home-theme-toggle">(function(){const b=document.getElementById("homeThemeToggle");if(!b)return;const k="cineora_home_theme";function apply(v){const dark=v==="dark";document.body.classList.toggle("cineora-home-dark",dark);b.textContent=dark?"☀️":"🌙";b.title=dark?"Светлая тема":"Тёмная тема";b.setAttribute("aria-label",b.title);try{localStorage.setItem(k,v)}catch(e){}}let saved="soft";try{saved=localStorage.getItem(k)||"soft"}catch(e){}apply(saved);b.addEventListener("click",()=>apply(document.body.classList.contains("cineora-home-dark")?"soft":"dark"));})();</script><script id="cineora-theme-toggle">
 (function(){
  const b=document.getElementById("roomThemeToggle"),root=document.documentElement;
  if(!b)return;
