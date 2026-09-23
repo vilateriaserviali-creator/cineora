@@ -1506,7 +1506,7 @@ function startRoom(roomId,pageParams){
     if(socket.connected)send();
     else{
       setStatus("Соединение с комнатой потеряно — переподключаемся…");
-      socket.once("cineora:connected",send);
+      window.addEventListener("cineora:connected",send,{once:true});
       socket.connect();
     }
   };
