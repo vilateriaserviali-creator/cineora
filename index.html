@@ -1093,6 +1093,7 @@ if(q){
 function startRoom(roomId,pageParams){
   const socket=io();
   let roomJoined=false;
+  window.cineoraRoomJoined=false;
   window.socket=socket;
   window.dispatchEvent(new Event("cineora:socket-ready")); const roomTitle=pageParams?.get("title")||"Киносеанс"; const scheduledAt=Number(pageParams?.get("at")||0); const roomTitleLabel=document.getElementById("roomTitleLabel"),inviteTitle=document.getElementById("inviteTitle"),countdown=document.getElementById("sessionCountdown"); if(roomTitleLabel)roomTitleLabel.textContent="🎬 "+roomTitle; if(inviteTitle)inviteTitle.textContent="🍿 "+roomTitle; if(scheduledAt&&countdown){let scheduledStarted=false;const tick=()=>{const left=scheduledAt-Date.now();if(left<=0){countdown.textContent="🍿 Киносеанс начинается сейчас";countdown.classList.add("show");if(!scheduledStarted&&socket.connected){scheduledStarted=true;socket.emit("sync",{playing:true,position:0});setTimeout(()=>applySync(true,0,Date.now()),300)}return}const s=Math.floor(left/1000),d=Math.floor(s/86400),hh=Math.floor(s%86400/3600),mm=Math.floor(s%3600/60),ss=s%60;countdown.textContent="🍿 Сеанс начнётся через "+(d?d+" д ":"")+String(hh).padStart(2,"0")+":"+String(mm).padStart(2,"0")+":"+String(ss).padStart(2,"0");countdown.classList.add("show")};tick();setInterval(tick,1000)}
   const cookieName=(document.cookie.match(/(?:^|; )cineora_name=([^;]*)/)||[])[1];
@@ -1671,7 +1672,7 @@ function startRoom(roomId,pageParams){
   socket.on("voice-user-state",u=>renderVoiceUsers(u.users||[]));
   socket.on("voice-peer-left",id=>removeVoicePeer(id));
 
-  socket.on("disconnect",()=>{roomJoined=false;setStatus("Соединение потеряно — переподключаемся…");const el=document.getElementById("chatConnection");if(el)el.textContent="● нет связи";window.dispatchEvent(new Event("cineora:disconnected"))});
+  socket.on("disconnect",()=>{roomJoined=false;window.cineoraRoomJoined=false;setStatus("Соединение потеряно — переподключаемся…");const el=document.getElementById("chatConnection");if(el)el.textContent="● нет связи";window.dispatchEvent(new Event("cineora:disconnected"))});
   socket.on("connect_error",()=>{setStatus("Нет соединения с комнатой — переподключаемся…");const el=document.getElementById("chatConnection");if(el)el.textContent="● нет связи"});
   socket.on("connect",()=>{
     const cookieName=(document.cookie.match(/(?:^|; )cineora_name=([^;]*)/)||[])[1];
@@ -1685,15 +1686,17 @@ function startRoom(roomId,pageParams){
         return;
       }
       roomJoined=true;
+      window.cineoraRoomJoined=true;
       setStatus("Комната подключена");
       const el=document.getElementById("chatConnection");if(el)el.textContent="● онлайн";
       window.dispatchEvent(new Event("cineora:connected"));
+      if(pendingChat){
+        const msg=pendingChat;pendingChat="";
+        socket.emit("chat-message",{text:msg},reply=>{if(!reply?.ok)setStatus(reply?.error||"Не удалось отправить сообщение")});
+        chatInput.value="";chatInput.focus();
+      }
     });
-    if(pendingChat){
-      const msg=pendingChat;pendingChat="";
-      socket.emit("chat-message",{text:msg},ack=>{if(!ack?.ok)setStatus(ack?.error||"Не удалось отправить сообщение")});
-      chatInput.value="";chatInput.focus();
-    }
+
   });
 
   socket.on("room-state",state=>{
@@ -1904,7 +1907,7 @@ function startRoom(roomId,pageParams){
     if(!msg)return;
     const s=window.socket;
     if(!s)return;
-    if(!s.connected || !roomJoined){
+    if(!s.connected || !window.cineoraRoomJoined){
       try{s.connect()}catch(_){}
       return;
     }
@@ -1922,6 +1925,14 @@ function startRoom(roomId,pageParams){
   form.addEventListener("submit",function(e){
     e.preventDefault();
     e.stopImmediatePropagation();
+    const msg=input.value.trim();
+    const s=window.socket;
+    if(!msg||!s)return;
+    if(!s.connected||!window.cineoraRoomJoined){try{s.connect()}catch(_){};return;}
+    s.emit("chat-message",{text:msg},function(ack){
+      if(ack&&!ack.ok){const status=document.getElementById("chatConnection");if(status)status.textContent="⚠️ "+(ack.error||"не отправлено");return;}
+      input.value="";input.focus();
+    });
   },true);
 })();
 </script><style id="cineora-live-status">
