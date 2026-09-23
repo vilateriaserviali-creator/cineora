@@ -551,9 +551,24 @@ function joinRoomForSocket(socket, { roomId, name, privateRoom, accessToken } = 
 }
 
 io.on("connection", socket => {
-  // Room membership is established only by the explicit join-room event after
-  // the client receives the Socket.IO connect event. This avoids a handshake
-  // race where room-state/room-users could arrive before client listeners.
+  console.log("[socket] connected", socket.id);
+  // Join from the handshake as a safety net. The client still performs the
+  // explicit join-room handshake after connect, which refreshes all room data.
+  // This makes chat/media work even if the browser misses the first join event.
+  const h = socket.handshake || {};
+  const hAuth = h.auth || {};
+  const hQuery = h.query || {};
+  const handshakeRoomId = hAuth.roomId || hQuery.roomId || "";
+  if (handshakeRoomId) {
+    const autoJoin = joinRoomForSocket(socket, {
+      roomId: handshakeRoomId,
+      name: hAuth.name || hQuery.name || "Гость",
+      privateRoom: hAuth.privateRoom === true || hAuth.privateRoom === "1" || hQuery.privateRoom === "1",
+      accessToken: hAuth.accessToken || hQuery.accessToken || ""
+    });
+    console.log("[socket] handshake join", socket.id, autoJoin.ok ? "ok" : autoJoin.error);
+  }
+
   socket.on("create-room", ({ roomId }, ack) => {
     const cleanRoom = String(roomId || "").trim().toUpperCase().slice(0, 16);
     if (!cleanRoom) { if (typeof ack === "function") ack({ ok: false, error: "Не удалось создать комнату." }); return; }
@@ -574,8 +589,9 @@ io.on("connection", socket => {
     socket.to(target.id).emit("voice-signal", { from: socket.id, name: socket.data.name || "Гость", data });
   });
 
-  socket.on("join-room", ({ roomId, name, privateRoom, accessToken }, ack) => {
+  socket.on("join-room", ({ roomId, name, privateRoom, accessToken } = {}, ack) => {
     const result = joinRoomForSocket(socket, { roomId, name, privateRoom, accessToken });
+    console.log("[socket] explicit join", socket.id, result.ok ? "ok" : result.error);
     if (typeof ack === "function") ack(result);
     if (result.ok) socket.emit("room-joined", result);
   });
@@ -682,6 +698,7 @@ io.on("connection", socket => {
     if (typeof ack === "function") ack({ ok: true });
   });
   socket.on("disconnect", () => {
+    console.log("[socket] disconnected", socket.id, socket.data.roomId || "-");
     const roomId = socket.data.roomId; if (!roomId || !rooms.has(roomId)) return;
     const room = rooms.get(roomId);
     room.users.delete(socket.id);
