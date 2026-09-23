@@ -12,9 +12,15 @@ const io = new Server(server);
 app.use(express.json({ limit: "20kb" }));
 app.get("/", (req, res) => { res.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate"); res.sendFile(path.join(__dirname, "index.html")); });
 app.get("/cineora-hero.png", (req, res) => res.sendFile(path.join(__dirname, "cineora-hero.png")));
+app.get("/cineora-cover.svg", (req, res) => {
+  res.type("image/svg+xml");
+  res.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+  res.sendFile(path.join(__dirname, "cineora-cover.svg"));
+});
+
 app.get("/lira.svg", (req, res) => {
   res.type("image/svg+xml");
-  res.set("Cache-Control", "public, max-age=31536000, immutable");
+  res.set("Cache-Control", "public, no-store, no-cache, must-revalidate, proxy-revalidate");
   res.sendFile(path.join(__dirname, "lira.svg"));
 });
 app.get("/health", (req, res) => {
