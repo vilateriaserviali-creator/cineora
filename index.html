@@ -1492,16 +1492,21 @@ function startRoom(roomId,pageParams){
     button.disabled=true;
     const oldText=button.textContent;
     button.textContent="Загрузка…";
-    if(socket.connected){
-      socket.emit("set-media",{url});
-      setTimeout(()=>{button.disabled=false;button.textContent=oldText},500);
-    }else{
-      setStatus("Соединение с комнатой потеряно — переподключаемся…");
-      socket.once("connect",()=>{
-        socket.emit("set-media",{url});
-        button.disabled=false;
-        button.textContent=oldText;
+    const send=()=>{
+      if(!roomJoined||!window.cineoraRoomJoined){
+        setStatus("Сначала подключаемся к комнате…");
+        button.disabled=false;button.textContent=oldText;
+        return;
+      }
+      socket.emit("set-media",{url},reply=>{
+        if(reply && !reply.ok)setStatus(reply.error||"Не удалось загрузить видео");
+        button.disabled=false;button.textContent=oldText;
       });
+    };
+    if(socket.connected)send();
+    else{
+      setStatus("Соединение с комнатой потеряно — переподключаемся…");
+      socket.once("cineora:connected",send);
       socket.connect();
     }
   };
@@ -1695,28 +1700,40 @@ function startRoom(roomId,pageParams){
 
   socket.on("disconnect",()=>{roomJoined=false;window.cineoraRoomJoined=false;setStatus("Соединение потеряно — переподключаемся…");const el=document.getElementById("chatConnection");if(el)el.textContent="● нет связи";window.dispatchEvent(new Event("cineora:disconnected"))});
   socket.on("connect_error",()=>{setStatus("Нет соединения с комнатой — переподключаемся…");const el=document.getElementById("chatConnection");if(el)el.textContent="● нет связи"});
-  socket.on("connect",()=>{
-    setStatus("Соединение установлено — подключаем комнату…");
+  let joinRetryTimer=null;
+  let joinInFlight=false;
+  function joinCurrentRoom(){
+    if(!socket.connected || joinInFlight || roomJoined)return;
+    joinInFlight=true;
+    setStatus("Подключаем комнату…");
     const el=document.getElementById("chatConnection");if(el)el.textContent="● подключение…";
-    // Compatibility fallback: explicitly join after connect as well.
-    // This also makes the client work against an older server deployment.
     socket.emit("join-room",{
       roomId:String(roomId||""),
       name:localStorage.getItem("cineora_name")||myName||"Гость",
       privateRoom:roomPrivate,
       accessToken:roomAccessKey
     },ack=>{
+      joinInFlight=false;
       if(ack?.ok){
         roomJoined=true;
         window.cineoraRoomJoined=true;
         setStatus("Комната подключена");
         if(el)el.textContent="● онлайн";
         window.dispatchEvent(new Event("cineora:connected"));
-      }else if(ack&&!ack.ok){
-        setStatus("🔒 "+(ack.error||"Не удалось войти в комнату"));
+        if(joinRetryTimer){clearTimeout(joinRetryTimer);joinRetryTimer=null;}
+      }else{
+        roomJoined=false;
+        window.cineoraRoomJoined=false;
+        setStatus(ack?.error ? "🔒 "+ack.error : "Не удалось войти в комнату — повторяем…");
         if(el)el.textContent="● нет связи";
+        clearTimeout(joinRetryTimer);
+        joinRetryTimer=setTimeout(()=>{joinRetryTimer=null;joinCurrentRoom()},1200);
       }
     });
+  }
+  socket.on("connect",()=>{
+    setStatus("Соединение установлено — подключаем комнату…");
+    joinCurrentRoom();
   });
 
   socket.on("room-joined",result=>{
