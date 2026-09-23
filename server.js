@@ -681,18 +681,16 @@ async function startServer() {
     console.error("PostgreSQL initialization failed. CINEORA will continue without database:", err.message);
   }
 
+  // Start HTTP/Socket.IO immediately. SMTP verification must never delay Render's port detection.
+  server.listen(PORT, "0.0.0.0", () => console.log(`CINEORA running on port ${PORT}`));
+
   if (mailer) {
-    try {
-      await mailer.verify();
-      console.log("SMTP connection verified.");
-    } catch (err) {
-      console.error("SMTP verification failed:", err.message);
-    }
+    mailer.verify()
+      .then(() => console.log("SMTP connection verified."))
+      .catch(err => console.error("SMTP verification failed:", err.message));
   } else {
     console.warn("SMTP is not configured. Email notifications are disabled.");
   }
-
-  server.listen(PORT, "0.0.0.0", () => console.log(`CINEORA running on port ${PORT}`));
 }
 
 startServer().catch(err => {
