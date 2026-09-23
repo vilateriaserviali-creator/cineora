@@ -1675,12 +1675,22 @@ function startRoom(roomId,pageParams){
       }
     }catch(e){}
   });
+  function ensureVoicePeers(users){
+    if(!voiceEnabled)return;
+    (users||[]).filter(u=>u.id!==socket.id && u.voiceEnabled).forEach(u=>{
+      const initiator=String(socket.id)<String(u.id);
+      createVoicePeer(u.id,u.name,initiator);
+    });
+  }
   socket.on("voice-peer-list",users=>{
     renderVoiceUsers(users);
-    const others=(users||[]).filter(u=>u.id!==socket.id);
-    if(voiceEnabled)others.forEach(u=>createVoicePeer(u.id,u.name,true));
+    ensureVoicePeers(users);
   });
-  socket.on("voice-user-state",u=>renderVoiceUsers(u.users||[]));
+  socket.on("voice-user-state",u=>{
+    const users=u.users||[];
+    renderVoiceUsers(users);
+    ensureVoicePeers(users);
+  });
   socket.on("voice-peer-left",id=>removeVoicePeer(id));
 
   socket.on("disconnect",()=>{roomJoined=false;window.cineoraRoomJoined=false;setStatus("Соединение потеряно — переподключаемся…");const el=document.getElementById("chatConnection");if(el)el.textContent="● нет связи";window.dispatchEvent(new Event("cineora:disconnected"))});
