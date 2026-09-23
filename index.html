@@ -1742,7 +1742,18 @@ function startRoom(roomId,pageParams){
   document.getElementById("setMediaRoom").onclick=submitMedia;
   window.addEventListener("pagehide",()=>{try{saveRoomProgress(roomId,currentUrl,getPosition())}catch(e){}});
   window.addEventListener("beforeunload",()=>{try{saveRoomProgress(roomId,currentUrl,getPosition())}catch(e){}});
-  document.getElementById("mediaUrlRoom").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();submitMedia()}});
+  document.getElementById("mediaUrlRoom").addEventListener("keydown",e=>{
+    if(e.key==="Enter"){
+      e.preventDefault();
+      if(!e.isComposing)submitMedia();
+    }
+  });
+  document.getElementById("mediaUrlRoom").addEventListener("paste",()=>{
+    setTimeout(()=>{
+      const input=document.getElementById("mediaUrlRoom");
+      if(input&&input.value.trim())submitMedia();
+    },0);
+  });
   const roomLayout=document.querySelector(".room-layout"),sideCard=document.getElementById("sideCard");
   const setFullscreenChat=()=>{sideCard.classList.remove("is-open","fullscreen-chat")};
   const fullscreenBtn=document.getElementById("fullscreenBtn");
