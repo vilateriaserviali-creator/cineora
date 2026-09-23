@@ -1698,15 +1698,15 @@ function startRoom(roomId,pageParams){
   });
   socket.on("voice-peer-left",id=>removeVoicePeer(id));
 
-  socket.on("disconnect",()=>{roomJoined=false;window.cineoraRoomJoined=false;setStatus("Соединение потеряно — переподключаемся…");const el=document.getElementById("chatConnection");if(el)el.textContent="● нет связи";window.dispatchEvent(new Event("cineora:disconnected"))});
-  socket.on("connect_error",()=>{setStatus("Нет соединения с комнатой — переподключаемся…");const el=document.getElementById("chatConnection");if(el)el.textContent="● нет связи"});
+  socket.on("disconnect",()=>{roomJoined=false;window.cineoraRoomJoined=false;setStatus("Соединение потеряно — переподключаемся…");const el=document.getElementById("chatConnection");if(el)el.textContent="● нет связи";const voiceEl=document.getElementById("voiceConnection");if(voiceEl)voiceEl.textContent="● нет связи";window.dispatchEvent(new Event("cineora:disconnected"))});
+  socket.on("connect_error",()=>{setStatus("Нет соединения с комнатой — переподключаемся…");const el=document.getElementById("chatConnection");if(el)el.textContent="● нет связи";const voiceEl=document.getElementById("voiceConnection");if(voiceEl)voiceEl.textContent="● нет связи"});
   let joinRetryTimer=null;
   let joinInFlight=false;
   function joinCurrentRoom(){
     if(!socket.connected || joinInFlight || roomJoined)return;
     joinInFlight=true;
     setStatus("Подключаем комнату…");
-    const el=document.getElementById("chatConnection");if(el)el.textContent="● подключение…";
+    const el=document.getElementById("chatConnection");if(el)el.textContent="● подключение…";const voiceEl=document.getElementById("voiceConnection");if(voiceEl)voiceEl.textContent="● подключение…";
     socket.emit("join-room",{
       roomId:String(roomId||""),
       name:localStorage.getItem("cineora_name")||myName||"Гость",
@@ -1718,7 +1718,7 @@ function startRoom(roomId,pageParams){
         roomJoined=true;
         window.cineoraRoomJoined=true;
         setStatus("Комната подключена");
-        if(el)el.textContent="● онлайн";
+        if(el)el.textContent="● онлайн";const voiceEl=document.getElementById("voiceConnection");if(voiceEl)voiceEl.textContent="● онлайн";
         window.dispatchEvent(new Event("cineora:connected"));
         if(joinRetryTimer){clearTimeout(joinRetryTimer);joinRetryTimer=null;}
       }else{
