@@ -1158,7 +1158,7 @@ function startRoom(roomId,pageParams){
       if(e.streams&&e.streams[0])audio.srcObject=e.streams[0];
     };
     pc.onconnectionstatechange=()=>{
-      if(["failed","closed","disconnected"].includes(pc.connectionState)&&pc.connectionState!=="disconnected")removeVoicePeer(id);
+      if(["failed","closed","disconnected"].includes(pc.connectionState))removeVoicePeer(id);
     };
     if(initiator){
       pc.createOffer().then(o=>pc.setLocalDescription(o)).then(()=>socket.emit("voice-signal",{to:id,data:{type:"offer",sdp:pc.localDescription}})).catch(()=>{});
@@ -1291,8 +1291,8 @@ function startRoom(roomId,pageParams){
     try{
       const u=new URL(url);
       const path=(u.pathname||"").toLowerCase();
-      if(/\\.(m3u8)(?:$)/i.test(path)||/\\.(m3u8)(?:[?#])/i.test(url))return {type:"hls",url};
-      if(/\\.(mp4|webm|ogg|ogv|mov|m4v)(?:$)/i.test(path))return {type:"video",url};
+      if(/\\.(m3u8)(?:[?#]|$)/i.test(url))return {type:"hls",url};
+      if(/\\.(mp4|webm|ogg|ogv|mov|m4v)(?:[?#]|$)/i.test(url))return {type:"video",url};
     }catch(e){}
     return {type:"page",url};
   }
@@ -1497,12 +1497,12 @@ function startRoom(roomId,pageParams){
       setTimeout(()=>{button.disabled=false;button.textContent=oldText},500);
     }else{
       setStatus("Соединение с комнатой потеряно — переподключаемся…");
-      socket.connect();
       socket.once("connect",()=>{
         socket.emit("set-media",{url});
         button.disabled=false;
         button.textContent=oldText;
       });
+      socket.connect();
     }
   };
   {const roomParams=new URLSearchParams(location.search);const isPrivateRoom=roomParams.get("private")==="1";const hasPrivateKey=!!roomParams.get("key");document.body.classList.toggle("room-private",isPrivateRoom);document.body.classList.toggle("room-public",!isPrivateRoom);const modeLabel=document.getElementById("roomModeLabel");if(modeLabel){modeLabel.className="room-code room-mode-chip "+(isPrivateRoom?"private":"public");modeLabel.textContent=isPrivateRoom?"🔒 Приватная":"🌐 Обычная"}const inviteTitleMode=document.getElementById("inviteTitle"),inviteSub=document.getElementById("inviteSub");if(isPrivateRoom){if(inviteTitleMode)inviteTitleMode.textContent="🔒 Приватное приглашение";if(inviteSub)inviteSub.textContent="Эта ссылка ведёт прямо в закрытую комнату."}else{if(inviteTitleMode)inviteTitleMode.textContent="🍿 Присоединяйтесь к просмотру";if(inviteSub)inviteSub.textContent="Отправьте ссылку друзьям — фильм уже ждёт."}}
@@ -1693,7 +1693,7 @@ function startRoom(roomId,pageParams){
     socket.emit("join-room",{
       roomId:String(roomId||""),
       name:localStorage.getItem("cineora_name")||myName||"Гость",
-      privateRoom,
+      privateRoom:roomPrivate,
       accessToken:roomAccessKey
     },ack=>{
       if(ack?.ok){
