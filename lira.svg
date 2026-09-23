@@ -1,51 +1,62 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 270">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 320">
 <defs>
- <linearGradient id="hair" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f6d9ef"/><stop offset=".48" stop-color="#d4b3e7"/><stop offset="1" stop-color="#9f88c7"/></linearGradient>
- <linearGradient id="dress" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f7e3f3"/><stop offset=".55" stop-color="#d4b8e8"/><stop offset="1" stop-color="#b09bd8"/></linearGradient>
- <linearGradient id="wing" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f9dff5" stop-opacity=".92"/><stop offset="1" stop-color="#bcdcff" stop-opacity=".5"/></linearGradient>
+ <linearGradient id="hair" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f5d8f2"/><stop offset=".5" stop-color="#c9a7e3"/><stop offset="1" stop-color="#9274bd"/></linearGradient>
+ <linearGradient id="dress" x1="0" y1="0" x2="0.9" y2="1"><stop stop-color="#f9eafa"/><stop offset=".55" stop-color="#d8bce9"/><stop offset="1" stop-color="#a990d0"/></linearGradient>
+ <linearGradient id="wing" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff0fb" stop-opacity=".9"/><stop offset="1" stop-color="#b9dfff" stop-opacity=".45"/></linearGradient>
+ <filter id="shadow" x="-30%" y="-30%" width="160%" height="170%"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-opacity=".16"/></filter>
 </defs>
-<!-- delicate wings -->
-<g fill="url(#wing)" stroke="#e9d7f4" stroke-width="2">
- <path d="M88 126C52 103 27 72 38 48c12-27 45-7 57 35z"/>
- <path d="M132 126c36-23 61-54 50-78-12-27-45-7-57 35z"/>
- <path d="M88 137c-28-13-49-8-47 10 3 22 30 25 52 9z"/>
- <path d="M132 137c28-13 49-8 47 10-3 22-30 25-52 9z"/>
+<!-- wings -->
+<g fill="url(#wing)" stroke="#ead7f5" stroke-width="2">
+ <path d="M94 139C61 124 28 91 39 61c9-24 43-17 61 22 7 16 9 34 5 56z"/>
+ <path d="M166 139c33-15 66-48 55-78-9-24-43-17-61 22-7 16-9 34-5 56z"/>
+ <path d="M94 151c-30-14-54-5-50 15 4 20 32 28 56 9z"/>
+ <path d="M166 151c30-14 54-5 50 15-4 20-32 28-56 9z"/>
 </g>
-<!-- tiny legs/body -->
-<path d="M91 181c-13 13-17 36-9 57 6 17 17 23 28 23s22-6 28-23c8-21 4-44-9-57z" fill="url(#dress)" stroke="#ead7ef" stroke-width="2"/>
-<path d="M87 187q23 12 46 0" fill="none" stroke="#fff" stroke-opacity=".7" stroke-width="3"/>
-<path d="M86 193c-15 5-20 17-12 25 7 7 15 1 22-10M134 193c15 5 20 17 12 25-7 7-15 1-22-10" fill="#f0d8ed"/>
-<ellipse cx="95" cy="263" rx="15" ry="5" fill="#9d86c5"/><ellipse cx="125" cy="263" rx="15" ry="5" fill="#9d86c5"/>
-<!-- hair behind head -->
-<path d="M52 108C43 61 63 20 110 18c47 2 67 43 58 90l-12 57c-11 22-29 31-46 31s-35-9-46-31z" fill="url(#hair)"/>
+<!-- hair behind -->
+<path d="M59 124C44 79 54 31 98 18c45-14 92 11 103 56 7 29-1 68-15 101-10 25-31 42-56 43-29 1-53-16-64-45z" fill="url(#hair)" stroke="#a889c9" stroke-width="2" filter="url(#shadow)"/>
+<!-- body -->
+<path d="M103 190c-16 13-25 38-19 65 5 24 20 40 46 40s41-16 46-40c6-27-3-52-19-65z" fill="url(#dress)" stroke="#d8c1e8" stroke-width="2"/>
+<path d="M87 215q43 17 86 0" fill="none" stroke="#fff" stroke-opacity=".65" stroke-width="4"/>
+<path d="M95 202c-17 4-27 18-19 30 7 10 19 4 29-11M165 202c17 4 27 18 19 30-7 10-19 4-29-11" fill="#ecd5f0"/>
+<!-- legs -->
+<path d="M104 278l-5 27M156 278l5 27" stroke="#f4d9d7" stroke-width="8" stroke-linecap="round"/>
+<ellipse cx="96" cy="307" rx="17" ry="6" fill="#8e72b8"/><ellipse cx="164" cy="307" rx="17" ry="6" fill="#8e72b8"/>
 <!-- face -->
-<ellipse cx="110" cy="108" rx="51" ry="65" fill="#ffe9e3"/>
-<!-- soft bangs -->
-<path d="M59 91C53 48 73 18 110 17c37 1 57 31 51 74-10-17-22-27-35-33-11 9-25 12-38 7-12 6-20 14-29 26z" fill="url(#hair)"/>
-<path d="M65 84c-12 28-5 57 10 73-20-12-27-37-20-63zM155 84c12 28 5 57-10 73 20-12 27-37 20-63z" fill="#b59bd4" opacity=".8"/>
-<!-- blue eyes -->
-<ellipse cx="88" cy="111" rx="11" ry="14" fill="#91addd"/>
-<ellipse cx="132" cy="111" rx="11" ry="14" fill="#91addd"/>
-<ellipse cx="89" cy="113" rx="5.5" ry="9" fill="#5f719e"/>
-<ellipse cx="131" cy="113" rx="5.5" ry="9" fill="#5f719e"/>
-<circle cx="91" cy="108" r="3.2" fill="#fff"/><circle cx="133" cy="108" r="3.2" fill="#fff"/>
+<ellipse cx="130" cy="112" rx="58" ry="72" fill="#ffe9e2" stroke="#efcbc9" stroke-width="1.5"/>
+<!-- long front hair -->
+<path d="M73 101C67 55 87 20 128 17c40-3 68 27 66 72-1 19-8 38-18 54l-15-27c-8-15-15-27-26-35-13 13-29 18-44 12-10 6-15 14-18 25z" fill="url(#hair)"/>
+<path d="M78 101c-12 31-5 66 14 83-27-16-36-51-25-84zM182 101c12 31 5 66-14 83 27-16 36-51 25-84z" fill="#a78bc9" opacity=".82"/>
+<!-- bangs -->
+<path d="M76 83c13-23 30-34 52-35 21 0 39 9 53 29-18-8-31-9-45-3-13 7-27 8-39 1-8 2-15 5-21 8z" fill="#c19ddd" opacity=".95"/>
 <!-- brows -->
-<path d="M78 93q10-7 20 0M122 93q10-7 20 0" fill="none" stroke="#806985" stroke-width="3" stroke-linecap="round"/>
-<!-- tiny nose + smile -->
-<path d="M108 122q-2 5 3 6" fill="none" stroke="#d08e9e" stroke-width="2" stroke-linecap="round"/>
-<path d="M98 137q12 9 24 0" fill="none" stroke="#bd7595" stroke-width="3" stroke-linecap="round"/>
+<path d="M91 94q15-9 29-1" fill="none" stroke="#765f7e" stroke-width="4.5" stroke-linecap="round"/>
+<path d="M140 93q14-8 29 1" fill="none" stroke="#765f7e" stroke-width="4.5" stroke-linecap="round"/>
+<!-- eyes -->
+<g stroke="#6c789e" stroke-width="2">
+ <ellipse cx="105" cy="113" rx="14" ry="17" fill="#9fc5ed"/>
+ <ellipse cx="155" cy="113" rx="14" ry="17" fill="#9fc5ed"/>
+</g>
+<ellipse cx="106" cy="115" rx="6.5" ry="11" fill="#53658f"/>
+<ellipse cx="154" cy="115" rx="6.5" ry="11" fill="#53658f"/>
+<ellipse cx="106" cy="110" rx="2.8" ry="4.5" fill="#fff"/>
+<ellipse cx="154" cy="110" rx="2.8" ry="4.5" fill="#fff"/>
+<!-- small neat nose -->
+<path d="M129 116c-1 5-5 11-1 13 3 2 7 1 9-1" fill="none" stroke="#d4939f" stroke-width="2.3" stroke-linecap="round"/>
+<!-- lips -->
+<path d="M117 143q13-8 26 0-13 10-26 0z" fill="#d78fa9"/>
+<path d="M120 143q10 3 20 0" fill="none" stroke="#bd708e" stroke-width="1.5"/>
 <!-- blush -->
-<ellipse cx="77" cy="128" rx="9" ry="4" fill="#f3b9c8" opacity=".5"/><ellipse cx="143" cy="128" rx="9" ry="4" fill="#f3b9c8" opacity=".5"/>
-<!-- little star hair clip -->
-<path d="M157 61l4 8 8 4-8 4-4 8-4-8-8-4 8-4z" fill="#f8d4ef"/>
-<!-- sparkle accents -->
-<g fill="#f3d4ef"><path d="M26 178l4 9 9 4-9 4-4 9-4-9-9-4 9-4z"/><circle cx="184" cy="184" r="4"/><circle cx="37" cy="232" r="3"/></g>
-<!-- tiny popcorn companion -->
-<g transform="translate(155 222)">
- <path d="M1 11q12-13 24 0l-2 25H3z" fill="#fff5fb" stroke="#d9c5df" stroke-width="1.5"/>
- <path d="M4 12q4-13 9 0 5-14 9 0" fill="none" stroke="#e4b9da" stroke-width="3"/>
- <circle cx="9" cy="20" r="1.8" fill="#665a70"/><circle cx="18" cy="20" r="1.8" fill="#665a70"/>
- <path d="M11 26q3 3 6 0" fill="none" stroke="#b17b99" stroke-width="1.5"/>
+<ellipse cx="89" cy="133" rx="12" ry="5" fill="#f3b7c8" opacity=".42"/>
+<ellipse cx="171" cy="133" rx="12" ry="5" fill="#f3b7c8" opacity=".42"/>
+<!-- star clip -->
+<path d="M183 57l5 10 10 5-10 5-5 10-5-10-10-5 10-5z" fill="#ffe1f5" stroke="#d5b1e1" stroke-width="1.5"/>
+<!-- sparkles -->
+<g fill="#f5d8f1"><path d="M31 205l5 11 11 5-11 5-5 11-5-11-11-5 11-5z"/><circle cx="215" cy="210" r="5"/><circle cx="45" cy="267" r="3.5"/></g>
+<!-- popcorn companion -->
+<g transform="translate(181 251)">
+ <path d="M2 16q14-14 28 0l-3 37H5z" fill="#fff8fc" stroke="#d8c4e0" stroke-width="2"/>
+ <path d="M6 16q5-15 10 0 5-15 10 0" fill="none" stroke="#e3b4d8" stroke-width="4"/>
+ <circle cx="11" cy="28" r="2" fill="#5e536b"/><circle cx="21" cy="28" r="2" fill="#5e536b"/>
+ <path d="M12 36q4 4 8 0" fill="none" stroke="#ad7895" stroke-width="2"/>
 </g>
 </svg>
