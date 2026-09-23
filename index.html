@@ -1308,6 +1308,11 @@ function startRoom(roomId,pageParams){
     const vk=getVkEmbed(url);if(vk)return {type:"vk",url:vk};
     try{
       const u=new URL(url);
+      const h=u.hostname.toLowerCase();
+      if(h==="lordfilm5.pro"||h.endsWith(".lordfilm5.pro"))return {type:"lordfilm",url};
+    }catch(e){}
+    try{
+      const u=new URL(url);
       const path=(u.pathname||"").toLowerCase();
       if(/\.(m3u8)(?:[?#]|$)/i.test(url))return {type:"hls",url};
       if(/\.(mp4|webm|ogg|ogv|mov|m4v)(?:[?#]|$)/i.test(url))return {type:"video",url};
@@ -1460,6 +1465,44 @@ function startRoom(roomId,pageParams){
     try{if(player&&player[func])player[func](...args)}catch(e){}
   }
 
+  async function loadLordfilm(url){
+    currentType="iframe";
+    host.innerHTML="";
+    setStatus("Lordfilm · ищем плеер…");
+    try{
+      const response=await fetch("/api/lordfilm-embed?url="+encodeURIComponent(url),{headers:{"Accept":"application/json"}});
+      const data=await response.json();
+      if(!response.ok||!data.ok)throw new Error(data.error||"Плеер не найден");
+      const embedUrl=String(data.embedUrl||"").trim();
+      if(!embedUrl)throw new Error("Плеер не найден");
+      const provider=detect(embedUrl);
+      if(provider.type==="youtube"){
+        currentType="youtube";
+        loadYouTube(provider.id);
+        setStatus("Lordfilm · YouTube-плеер");
+        return;
+      }
+      if(provider.type==="rutube"){
+        currentType="rutube";embedTime=0;embedDuration=0;embedPlaying=false;
+        const iframe=makeIframe("https://rutube.ru/play/embed/"+encodeURIComponent(provider.id)+provider.query);
+        iframe.addEventListener("load",()=>setStatus("Lordfilm · RUTUBE-плеер"),{once:true});
+        return;
+      }
+      if(provider.type==="vk"){
+        currentType="vk";embedTime=0;embedDuration=0;embedPlaying=false;
+        const sep=embedUrl.includes("?")?"&":"?";
+        const iframe=makeIframe(embedUrl+(embedUrl.includes("js_api=")?"":sep+"js_api=1"));
+        iframe.addEventListener("load",()=>{loadVkApi(iframe);setStatus("Lordfilm · VK-плеер")},{once:true});
+        return;
+      }
+      const iframe=makeIframe(embedUrl);
+      iframe.addEventListener("load",()=>setStatus("Lordfilm · плеер готов"),{once:true});
+    }catch(e){
+      currentType="error";
+      showError(e.message||"Не удалось найти плеер Lordfilm.");
+    }
+  }
+
   function loadMedia(raw){
     const nextUrl=String(raw||"").trim();
     if(nextUrl&&nextUrl===currentUrl&&currentType&&currentType!=="error")return;
@@ -1467,6 +1510,7 @@ function startRoom(roomId,pageParams){
     if(!nextUrl){clearPlayer();setStatus("Видео пока не добавлено");return}
     empty.style.display="none";
     if(d.type==="youtube"){loadYouTube(d.id);setStatus("YouTube");return}
+    if(d.type==="lordfilm"){loadLordfilm(d.url);return}
     if(d.type==="rutube"){
       currentType="rutube";embedTime=0;embedDuration=0;embedPlaying=false;
       const iframe=makeIframe("https://rutube.ru/play/embed/"+encodeURIComponent(d.id)+d.query);
@@ -1528,7 +1572,7 @@ function startRoom(roomId,pageParams){
         setStatus("Видео · готово к просмотру");
         setTimeout(()=>restoreSavedProgress(),50);
       });
-      v.addEventListener("error",()=>showError("Не удалось воспроизвести видео. Нужна прямая ссылка на MP4/WebM/OGG/M4V или поток M3U8. Ссылки на страницы сайтов вставляйте как ссылку на сам ролик."));
+      v.addEventListener("error",()=>showError("Не удалось воспроизвести видео. Для страниц Lordfilm вставляйте ссылку на страницу сериала/фильма, а для других сайтов — прямую ссылку на видео."));
       return;
     }
     currentType="iframe";makeIframe(d.url);setStatus("Страница с видео");
@@ -1681,6 +1725,8 @@ function startRoom(roomId,pageParams){
           setStatus(reply.error||"Не удалось загрузить видео");
         }else{
           saveRoomMedia(roomId,url);
+          const detected=detect(url);
+          if(detected.type==="lordfilm")setStatus("Lordfilm · загружаем плеер…");
         }
         button.disabled=false;button.textContent=oldText;
       });
