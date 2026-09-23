@@ -883,19 +883,19 @@ body.cineora-home-dark .modal-box{background:#29252d;border-color:#514754}
 
 <!-- CINEORA LIRA DESIGN LOCK -->
 <style id="cineora-lira-design-lock">
-/* Единый канонический образ Лиры. Источник внешности: /lira.svg?v=5 */
-#cineoraLiraWalker img[src="/lira.svg?v=5"]{object-fit:contain;image-rendering:auto}
+/* Единый канонический образ Лиры. Источник внешности: /lira.svg?v=6 */
+#cineoraLiraWalker img[src="/lira.svg?v=6"]{object-fit:contain;image-rendering:auto}
 #cineoraLiraWalker .lira-walker-body{transform-origin:50% 85%}
 </style>
 <script id="cineora-lira-design-data">
 window.CINEORA_LIRA_DESIGN=Object.freeze({
- name:"Лира", asset:"/lira.svg?v=5",
+ name:"Лира", asset:"/lira.svg?v=6",
  type:"маленькая мини-фея-помощница",
  hair:"светло-сиреневые длинные волосы", eyes:"голубые", skin:"светлая",
  eyebrows:"выразительные, слегка густые", nose:"маленький аккуратный, азиатская форма",
  outfit:"нежное сиреневое платье", wings:"маленькие полупрозрачные крылышки",
  hairAccessory:"звёздочка", companion:"маленький попкорн",
- rules:Object.freeze(["не менять лицо","не менять волосы","не менять цвет глаз","не добавлять очки","не добавлять серьги","сохранять миниатюрные пропорции","использовать /lira.svg?v=5 как основной визуальный источник"])
+ rules:Object.freeze(["не менять лицо","не менять волосы","не менять цвет глаз","не добавлять очки","не добавлять серьги","сохранять миниатюрные пропорции","использовать /lira.svg?v=6 как основной визуальный источник"])
 });
 </script>
 
@@ -921,7 +921,7 @@ window.CINEORA_LIRA_DESIGN=Object.freeze({
     </section>
     <div class="room-lira" id="roomLira" aria-label="Лира">
       <div class="room-lira-bubble">Я здесь 🍿<small>Смотрим вместе?</small></div>
-      <img src="/lira.svg?v=5" alt="Лира">
+      <img src="/lira.svg?v=6" alt="Лира">
     </div>
     <aside class="side-card" id="sideCard"><div class="invite-card"><div><strong id="inviteTitle">🍿 Присоединяйтесь к просмотру</strong><span id="inviteSub">Отправьте ссылку друзьям — фильм уже ждёт.</span></div><button id="inviteJoin" type="button">🔗 Скопировать приглашение</button></div><div class="session-countdown" id="sessionCountdown"></div>
       <div class="side-title">Участники <span id="participantCount">0</span></div>
@@ -2115,7 +2115,7 @@ function startRoom(roomId,pageParams){
   walker.setAttribute("role","button");
   walker.setAttribute("tabindex","0");
   walker.setAttribute("aria-label","Лира — маленькая помощница CINEORA");
-  walker.innerHTML='<div class="lira-walker-bubble"><span></span><small></small></div><div class="lira-walker-body"><img src="/lira.svg?v=5" alt="Лира"><div class="lira-walker-shadow"></div></div>';
+  walker.innerHTML='<div class="lira-walker-bubble"><span></span><small></small></div><div class="lira-walker-body"><img src="/lira.svg?v=6" alt="Лира"><div class="lira-walker-shadow"></div></div>';
   document.body.appendChild(walker);
 
   const bubble=walker.querySelector(".lira-walker-bubble");
