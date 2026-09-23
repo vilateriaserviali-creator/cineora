@@ -727,13 +727,21 @@ async function startServer() {
   }
 
   if (mailer) {
-    mailer.verify({
-      connectionTimeout: 5000,
-      greetingTimeout: 5000,
-      socketTimeout: 5000
-    })
-      .then(() => console.log("SMTP connection verified."))
-      .catch(err => console.error("SMTP verification failed:", err.message));
+    try {
+      mailer.verify({
+        connectionTimeout: 5000,
+        greetingTimeout: 5000,
+        socketTimeout: 5000
+      }, (err) => {
+        if (err) {
+          console.error("SMTP verification failed:", err.message);
+        } else {
+          console.log("SMTP connection verified.");
+        }
+      });
+    } catch (err) {
+      console.error("SMTP verification could not be started:", err.message);
+    }
   } else {
     console.warn("SMTP is not configured. Email notifications are disabled.");
   }
