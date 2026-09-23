@@ -1995,3 +1995,55 @@ function startRoom(roomId,pageParams){
 </script>
 </body>
 </html>
+<style id="cineora-lira-mini-mascot">
+/* Лира — маленькая живая помощница, а не большой персонаж */
+.lira-stage{
+  width:170px!important;height:185px!important;
+  right:18px!important;top:150px!important;
+  z-index:30!important;
+}
+.lira-aura{inset:25px 15px 12px!important;opacity:.55!important}
+.lira-mascot{
+  width:118px!important;height:auto!important;
+  right:28px!important;top:22px!important;
+  filter:drop-shadow(0 10px 16px rgba(80,62,90,.22))!important;
+}
+.lira-bubble{
+  right:-5px!important;top:0!important;
+  max-width:120px!important;padding:7px 9px!important;
+  border-radius:12px 12px 3px 12px!important;
+  font-size:9px!important;
+  box-shadow:0 7px 16px rgba(80,62,90,.12)!important;
+}
+.lira-bubble small{font-size:7px!important;margin-top:2px!important}
+.lira-float-card{display:none!important}
+.lira-stars{right:108px!important;top:42px!important;font-size:11px!important;letter-spacing:3px!important}
+.room-lira{
+  width:92px!important;height:108px!important;
+  right:12px!important;bottom:12px!important;
+}
+.room-lira img{
+  width:78px!important;
+  filter:drop-shadow(0 8px 14px rgba(80,62,90,.20))!important;
+}
+.room-lira-bubble{
+  right:-5px!important;top:0!important;
+  max-width:78px!important;padding:5px 7px!important;
+  border-radius:10px 10px 2px 10px!important;
+  font-size:8px!important;
+  box-shadow:0 6px 14px rgba(80,62,90,.12)!important;
+}
+.room-lira-bubble small{font-size:6px!important}
+@media(max-width:900px){
+  .lira-stage{
+    position:absolute!important;
+    width:120px!important;height:130px!important;
+    right:8px!important;top:105px!important;
+    margin:0!important;
+  }
+  .lira-mascot{width:82px!important;right:10px!important;top:28px!important}
+  .lira-bubble{right:-3px!important;top:0!important;max-width:82px!important}
+  .lira-stars{right:72px!important;top:45px!important}
+  .room-lira{right:7px!important;bottom:7px!important;transform:none!important}
+}
+</style>
