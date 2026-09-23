@@ -1267,14 +1267,34 @@ function startRoom(roomId,pageParams){
     try{
       const u=new URL(raw);
       const hostName=u.hostname.replace(/^www\./,"");
-      if(!["vk.com","m.vk.com","vkvideo.ru"].includes(hostName)) return "";
-      if(hostName==="vk.com"&&u.pathname.includes("video_ext.php")) return u.href;
-      const m=u.pathname.match(/video(-?\d+)[_](\d+)/);
-      if(m){
-        const oid=m[1].startsWith("-")?m[1]:"-"+m[1],id=m[2],hash=u.searchParams.get("hash");
-        return "https://vk.com/video_ext.php?oid="+encodeURIComponent(oid)+"&id="+encodeURIComponent(id)+(hash?"&hash="+encodeURIComponent(hash):"");
+      if(!["vk.com","vk.ru","m.vk.com","vkvideo.ru"].includes(hostName)) return "";
+
+      // Already an official VK embed URL: keep its parameters (hash, hd, etc.).
+      if(u.pathname==="/video_ext.php"){
+        const oid=u.searchParams.get("oid");
+        const id=u.searchParams.get("id");
+        if(oid&&id) return u.href;
+        return "";
       }
-      if(hostName==="vkvideo.ru") return u.href;
+
+      // VK links may use ?z=video-123_456 or ?z=video123_456.
+      const z=u.searchParams.get("z")||"";
+      const zMatch=z.match(/^video(-?\d+)_(-?\d+)/i);
+      if(zMatch){
+        const oid=zMatch[1].startsWith("-")?zMatch[1]:"-"+zMatch[1];
+        const id=zMatch[2];
+        const hash=u.searchParams.get("hash");
+        return "https://vkvideo.ru/video_ext.php?oid="+encodeURIComponent(oid)+"&id="+encodeURIComponent(id)+(hash?"&hash="+encodeURIComponent(hash):"")+"&hd=2";
+      }
+
+      // Standard VK Video page: /video-123_456 or /video123_456.
+      const m=u.pathname.match(/(?:^|\/)video(-?\d+)_([0-9]+)/i);
+      if(m){
+        const oid=m[1].startsWith("-")?m[1]:"-"+m[1];
+        const id=m[2];
+        const hash=u.searchParams.get("hash");
+        return "https://vkvideo.ru/video_ext.php?oid="+encodeURIComponent(oid)+"&id="+encodeURIComponent(id)+(hash?"&hash="+encodeURIComponent(hash):"")+"&hd=2";
+      }
     }catch(e){}
     return "";
   }
