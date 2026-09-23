@@ -1636,18 +1636,21 @@ function startRoom(roomId,pageParams){
   function sendChatMessage(){
     const msg=chatInput.value.trim();
     if(!msg)return;
-    if(!socket.connected){
+    if(!socket.connected || !roomJoined || !window.cineoraRoomJoined){
       pendingChat=msg;
-      setStatus("Сообщение отправится после восстановления соединения…");
-      socket.connect();
+      setStatus(!socket.connected?"Подключаемся к комнате…":"Входим в комнату…");
+      if(!socket.connected){try{socket.connect()}catch(e){}}
       return;
     }
     socket.emit("chat-message",{text:msg},ack=>{
-      if(!ack?.ok)setStatus(ack?.error||"Не удалось отправить сообщение");
+      if(!ack?.ok){
+        setStatus(ack?.error||"Не удалось отправить сообщение");
+        return;
+      }
+      playChatSound();
+      chatInput.value="";
+      chatInput.focus();
     });
-    playChatSound();
-    chatInput.value="";
-    chatInput.focus();
   }
   chatForm.addEventListener("submit",e=>{ prepareChatAudio();e.preventDefault();sendChatMessage()});
   chatInput.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendChatMessage()}});
