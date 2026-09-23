@@ -1582,7 +1582,7 @@ function startRoom(roomId,pageParams){
     }
   });
 
-  document.getElementById("leaveRoom").onclick=()=>{\n    try{ if(window.socket){ window.socket.removeAllListeners?.(); window.socket.disconnect(); } }catch(_){}\n    try{ window.cineoraRoomJoined=false; window.socket=null; }catch(_){}\n    try{ localStorage.removeItem("cineora_room"); sessionStorage.removeItem("cineora_room"); }catch(_){}\n    window.location.replace("/");\n  };
+  document.getElementById("leaveRoom").onclick=()=>{location.href="/"};
 
   setInterval(()=>{
     if(!socket.connected||suppress)return;
@@ -2102,5 +2102,5 @@ function startRoom(roomId,pageParams){
   });
 })();
 </script>
-\n<script id="cineora-leave-hard-fix">\n(function(){\n  const bind=()=>{\n    const btn=document.getElementById("leaveRoom");\n    if(!btn||btn.dataset.leaveBound==="1")return;\n    btn.dataset.leaveBound="1";\n    btn.addEventListener("click",function(e){\n      e.preventDefault();\n      e.stopImmediatePropagation();\n      try{ if(window.socket){ window.socket.disconnect(); } }catch(_){}\n      try{ window.cineoraRoomJoined=false; }catch(_){}\n      try{ localStorage.removeItem("cineora_room"); sessionStorage.removeItem("cineora_room"); }catch(_){}\n      window.location.assign("/");\n    },true);\n  };\n  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",bind,{once:true});\n  else bind();\n})();\n</script>\n</body>
+</body>
 </html>
