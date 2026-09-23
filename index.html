@@ -1531,7 +1531,7 @@ function startRoom(roomId,pageParams){
     e.preventDefault();
     e.stopPropagation();
 
-    const inviteUrl=window.location.href;
+    const inviteParams=new URLSearchParams(window.location.search); inviteParams.set("room",roomId); const inviteUrl=window.location.origin+"/?"+inviteParams.toString();
     const button=this;
 
     async function copyText(text){
