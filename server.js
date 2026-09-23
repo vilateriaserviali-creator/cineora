@@ -115,7 +115,13 @@ app.get("/api/lordfilm-embed", async (req, res) => {
           const u = new URL(item.url);
           const h = u.hostname.toLowerCase();
           const p = u.pathname.toLowerCase();
-          if (/(?:embed|player|video|iframe|stream|alloha|kodik|cdn)/i.test(h + p)) score += 25;
+          const hp = h + p;
+
+          // Lordfilm's current player family uses these hosts. Prefer them
+          // over generic page links, scripts and advertising URLs.
+          if (/(ortified|lordfilm64|fotpro)/i.test(hp)) score += 120;
+          if (/\/embed\//i.test(p)) score += 80;
+          if (/(?:embed|player|video|iframe|stream|alloha|kodik|cdn)/i.test(hp)) score += 25;
           if (h === finalHost || h.endsWith("." + finalHost)) score -= 5;
           if (/(?:google-analytics|googletagmanager|doubleclick|mc\.yandex|vk\.com\/rtrg|stats\.)/i.test(item.url)) score -= 100;
         } catch {}
