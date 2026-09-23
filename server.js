@@ -41,6 +41,65 @@ app.get("/lira.svg", (req, res) => {
   res.set("Cache-Control", "public, no-store, no-cache, must-revalidate, proxy-revalidate");
   res.sendFile(path.join(__dirname, "lira.svg"));
 });
+app.get("/api/lordfilm-embed", async (req, res) => {
+  try {
+    const raw = String(req.query.url || "").trim();
+    const page = new URL(raw);
+    const host = page.hostname.toLowerCase();
+    const allowed = host === "lordfilm5.pro" || host.endsWith(".lordfilm5.pro");
+    if (page.protocol !== "https:" || !allowed) {
+      return res.status(400).json({ ok: false, error: "Разрешены только страницы Lordfilm." });
+    }
+
+    const response = await fetch(page.href, {
+      headers: {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/153 Safari/537.36",
+        "Accept": "text/html,application/xhtml+xml"
+      },
+      redirect: "follow"
+    });
+    if (!response.ok) {
+      return res.status(502).json({ ok: false, error: "Lordfilm не отдал страницу." });
+    }
+    const finalUrl = new URL(response.url);
+    const finalHost = finalUrl.hostname.toLowerCase();
+    if (!(finalHost === "lordfilm5.pro" || finalHost.endsWith(".lordfilm5.pro"))) {
+      return res.status(400).json({ ok: false, error: "Страница перенаправила на другой домен." });
+    }
+
+    const html = await response.text();
+    const candidates = [];
+    const attrRe = /<(?:iframe|video|source)[^>]+(?:src|data-src|data-url)=["']([^"']+)["']/gi;
+    let m;
+    while ((m = attrRe.exec(html))) candidates.push(m[1]);
+
+    const playerRe = /(?:file|iframe|player|video|embed)[^"'<>]{0,80}(?:https?:)?\/\/[^"'<>\s]+/gi;
+    while ((m = playerRe.exec(html))) candidates.push(m[0].replace(/^[^h]*(https?:\/\/)/i, "$1"));
+
+    const urls = candidates.map(value => {
+      try {
+        const clean = String(value).replace(/&amp;/g, "&").trim();
+        return new URL(clean, finalUrl.href).href;
+      } catch { return ""; }
+    }).filter(Boolean);
+
+    const preferred = urls.find(u => {
+      try {
+        const h = new URL(u).hostname.toLowerCase();
+        return /^(iframe|player|embed|video)/i.test(new URL(u).pathname) || h !== finalHost;
+      } catch { return false; }
+    }) || urls[0] || "";
+
+    if (!preferred) {
+      return res.status(404).json({ ok: false, error: "На этой странице не найден встроенный плеер." });
+    }
+    res.json({ ok: true, pageUrl: finalUrl.href, embedUrl: preferred });
+  } catch (err) {
+    console.error("[lordfilm] extract error:", err.message);
+    res.status(400).json({ ok: false, error: "Не удалось разобрать ссылку Lordfilm." });
+  }
+});
+
 app.get("/health", (req, res) => {
   res.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
   res.json({ ok: true, service: "CINEORA", time: Date.now() });
