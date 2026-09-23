@@ -732,7 +732,8 @@ body.cineora-home-dark .modal-box{background:#29252d;border-color:#514754}
 .footer{background:#090812!important;border-top-color:#ffffff10!important}
 .home-visual{display:none!important}
 .lira-stage{
-  position:absolute;right:-5px;top:118px;width:min(560px,45vw);height:560px;z-index:3;pointer-events:none;
+  appearance:none;border:0;font:inherit;text-align:left;
+  position:absolute;right:-5px;top:118px;width:min(560px,45vw);height:560px;z-index:3;pointer-events:auto;cursor:pointer;
 }
 .lira-aura{
   position:absolute;inset:45px 20px 35px 20px;border-radius:50%;
@@ -837,13 +838,13 @@ body.cineora-home-dark .modal-box{background:#29252d;border-color:#514754}
 <div class="actions"><button type="button" class="primary" id="join">▶ &nbsp;Присоединиться к сессии</button><button type="button" class="secondary" id="create">＋ &nbsp;Создать сессию</button></div>
 <div class="sources"><div class="sources-title">Поддерживаем популярные источники</div><div class="source-row"><div class="source"><span class="source-icon">▶</span>YouTube</div><div class="source"><span class="source-icon">VK</span>VK Видео</div><div class="source"><span class="source-icon">R</span>RUTUBE</div><div class="source"><span class="source-icon">↗</span>Видео из интернета</div></div></div>
 </div>
-<div class="lira-stage" aria-hidden="true">
+<button class="lira-stage" id="liraMascot" type="button" aria-label="Лира — создать комнату">
   <div class="lira-aura"></div>
   <div class="lira-stars">✦　·　✧　　✦</div>
   <div class="lira-bubble">Привет! Я Лира ♡<small>Готова смотреть вместе</small></div>
   <img class="lira-mascot" src="/lira.svg" alt="">
-  <div class="lira-float-card"><span>🍿</span><div><b>Все собрались?</b><small>Тогда начинаем!</small></div></div>
-</div>
+  <div class="lira-float-card"><span>🍿</span><div><b>Все собрались?</b><small>Нажми на Лиру — создадим комнату</small></div></div>
+</button>
 <div class="home-visual" aria-hidden="true">
   <div class="home-visual-glow"></div>
   <div class="mock-window">
@@ -1905,5 +1906,32 @@ function startRoom(roomId,pageParams){
 <style id="cineora-invite-copy-fix">
 .invite-card button.invite-copied{background:#63896c!important;color:#fff!important}
 </style>
+<script id="cineora-link-fix">
+(function(){
+  function goHomeHash(id){
+    const el=document.getElementById(id);
+    if(!el)return;
+    history.replaceState(null,"","#"+id);
+    el.scrollIntoView({behavior:"smooth",block:"start"});
+  }
+  document.querySelectorAll('.nav a[href^="#"]').forEach(a=>{
+    a.addEventListener("click",function(e){
+      const id=this.getAttribute("href").slice(1);
+      if(document.getElementById(id)){e.preventDefault();goHomeHash(id);}
+    });
+  });
+  const lira=document.getElementById("liraMascot");
+  if(lira)lira.addEventListener("click",function(){
+    const create=document.getElementById("create");
+    if(typeof openModal==="function"){openModal(true);}
+    else if(create)create.click();
+  });
+  document.querySelectorAll('a[href="/"]').forEach(a=>{
+    a.addEventListener("click",function(e){
+      if(location.pathname==="/" && !location.search){e.preventDefault();history.pushState(null,"","/");window.scrollTo({top:0,behavior:"smooth"});}
+    });
+  });
+})();
+</script>
 </body>
 </html>
