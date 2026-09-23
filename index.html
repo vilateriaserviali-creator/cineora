@@ -1542,7 +1542,7 @@ function startRoom(roomId,pageParams){
     socket.emit("request-sync");
     setTimeout(()=>{b.textContent="✓ Синхронизировано";setTimeout(()=>b.textContent="↻ Синхронизировать",1200)},350);
   };
-  document.querySelector(".chat-close").onclick=()=>{setFullscreenChat()};
+  document.querySelector(".chat-close")?.addEventListener("click",()=>{setFullscreenChat()});
   document.getElementById("inviteJoin")?.addEventListener("click",async function(e){
     e.preventDefault();
     e.stopPropagation();
