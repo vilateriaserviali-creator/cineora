@@ -1291,8 +1291,8 @@ function startRoom(roomId,pageParams){
     try{
       const u=new URL(url);
       const path=(u.pathname||"").toLowerCase();
-      if(/\\.(m3u8)(?:[?#]|$)/i.test(url))return {type:"hls",url};
-      if(/\\.(mp4|webm|ogg|ogv|mov|m4v)(?:[?#]|$)/i.test(url))return {type:"video",url};
+      if(/\.(m3u8)(?:[?#]|$)/i.test(url))return {type:"hls",url};
+      if(/\.(mp4|webm|ogg|ogv|mov|m4v)(?:[?#]|$)/i.test(url))return {type:"video",url};
     }catch(e){}
     return {type:"page",url};
   }
