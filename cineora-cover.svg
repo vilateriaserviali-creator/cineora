@@ -23,5 +23,6 @@
 <path d="M700 765c0-85 130-85 130 0" fill="none" stroke="#0d0c13" stroke-width="32" stroke-linecap="round"/><rect x="686" y="735" width="34" height="55" rx="12" fill="#9d6fa5"/><rect x="810" y="735" width="34" height="55" rx="12" fill="#9d6fa5"/>
 <g transform="translate(1260 620)"><path d="M0 0h260v145H0z" fill="#17151f" stroke="#b98ac4" stroke-opacity=".4"/><path d="M-25 145h310l-45 22H20Z" fill="#292331"/><path d="M35 30h190v90H35z" fill="#201936"/><path d="M60 85h140" stroke="#dca8ef" stroke-width="3" opacity=".7"/></g>
 <g fill="#f6bfe9" opacity=".8"><circle cx="95" cy="585" r="3"/><circle cx="1510" cy="550" r="3"/></g>
+<image href="/lira.svg" x="1120" y="470" width="92" height="110" preserveAspectRatio="xMidYMax meet"/>
 <rect x="315" y="55" width="1040" height="535" rx="12" fill="url(#glass)"/>
 </svg>
