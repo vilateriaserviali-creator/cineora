@@ -919,7 +919,34 @@ window.CINEORA_LIRA_DESIGN=Object.freeze({
       <div class="player-wrap" id="playerWrap"><div id="universalPlayer"></div><div class="empty-player" id="emptyPlayer"><strong>Добавьте видео</strong><span>Вставьте ссылку на YouTube, VK Видео, RUTUBE или прямую ссылку на видео.</span></div></div><div class="media-bar"><input id="mediaUrlRoom" placeholder="YouTube / VK / RUTUBE / ссылка на видео"><button class="room-btn primary" id="setMediaRoom" type="button">Загрузить</button></div>
       <div class="sync-note">YouTube и прямые видео синхронизируются по воспроизведению, паузе и перемотке. Для сайтов, которые разрешают встраивание, CINEORA откроет их плеер внутри комнаты.</div>
     </section>
-    </section>
+    <div class="room-lira" id="roomLira" aria-label="Лира">
+      <div class="room-lira-bubble">Я здесь 🍿<small>Смотрим вместе?</small></div>
+      <img src="/lira.svg?v=4" alt="Лира">
+    </div>
+    <aside class="side-card" id="sideCard"><div class="invite-card"><div><strong id="inviteTitle">🍿 Присоединяйтесь к просмотру</strong><span id="inviteSub">Отправьте ссылку друзьям — фильм уже ждёт.</span></div><button id="inviteJoin" type="button">🔗 Скопировать приглашение</button></div><div class="session-countdown" id="sessionCountdown"></div>
+      <div class="side-title">Участники <span id="participantCount">0</span></div>
+      <div class="participants" id="participants"></div>
+      <div class="voice-panel" id="voicePanel">
+        <div class="voice-head">
+          <div>
+            <div class="voice-title">🎙 Голосовая комната</div>
+            <div class="voice-status" id="voiceStatus">Микрофон выключен</div>
+          </div>
+          <button class="voice-toggle" id="voiceToggle" type="button">🎙 Включить микрофон</button>
+        </div>
+        <div class="voice-tools">
+          <label class="noise-option"><input type="checkbox" id="noiseSuppression" checked> Шумоподавление</label>
+          <span class="voice-note" id="voiceConnection">● онлайн</span>
+        </div>
+        <div class="voice-users" id="voiceUsers"></div>
+      </div>
+      <div class="chat">
+        <div class="side-title chat-title-row">Чат <span id="chatConnection">● онлайн</span></div>
+        <div class="chat-messages" id="chatMessages"></div>
+        <form class="chat-form" id="chatForm"><div class="emoji-wrap"><button class="emoji-toggle" id="emojiToggle" type="button" aria-label="Смайлики">😊</button><div class="emoji-picker hidden" id="emojiPicker"><div class="sticker-title">Стикеры и эмоции</div><div class="sticker-grid"><button type="button">😂</button><button type="button">😍</button><button type="button">🥰</button><button type="button">😎</button><button type="button">🤭</button><button type="button">🥹</button><button type="button">😭</button><button type="button">😡</button><button type="button">🤯</button><button type="button">🤍</button><button type="button">❤️</button><button type="button">💜</button><button type="button">🔥</button><button type="button">✨</button><button type="button">🎉</button><button type="button">🍿</button><button type="button">👍</button><button type="button">👏</button><button type="button">💀</button><button type="button">👀</button><button type="button">💅</button><button type="button">🫶</button><button type="button">☕</button><button type="button">🎬</button></div></div></div><input id="chatInput" maxlength="500" placeholder="Напишите сообщение..."><button type="submit">→</button></form>
+      </div>
+    </aside>
+  </main>
 </section>
 
 <section class="hero">
