@@ -501,11 +501,23 @@ io.on("connection", socket => {
     socket.to(target.id).emit("voice-signal", { from: socket.id, name: socket.data.name || "Гость", data });
   });
 
-  socket.on("join-room", ({ roomId, name }) => {
+  socket.on("join-room", ({ roomId, name, privateRoom, accessToken }, ack) => {
     roomId = String(roomId || "").trim().toUpperCase().slice(0, 16);
     name = String(name || "Гость").trim().slice(0, 24);
+    privateRoom = !!privateRoom;
+    accessToken = String(accessToken || "").trim().slice(0, 96);
     if (!roomId) return;
     const room = roomState(roomId);
+    if (room.isPrivate) {
+      if (!accessToken || accessToken !== room.accessToken) {
+        if (typeof ack === "function") ack({ok:false,error:"Эта комната приватная. Нужна персональная ссылка-приглашение."});
+        return;
+      }
+    } else if (privateRoom && room.users.size === 0) {
+      room.isPrivate = true;
+      room.accessToken = accessToken || require("crypto").randomBytes(24).toString("hex");
+    }
+    if (typeof ack === "function") ack({ok:true});
     if (socket.data.roomId && socket.data.roomId !== roomId) socket.leave(socket.data.roomId);
     socket.join(roomId);
     socket.data.roomId = roomId;
