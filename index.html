@@ -1215,6 +1215,7 @@ function startRoom(roomId,pageParams){
   const wrap=document.getElementById("playerWrap"), host=document.getElementById("universalPlayer"), empty=document.getElementById("emptyPlayer");
   const participants=document.getElementById("participants"), chatMessages=document.getElementById("chatMessages");
   let suppress=false,lastProgress=0,currentType="",player=null,currentUrl="",hostId="",roomPlaying=false,roomPosition=0,roomServerTime=Date.now();
+  let embedPlayer=null,embedFrame=null,embedTime=0,embedDuration=0,embedPlaying=false;
 
   document.getElementById("roomCodeLabel").textContent=roomId;
   document.getElementById("myRoomName").textContent="Имя: "+myName;
@@ -1314,24 +1315,75 @@ function startRoom(roomId,pageParams){
     return {type:"page",url};
   }
 
-  function clearPlayer(){player=null;currentType="";currentUrl="";host.innerHTML="";empty.style.display="grid"}
+  function clearPlayer(){
+    try{if(embedPlayer?.destroy)embedPlayer.destroy()}catch(e){}
+    player=null;embedPlayer=null;embedFrame=null;embedTime=0;embedDuration=0;embedPlaying=false;
+    currentType="";currentUrl="";host.innerHTML="";empty.style.display="grid";
+  }
   function setStatus(label){document.getElementById("mediaStatus").textContent=label}
-  function showError(message){player=null;currentType="error";host.innerHTML='<div class="player-error"><strong>Не удалось открыть видео</strong><span>'+escapeHtml(message)+'</span></div>';empty.style.display="none"}
+  function showError(message){player=null;embedPlayer=null;embedFrame=null;currentType="error";host.innerHTML='<div class="player-error"><strong>Не удалось открыть видео</strong><span>'+escapeHtml(message)+'</span></div>';empty.style.display="none"}
 
   function makeIframe(src){
     host.innerHTML="";
     const iframe=document.createElement("iframe");
-    iframe.src=src;iframe.allow="autoplay; fullscreen; picture-in-picture; encrypted-media";iframe.allowFullscreen=true;iframe.referrerPolicy="strict-origin-when-cross-origin";
-    host.appendChild(iframe);return iframe;
+    iframe.src=src;iframe.allow="autoplay; fullscreen; picture-in-picture; encrypted-media; screen-wake-lock";iframe.allowFullscreen=true;iframe.referrerPolicy="strict-origin-when-cross-origin";
+    host.appendChild(iframe);
+    embedFrame=iframe;
+    return iframe;
+  }
+
+  // RUTUBE sends player events to the parent window. VK exposes a JS API when
+  // js_api=1 is present in the embed URL. Both paths let CINEORA report the
+  // real current position and duration to the participant list.
+  window.addEventListener("message",event=>{
+    if(!embedFrame || event.source!==embedFrame.contentWindow)return;
+    let msg=event.data;
+    try{if(typeof msg==="string")msg=JSON.parse(msg)}catch(e){return}
+    if(!msg||typeof msg!=="object")return;
+    const data=msg.data&&typeof msg.data==="object"?msg.data:msg;
+    const type=msg.type||msg.event||"";
+    if(currentType==="rutube"){
+      if(type==="player:currentTime")embedTime=Number(data.time)||0;
+      if(type==="player:durationChange")embedDuration=Number(data.duration)||embedDuration;
+      if(type==="player:changeState"){
+        embedPlaying=data.state==="playing";
+        if(data.time!=null)embedTime=Number(data.time)||0;
+        if(data.duration!=null)embedDuration=Number(data.duration)||embedDuration;
+      }
+    }
+  });
+
+  function loadVkApi(iframe){
+    const init=()=>{
+      try{
+        if(window.VK&&typeof window.VK.VideoPlayer==="function"){
+          embedPlayer=window.VK.VideoPlayer(iframe);
+          const onState=state=>{
+            if(!state)return;
+            if(state.time!=null)embedTime=Number(state.time)||0;
+            if(state.duration!=null)embedDuration=Number(state.duration)||embedDuration;
+          };
+          ["inited","timeupdate","started","resumed","paused","ended"].forEach(name=>{
+            try{embedPlayer.on(name,onState)}catch(e){}
+          });
+        }
+      }catch(e){}
+    };
+    if(window.VK&&typeof window.VK.VideoPlayer==="function"){init();return}
+    if(document.querySelector('script[data-vk-video-api]')){setTimeout(init,150);return}
+    const s=document.createElement("script");
+    s.src="https://vk.com/js/api/videoplayer.js";
+    s.async=true;s.dataset.vkVideoApi="1";s.onload=init;
+    document.head.appendChild(s);
   }
 
   function loadYouTube(id){
-    currentType="youtube";
+    currentType="youtube";embedPlayer=null;embedFrame=null;embedTime=0;embedDuration=0;embedPlaying=false;
     host.innerHTML='<div id="ytPlayer" class="universal-player"></div>';
     const build=()=>{
       if(!window.YT||!YT.Player){setTimeout(build,100);return}
       player=new YT.Player("ytPlayer",{width:"100%",height:"100%",videoId:id,playerVars:{playsinline:1,rel:0,origin:location.origin,enablejsapi:1},events:{
-        onReady:()=>setStatus("YouTube · готово к просмотру"),
+        onReady:()=>{setStatus("YouTube · готово к просмотру");try{embedDuration=player.getDuration()||0}catch(e){}},
         onStateChange:e=>{
           if(suppress)return;
           if(e.data===1)socket.emit("sync",{playing:true,position:player.getCurrentTime()});
@@ -1359,8 +1411,19 @@ function startRoom(roomId,pageParams){
     if(!nextUrl){clearPlayer();setStatus("Видео пока не добавлено");return}
     empty.style.display="none";
     if(d.type==="youtube"){loadYouTube(d.id);setStatus("YouTube");return}
-    if(d.type==="rutube"){currentType="rutube";makeIframe("https://rutube.ru/play/embed/"+encodeURIComponent(d.id)+d.query);setStatus("RUTUBE");return}
-    if(d.type==="vk"){currentType="vk";makeIframe(d.url);setStatus("VK Видео");return}
+    if(d.type==="rutube"){
+      currentType="rutube";embedTime=0;embedDuration=0;embedPlaying=false;
+      const iframe=makeIframe("https://rutube.ru/play/embed/"+encodeURIComponent(d.id)+d.query);
+      iframe.addEventListener("load",()=>setStatus("RUTUBE · готово к просмотру"),{once:true});
+      setStatus("RUTUBE");return
+    }
+    if(d.type==="vk"){
+      currentType="vk";embedTime=0;embedDuration=0;embedPlaying=false;
+      const sep=d.url.includes("?")?"&":"?";
+      const iframe=makeIframe(d.url+(d.url.includes("js_api=")?"":sep+"js_api=1"));
+      iframe.addEventListener("load",()=>loadVkApi(iframe),{once:true});
+      setStatus("VK Видео");return
+    }
     if(d.type==="hls"){
       currentType="video";host.innerHTML="";
       const v=document.createElement("video");v.id="roomVideo";v.controls=false;v.playsInline=true;v.preload="metadata";host.appendChild(v);
@@ -1407,6 +1470,28 @@ function startRoom(roomId,pageParams){
     try{
       if(currentType==="youtube"&&player?.getCurrentTime)return player.getCurrentTime()||0;
       if(currentType==="video")return document.getElementById("roomVideo")?.currentTime||0;
+      if(currentType==="rutube"||currentType==="vk"){
+        if(embedPlayer?.getCurrentTime){
+          const t=embedPlayer.getCurrentTime();
+          if(typeof t==="number")embedTime=t;
+        }
+        return Number(embedTime)||0;
+      }
+    }catch(e){}
+    return 0;
+  }
+
+  function getDuration(){
+    try{
+      if(currentType==="youtube"&&player?.getDuration)return player.getDuration()||0;
+      if(currentType==="video")return document.getElementById("roomVideo")?.duration||0;
+      if(currentType==="rutube"||currentType==="vk"){
+        if(embedPlayer?.getDuration){
+          const d=embedPlayer.getDuration();
+          if(typeof d==="number"&&d>0)embedDuration=d;
+        }
+        return Number(embedDuration)||0;
+      }
     }catch(e){}
     return 0;
   }
@@ -1415,6 +1500,7 @@ function startRoom(roomId,pageParams){
     try{
       if(currentType==="youtube"&&player?.getPlayerState)return player.getPlayerState()===1;
       if(currentType==="video"){const v=document.getElementById("roomVideo");return !!v&&!v.paused}
+      if(currentType==="rutube"||currentType==="vk")return !!embedPlaying;
     }catch(e){}
     return false;
   }
@@ -1441,8 +1527,15 @@ function startRoom(roomId,pageParams){
         const iframe=host.querySelector("iframe");
         if(iframe){
           const target=targetPosition(pos,serverTime,playing);
-          iframe.contentWindow.postMessage(JSON.stringify({type:playing?"player:play":"player:pause",data:{}}),"*");
           iframe.contentWindow.postMessage(JSON.stringify({type:"player:setCurrentTime",data:{time:target}}),"*");
+          iframe.contentWindow.postMessage(JSON.stringify({type:playing?"player:play":"player:pause",data:{}}),"*");
+        }
+      }else if(currentType==="vk"){
+        const target=targetPosition(pos,serverTime,playing);
+        if(embedPlayer){
+          if(embedPlayer.seek)embedPlayer.seek(target);
+          if(playing&&embedPlayer.play)embedPlayer.play();
+          if(!playing&&embedPlayer.pause)embedPlayer.pause();
         }
       }
     }catch(e){}
@@ -1622,9 +1715,7 @@ function startRoom(roomId,pageParams){
       if(Math.abs(now-target)>1.2) applySync(true,roomPosition,roomServerTime);
     }
     if(currentType){
-      const currentVideo=document.getElementById("roomVideo");
-      let duration=0;
-      try{duration=currentType==="youtube"&&player?.getDuration?player.getDuration():(currentVideo?.duration||0)}catch(e){}
+      const duration=getDuration();
       socket.emit("user-progress",{position:getPosition(),playing:isPlaying(),duration});
     }
   },500);
