@@ -547,6 +547,7 @@ io.on("connection", socket => {
     socket.emit("room-state", { hostId: room.hostId, playing: room.playing, position: room.playing ? room.position + (Date.now() - room.updatedAt) / 1000 : room.position, serverTime: Date.now(), mediaUrl: room.mediaUrl });
     if (room.messages.length) socket.emit("chat-history", room.messages.slice(-100));
     broadcastRoom(roomId);
+    socket.emit("room-users", publicUsers(room));
     io.to(roomId).emit("voice-user-state", { users: [...room.users.values()].map(u => ({ id:u.id, name:u.name, voiceEnabled:!!u.voiceEnabled })) });
   });
   socket.on("rename", ({ name }) => {
