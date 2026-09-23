@@ -504,9 +504,6 @@ io.on("connection", socket => {
     const user = room.users.get(socket.id); if (!user) return;
     user.voiceEnabled = !!enabled;
     io.to(roomId).emit("voice-user-state", { users: [...room.users.values()].map(u => ({ id:u.id, name:u.name, voiceEnabled:!!u.voiceEnabled })) });
-    // Acknowledge only after the socket is actually attached to the room.
-    // This prevents the client from sending chat/media events during the join race.
-    if (typeof ack === "function") ack({ok:true, roomId});
   });
   socket.on("voice-signal", ({ to, data }) => {
     const roomId = socket.data.roomId;
@@ -550,6 +547,8 @@ io.on("connection", socket => {
     broadcastRoom(roomId);
     socket.emit("room-users", publicUsers(room));
     io.to(roomId).emit("voice-user-state", { users: [...room.users.values()].map(u => ({ id:u.id, name:u.name, voiceEnabled:!!u.voiceEnabled })) });
+    // Confirm only after socket.join() and socket.data.roomId are set.
+    if (typeof ack === "function") ack({ok:true, roomId});
   });
   socket.on("rename", ({ name }) => {
     const roomId = socket.data.roomId;
