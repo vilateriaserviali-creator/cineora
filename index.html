@@ -1094,6 +1094,13 @@ function startRoom(roomId,pageParams){
   const roomPrivate=new URLSearchParams(location.search).get("private")==="1";
   const socket=io({
     autoConnect:false,
+    transports:["polling","websocket"],
+    query:{
+      roomId:String(roomId||""),
+      name:myName||"Гость",
+      privateRoom:roomPrivate?"1":"0",
+      accessToken:roomAccessKey
+    },
     auth:{roomId:String(roomId||""),name:myName||"Гость",privateRoom:roomPrivate,accessToken:roomAccessKey}
   });
   let roomJoined=false;
