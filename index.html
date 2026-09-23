@@ -2041,67 +2041,45 @@ function startRoom(roomId,pageParams){
 })();
 </script>
 <style id="cineora-lira-walker">
-/* Лира живёт внутри интерфейса: маленькая, самостоятельная и всегда в движении */
+/* Лира — маленький самостоятельный житель CINEORA */
 #cineoraLiraWalker{
-  position:fixed!important;
-  left:0;top:0;
-  width:104px;height:126px;
-  z-index:9990;
-  pointer-events:auto;
+  position:fixed!important;left:0;top:0;width:96px;height:118px;z-index:9990;
+  pointer-events:auto;cursor:pointer;
   transform:translate3d(var(--lira-x,78vw),var(--lira-y,72vh),0);
-  transition:transform 1.15s cubic-bezier(.22,.8,.24,1);
+  transition:transform 1.05s cubic-bezier(.22,.8,.24,1);
   filter:drop-shadow(0 9px 16px rgba(36,24,45,.18));
 }
 #cineoraLiraWalker .lira-walker-body{
-  position:absolute;right:0;bottom:0;
-  width:78px;height:94px;
-  animation:liraWalkerBob 2.7s ease-in-out infinite;
-  transform-origin:50% 85%;
+  position:absolute;right:0;bottom:0;width:76px;height:92px;
+  transform-origin:50% 85%;animation:liraWalkerBob 2.7s ease-in-out infinite;
 }
-#cineoraLiraWalker img{
-  display:block;width:100%;height:100%;object-fit:contain;
-}
+#cineoraLiraWalker img{display:block;width:100%;height:100%;object-fit:contain}
 #cineoraLiraWalker .lira-walker-bubble{
-  position:absolute;right:52px;top:0;
-  min-width:76px;max-width:128px;
-  padding:7px 9px;
-  border:1px solid rgba(213,185,222,.9);
-  border-radius:11px 11px 3px 11px;
-  background:rgba(251,244,251,.96);
-  color:#5c4a63;
-  font:700 9px/1.25 Manrope,sans-serif;
+  position:absolute;right:48px;top:0;min-width:72px;max-width:132px;
+  padding:7px 9px;border:1px solid rgba(213,185,222,.9);
+  border-radius:11px 11px 3px 11px;background:rgba(251,244,251,.97);
+  color:#5c4a63;font:700 9px/1.25 Manrope,sans-serif;
   box-shadow:0 7px 18px rgba(52,37,59,.13);
-  opacity:0;
-  transform:translateY(4px) scale(.96);
-  transition:opacity .25s ease,transform .25s ease;
-  pointer-events:none;
+  opacity:0;transform:translateY(4px) scale(.96);
+  transition:opacity .25s ease,transform .25s ease;pointer-events:none;
 }
-#cineoraLiraWalker .lira-walker-bubble.show{
-  opacity:1;transform:translateY(0) scale(1);
-}
-#cineoraLiraWalker .lira-walker-bubble small{
-  display:block;margin-top:2px;
-  color:#927d98;font-weight:500;font-size:7px;
-}
+#cineoraLiraWalker .lira-walker-bubble.show{opacity:1;transform:translateY(0) scale(1)}
+#cineoraLiraWalker .lira-walker-bubble small{display:block;margin-top:2px;color:#927d98;font-weight:500;font-size:7px}
 #cineoraLiraWalker .lira-walker-shadow{
-  position:absolute;right:13px;bottom:0;
-  width:55px;height:9px;border-radius:50%;
-  background:rgba(46,31,53,.16);
-  filter:blur(4px);
-  animation:liraWalkerShadow 2.7s ease-in-out infinite;
+  position:absolute;right:10px;bottom:0;width:54px;height:8px;border-radius:50%;
+  background:rgba(46,31,53,.16);filter:blur(4px);animation:liraWalkerShadow 2.7s ease-in-out infinite;
 }
-#cineoraLiraWalker.walk-right .lira-walker-body{transform:scaleX(1)}
 #cineoraLiraWalker.walk-left .lira-walker-body{transform:scaleX(-1)}
-#cineoraLiraWalker.walk-left .lira-walker-bubble{right:auto;left:52px;border-radius:11px 11px 11px 3px}
+#cineoraLiraWalker.walk-left .lira-walker-bubble{right:auto;left:48px;border-radius:11px 11px 11px 3px}
 #cineoraLiraWalker.walking .lira-walker-body{animation:liraWalkerStep .72s ease-in-out infinite}
 @keyframes liraWalkerBob{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-5px) rotate(1deg)}}
 @keyframes liraWalkerStep{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-9px) rotate(2deg)}}
 @keyframes liraWalkerShadow{0%,100%{transform:scaleX(1);opacity:.45}50%{transform:scaleX(.78);opacity:.25}}
 @media(max-width:900px){
-  #cineoraLiraWalker{width:78px;height:96px}
-  #cineoraLiraWalker .lira-walker-body{width:62px;height:76px}
-  #cineoraLiraWalker .lira-walker-bubble{right:38px;max-width:100px;font-size:8px;padding:6px 7px}
-  #cineoraLiraWalker.walk-left .lira-walker-bubble{left:38px}
+  #cineoraLiraWalker{width:72px;height:90px}
+  #cineoraLiraWalker .lira-walker-body{width:58px;height:72px}
+  #cineoraLiraWalker .lira-walker-bubble{right:35px;max-width:102px;font-size:8px;padding:6px 7px}
+  #cineoraLiraWalker.walk-left .lira-walker-bubble{left:35px}
 }
 @media(prefers-reduced-motion:reduce){
   #cineoraLiraWalker{transition:none!important}
@@ -2111,8 +2089,14 @@ function startRoom(roomId,pageParams){
 <script id="cineora-lira-walker">
 (function(){
   if(document.getElementById("cineoraLiraWalker"))return;
+
+  /* Убираем старые статичные версии: на странице остаётся одна Лира. */
+  document.querySelectorAll(".lira-stage,.room-lira").forEach(function(el){el.style.display="none"});
+
   const walker=document.createElement("div");
   walker.id="cineoraLiraWalker";
+  walker.setAttribute("role","button");
+  walker.setAttribute("tabindex","0");
   walker.setAttribute("aria-label","Лира — маленькая помощница CINEORA");
   walker.innerHTML='<div class="lira-walker-bubble"><span></span><small></small></div><div class="lira-walker-body"><img src="/lira.svg" alt="Лира"><div class="lira-walker-shadow"></div></div>';
   document.body.appendChild(walker);
@@ -2124,63 +2108,127 @@ function startRoom(roomId,pageParams){
   const reduce=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   const homePoints=[
-    [76,67,"Я тут 🍿","Проверяю, все ли собрались."],
-    [88,38,"Кино начинается ✨","Только не забудьте попкорн."],
-    [61,82,"Проверяю чат 💬","Спойлеры не пропускаю."],
+    [76,68,"Я тут 🍿","Проверяю, все ли собрались."],
+    [86,39,"Кино начинается ✨","Только не забудьте попкорн."],
+    [61,81,"Проверяю чат 💬","Спойлеры не пропускаю."],
     [91,73,"Всё под контролем 🎬","Смотрим вместе."]
   ];
   const roomPoints=[
-    [67,73,"Я рядом 🍿","Можно смотреть дальше."],
-    [90,27,"Что тут в чате? 💬","Я ненадолго заглянула."],
-    [74,42,"Синхронно ✨","Никто не отстал."],
+    [68,73,"Я рядом 🍿","Можно смотреть дальше."],
+    [88,28,"Что тут в чате? 💬","Я ненадолго заглянула."],
+    [74,43,"Синхронно ✨","Никто не отстал."],
     [8,76,"Попкорн доставлен 🍿","Продолжаем сеанс."]
   ];
   const points=isRoom?roomPoints:homePoints;
-  let index=Math.floor(Math.random()*points.length);
-  let timer=null;
-  let hideTimer=null;
+  let index=Math.floor(Math.random()*points.length),timer=null,hideTimer=null;
 
-  function move(){
-    if(!points.length)return;
-    const p=points[index];
+  function speak(title,small,duration){
+    clearTimeout(hideTimer);
+    bubble.classList.remove("show");
+    setTimeout(function(){
+      bubbleText.textContent=title;
+      bubbleSmall.textContent=small||"";
+      bubble.classList.add("show");
+      hideTimer=setTimeout(function(){bubble.classList.remove("show")},duration||2800);
+    },180);
+  }
+
+  function moveTo(x,y,title,small,opts){
     const maxX=Math.max(2,100-(walker.offsetWidth/window.innerWidth*100)-2);
     const maxY=Math.max(5,100-(walker.offsetHeight/window.innerHeight*100)-2);
-    const x=Math.min(Math.max(p[0],2),maxX);
-    const y=Math.min(Math.max(p[1],5),maxY);
+    x=Math.min(Math.max(x,2),maxX); y=Math.min(Math.max(y,5),maxY);
     const previousX=parseFloat(walker.dataset.x||x);
     walker.classList.toggle("walk-left",x<previousX);
-    walker.classList.toggle("walk-right",x>=previousX);
     walker.classList.add("walking");
     walker.style.setProperty("--lira-x",x+"vw");
     walker.style.setProperty("--lira-y",y+"vh");
     walker.dataset.x=x;
-    clearTimeout(hideTimer);
-    bubble.classList.remove("show");
-    setTimeout(()=>{
-      bubbleText.textContent=p[2];
-      bubbleSmall.textContent=p[3];
-      bubble.classList.add("show");
-      hideTimer=setTimeout(()=>bubble.classList.remove("show"),2600);
-    },700);
-    setTimeout(()=>walker.classList.remove("walking"),1250);
+    if(title)speak(title,small,(opts&&opts.duration)||2800);
+    setTimeout(function(){walker.classList.remove("walking")},1150);
+  }
+
+  function moveToElement(el,title,small,side){
+    if(!el||!el.getBoundingClientRect)return;
+    const r=el.getBoundingClientRect();
+    const x=(side==="left"?r.left-8:r.right+8);
+    const y=r.top+r.height*.5-58;
+    moveTo((x/window.innerWidth)*100,(y/window.innerHeight)*100,title,small,{duration:3200});
+  }
+
+  function patrol(){
+    const p=points[index];
+    moveTo(p[0],p[1],p[2],p[3]);
     index=(index+1)%points.length;
+  }
+
+  function reactToContext(){
+    const modal=document.getElementById("modal");
+    if(modal&&!modal.classList.contains("hidden")){
+      moveToElement(modal,"Я помогу 🍿","Выбираем комнату?", "right");
+      return;
+    }
+    const chat=document.getElementById("chatInput");
+    if(document.activeElement===chat){
+      moveToElement(chat,"Я рядом 💬","Пиши, я слушаю.", "left");
+      return;
+    }
+    const media=document.getElementById("mediaUrlRoom");
+    if(document.activeElement===media){
+      moveToElement(media,"Сейчас загрузим 🎬","Куда ставим фильм?", "left");
+      return;
+    }
+    const create=document.getElementById("create");
+    if(create&&document.activeElement===create){
+      moveToElement(create,"Сюда? ✨","Создаём киносеанс!", "right");
+    }
   }
 
   walker.addEventListener("click",function(e){
     e.stopPropagation();
-    move();
+    if(isRoom){
+      const sync=document.getElementById("syncBtn");
+      if(sync){moveToElement(sync,"Проверяю синхронизацию ✨","Сейчас всё сверю.","left");return}
+    }else{
+      const create=document.getElementById("create");
+      if(create&&typeof window.openModal==="function"){moveToElement(create,"Пойдём? 🍿","Создадим комнату.","right");window.openModal(true);return}
+    }
+    patrol();
   });
+  walker.addEventListener("keydown",function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();walker.click()}});
+
+  document.addEventListener("focusin",reactToContext);
+  document.addEventListener("click",function(e){
+    const modal=document.getElementById("modal");
+    if(modal&&!modal.classList.contains("hidden")&&e.target.closest("#go,#create,#join,#closeModal")){
+      setTimeout(reactToContext,120);
+    }
+  },true);
+
+  const modal=document.getElementById("modal");
+  if(modal){
+    new MutationObserver(function(){reactToContext()}).observe(modal,{attributes:true,attributeFilter:["class"]});
+  }
+
+  /* Когда кто-то входит в комнату, Лира первой замечает это. */
+  if(window.socket){
+    socket.on("room-users",function(users){
+      if(isRoom&&Array.isArray(users)&&users.length>1){
+        const last=users[users.length-1];
+        if(last&&last.name)speak("О, кто-то пришёл! 👋",String(last.name)+" уже с нами.",3400);
+      }
+    });
+  }
 
   if(!reduce){
-    move();
-    timer=setInterval(move,6500);
+    patrol();
+    timer=setInterval(patrol,7000);
     document.addEventListener("visibilitychange",function(){
       if(document.hidden){clearInterval(timer);timer=null}
-      else if(!timer){move();timer=setInterval(move,6500)}
+      else if(!timer){patrol();timer=setInterval(patrol,7000)}
     });
   }else{
-    move();
-    bubble.classList.add("show");
+    patrol();
+    speak("Я здесь 🍿","Лира рядом.",3000);
   }
 })();
 </script>
