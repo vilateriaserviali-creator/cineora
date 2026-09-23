@@ -935,12 +935,12 @@ window.CINEORA_LIRA_DESIGN=Object.freeze({
         </div>
         <div class="voice-tools">
           <label class="noise-option"><input type="checkbox" id="noiseSuppression" checked> Шумоподавление</label>
-          <span class="voice-note" id="voiceConnection">● онлайн</span>
+          <span class="voice-note" id="voiceConnection">● нет связи</span>
         </div>
         <div class="voice-users" id="voiceUsers"></div>
       </div>
       <div class="chat">
-        <div class="side-title chat-title-row">Чат <span id="chatConnection">● онлайн</span></div>
+        <div class="side-title chat-title-row">Чат <span id="chatConnection">● нет связи</span></div>
         <div class="chat-messages" id="chatMessages"></div>
         <form class="chat-form" id="chatForm"><div class="emoji-wrap"><button class="emoji-toggle" id="emojiToggle" type="button" aria-label="Смайлики">😊</button><div class="emoji-picker hidden" id="emojiPicker"><div class="sticker-title">Стикеры и эмоции</div><div class="sticker-grid"><button type="button">😂</button><button type="button">😍</button><button type="button">🥰</button><button type="button">😎</button><button type="button">🤭</button><button type="button">🥹</button><button type="button">😭</button><button type="button">😡</button><button type="button">🤯</button><button type="button">🤍</button><button type="button">❤️</button><button type="button">💜</button><button type="button">🔥</button><button type="button">✨</button><button type="button">🎉</button><button type="button">🍿</button><button type="button">👍</button><button type="button">👏</button><button type="button">💀</button><button type="button">👀</button><button type="button">💅</button><button type="button">🫶</button><button type="button">☕</button><button type="button">🎬</button></div></div></div><input id="chatInput" maxlength="500" placeholder="Напишите сообщение..."><button type="submit">→</button></form>
       </div>
@@ -1737,20 +1737,8 @@ function startRoom(roomId,pageParams){
   });
 
   socket.on("room-joined",result=>{
-    if(!result?.ok)return;
-    roomJoined=true;
-    window.cineoraRoomJoined=true;
-    document.body.classList.remove("room-access-denied");
-    setStatus("Комната подключена");
-    const el=document.getElementById("chatConnection");if(el)el.textContent="● онлайн";
-    window.dispatchEvent(new Event("cineora:connected"));
-    if(pendingChat){
-      const msg=pendingChat;pendingChat="";
-      socket.emit("chat-message",{text:msg},reply=>{
-        if(!reply?.ok)setStatus(reply?.error||"Не удалось отправить сообщение");
-      });
-      chatInput.value="";chatInput.focus();
-    }
+    // join-room acknowledgement is the single source of truth.
+    // Keep this event only for compatibility with older server builds.
   });
 
   socket.on("room-access-denied",result=>{
