@@ -1321,6 +1321,17 @@ function startRoom(roomId,pageParams){
     currentType="";currentUrl="";host.innerHTML="";empty.style.display="grid";
   }
   function setStatus(label){document.getElementById("mediaStatus").textContent=label}
+  function mediaStorageKey(roomId){return "cineora_media_"+String(roomId||"").trim().toUpperCase()}
+  function saveRoomMedia(roomId,url){
+    try{
+      const value=String(url||"").trim();
+      if(value)localStorage.setItem(mediaStorageKey(roomId),value);
+      else localStorage.removeItem(mediaStorageKey(roomId));
+    }catch(e){}
+  }
+  function getSavedRoomMedia(roomId){
+    try{return localStorage.getItem(mediaStorageKey(roomId))||""}catch(e){return ""}
+  }
   function showError(message){player=null;embedPlayer=null;embedFrame=null;currentType="error";host.innerHTML='<div class="player-error"><strong>Не удалось открыть видео</strong><span>'+escapeHtml(message)+'</span></div>';empty.style.display="none"}
 
   function makeIframe(src){
@@ -1609,7 +1620,11 @@ function startRoom(roomId,pageParams){
         return;
       }
       socket.emit("set-media",{url},reply=>{
-        if(reply && !reply.ok)setStatus(reply.error||"Не удалось загрузить видео");
+        if(reply && !reply.ok){
+          setStatus(reply.error||"Не удалось загрузить видео");
+        }else{
+          saveRoomMedia(roomId,url);
+        }
         button.disabled=false;button.textContent=oldText;
       });
     };
@@ -1860,15 +1875,23 @@ function startRoom(roomId,pageParams){
   socket.on("room-state",state=>{
     hostId=state.hostId||"";
     roomPlaying=!!state.playing;roomPosition=Number(state.position)||0;roomServerTime=Number(state.serverTime)||Date.now();
-    document.getElementById("mediaUrlRoom").value=state.mediaUrl||"";
+    const serverMedia=String(state.mediaUrl||"").trim();
+    const savedMedia=getSavedRoomMedia(roomId);
+    const mediaUrl=serverMedia||savedMedia;
+    if(mediaUrl){
+      document.getElementById("mediaUrlRoom").value=mediaUrl;
+      saveRoomMedia(roomId,mediaUrl);
+    }
     const syncStateEl=document.getElementById("syncState"); if(syncStateEl) syncStateEl.textContent="Видео синхронизируется между участниками";
-    loadMedia(state.mediaUrl);
+    loadMedia(mediaUrl);
     setTimeout(()=>applySync(state.playing,state.position,state.serverTime),1200);
   });
   socket.on("media-changed",state=>{
     const data=typeof state==="string"?{url:state,playing:false,position:0,serverTime:Date.now()}:state;
-    document.getElementById("mediaUrlRoom").value=data.url||"";
-    loadMedia(data.url);
+    const mediaUrl=String(data.url||"").trim();
+    document.getElementById("mediaUrlRoom").value=mediaUrl;
+    saveRoomMedia(roomId,mediaUrl);
+    loadMedia(mediaUrl);
     setTimeout(()=>applySync(!!data.playing,Number(data.position)||0,data.serverTime),1200);
   });
   socket.on("sync",state=>applySync(state.playing,state.position,state.serverTime));
