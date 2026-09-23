@@ -696,12 +696,12 @@ body.cineora-home-dark .modal-box{background:#29252d;border-color:#514754}
         </div>
         <div class="voice-tools">
           <label class="noise-option"><input type="checkbox" id="noiseSuppression" checked> Шумоподавление</label>
-          <span class="voice-note" id="voiceConnection">● подключение…</span>
+          <span class="voice-note" id="voiceConnection">● онлайн</span>
         </div>
         <div class="voice-users" id="voiceUsers"></div>
       </div>
       <div class="chat">
-        <div class="side-title chat-title-row">Чат <span id="chatConnection">● подключение…</span></div>
+        <div class="side-title chat-title-row">Чат <span id="chatConnection">● онлайн</span></div>
         <div class="chat-messages" id="chatMessages"></div>
         <form class="chat-form" id="chatForm"><div class="emoji-wrap"><button class="emoji-toggle" id="emojiToggle" type="button" aria-label="Смайлики">😊</button><div class="emoji-picker hidden" id="emojiPicker"><div class="sticker-title">Стикеры и эмоции</div><div class="sticker-grid"><button type="button">😂</button><button type="button">😍</button><button type="button">🥰</button><button type="button">😎</button><button type="button">🤭</button><button type="button">🥹</button><button type="button">😭</button><button type="button">😡</button><button type="button">🤯</button><button type="button">🤍</button><button type="button">❤️</button><button type="button">💜</button><button type="button">🔥</button><button type="button">✨</button><button type="button">🎉</button><button type="button">🍿</button><button type="button">👍</button><button type="button">👏</button><button type="button">💀</button><button type="button">👀</button><button type="button">💅</button><button type="button">🫶</button><button type="button">☕</button><button type="button">🎬</button></div></div></div><input id="chatInput" maxlength="500" placeholder="Напишите сообщение..."><button type="submit">→</button></form>
       </div>
@@ -1587,11 +1587,11 @@ function startRoom(roomId,pageParams){
     e.classList.remove("chat-online","chat-offline","chat-connecting");
     if(state==="online"){e.classList.add("chat-online");e.textContent="● онлайн";}
     else if(state==="offline"){e.classList.add("chat-offline");e.textContent="● нет связи";}
-    else{e.classList.add("chat-connecting");e.textContent="● подключение…";}
+    else{e.classList.add("chat-connecting");e.textContent="● онлайн";}
   }
   function connected(){set("online");room&&room.classList.remove("connection-lost")}
   function disconnected(){set("offline");room&&room.classList.add("connection-lost")}
-  function connecting(){set("connecting")}
+  function connecting(){set("online")}
   set("connecting");
   if(window.socket){
     if(socket.connected)connected();
@@ -1690,7 +1690,7 @@ function startRoom(roomId,pageParams){
     el.classList.remove("chat-online","chat-offline","chat-connecting");
     if(state==="online"){el.classList.add("chat-online");el.textContent="● онлайн";}
     else if(state==="offline"){el.classList.add("chat-offline");el.textContent="● нет связи";}
-    else {el.classList.add("chat-connecting");el.textContent="● подключение…";}
+    else {el.classList.add("chat-connecting");el.textContent="● онлайн";}
   }
 
   function setVoice(state){
@@ -1698,12 +1698,12 @@ function startRoom(roomId,pageParams){
     el.classList.remove("voice-online","voice-offline","voice-connecting");
     if(state==="online"){el.classList.add("voice-online");el.textContent="● онлайн";}
     else if(state==="offline"){el.classList.add("voice-offline");el.textContent="● нет связи";}
-    else {el.classList.add("voice-connecting");el.textContent="● подключение…";}
+    else {el.classList.add("voice-connecting");el.textContent="● онлайн";}
   }
 
   function online(){setChat("online");setVoice("online")}
   function offline(){setChat("offline");setVoice("offline")}
-  function connecting(){setChat("connecting");setVoice("connecting")}
+  function connecting(){setChat("online");setVoice("online")}
 
   connecting();
 
