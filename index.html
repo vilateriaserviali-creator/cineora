@@ -1744,8 +1744,6 @@ function startRoom(roomId,pageParams){
     const el=document.getElementById("chatConnection");if(el)el.textContent="● нет связи";
   });
 
-  socket.connect();
-
   socket.on("room-state",state=>{
     hostId=state.hostId||"";
     roomPlaying=!!state.playing;roomPosition=Number(state.position)||0;roomServerTime=Number(state.serverTime)||Date.now();
@@ -1790,6 +1788,9 @@ function startRoom(roomId,pageParams){
   }
   document.addEventListener("pointerdown",enableChatSound,{once:true});
   document.addEventListener("keydown",enableChatSound,{once:true});
+  // Connect only after every room listener is registered, so the initial room-users event cannot be missed.
+  socket.connect();
+
   socket.on("chat-message",message=>{
     addMessage(message);
     if(message?.userId!==socket.id)playChatSound();
