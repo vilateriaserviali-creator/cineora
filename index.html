@@ -1705,5 +1705,55 @@ function startRoom(roomId,pageParams){
     e.stopImmediatePropagation();
   },true);
 })();
-</script></body>
+</script><style id="cineora-live-status">
+#chatConnection,#voiceConnection{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:600;transition:color .2s ease}
+#chatConnection.chat-online,#voiceConnection.voice-online{color:#4f9a5c!important}
+#chatConnection.chat-offline,#voiceConnection.voice-offline{color:#b56b68!important}
+#chatConnection.chat-connecting,#voiceConnection.voice-connecting{color:#9a7f98!important}
+#chatConnection.chat-online::first-letter,#voiceConnection.voice-online::first-letter{color:#55c76a}
+#chatConnection.chat-offline::first-letter,#voiceConnection.voice-offline::first-letter{color:#d17b76}
+</style>
+<script id="cineora-live-status-fix">
+(function(){
+  const chat=()=>document.getElementById("chatConnection");
+  const voice=()=>document.getElementById("voiceConnection");
+
+  function setChat(state){
+    const el=chat(); if(!el)return;
+    el.classList.remove("chat-online","chat-offline","chat-connecting");
+    if(state==="online"){el.classList.add("chat-online");el.textContent="● онлайн";}
+    else if(state==="offline"){el.classList.add("chat-offline");el.textContent="● нет связи";}
+    else {el.classList.add("chat-connecting");el.textContent="● подключение…";}
+  }
+
+  function setVoice(state){
+    const el=voice(); if(!el)return;
+    el.classList.remove("voice-online","voice-offline","voice-connecting");
+    if(state==="online"){el.classList.add("voice-online");el.textContent="● онлайн";}
+    else if(state==="offline"){el.classList.add("voice-offline");el.textContent="● нет связи";}
+    else {el.classList.add("voice-connecting");el.textContent="● подключение…";}
+  }
+
+  function online(){setChat("online");setVoice("online")}
+  function offline(){setChat("offline");setVoice("offline")}
+  function connecting(){setChat("connecting");setVoice("connecting")}
+
+  connecting();
+
+  if(window.socket){
+    if(socket.connected)online();
+    socket.on("connect",online);
+    socket.on("disconnect",offline);
+    socket.on("connect_error",connecting);
+    if(socket.io){
+      socket.io.on("reconnect_attempt",connecting);
+      socket.io.on("reconnect",online);
+    }
+  }
+
+  window.addEventListener("cineora:connected",online);
+  window.addEventListener("cineora:disconnected",offline);
+})();
+</script>
+</body>
 </html>
