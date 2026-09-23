@@ -1332,6 +1332,47 @@ function startRoom(roomId,pageParams){
   function getSavedRoomMedia(roomId){
     try{return localStorage.getItem(mediaStorageKey(roomId))||""}catch(e){return ""}
   }
+  function progressStorageKey(roomId){return "cineora_progress_"+String(roomId||"").trim().toUpperCase()}
+  function saveRoomProgress(roomId,url,position){
+    try{
+      const value=Number(position);
+      if(!url||!Number.isFinite(value)||value<0)return;
+      localStorage.setItem(progressStorageKey(roomId),JSON.stringify({url:String(url),position:value,savedAt:Date.now()}));
+    }catch(e){}
+  }
+  function getSavedRoomProgress(roomId,url){
+    try{
+      const raw=localStorage.getItem(progressStorageKey(roomId));
+      if(!raw)return null;
+      const data=JSON.parse(raw);
+      if(!data||String(data.url||"")!==String(url||""))return null;
+      const position=Number(data.position);
+      return Number.isFinite(position)&&position>=0?position:null;
+    }catch(e){return null}
+  }
+  function restoreSavedProgress(){
+    const saved=getSavedRoomProgress(roomId,currentUrl);
+    if(saved===null)return false;
+    suppress=true;
+    try{
+      if(currentType==="youtube"&&player?.seekTo){
+        player.seekTo(saved,true);
+      }else if(currentType==="video"){
+        const v=document.getElementById("roomVideo");
+        if(v)v.currentTime=saved;
+      }else if((currentType==="rutube"||currentType==="vk")&&embedPlayer?.seek){
+        embedPlayer.seek(saved);
+      }else if((currentType==="rutube"||currentType==="vk")&&embedFrame){
+        embedFrame.contentWindow.postMessage(JSON.stringify({type:"player:setCurrentTime",data:{time:saved}}),"*");
+      }else{
+        suppress=false;
+        return false;
+      }
+    }catch(e){}
+    setTimeout(()=>suppress=false,500);
+    setStatus("Продолжаем с "+fmt(saved));
+    return true;
+  }
   function showError(message){player=null;embedPlayer=null;embedFrame=null;currentType="error";host.innerHTML='<div class="player-error"><strong>Не удалось открыть видео</strong><span>'+escapeHtml(message)+'</span></div>';empty.style.display="none"}
 
   function makeIframe(src){
@@ -1394,7 +1435,11 @@ function startRoom(roomId,pageParams){
     const build=()=>{
       if(!window.YT||!YT.Player){setTimeout(build,100);return}
       player=new YT.Player("ytPlayer",{width:"100%",height:"100%",videoId:id,playerVars:{playsinline:1,rel:0,origin:location.origin,enablejsapi:1},events:{
-        onReady:()=>{setStatus("YouTube · готово к просмотру");try{embedDuration=player.getDuration()||0}catch(e){}},
+        onReady:()=>{
+          setStatus("YouTube · готово к просмотру");
+          try{embedDuration=player.getDuration()||0}catch(e){}
+          setTimeout(()=>restoreSavedProgress(),150);
+        },
         onStateChange:e=>{
           if(suppress)return;
           if(e.data===1)socket.emit("sync",{playing:true,position:player.getCurrentTime()});
@@ -1425,14 +1470,20 @@ function startRoom(roomId,pageParams){
     if(d.type==="rutube"){
       currentType="rutube";embedTime=0;embedDuration=0;embedPlaying=false;
       const iframe=makeIframe("https://rutube.ru/play/embed/"+encodeURIComponent(d.id)+d.query);
-      iframe.addEventListener("load",()=>setStatus("RUTUBE · готово к просмотру"),{once:true});
+      iframe.addEventListener("load",()=>{
+        setStatus("RUTUBE · готово к просмотру");
+        setTimeout(()=>restoreSavedProgress(),900);
+      },{once:true});
       setStatus("RUTUBE");return
     }
     if(d.type==="vk"){
       currentType="vk";embedTime=0;embedDuration=0;embedPlaying=false;
       const sep=d.url.includes("?")?"&":"?";
       const iframe=makeIframe(d.url+(d.url.includes("js_api=")?"":sep+"js_api=1"));
-      iframe.addEventListener("load",()=>loadVkApi(iframe),{once:true});
+      iframe.addEventListener("load",()=>{
+        loadVkApi(iframe);
+        setTimeout(()=>restoreSavedProgress(),900);
+      },{once:true});
       setStatus("VK Видео");return
     }
     if(d.type==="hls"){
@@ -1445,7 +1496,10 @@ function startRoom(roomId,pageParams){
         }else if(window.Hls){
           const hls=new Hls({enableWorker:true,lowLatencyMode:false});
           hls.loadSource(d.url);hls.attachMedia(v);
-          hls.on(Hls.Events.MANIFEST_PARSED,()=>setStatus("HLS · готово к просмотру"));
+          hls.on(Hls.Events.MANIFEST_PARSED,()=>{
+            setStatus("HLS · готово к просмотру");
+            setTimeout(()=>restoreSavedProgress(),100);
+          });
           hls.on(Hls.Events.ERROR,(ev,data)=>{
             if(data?.fatal)showError("Не удалось открыть HLS-поток. Проверьте ссылку или доступ к потоку.");
           });
@@ -1470,7 +1524,10 @@ function startRoom(roomId,pageParams){
       v.addEventListener("play",()=>{if(!suppress)socket.emit("sync",{playing:true,position:v.currentTime})});
       v.addEventListener("pause",()=>{if(!suppress)socket.emit("sync",{playing:false,position:v.currentTime})});
       v.addEventListener("seeked",()=>{if(!suppress)socket.emit("sync",{playing:!v.paused,position:v.currentTime})});
-      v.addEventListener("loadedmetadata",()=>setStatus("Видео · готово к просмотру"));
+      v.addEventListener("loadedmetadata",()=>{
+        setStatus("Видео · готово к просмотру");
+        setTimeout(()=>restoreSavedProgress(),50);
+      });
       v.addEventListener("error",()=>showError("Не удалось воспроизвести видео. Нужна прямая ссылка на MP4/WebM/OGG/M4V или поток M3U8. Ссылки на страницы сайтов вставляйте как ссылку на сам ролик."));
       return;
     }
@@ -1637,6 +1694,8 @@ function startRoom(roomId,pageParams){
   };
   {const roomParams=new URLSearchParams(location.search);const isPrivateRoom=roomParams.get("private")==="1";const hasPrivateKey=!!roomParams.get("key");document.body.classList.toggle("room-private",isPrivateRoom);document.body.classList.toggle("room-public",!isPrivateRoom);const modeLabel=document.getElementById("roomModeLabel");if(modeLabel){modeLabel.className="room-code room-mode-chip "+(isPrivateRoom?"private":"public");modeLabel.textContent=isPrivateRoom?"🔒 Приватная":"🌐 Обычная"}const inviteTitleMode=document.getElementById("inviteTitle"),inviteSub=document.getElementById("inviteSub");if(isPrivateRoom){if(inviteTitleMode)inviteTitleMode.textContent="🔒 Приватное приглашение";if(inviteSub)inviteSub.textContent="Эта ссылка ведёт прямо в закрытую комнату."}else{if(inviteTitleMode)inviteTitleMode.textContent="🍿 Присоединяйтесь к просмотру";if(inviteSub)inviteSub.textContent="Отправьте ссылку друзьям — фильм уже ждёт."}}
   document.getElementById("setMediaRoom").onclick=submitMedia;
+  window.addEventListener("pagehide",()=>{try{saveRoomProgress(roomId,currentUrl,getPosition())}catch(e){}});
+  window.addEventListener("beforeunload",()=>{try{saveRoomProgress(roomId,currentUrl,getPosition())}catch(e){}});
   document.getElementById("mediaUrlRoom").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();submitMedia()}});
   const roomLayout=document.querySelector(".room-layout"),sideCard=document.getElementById("sideCard");
   const setFullscreenChat=()=>{sideCard.classList.remove("is-open","fullscreen-chat")};
@@ -1731,7 +1790,9 @@ function startRoom(roomId,pageParams){
     }
     if(currentType){
       const duration=getDuration();
-      socket.emit("user-progress",{position:getPosition(),playing:isPlaying(),duration});
+      const currentPosition=getPosition();
+      socket.emit("user-progress",{position:currentPosition,playing:isPlaying(),duration});
+      if(currentUrl&&currentType!=="error")saveRoomProgress(roomId,currentUrl,currentPosition);
     }
   },500);
 
