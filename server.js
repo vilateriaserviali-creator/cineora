@@ -591,8 +591,12 @@ io.on("connection", socket => {
     broadcastRoom(roomId);
     io.to(roomId).emit("voice-user-state", { users: [...room.users.values()].map(u => ({ id:u.id, name:u.name, voiceEnabled:!!u.voiceEnabled })) });
   });
-  socket.on("set-media", ({ url }) => {
-    const roomId = socket.data.roomId; if (!roomId) return;
+  socket.on("set-media", ({ url } = {}, ack) => {
+    const roomId = socket.data.roomId;
+    if (!roomId) {
+      if (typeof ack === "function") ack({ ok: false, error: "Вы ещё не вошли в комнату." });
+      return;
+    }
     const room = roomState(roomId);
     room.mediaUrl = String(url || "").trim();
     room.playing = false;
@@ -610,6 +614,7 @@ io.on("connection", socket => {
       serverTime: room.updatedAt
     });
     broadcastRoom(roomId);
+    if (typeof ack === "function") ack({ ok: true });
   });
   socket.on("sync", ({ playing, position }) => {
     const roomId = socket.data.roomId; if (!roomId) return;
