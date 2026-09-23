@@ -833,6 +833,53 @@ body.cineora-home-dark .modal-box{background:#29252d;border-color:#514754}
   .hero .features{margin:42px 0 0!important}
 }
 </style>
+<style id="cineora-cover-hero">
+/* Фирменная обложка CINEORA */
+.hero{
+  background-image:
+    linear-gradient(90deg,rgba(7,6,18,.78) 0%,rgba(10,8,23,.42) 38%,rgba(10,9,25,.12) 72%,rgba(8,7,18,.46) 100%),
+    linear-gradient(180deg,rgba(7,6,18,.10) 0%,rgba(7,6,18,0) 52%,rgba(7,6,18,.48) 100%),
+    url("/cineora-cover.svg")!important;
+  background-size:cover!important;
+  background-position:center!important;
+  background-repeat:no-repeat!important;
+}
+.hero:before{
+  width:560px!important;height:560px!important;right:-90px!important;top:55px!important;
+  background:radial-gradient(circle,rgba(216,169,239,.18),transparent 68%)!important;
+  filter:blur(3px)!important;box-shadow:none!important;
+}
+.hero:after{
+  background:linear-gradient(90deg,rgba(7,6,18,.34),transparent 58%,rgba(7,6,18,.18))!important;
+}
+.hero-content{
+  max-width:610px!important;
+  padding-top:82px!important;
+}
+.hero .brand-big{font-size:clamp(54px,6.5vw,78px)!important;text-shadow:0 8px 35px rgba(0,0,0,.28)}
+.hero h1{color:#fff!important;text-shadow:0 5px 24px rgba(0,0,0,.28)}
+.hero .lead{color:#eee5f1!important;text-shadow:0 2px 12px rgba(0,0,0,.24)}
+.hero #funLine{color:#eee4f0!important;background:rgba(24,17,34,.34)!important;border-color:rgba(255,255,255,.18)!important;backdrop-filter:blur(8px)}
+.hero .sources-title,.hero .source{color:#eee4f0!important}
+.hero .source-icon{background:rgba(31,22,40,.42)!important;border-color:rgba(255,255,255,.28)!important}
+.hero .features{background:linear-gradient(180deg,rgba(8,7,18,0),rgba(8,7,18,.24))!important}
+.hero .feature{color:#eee4f0!important}
+.lira-stage{
+  width:150px!important;height:165px!important;
+  right:7%!important;top:138px!important;
+}
+.lira-mascot{width:104px!important;right:18px!important;top:28px!important}
+.lira-bubble{max-width:112px!important;font-size:9px!important;padding:7px 9px!important;right:-4px!important;top:0!important}
+.lira-stars{right:92px!important;top:43px!important;font-size:10px!important}
+@media(max-width:1180px){
+  .lira-stage{right:3%!important}
+}
+@media(max-width:900px){
+  .hero{background-position:center!important}
+  .hero-content{max-width:100%!important}
+  .hero .features{background:linear-gradient(180deg,rgba(8,7,18,0),rgba(8,7,18,.30))!important}
+}
+</style>
 </head>
 <body>
 
