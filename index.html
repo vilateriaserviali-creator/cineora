@@ -2075,12 +2075,7 @@ function startRoom(roomId,pageParams){
 @keyframes liraWalkerBob{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-5px) rotate(1deg)}}
 @keyframes liraWalkerStep{0%,100%{transform:translateY(0) rotate(-3deg)}25%{transform:translateY(-3px) rotate(2deg)}50%{transform:translateY(-7px) rotate(3deg)}75%{transform:translateY(-3px) rotate(-2deg)}}
 @keyframes liraWalkerShadow{0%,100%{transform:scaleX(1);opacity:.45}50%{transform:scaleX(.78);opacity:.25}}
-@media(max-width:900px){
-  #cineoraLiraWalker{width:50px;height:64px}
-  #cineoraLiraWalker .lira-walker-body{width:42px;height:54px}
-  #cineoraLiraWalker .lira-walker-bubble{right:35px;max-width:102px;font-size:8px;padding:6px 7px}
-  #cineoraLiraWalker.walk-left .lira-walker-bubble{left:35px}
-}
+@media(max-width:900px){#cineoraLiraWalker{display:none!important}}
 @media(prefers-reduced-motion:reduce){
   #cineoraLiraWalker{transition:none!important}
   #cineoraLiraWalker .lira-walker-body,#cineoraLiraWalker .lira-walker-shadow{animation:none!important}
