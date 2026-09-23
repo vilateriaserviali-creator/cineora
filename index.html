@@ -1308,7 +1308,8 @@ function startRoom(roomId,pageParams){
       '<div style="display:flex;gap:8px;margin-top:11px;flex-wrap:wrap">'+
         '<button id="cineoraInviteCopy" type="button" style="flex:1;min-width:150px;padding:12px;border:0;border-radius:12px;background:#8f7896;color:#fff;font-weight:700">📋 Скопировать</button>'+
         '<button id="cineoraInviteSelect" type="button" style="padding:12px 15px;border:1px solid #cfc1d2;border-radius:12px;background:#fff;color:#594d5f;font-weight:600">Выделить</button>'+
-        '<a id="cineoraInviteOpen" href="'+escapeHtml(inviteUrl)+'" style="padding:12px 15px;border:1px solid #cfc1d2;border-radius:12px;background:#fff;color:#594d5f;font-weight:600;text-decoration:none">Открыть</a>'+
+        '<button id="cineoraInviteShare" type="button" style="padding:12px 15px;border:1px solid #cfc1d2;border-radius:12px;background:#fff;color:#594d5f;font-weight:600">↗ Поделиться</button>'+
+        '<a id="cineoraInviteOpen" href="'+escapeHtml(inviteUrl)+'" target="_blank" rel="noopener" style="padding:12px 15px;border:1px solid #cfc1d2;border-radius:12px;background:#fff;color:#594d5f;font-weight:600;text-decoration:none">Открыть ссылку</a>'+
       '</div>'+
       '<button id="cineoraInviteClose" type="button" style="display:block;width:100%;margin-top:8px;padding:10px;border:0;background:transparent;color:#817782">Закрыть</button>'+
       '<div id="cineoraInviteStatus" style="min-height:18px;margin-top:4px;text-align:center;font-size:12px;color:#806b85"></div>'+
@@ -1319,6 +1320,7 @@ function startRoom(roomId,pageParams){
     const field=dialog.querySelector("#cineoraInviteField");
     const copy=dialog.querySelector("#cineoraInviteCopy");
     const select=dialog.querySelector("#cineoraInviteSelect");
+    const share=dialog.querySelector("#cineoraInviteShare");
     const close=dialog.querySelector("#cineoraInviteClose");
     const status=dialog.querySelector("#cineoraInviteStatus");
 
@@ -1354,6 +1356,10 @@ function startRoom(roomId,pageParams){
 
     copy.addEventListener("click",copyLink);
     select.addEventListener("click",selectLink);
+    share.addEventListener("click",async()=>{
+      if(!navigator.share){status.textContent="Поделиться через браузер недоступно — используйте «Скопировать» или «Открыть ссылку»";return}
+      try{await navigator.share({title:"CINEORA — приглашение",text:"Присоединяйся к просмотру в CINEORA 🍿",url:inviteUrl});status.textContent="Приглашение готово к отправке"}catch(err){if(err?.name!=="AbortError")status.textContent="Не удалось открыть меню отправки"} 
+    });
     close.addEventListener("click",()=>dialog.remove());
     dialog.addEventListener("click",ev=>{if(ev.target===dialog)dialog.remove()});
     field.addEventListener("click",selectLink);
