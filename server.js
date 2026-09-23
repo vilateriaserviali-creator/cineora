@@ -672,9 +672,13 @@ setInterval(()=>{
 
 const PORT = process.env.PORT || 3000;
 
+// Open the HTTP port before any optional startup work.
+// Render must be able to detect the listener even if DB or SMTP is slow/unavailable.
+server.listen(PORT, "0.0.0.0", () => {
+  console.log(`CINEORA running on port ${PORT}`);
+});
+
 async function startServer() {
-  // The web server must start even when PostgreSQL is unavailable.
-  // Database-backed features will report their own errors until the DB is reachable.
   try {
     await initDatabase();
     console.log("PostgreSQL initialization completed.");
@@ -682,11 +686,12 @@ async function startServer() {
     console.error("PostgreSQL initialization failed. CINEORA will continue without database:", err.message);
   }
 
-  // Start HTTP/Socket.IO immediately. SMTP verification must never delay Render's port detection.
-  server.listen(PORT, "0.0.0.0", () => console.log(`CINEORA running on port ${PORT}`));
-
   if (mailer) {
-    mailer.verify()
+    mailer.verify({
+      connectionTimeout: 5000,
+      greetingTimeout: 5000,
+      socketTimeout: 5000
+    })
       .then(() => console.log("SMTP connection verified."))
       .catch(err => console.error("SMTP verification failed:", err.message));
   } else {
@@ -696,5 +701,4 @@ async function startServer() {
 
 startServer().catch(err => {
   console.error("Unexpected CINEORA startup error:", err);
-  server.listen(PORT, "0.0.0.0", () => console.log(`CINEORA running on port ${PORT}`));
 });
