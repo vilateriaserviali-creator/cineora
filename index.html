@@ -1091,14 +1091,18 @@ if(q){
 }
 
 function startRoom(roomId,pageParams){
-  const socket=io();
+  const cookieName=(document.cookie.match(/(?:^|; )cineora_name=([^;]*)/)||[])[1];
+  const myName=localStorage.getItem("cineora_name")||sessionStorage.getItem("cineora_name")||(cookieName?decodeURIComponent(cookieName):"Гость");
+  const roomAccessKey=new URLSearchParams(location.search).get("key")||"";
+  const roomPrivate=new URLSearchParams(location.search).get("private")==="1";
+  const socket=io({
+    autoConnect:false,
+    auth:{roomId:String(roomId||""),name:myName||"Гость",privateRoom:roomPrivate,accessToken:roomAccessKey}
+  });
   let roomJoined=false;
   window.cineoraRoomJoined=false;
   window.socket=socket;
   window.dispatchEvent(new Event("cineora:socket-ready")); const roomTitle=pageParams?.get("title")||"Киносеанс"; const scheduledAt=Number(pageParams?.get("at")||0); const roomTitleLabel=document.getElementById("roomTitleLabel"),inviteTitle=document.getElementById("inviteTitle"),countdown=document.getElementById("sessionCountdown"); if(roomTitleLabel)roomTitleLabel.textContent="🎬 "+roomTitle; if(inviteTitle)inviteTitle.textContent="🍿 "+roomTitle; if(scheduledAt&&countdown){let scheduledStarted=false;const tick=()=>{const left=scheduledAt-Date.now();if(left<=0){countdown.textContent="🍿 Киносеанс начинается сейчас";countdown.classList.add("show");if(!scheduledStarted&&socket.connected){scheduledStarted=true;socket.emit("sync",{playing:true,position:0});setTimeout(()=>applySync(true,0,Date.now()),300)}return}const s=Math.floor(left/1000),d=Math.floor(s/86400),hh=Math.floor(s%86400/3600),mm=Math.floor(s%3600/60),ss=s%60;countdown.textContent="🍿 Сеанс начнётся через "+(d?d+" д ":"")+String(hh).padStart(2,"0")+":"+String(mm).padStart(2,"0")+":"+String(ss).padStart(2,"0");countdown.classList.add("show")};tick();setInterval(tick,1000)}
-  const cookieName=(document.cookie.match(/(?:^|; )cineora_name=([^;]*)/)||[])[1];
-  const myName=localStorage.getItem("cineora_name")||sessionStorage.getItem("cineora_name")||(cookieName?decodeURIComponent(cookieName):"Гость");
-
   // Real-time voice chat: WebRTC mesh with Socket.IO signaling.
   const voicePeers=new Map();
   const voiceMuted=new Map();
@@ -1675,29 +1679,36 @@ function startRoom(roomId,pageParams){
   socket.on("disconnect",()=>{roomJoined=false;window.cineoraRoomJoined=false;setStatus("Соединение потеряно — переподключаемся…");const el=document.getElementById("chatConnection");if(el)el.textContent="● нет связи";window.dispatchEvent(new Event("cineora:disconnected"))});
   socket.on("connect_error",()=>{setStatus("Нет соединения с комнатой — переподключаемся…");const el=document.getElementById("chatConnection");if(el)el.textContent="● нет связи"});
   socket.on("connect",()=>{
-    const cookieName=(document.cookie.match(/(?:^|; )cineora_name=([^;]*)/)||[])[1];
-    const saved=localStorage.getItem("cineora_name")||sessionStorage.getItem("cineora_name")||(cookieName?decodeURIComponent(cookieName):"Гость");
-    const roomAccessKey=new URLSearchParams(location.search).get("key")||""; const roomPrivate=new URLSearchParams(location.search).get("private")==="1"; socket.emit("join-room",{roomId,name:saved||"Гость",privateRoom:roomPrivate,accessToken:roomAccessKey},ack=>{
-      if(ack&&!ack.ok){
-        setStatus("🔒 "+(ack.error||"Нет доступа к комнате"));
-        document.body.classList.add("room-access-denied");
-        const el=document.getElementById("chatConnection");if(el)el.textContent="● нет связи";
-        setTimeout(()=>{try{socket.disconnect()}catch(e){}},200);
-        return;
-      }
-      roomJoined=true;
-      window.cineoraRoomJoined=true;
-      setStatus("Комната подключена");
-      const el=document.getElementById("chatConnection");if(el)el.textContent="● онлайн";
-      window.dispatchEvent(new Event("cineora:connected"));
-      if(pendingChat){
-        const msg=pendingChat;pendingChat="";
-        socket.emit("chat-message",{text:msg},reply=>{if(!reply?.ok)setStatus(reply?.error||"Не удалось отправить сообщение")});
-        chatInput.value="";chatInput.focus();
-      }
-    });
-
+    setStatus("Соединение установлено — подключаем комнату…");
+    const el=document.getElementById("chatConnection");if(el)el.textContent="● подключение…";
   });
+
+  socket.on("room-joined",result=>{
+    if(!result?.ok)return;
+    roomJoined=true;
+    window.cineoraRoomJoined=true;
+    document.body.classList.remove("room-access-denied");
+    setStatus("Комната подключена");
+    const el=document.getElementById("chatConnection");if(el)el.textContent="● онлайн";
+    window.dispatchEvent(new Event("cineora:connected"));
+    if(pendingChat){
+      const msg=pendingChat;pendingChat="";
+      socket.emit("chat-message",{text:msg},reply=>{
+        if(!reply?.ok)setStatus(reply?.error||"Не удалось отправить сообщение");
+      });
+      chatInput.value="";chatInput.focus();
+    }
+  });
+
+  socket.on("room-access-denied",result=>{
+    roomJoined=false;
+    window.cineoraRoomJoined=false;
+    setStatus("🔒 "+(result?.error||"Нет доступа к комнате"));
+    document.body.classList.add("room-access-denied");
+    const el=document.getElementById("chatConnection");if(el)el.textContent="● нет связи";
+  });
+
+  socket.connect();
 
   socket.on("room-state",state=>{
     hostId=state.hostId||"";
