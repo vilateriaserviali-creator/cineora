@@ -2030,5 +2030,72 @@ function startRoom(roomId,pageParams){
 @media(max-width:600px){
   .room-view .emoji-picker{left:0!important;right:auto!important;bottom:52px!important;width:min(292px,calc(100vw - 24px))!important;max-height:46vh!important}
 }
-</style></body>
+</style><script id="cineora-room-chat-last-fix">
+(function(){
+  function ready(){
+    const form=document.getElementById("chatForm");
+    const input=document.getElementById("chatInput");
+    const toggle=document.getElementById("emojiToggle");
+    const picker=document.getElementById("emojiPicker");
+    if(!form||!input||!toggle||!picker)return;
+
+    toggle.addEventListener("click",function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      picker.classList.toggle("hidden");
+      input.focus();
+    });
+
+    picker.addEventListener("click",function(e){
+      const button=e.target.closest("button");
+      if(!button)return;
+      e.preventDefault();
+      e.stopPropagation();
+      const emoji=button.textContent.trim();
+      if(!emoji)return;
+      const start=Number.isInteger(input.selectionStart)?input.selectionStart:input.value.length;
+      const end=Number.isInteger(input.selectionEnd)?input.selectionEnd:input.value.length;
+      input.value=input.value.slice(0,start)+emoji+input.value.slice(end);
+      input.focus();
+      try{input.setSelectionRange(start+emoji.length,start+emoji.length)}catch(_){}
+      picker.classList.add("hidden");
+    });
+
+    form.addEventListener("submit",function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      const msg=input.value.trim();
+      if(!msg)return;
+      const socket=window.socket;
+      if(!socket||!socket.connected||!window.cineoraRoomJoined){
+        if(socket&&!socket.connected){try{socket.connect()}catch(_){}}
+        return;
+      }
+      socket.emit("chat-message",{text:msg},function(ack){
+        if(ack&&ack.ok){
+          input.value="";
+          input.focus();
+        }else if(ack&&!ack.ok){
+          const status=document.getElementById("chatConnection");
+          if(status)status.textContent="⚠️ "+(ack.error||"не отправлено");
+        }
+      });
+    });
+
+    input.addEventListener("keydown",function(e){
+      if(e.key!=="Enter"||e.shiftKey)return;
+      e.preventDefault();
+      e.stopPropagation();
+      form.requestSubmit();
+    });
+
+    document.addEventListener("click",function(e){
+      if(!e.target.closest(".emoji-wrap"))picker.classList.add("hidden");
+    });
+  }
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",ready,{once:true});
+  else ready();
+})();
+</script>
+</style></body></body>
 </html>
