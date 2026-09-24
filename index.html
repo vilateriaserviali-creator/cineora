@@ -2773,11 +2773,18 @@ function startRoom(roomId,pageParams){
   let suppress=false,lastProgress=0,currentType="",player=null,currentUrl="",hostId="",roomPlaying=false,roomPosition=0,roomServerTime=Date.now();
   let lastLocalControl=0;
   function publishSync(playing,position){
-    // Only the room host may change the shared playback clock.
+    // Playback is synchronized only after an explicit user action.
     if(!isHost()||!socket.connected||!roomJoined)return;
     lastLocalControl=Date.now();
     socket.emit("sync",{playing:!!playing,position:Math.max(0,Number(position)||0)});
   }
+  function requestRoomSync(){
+    if(!socket.connected||!roomJoined)return;
+    lastLocalControl=Date.now();
+    socket.emit("request-sync");
+    setStatus("Запрашиваем синхронизацию…");
+  }
+  document.getElementById("syncBtn")?.addEventListener("click",requestRoomSync);
   let embedPlayer=null,embedFrame=null,embedTime=0,embedDuration=0,embedPlaying=false;
 
   document.getElementById("roomCodeLabel").textContent=roomId;
@@ -3044,16 +3051,16 @@ function startRoom(roomId,pageParams){
         },
         onStateChange:e=>{
           if(suppress)return;
-          if(e.data===1)publishSync(true,player.getCurrentTime());
+          /* Do not sync automatically when the player changes state. */
           if(e.data===2){
             clearTimeout(window.__cineoraPauseTimer);
             window.__cineoraPauseTimer=setTimeout(()=>{
               if(suppress)return;
               const state=player?.getPlayerState?.();
-              if(state===2)publishSync(false,player.getCurrentTime());
+              /* Pause changes are local until the user requests synchronization. */
             },1200);
           }
-          if(e.data===0)publishSync(false,player.getCurrentTime());
+          /* End state is local until explicit synchronization. */
         },
         onAutoplayBlocked:()=>setStatus("Нажмите ▶ в плеере — браузер заблокировал автозапуск"),
         onError:e=>showError("YouTube не разрешил этот ролик во встроенном плеере. Код ошибки: "+e.data)
@@ -3166,7 +3173,7 @@ function startRoom(roomId,pageParams){
         }
       };
       startHls();
-      v.addEventListener("play",()=>{if(!suppress)publishSync(true,v.currentTime)});
+      v.addEventListener("play",()=>{});
       v.addEventListener("pause",()=>{
         if(suppress)return;
         clearTimeout(v.__cineoraPauseTimer);
@@ -3174,7 +3181,7 @@ function startRoom(roomId,pageParams){
           if(!suppress&&v.paused)publishSync(false,v.currentTime);
         },900);
       });
-      v.addEventListener("seeked",()=>{if(!suppress)publishSync(!v.paused,v.currentTime)});
+      v.addEventListener("seeked",()=>{});
       v.addEventListener("error",()=>showError("Браузер не может воспроизвести этот видеоформат. Попробуйте MP4, WebM или HLS (M3U8)."));
       return;
     }
@@ -3183,7 +3190,7 @@ function startRoom(roomId,pageParams){
       const v=document.createElement("video");v.id="roomVideo";v.controls=false;v.playsInline=true;v.preload="metadata";v.src=d.url;host.appendChild(v);
       setStatus("Видео из интернета");
       v.addEventListener("play",()=>{if(!suppress)publishSync(true,v.currentTime)});
-      v.addEventListener("pause",()=>{if(!suppress)publishSync(false,v.currentTime)});
+      v.addEventListener("pause",()=>{});
       v.addEventListener("seeked",()=>{if(!suppress)publishSync(!v.paused,v.currentTime)});
       v.addEventListener("loadedmetadata",()=>{
         setStatus("Видео · готово к просмотру");
