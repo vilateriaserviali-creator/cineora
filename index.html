@@ -1396,7 +1396,126 @@ body.cineora-home-dark .hero:after{
   background:linear-gradient(90deg,rgba(7,6,18,.22),transparent 58%,rgba(7,6,18,.18))!important;
 }
 </style>
-</head>
+<style id="cineora-home-premium-upgrade">
+/* Премиальная полировка главной страницы */
+body:not(.room-page) .actions .primary{
+  position:relative;overflow:hidden;
+  min-width:255px;
+  box-shadow:0 10px 28px rgba(125,101,132,.16);
+  transition:transform .22s cubic-bezier(.22,1,.36,1),box-shadow .22s ease,filter .22s ease;
+}
+body:not(.room-page) .actions .primary:before{
+  content:"";position:absolute;top:-80%;left:-45%;width:34%;height:260%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);
+  transform:rotate(18deg);transition:left .55s ease;pointer-events:none;
+}
+body:not(.room-page) .actions .primary:hover{
+  transform:translateY(-3px);box-shadow:0 16px 34px rgba(125,101,132,.23);filter:saturate(1.04);
+}
+body:not(.room-page) .actions .primary:hover:before{left:125%}
+body:not(.room-page) .actions .primary:active{transform:translateY(-1px) scale(.99)}
+
+body:not(.room-page) .actions .secondary{
+  transition:transform .22s ease,background .22s ease,box-shadow .22s ease,border-color .22s ease;
+}
+body:not(.room-page) .actions .secondary:hover{
+  transform:translateY(-2px);
+  background:rgba(255,255,255,.96);
+  box-shadow:0 10px 25px rgba(91,78,96,.10);
+}
+
+body:not(.room-page) .source{
+  position:relative;
+  padding:7px 12px 7px 7px;
+  border:1px solid rgba(189,178,194,.55);
+  border-radius:999px;
+  background:rgba(255,255,255,.30);
+  transition:transform .2s ease,background .2s ease,box-shadow .2s ease,border-color .2s ease;
+}
+body:not(.room-page) .source:hover{
+  transform:translateY(-2px);
+  background:rgba(255,255,255,.78);
+  border-color:#b9a9bf;
+  box-shadow:0 8px 20px rgba(91,78,96,.09);
+}
+body:not(.room-page) .source-icon{
+  width:27px;height:27px;
+  border:1px solid #c4b6c8;
+  border-radius:50%;
+  background:#f5eef6;
+  color:#66566d;
+  font-weight:700;
+  box-shadow:inset 0 1px 2px rgba(255,255,255,.9);
+}
+body:not(.room-page) .source-row{gap:10px}
+
+body:not(.room-page) .feature{
+  position:relative;
+  min-height:62px;
+  transition:transform .2s ease,background .2s ease;
+}
+body:not(.room-page) .feature:not(:last-child):hover{transform:translateX(3px)}
+body:not(.room-page) .feature:last-child:hover{transform:translateX(3px)}
+body:not(.room-page) .feature-icon{
+  width:38px;height:38px;min-width:38px;
+  display:grid;place-items:center;
+  border:1px solid rgba(185,170,190,.65);
+  border-radius:12px;
+  background:rgba(255,255,255,.35);
+  box-shadow:0 5px 14px rgba(91,78,96,.06);
+  transition:transform .22s cubic-bezier(.22,1,.36,1),background .2s ease,box-shadow .2s ease;
+}
+body:not(.room-page) .feature:hover .feature-icon{
+  transform:rotate(-4deg) scale(1.07);
+  background:rgba(255,255,255,.72);
+  box-shadow:0 8px 18px rgba(91,78,96,.10);
+}
+
+body:not(.room-page) #how .cards{gap:20px}
+body:not(.room-page) #how .card{
+  position:relative;overflow:hidden;
+  min-height:190px;
+  background:rgba(255,255,255,.56);
+  border-color:#ddd4df;
+  box-shadow:0 8px 25px rgba(91,78,96,.045);
+  transition:transform .24s cubic-bezier(.22,1,.36,1),box-shadow .24s ease,border-color .24s ease;
+}
+body:not(.room-page) #how .card:after{
+  content:"";position:absolute;right:-35px;bottom:-45px;width:125px;height:125px;
+  border-radius:50%;background:radial-gradient(circle,rgba(216,198,223,.34),transparent 68%);
+  pointer-events:none;
+}
+body:not(.room-page) #how .card:hover{
+  transform:translateY(-6px);
+  border-color:#c8b5cd;
+  box-shadow:0 18px 38px rgba(91,78,96,.12);
+}
+body:not(.room-page) #how .card .num{
+  position:relative;z-index:1;
+  width:38px;height:38px;
+  background:#e6d9e9;
+  color:#5c4c63;
+  font-weight:700;
+  transition:transform .22s ease;
+}
+body:not(.room-page) #how .card:hover .num{transform:scale(1.08) rotate(-5deg)}
+body:not(.room-page) #how .card h3{position:relative;z-index:1}
+
+@media(max-width:900px){
+  body:not(.room-page) .source-row{gap:8px}
+  body:not(.room-page) .source{padding-right:10px}
+  body:not(.room-page) #how .card{min-height:0}
+}
+@media(prefers-reduced-motion:reduce){
+  body:not(.room-page) .actions .primary,
+  body:not(.room-page) .actions .secondary,
+  body:not(.room-page) .source,
+  body:not(.room-page) .feature,
+  body:not(.room-page) .feature-icon,
+  body:not(.room-page) #how .card,
+  body:not(.room-page) #how .card .num{transition:none!important}
+}
+</style></head>
 <body>
 
 
@@ -1459,7 +1578,7 @@ body.cineora-home-dark .hero:after{
 <div class="brand-big">CINE<span class="accent">O</span>RA</div>
 <h1>Кино становится <em class="accent">ближе.</em></h1>
 <p class="lead">Смотрите фильмы и видео вместе с друзьями — в одной синхронизированной сессии, где бы вы ни были.</p><div id="funLine" style="margin-top:16px;font-size:13px;color:#6f6470;min-height:20px"></div>
-<div class="actions"><button type="button" class="primary" id="join">▶ &nbsp;Присоединиться к сессии</button><button type="button" class="secondary" id="create">＋ &nbsp;Создать сессию</button></div>
+<div class="actions"><button type="button" class="primary" id="join">▶ &nbsp;Присоединиться к сессии</button><button type="button" class="secondary" id="create">＋ &nbsp;Создать комнату</button></div>
 <div class="sources"><div class="sources-title">Поддерживаем популярные источники</div><div class="source-row"><div class="source"><span class="source-icon">▶</span>YouTube</div><div class="source"><span class="source-icon">VK</span>VK Видео</div><div class="source"><span class="source-icon">R</span>RUTUBE</div><div class="source"><span class="source-icon">↗</span>Видео из интернета</div></div></div>
 </div>
 
