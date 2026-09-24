@@ -767,16 +767,19 @@ function publicUsers(room) {
     position: u.playing ? u.position + Math.max(0, now - (u.progressUpdatedAt || now)) / 1000 : u.position,
     playing: u.playing,
     duration: u.duration || 0,
-    isAdmin: !!u.isAdmin
+    isAdmin: !!u.isAdmin,
+    avatar: u.avatar || "star"
   }));
 }
 function broadcastRoom(roomId) { const room = rooms.get(roomId); if (room) io.to(roomId).emit("room-users", publicUsers(room)); }
 
-async function joinRoomForSocket(socket, { roomId, name, privateRoom, accessToken } = {}) {
+async function joinRoomForSocket(socket, { roomId, name, avatar, privateRoom, accessToken } = {}) {
   roomId = String(roomId || "").trim().toUpperCase().slice(0, 16);
   name = String(name || "Гость").trim().slice(0, 24);
   privateRoom = !!privateRoom;
   accessToken = String(accessToken || "").trim().slice(0, 96);
+  const allowedAvatars = new Set(["star","film","popcorn","moon","heart","spark","play","smile"]);
+  avatar = allowedAvatars.has(String(avatar || "")) ? String(avatar) : "star";
 
   if (!roomId) return { ok:false, error:"Не указан код комнаты." };
 
@@ -795,6 +798,7 @@ async function joinRoomForSocket(socket, { roomId, name, privateRoom, accessToke
   socket.join(roomId);
   socket.data.roomId = roomId;
   socket.data.name = name;
+  socket.data.avatar = avatar;
   room.emptySince = null;
 
   if (!room.hostId) room.hostId = socket.id;
@@ -873,6 +877,7 @@ io.on("connection", socket => {
     joinRoomForSocket(socket, {
       roomId: handshakeRoomId,
       name: hAuth.name || hQuery.name || "Гость",
+      avatar: hAuth.avatar || hQuery.avatar || "star",
       privateRoom: hAuth.privateRoom === true || hAuth.privateRoom === "1" || hQuery.privateRoom === "1",
       accessToken: hAuth.accessToken || hQuery.accessToken || ""
     }).then(autoJoin => {
@@ -900,8 +905,8 @@ io.on("connection", socket => {
     socket.to(target.id).emit("voice-signal", { from: socket.id, name: socket.data.name || "Гость", data });
   });
 
-  socket.on("join-room", async ({ roomId, name, privateRoom, accessToken } = {}, ack) => {
-    const result = await joinRoomForSocket(socket, { roomId, name, privateRoom, accessToken });
+  socket.on("join-room", async ({ roomId, name, avatar, privateRoom, accessToken } = {}, ack) => {
+    const result = await joinRoomForSocket(socket, { roomId, name, avatar, privateRoom, accessToken });
     console.log("[socket] explicit join", socket.id, result.ok ? "ok" : result.error);
     if (typeof ack === "function") ack(result);
     if (result.ok) socket.emit("room-joined", result);
@@ -916,6 +921,7 @@ io.on("connection", socket => {
     const user = room.users.get(socket.id);
     if (user) {
       user.name = clean;
+      user.avatar = socket.data.avatar || user.avatar || "star";
       user.isAdmin = !!socket.data.isAdmin;
     }
     broadcastRoom(roomId);
