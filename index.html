@@ -3051,16 +3051,15 @@ function startRoom(roomId,pageParams){
         },
         onStateChange:e=>{
           if(suppress)return;
-          /* Do not sync automatically when the player changes state. */
-          if(e.data===2){
-            clearTimeout(window.__cineoraPauseTimer);
-            window.__cineoraPauseTimer=setTimeout(()=>{
-              if(suppress)return;
-              const state=player?.getPlayerState?.();
-              /* Pause changes are local until the user requests synchronization. */
-            },1200);
+          // A real player action is an explicit user action, so the host can publish it.
+          // Buffering/ended states are never used for synchronization.
+          if(e.data===1){
+            if(isHost()) publishSync(true,getPosition());
+            setStatus("▶ Воспроизведение");
+          }else if(e.data===2){
+            if(isHost()) publishSync(false,getPosition());
+            setStatus("⏸ Пауза");
           }
-          /* End state is local until explicit synchronization. */
         },
         onAutoplayBlocked:()=>setStatus("Нажмите ▶ в плеере — браузер заблокировал автозапуск"),
         onError:e=>showError("YouTube не разрешил этот ролик во встроенном плеере. Код ошибки: "+e.data)
@@ -3173,15 +3172,20 @@ function startRoom(roomId,pageParams){
         }
       };
       startHls();
-      v.addEventListener("play",()=>{});
+      v.addEventListener("play",()=>{
+        if(suppress)return;
+        if(isHost()) publishSync(true,v.currentTime);
+        setStatus("▶ Воспроизведение");
+      });
       v.addEventListener("pause",()=>{
         if(suppress)return;
-        clearTimeout(v.__cineoraPauseTimer);
-        v.__cineoraPauseTimer=setTimeout(()=>{
-          if(!suppress&&v.paused)publishSync(false,v.currentTime);
-        },900);
+        if(isHost()) publishSync(false,v.currentTime);
+        setStatus("⏸ Пауза");
       });
-      v.addEventListener("seeked",()=>{});
+      v.addEventListener("seeked",()=>{
+        if(suppress)return;
+        if(isHost()) publishSync(!v.paused,v.currentTime);
+      });
       v.addEventListener("error",()=>showError("Браузер не может воспроизвести этот видеоформат. Попробуйте MP4, WebM или HLS (M3U8)."));
       return;
     }
