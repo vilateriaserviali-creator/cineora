@@ -706,7 +706,13 @@ const featureDefs=[["🎭","Аватарки","Создание персонал
 function featureState(){try{return JSON.parse(localStorage.getItem("cineora_admin_features")||"{}")}catch(e){return {}}}
 function renderFeatures(){
   const state=featureState(),el=document.getElementById("featureList");if(!el)return;
-  el.innerHTML=featureDefs.map(([icon,name,desc],i)=>{const on=state[name]!==false&&i<6;return "<div class='achievement'><div class='achievement-icon'>"+icon+"</div><div><h3>"+name+"</h3><p>"+desc+"</p></div><label><input type='checkbox' "+(on?"checked":"")+" onchange='toggleFeature(&quot;"+esc(name)+"&quot;,this.checked)'> ON</label></div>"}).join("");
+  el.innerHTML=featureDefs.map(([icon,name,desc],i)=>{
+    const on=state[name]!==false&&i<6;
+    return "<article class='achievement'><div class='achievement-icon'>"+icon+"</div><div><h3>"+esc(name)+"</h3><p>"+esc(desc)+"</p></div><label class='check'><input type='checkbox' data-feature-name='"+esc(name)+"' "+(on?"checked":"")+"> ON</label></article>";
+  }).join("");
+  el.querySelectorAll("input[data-feature-name]").forEach(input=>{
+    input.addEventListener("change",()=>toggleFeature(input.getAttribute("data-feature-name"),input.checked));
+  });
 }
 function toggleFeature(name,on){const s=featureState();s[name]=!!on;localStorage.setItem("cineora_admin_features",JSON.stringify(s));addLog("Изменена функция: "+name+" — "+(on?"включена":"выключена"));renderFeatures()}
 function getLogs(){try{return JSON.parse(localStorage.getItem("cineora_admin_log")||"[]")}catch(e){return []}}
@@ -854,7 +860,7 @@ async function refreshAll(){
   if(!adminAuthenticated)return;
   try{
     await Promise.all([loadStats(),loadIdeas(),loadNews()]);
-    renderUsers();renderModeration();renderAchievements();
+    renderUsers();renderModeration();renderAchievements();renderAnalytics();renderFeatures();renderLog();
     document.getElementById("dashboard").classList.add("show");
     document.getElementById("loginBox").style.display="none";
     document.getElementById("loginStatus").textContent="";
