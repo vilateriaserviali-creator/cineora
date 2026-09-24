@@ -2940,7 +2940,7 @@ function startRoom(roomId,pageParams){
   function makeIframe(src){
     host.innerHTML="";
     const iframe=document.createElement("iframe");
-    iframe.src=src;iframe.allow="autoplay; fullscreen; picture-in-picture; encrypted-media; screen-wake-lock";iframe.allowFullscreen=true;iframe.referrerPolicy="strict-origin-when-cross-origin";
+    iframe.src=src;iframe.allow="autoplay; fullscreen; picture-in-picture; encrypted-media; screen-wake-lock";iframe.referrerPolicy="strict-origin-when-cross-origin";
     host.appendChild(iframe);
     embedFrame=iframe;
     return iframe;
