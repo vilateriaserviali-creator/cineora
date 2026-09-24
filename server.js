@@ -1040,7 +1040,7 @@ io.on("connection", socket => {
     });
   });
 
-  socket.on("chat-message", (payload, ack) => {
+  socket.on("chat-message", async (payload, ack) => {
     const roomId = socket.data.roomId;
     if (!roomId) { if (typeof ack === "function") ack({ ok: false, error: "Вы ещё не вошли в комнату." }); return; }
     const room = roomState(roomId);
