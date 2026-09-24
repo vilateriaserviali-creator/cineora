@@ -906,6 +906,7 @@ window.CINEORA_LIRA_DESIGN=Object.freeze({
 <section class="room-view" id="roomView">
   <header class="room-top">
     <a class="room-brand" href="/" aria-label="CINEORA — на главную">CINE<span class="accent">ORA</span></a>
+    <div class="top-invite" title="Пригласить друзей"><span id="inviteTitle">🍿 Пригласить</span><button id="inviteJoin" type="button">🔗 Скопировать</button><span id="inviteSub" class="top-invite-sub">Фильм уже ждёт</span></div>
     <div class="room-actions"><button id="roomThemeToggle" class="room-btn" type="button" title="Переключить оформление комнаты">◐ Тема</button>
       <span class="room-code">Сессия: <b id="roomCodeLabel">—</b></span><span class="room-code room-title-chip" id="roomTitleLabel">🎬 Киносеанс</span><span class="room-code room-mode-chip public" id="roomModeLabel">🌐 Обычная</span><span class="room-code">👥 Смотрят: <b id="viewerCount">0</b></span>
       <button class="room-btn" id="changeName">✎ Изменить имя</button>
@@ -922,7 +923,7 @@ window.CINEORA_LIRA_DESIGN=Object.freeze({
     
       
     </div>
-    <aside class="side-card" id="sideCard"><div class="invite-card"><div><strong id="inviteTitle">🍿 Присоединяйтесь к просмотру</strong><span id="inviteSub">Отправьте ссылку друзьям — фильм уже ждёт.</span></div><button id="inviteJoin" type="button">🔗 Скопировать приглашение</button></div><div class="session-countdown" id="sessionCountdown"></div>
+    <aside class="side-card" id="sideCard"><div class="session-countdown" id="sessionCountdown"></div>
       <div class="side-title">Участники <span id="participantCount">0</span></div>
       <div class="participants" id="participants"></div>
       <div class="voice-panel" id="voicePanel">
@@ -2294,5 +2295,54 @@ function startRoom(roomId,pageParams){
   .room-view .chat-form{padding:9px!important}
 }
 </style>
-</body>
+<style id="cineora-top-invite">
+.top-invite{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  min-width:0;
+  padding:5px 7px 5px 10px;
+  border:1px solid rgba(185,170,190,.62);
+  border-radius:999px;
+  background:rgba(255,252,254,.76);
+  box-shadow:0 5px 18px rgba(91,78,96,.07);
+  color:#5d5361;
+  font-size:10px;
+  white-space:nowrap;
+}
+.top-invite>span:first-child{font-weight:700}
+.top-invite-sub{display:none}
+.top-invite button{
+  border:0;
+  border-radius:999px;
+  padding:6px 9px;
+  background:#d8c6df;
+  color:#463c4b;
+  font:700 10px "Manrope","DM Sans",sans-serif;
+  cursor:pointer;
+  transition:transform .18s ease,box-shadow .18s ease;
+}
+.top-invite button:hover{transform:translateY(-1px);box-shadow:0 5px 12px rgba(91,78,96,.12)}
+html.cineora-dark .top-invite{
+  background:#302a32!important;
+  border-color:#594d5a!important;
+  color:#eee!important;
+}
+html.cineora-dark .top-invite button{
+  background:#5b4860!important;
+  color:#fff!important;
+}
+@media(max-width:1100px){
+  .top-invite{padding-left:7px}
+  .top-invite>span:first-child{font-size:0}
+  .top-invite>span:first-child:after{content:"🍿 Пригласить";font-size:10px}
+}
+@media(max-width:800px){
+  .room-top{flex-wrap:wrap;gap:7px}
+  .top-invite{order:3;width:100%;justify-content:space-between;border-radius:12px;padding:6px 8px}
+  .top-invite-sub{display:inline!important;color:#8a7d8d;font-size:9px;margin-left:auto}
+  .top-invite button{padding:7px 10px}
+  html.cineora-dark .top-invite-sub{color:#aaa0ad}
+}
+</style></body>
 </html>
