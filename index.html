@@ -3276,6 +3276,7 @@ function renderUsers(users){
     el.dataset.messageId=m.id||"";
     el.innerHTML="<div class=\"chat-msg-head\"><b>"+escapeHtml(m.name||"Гость")+(m.isAdmin?'<span class="admin-sticker">✦ Админ</span>':"")+"</b><small>"+escapeHtml(formatChatTime(m))+"</small></div><span>"+escapeHtml(m.text)+"</span>";
     chatMessages.appendChild(el);
+    cacheLocalChat(m);
     if(wasNearBottom||own||incoming)chatMessages.scrollTo({top:chatMessages.scrollHeight,behavior:"smooth"});
     updateChatCount();
     if(incoming)playIncomingMessageSound();
@@ -3618,7 +3619,34 @@ function renderUsers(users){
   });
   socket.on("room-users",renderUsers);
   socket.on("sync-state",state=>applySync(state.playing,state.position,state.serverTime));
-  socket.on("chat-history",messages=>{chatMessages.innerHTML="";(messages||[]).forEach(m=>addMessage(m,false));chatMessages.scrollTop=chatMessages.scrollHeight;updateChatCount()});
+  function restoreLocalChat(){
+    try{
+      const key="cineora_chat_"+String(roomId||"").toUpperCase();
+      const saved=JSON.parse(localStorage.getItem(key)||"[]");
+      if(!saved.length)return false;
+      chatMessages.innerHTML="";
+      saved.slice(-100).forEach(m=>addMessage(m,false));
+      chatMessages.scrollTop=chatMessages.scrollHeight;
+      updateChatCount();
+      return true;
+    }catch(e){return false}
+  }
+  function cacheLocalChat(m){
+    try{
+      const key="cineora_chat_"+String(roomId||"").toUpperCase();
+      const saved=JSON.parse(localStorage.getItem(key)||"[]");
+      const id=m?.id;
+      if(id&&!saved.some(x=>x.id===id))saved.push(m);
+      localStorage.setItem(key,JSON.stringify(saved.slice(-100)));
+    }catch(e){}
+  }
+  socket.on("chat-history",messages=>{
+    chatMessages.innerHTML="";
+    (messages||[]).forEach(m=>{addMessage(m,false);cacheLocalChat(m)});
+    if(!(messages||[]).length)restoreLocalChat();
+    chatMessages.scrollTop=chatMessages.scrollHeight;
+    updateChatCount();
+  });
   const chatTyping=document.getElementById("chatTyping");
   let typingTimer=null;
   let isTypingSent=false;
