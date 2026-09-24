@@ -1007,6 +1007,21 @@ html.cineora-dark .watch-card{background:#211d25!important}
 html.cineora-dark .watch-head{background:linear-gradient(180deg,#2d2730,#252029)!important}
 html.cineora-dark .side-card .chat{background:#211d25!important}
 </style>
+<style id="cineora-invite-polish">
+.top-invite{min-width:250px;max-width:360px;display:grid!important;grid-template-columns:auto 1fr auto;align-items:center;gap:5px 9px}
+.top-invite #inviteTitle{font-size:12px;font-weight:700;white-space:nowrap}
+.invite-link-preview{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px;color:#817482}
+.top-invite #inviteJoin{grid-column:1 / -1;justify-self:start;border:1px solid #b9aab7;background:#ded1d9;color:#514651;border-radius:9px;padding:6px 10px;font-size:10px;font-weight:700;cursor:pointer;transition:.18s ease}
+.top-invite #inviteJoin:hover{transform:translateY(-1px);background:#d5c5d0}
+.top-invite #inviteJoin.invite-copied{background:#c9dfcf;color:#4f7058;border-color:#a9c5b0}
+.top-invite-sub{grid-column:2 / -1;font-size:9px;color:#958994;white-space:nowrap}
+html.cineora-dark .top-invite #inviteJoin{background:#332d36!important;color:#eee!important;border-color:#514753!important}
+html.cineora-dark .top-invite #inviteJoin:hover{background:#403744!important}
+html.cineora-dark .invite-link-preview,html.cineora-dark .top-invite-sub{color:#a9a0aa!important}
+html.cineora-dark .top-invite #inviteJoin.invite-copied{background:#304437!important;color:#b9d7bf!important;border-color:#46624d!important}
+@media(max-width:900px){.top-invite{min-width:190px;max-width:240px}.top-invite-sub{display:none}.invite-link-preview{max-width:100px}}
+@media(max-width:600px){.top-invite{min-width:0;max-width:170px;grid-template-columns:1fr auto}.top-invite #inviteTitle{display:none}.invite-link-preview{grid-column:1;max-width:90px}.top-invite #inviteJoin{grid-column:2;grid-row:1;padding:7px 8px;font-size:9px}}
+</style>
 </head>
 <body>
 
@@ -1014,7 +1029,7 @@ html.cineora-dark .side-card .chat{background:#211d25!important}
 <section class="room-view" id="roomView">
   <header class="room-top">
     <a class="room-brand" href="/" aria-label="CINEORA — на главную">CINE<span class="accent">ORA</span></a>
-    <div class="top-invite" title="Пригласить друзей"><span id="inviteTitle">🍿 Пригласить</span><button id="inviteJoin" type="button">🔗 Скопировать</button><span id="inviteSub" class="top-invite-sub">Фильм уже ждёт</span></div>
+    <div class="top-invite" title="Ссылка на комнату"><span id="inviteTitle">🔗 Ссылка комнаты</span><span id="inviteLinkPreview" class="invite-link-preview">cineora…/?room=—</span><button id="inviteJoin" type="button">Скопировать ссылку</button><span id="inviteSub" class="top-invite-sub">Отправьте её друзьям</span></div>
     <div class="room-actions"><button id="roomThemeToggle" class="room-btn" type="button" title="Переключить оформление комнаты">◐ Тема</button>
       <span class="room-code">Сессия: <b id="roomCodeLabel">—</b></span><span class="room-code room-title-chip" id="roomTitleLabel">🎬 Киносеанс</span><span class="room-code room-mode-chip public" id="roomModeLabel">🌐 Обычная</span><span class="room-code">👥 Смотрят: <b id="viewerCount">0</b></span>
       <button class="room-btn" id="changeName">✎ Изменить имя</button>
@@ -1948,7 +1963,7 @@ function startRoom(roomId,pageParams){
     e.preventDefault();
     e.stopPropagation();
 
-    const currentParams=new URLSearchParams(window.location.search); const inviteParams=new URLSearchParams(); inviteParams.set("room",roomId); const inviteKey=currentParams.get("key"); const invitePrivate=currentParams.get("private")==="1" || !!inviteKey; if(invitePrivate)inviteParams.set("private","1"); if(inviteKey)inviteParams.set("key",inviteKey); const inviteTitle=currentParams.get("title"); const inviteAt=currentParams.get("at"); if(inviteTitle)inviteParams.set("title",inviteTitle); if(inviteAt)inviteParams.set("at",inviteAt); const inviteUrl=window.location.origin+"/?"+inviteParams.toString();
+    const currentParams=new URLSearchParams(window.location.search); const inviteParams=new URLSearchParams(); inviteParams.set("room",roomId); const inviteKey=currentParams.get("key"); const invitePrivate=currentParams.get("private")==="1" || !!inviteKey; if(invitePrivate)inviteParams.set("private","1"); if(inviteKey)inviteParams.set("key",inviteKey); const inviteTitle=currentParams.get("title"); const inviteAt=currentParams.get("at"); if(inviteTitle)inviteParams.set("title",inviteTitle); if(inviteAt)inviteParams.set("at",inviteAt); const inviteUrl=window.location.origin+"/?"+inviteParams.toString(); const preview=document.getElementById("inviteLinkPreview"); if(preview)preview.textContent=inviteUrl;
     const button=this;
 
     async function copyText(text){
