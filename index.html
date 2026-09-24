@@ -2133,7 +2133,18 @@ body:not(.room-page):not(.cineora-home-dark) .home-theme-toggle{
   .emoji-wrap{flex:0 0 40px!important}
 }
 </style>
-</head>
+<style id="cineora-catalog-russian">
+.cinema-catalog .catalog-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0 4px}
+.cinema-catalog .catalog-tab{border:1px solid rgba(120,105,125,.22);background:rgba(255,255,255,.62);color:#625967;border-radius:999px;padding:8px 13px;font:700 11px "Manrope","DM Sans",sans-serif;cursor:pointer;transition:.18s ease}
+.cinema-catalog .catalog-tab:hover{transform:translateY(-1px)}
+.cinema-catalog .catalog-tab.active{background:#5d4a64;color:#fff;border-color:#5d4a64}
+.movie-duration{margin:7px 0 0!important;color:#8f8492!important;font-size:10px!important}
+.movie-overview{margin:7px 0 0!important;color:#817782!important;font-size:10px!important;line-height:1.45!important;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+html.cineora-home-dark .cinema-catalog .catalog-tab{background:#302a33;color:#ddd;border-color:#514653}
+html.cineora-home-dark .cinema-catalog .catalog-tab.active{background:#5d4a64;color:#fff;border-color:#6b5572}
+html.cineora-home-dark .movie-overview,html.cineora-home-dark .movie-duration{color:#aaa0ad!important}
+@media(max-width:700px){.cinema-catalog .catalog-tabs{margin-top:14px}.cinema-catalog .catalog-tab{padding:8px 11px;font-size:10px}}
+</style></head>
 <body>
 
 
@@ -2216,7 +2227,11 @@ body:not(.room-page):not(.cineora-home-dark) .home-theme-toggle{
 
 <section class="section cinema-catalog" id="catalog">
   <div class="wrap">
-    <div class="catalog-head">
+    <div class="catalog-tabs" aria-label="Разделы киноафиши">
+  <button type="button" class="catalog-tab active" data-catalog-type="trending">🔥 В тренде</button>
+  <button type="button" class="catalog-tab" data-catalog-type="popular">🍿 Популярное</button>
+  <button type="button" class="catalog-tab" data-catalog-type="top_rated">⭐ Лучшие</button>
+</div><div class="catalog-head">
       <div>
         <div class="section-kicker">Киноафиша CINEORA</div>
         <h2 class="section-title">Что посмотреть сегодня?</h2>
@@ -3966,11 +3981,12 @@ body.cineora-home-dark .idea-link{color:#ddd}
 })();
 </script><script id="cineora-catalog-actions">
 (function(){
-  const grid=document.getElementById("movieGrid"), random=document.getElementById("catalogRandom"), loading=document.getElementById("catalogLoading");
+  const grid=document.getElementById("movieGrid"), random=document.getElementById("catalogRandom");
   if(!grid)return;
   const genres={28:"Боевик",12:"Приключения",16:"Мультфильм",35:"Комедия",80:"Криминал",99:"Документальный",18:"Драма",10751:"Семейный",14:"Фэнтези",36:"История",27:"Ужасы",10402:"Музыка",9648:"Детектив",10749:"Романтика",878:"Фантастика",53:"Триллер",10752:"Военный",37:"Вестерн"};
-  let movies=[];
+  let movies=[], activeType="trending";
   function esc(v){return String(v||"").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[ch]));}
+  function duration(v){v=Number(v||0);return v?Math.floor(v/60)+" ч "+(v%60?String(v%60).padStart(2,"0")+" мин":""): "—";}
   function startMovie(title){
     if(typeof openModal==="function"){
       openModal(true);
@@ -3981,27 +3997,31 @@ body.cineora-home-dark .idea-link{color:#ddd}
     movies=list;
     if(!list.length){grid.innerHTML='<div class="catalog-loading">Киноафиша пока недоступна.</div>';return}
     grid.innerHTML=list.map((m,i)=>{
-      const genre=(m.genreIds||[]).map(x=>genres[x]).filter(Boolean).slice(0,2).join(" · ")||"Фильм";
-      const year=m.year||"—";
+      const detailGenres=(m.genres||[]).map(g=>g.name).filter(Boolean).slice(0,2);
+      const genre=detailGenres.join(" · ")||((m.genreIds||[]).map(x=>genres[x]).filter(Boolean).slice(0,2).join(" · "))||"Фильм";
       const poster=m.poster?'<img loading="lazy" src="'+esc(m.poster)+'" alt="'+esc(m.title)+'">':'<span>🎬</span>';
-      return '<article class="movie-card"><div class="movie-poster">'+poster+'</div><div class="movie-info"><div class="movie-meta"><span>'+esc(genre)+' · '+esc(year)+'</span><b>★ '+esc(m.rating)+'</b></div><h3>'+esc(m.title)+'</h3><p class="movie-duration">TMDB · актуальная популярность</p><button type="button" class="movie-watch" data-index="'+i+'">Смотреть вместе</button></div></article>';
+      return '<article class="movie-card"><div class="movie-poster">'+poster+'</div><div class="movie-info"><div class="movie-meta"><span>'+esc(genre)+' · '+esc(m.year||"—")+'</span><b>★ '+esc(m.rating)+'</b></div><h3>'+esc(m.title)+'</h3><p class="movie-duration">⏱ '+esc(duration(m.runtime))+'</p><p class="movie-overview">'+esc(m.overview||"Описание пока недоступно.")+'</p><button type="button" class="movie-watch" data-index="'+i+'">Смотреть вместе</button></div></article>';
     }).join("");
     grid.querySelectorAll(".movie-watch").forEach(b=>b.addEventListener("click",()=>startMovie(movies[Number(b.dataset.index)]?.title||"Фильм")));
   }
-  async function load(){
+  async function load(type="trending"){
+    activeType=type;
+    grid.innerHTML='<div class="catalog-loading">Загружаем фильмы…</div>';
     try{
-      const r=await fetch("/api/movies",{cache:"no-store"});
+      const r=await fetch("/api/movies?type="+encodeURIComponent(type),{cache:"no-store"});
       const d=await r.json().catch(()=>({}));
       if(!r.ok)throw new Error(d.error||"Киноафиша недоступна.");
       render(d.movies||[]);
-    }catch(e){
-      grid.innerHTML='<div class="catalog-loading">Не удалось загрузить киноафишу. Попробуйте позже.</div>';
-    }
+    }catch(e){grid.innerHTML='<div class="catalog-loading">Не удалось загрузить киноафишу. Проверьте TMDB API в настройках CINEORA.</div>';}
   }
-  if(random)random.addEventListener("click",()=>{
-    if(!movies.length)return;
-    startMovie(movies[Math.floor(Math.random()*movies.length)].title);
+  document.querySelectorAll("[data-catalog-type]").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      document.querySelectorAll("[data-catalog-type]").forEach(x=>x.classList.remove("active"));
+      btn.classList.add("active");
+      load(btn.dataset.catalogType);
+    });
   });
+  if(random)random.addEventListener("click",()=>{if(movies.length)startMovie(movies[Math.floor(Math.random()*movies.length)].title)});
   load();
 })();
 </script>
