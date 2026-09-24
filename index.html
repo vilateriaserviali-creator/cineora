@@ -1295,6 +1295,92 @@ html,body{max-width:100%;overflow-x:hidden}
   .person-row:hover{transform:none!important}
 }
 </style>
+
+<style id="cineora-micro-interactions">
+/* Анимации и мелкие UX-улучшения */
+:root{--cineora-ease:cubic-bezier(.22,1,.36,1)}
+.room-view.show .room-top{animation:cineoraFadeDown .45s var(--cineora-ease) both}
+.room-view.show .watch-card{animation:cineoraFadeUp .55s .04s var(--cineora-ease) both}
+.room-view.show .side-card{animation:cineoraFadeUp .55s .10s var(--cineora-ease) both}
+@keyframes cineoraFadeDown{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:none}}
+@keyframes cineoraFadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+.room-btn,.player-fullscreen,.emoji-toggle,.top-invite button,.voice-toggle,.chat-form>button,
+.room-code,.source-pill,.person-row,.chat-msg,.invite-card{
+  transition:transform .18s var(--cineora-ease),box-shadow .18s var(--cineora-ease),
+             background-color .18s ease,border-color .18s ease,opacity .18s ease;
+}
+.room-btn:hover,.player-fullscreen:hover,.emoji-toggle:hover,.top-invite button:hover,.voice-toggle:hover{
+  transform:translateY(-1px);
+}
+.room-btn:active,.player-fullscreen:active,.emoji-toggle:active,.top-invite button:active,
+.voice-toggle:active,.chat-form>button:active{
+  transform:translateY(1px) scale(.97);
+}
+.room-btn:focus-visible,.player-fullscreen:focus-visible,.emoji-toggle:focus-visible,
+.top-invite button:focus-visible,.voice-toggle:focus-visible,.chat-form button:focus-visible,
+.chat-form input:focus-visible{
+  outline:2px solid #b99bb5;
+  outline-offset:2px;
+}
+.media-bar .room-btn.primary{position:relative;overflow:hidden}
+.media-bar .room-btn.primary:after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(110deg,transparent 25%,rgba(255,255,255,.38) 50%,transparent 75%);
+  transform:translateX(-130%);transition:transform .6s ease;
+}
+.media-bar .room-btn.primary:hover:after{transform:translateX(130%)}
+
+.participant-card{animation:cineoraPersonIn .35s var(--cineora-ease) both}
+@keyframes cineoraPersonIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+.participant-avatar{transition:transform .2s var(--cineora-ease),box-shadow .2s ease}
+.participant-card:hover .participant-avatar{transform:scale(1.05)}
+.participant-card.watching .participant-avatar{animation:cineoraPulse 2.2s ease-in-out infinite}
+@keyframes cineoraPulse{
+  0%,100%{box-shadow:0 0 0 3px rgba(216,232,220,.7),0 5px 12px rgba(91,72,96,.12)}
+  50%{box-shadow:0 0 0 5px rgba(216,232,220,.25),0 5px 16px rgba(91,72,96,.14)}
+}
+.person-progress i{transition:width .45s linear}
+
+.chat-msg{animation:cineoraMessageIn .25s var(--cineora-ease) both}
+@keyframes cineoraMessageIn{from{opacity:0;transform:translateY(6px) scale(.985)}to{opacity:1;transform:none}}
+.chat-typing.show:before{animation:cineoraTyping 1s infinite ease-in-out}
+@keyframes cineoraTyping{
+  0%,100%{opacity:.35;transform:translateX(0)}
+  50%{opacity:1;transform:translateX(3px)}
+}
+.chat-form>button[type="submit"]{transition:transform .16s var(--cineora-ease),box-shadow .16s ease,background-color .16s ease}
+.chat-form>button[type="submit"]:hover{transform:translateY(-1px);box-shadow:0 7px 16px rgba(105,86,110,.14)}
+
+.emoji-picker{
+  transform-origin:left bottom;
+  animation:cineoraPop .18s var(--cineora-ease);
+}
+.emoji-picker.hidden{animation:none}
+@keyframes cineoraPop{from{opacity:0;transform:translateY(7px) scale(.96)}to{opacity:1;transform:none}}
+.emoji-picker button{transition:transform .12s ease,background .12s ease}
+.emoji-picker button:hover{transform:scale(1.08)}
+
+.top-invite .invite-link-preview{transition:color .18s ease}
+.cineora-join-toast{transition:opacity .22s ease,transform .22s var(--cineora-ease)!important}
+
+.room-view .chat-messages::-webkit-scrollbar{width:7px}
+.room-view .chat-messages::-webkit-scrollbar-thumb{background:#cbbccc;border-radius:999px}
+html.cineora-dark .room-view .chat-messages::-webkit-scrollbar-thumb{background:#5b4d5e}
+
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    animation-duration:.01ms!important;
+    animation-iteration-count:1!important;
+    scroll-behavior:auto!important;
+    transition-duration:.01ms!important;
+  }
+}
+@media(max-width:800px){
+  .room-view.show .watch-card,.room-view.show .side-card{animation-duration:.4s}
+  .participant-card:hover .participant-avatar{transform:none}
+}
+</style>
 </head>
 <body>
 
