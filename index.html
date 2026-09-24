@@ -21,7 +21,7 @@
 .cinema-catalog{background:linear-gradient(180deg,#f8f5ee 0%,#f0eaf1 100%);border-top:1px solid #e2dbe2;border-bottom:1px solid #e2dbe2}
 .catalog-head{display:flex;align-items:flex-end;justify-content:space-between;gap:25px}
 .catalog-random{border:1px solid #bcaec4;background:#fff8;color:#51495a;border-radius:999px;padding:12px 16px;font-weight:700;white-space:nowrap}
-.movie-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:34px}
+.movie-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:34px}.catalog-loading{grid-column:1/-1;min-height:180px;display:grid;place-items:center;border:1px dashed #d7ced9;border-radius:20px;color:#8a7e8d;font-size:14px}.movie-poster img{width:100%;height:100%;display:block;object-fit:cover}.movie-poster{background:#28242a}.movie-poster img + span{display:none}
 .movie-card{overflow:hidden;border:1px solid #d7ced9;border-radius:20px;background:rgba(255,255,255,.78);box-shadow:0 14px 38px rgba(91,78,96,.09);transition:transform .2s ease,box-shadow .2s ease}
 .movie-card:hover{transform:translateY(-4px);box-shadow:0 20px 48px rgba(91,78,96,.14)}
 .movie-poster{height:300px;display:grid;place-items:center;position:relative;overflow:hidden}
@@ -2225,34 +2225,8 @@ body:not(.room-page):not(.cineora-home-dark) .home-theme-toggle{
       <button type="button" class="catalog-random" id="catalogRandom">🎲 Случайный фильм</button>
     </div>
     <div class="movie-grid" id="movieGrid">
-      <article class="movie-card">
-        <div class="movie-poster poster-one"><span>🎬</span></div>
-        <div class="movie-info">
-          <div class="movie-meta"><span>Драма · 2024</span><b>★ 8.2</b></div>
-          <h3>За гранью вечера</h3>
-          <p class="movie-duration">⏱ 1 ч 58 мин</p>
-          <button type="button" class="movie-watch" data-movie="За гранью вечера">Смотреть вместе</button>
-        </div>
-      </article>
-      <article class="movie-card">
-        <div class="movie-poster poster-two"><span>🌙</span></div>
-        <div class="movie-info">
-          <div class="movie-meta"><span>Романтика · 2025</span><b>★ 8.7</b></div>
-          <h3>После последнего сеанса</h3>
-          <p class="movie-duration">⏱ 2 ч 06 мин</p>
-          <button type="button" class="movie-watch" data-movie="После последнего сеанса">Смотреть вместе</button>
-        </div>
-      </article>
-      <article class="movie-card">
-        <div class="movie-poster poster-three"><span>🍿</span></div>
-        <div class="movie-info">
-          <div class="movie-meta"><span>Комедия · 2023</span><b>★ 7.9</b></div>
-          <h3>Ещё одну — и спать</h3>
-          <p class="movie-duration">⏱ 1 ч 42 мин</p>
-          <button type="button" class="movie-watch" data-movie="Ещё одну — и спать">Смотреть вместе</button>
-        </div>
-      </article>
-    </div>
+      <div class="catalog-loading" id="catalogLoading">Загружаем свежую киноафишу…</div>
+    </div></div>
   </div>
 </section>
 <section class="section cream" id="about">
@@ -3992,19 +3966,43 @@ body.cineora-home-dark .idea-link{color:#ddd}
 })();
 </script><script id="cineora-catalog-actions">
 (function(){
-  const grid=document.getElementById("movieGrid"), random=document.getElementById("catalogRandom");
+  const grid=document.getElementById("movieGrid"), random=document.getElementById("catalogRandom"), loading=document.getElementById("catalogLoading");
   if(!grid)return;
+  const genres={28:"Боевик",12:"Приключения",16:"Мультфильм",35:"Комедия",80:"Криминал",99:"Документальный",18:"Драма",10751:"Семейный",14:"Фэнтези",36:"История",27:"Ужасы",10402:"Музыка",9648:"Детектив",10749:"Романтика",878:"Фантастика",53:"Триллер",10752:"Военный",37:"Вестерн"};
+  let movies=[];
+  function esc(v){return String(v||"").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[ch]));}
   function startMovie(title){
-    const create=document.getElementById("create");
-    if(typeof openModal==="function"){openModal(true);setTimeout(()=>{const name=document.getElementById("roomName");if(name)name.value=title+" — CINEORA";},60);return;}
-    if(create)create.click();
+    if(typeof openModal==="function"){
+      openModal(true);
+      setTimeout(()=>{const name=document.getElementById("roomName");if(name)name.value=title+" — CINEORA";},60);
+    }
   }
-  grid.querySelectorAll(".movie-watch").forEach(b=>b.addEventListener("click",()=>startMovie(b.dataset.movie||"Фильм")));
+  function render(list){
+    movies=list;
+    if(!list.length){grid.innerHTML='<div class="catalog-loading">Киноафиша пока недоступна.</div>';return}
+    grid.innerHTML=list.map((m,i)=>{
+      const genre=(m.genreIds||[]).map(x=>genres[x]).filter(Boolean).slice(0,2).join(" · ")||"Фильм";
+      const year=m.year||"—";
+      const poster=m.poster?'<img loading="lazy" src="'+esc(m.poster)+'" alt="'+esc(m.title)+'">':'<span>🎬</span>';
+      return '<article class="movie-card"><div class="movie-poster">'+poster+'</div><div class="movie-info"><div class="movie-meta"><span>'+esc(genre)+' · '+esc(year)+'</span><b>★ '+esc(m.rating)+'</b></div><h3>'+esc(m.title)+'</h3><p class="movie-duration">TMDB · актуальная популярность</p><button type="button" class="movie-watch" data-index="'+i+'">Смотреть вместе</button></div></article>';
+    }).join("");
+    grid.querySelectorAll(".movie-watch").forEach(b=>b.addEventListener("click",()=>startMovie(movies[Number(b.dataset.index)]?.title||"Фильм")));
+  }
+  async function load(){
+    try{
+      const r=await fetch("/api/movies",{cache:"no-store"});
+      const d=await r.json().catch(()=>({}));
+      if(!r.ok)throw new Error(d.error||"Киноафиша недоступна.");
+      render(d.movies||[]);
+    }catch(e){
+      grid.innerHTML='<div class="catalog-loading">Не удалось загрузить киноафишу. Попробуйте позже.</div>';
+    }
+  }
   if(random)random.addEventListener("click",()=>{
-    const buttons=[...grid.querySelectorAll(".movie-watch")];
-    if(!buttons.length)return;
-    buttons[Math.floor(Math.random()*buttons.length)].click();
+    if(!movies.length)return;
+    startMovie(movies[Math.floor(Math.random()*movies.length)].title);
   });
+  load();
 })();
 </script>
 </body>
