@@ -2226,9 +2226,9 @@ body:not(.room-page):not(.cineora-home-dark) .home-theme-toggle{
 
 <section class="section cream" id="updates"><div class="wrap"><div class="section-kicker">Обновления CINEORA</div><h2 class="section-title">Что нового в сервисе</h2><div id="newsFeed" class="cards"><div class="card"><h3>Мы развиваем CINEORA вместе с вами</h3><p>Здесь будут появляться новые возможности, улучшения и важные новости сервиса.</p></div></div></div></section>
 
-<footer class="footer"><div class="wrap"><span>CINEORA</span><span>Кино становится ближе.</span><a class="admin-link" href="/admin" aria-label="Вход администратора">Администратор</a></div></footer>
+<footer class="footer"><div class="wrap"><span>CINEORA</span><span>Кино становится ближе.</span><button type="button" class="idea-link" id="ideaLink">💡 Предложить идею</button><a class="admin-link" href="/admin" aria-label="Вход администратора">Администратор</a></div></footer>
 
-<div class="modal hidden" id="modal"><div class="modal-box"><button class="close" id="close">×</button><h2 id="modalTitle">Войти в CINEORA</h2><p id="modalText">Введите имя. Для входа в существующую комнату укажите её код.</p><input id="name" placeholder="Ваше имя" maxlength="24" autocomplete="nickname"><input id="room" placeholder="Код сессии" maxlength="16" autocomplete="off"><input id="roomTitleInput" placeholder="Название киносеанса (необязательно)" maxlength="70" style="display:none"><input id="scheduleInput" type="datetime-local" style="display:none"><label id="privateOption" style="display:none;align-items:center;gap:7px;margin:8px 0;font-size:12px;color:#d9d0d8"><input id="privateRoom" type="checkbox"> 🔒 Приватная комната</label><div id="modalStatus" style="min-height:20px;color:#dbc5d8;font-size:13px;margin:6px 0"></div><button type="button" class="go" id="go">Войти</button><div id="authBenefits" style="margin-top:12px;color:#d9d0d8;font-size:12px;line-height:1.55"></div></div></div>
+<div class="modal hidden" id="ideaModal"><div class="modal-box suggestion-box"><button class="close" id="ideaClose" type="button">×</button><h2>Предложить идею</h2><p>Расскажите, что стоит добавить или улучшить в CINEORA.</p><input id="ideaName" placeholder="Ваше имя" maxlength="40" autocomplete="nickname"><textarea id="ideaText" placeholder="Ваша идея..." maxlength="1000"></textarea><div id="ideaStatus" class="suggestion-status"></div><button type="button" class="go" id="ideaSend">Отправить предложение</button></div></div>\n\n<div class="modal hidden" id="modal"><div class="modal-box"><button class="close" id="close">×</button><h2 id="modalTitle">Войти в CINEORA</h2><p id="modalText">Введите имя. Для входа в существующую комнату укажите её код.</p><input id="name" placeholder="Ваше имя" maxlength="24" autocomplete="nickname"><input id="room" placeholder="Код сессии" maxlength="16" autocomplete="off"><input id="roomTitleInput" placeholder="Название киносеанса (необязательно)" maxlength="70" style="display:none"><input id="scheduleInput" type="datetime-local" style="display:none"><label id="privateOption" style="display:none;align-items:center;gap:7px;margin:8px 0;font-size:12px;color:#d9d0d8"><input id="privateRoom" type="checkbox"> 🔒 Приватная комната</label><div id="modalStatus" style="min-height:20px;color:#dbc5d8;font-size:13px;margin:6px 0"></div><button type="button" class="go" id="go">Войти</button><div id="authBenefits" style="margin-top:12px;color:#d9d0d8;font-size:12px;line-height:1.55"></div></div></div>
 
 <script src="/socket.io/socket.io.js"></script>
 <script>
@@ -3856,7 +3856,38 @@ html.cineora-dark ::selection{
   background:#6a5370;
   color:#fff;
 }
-</style><script id="cineora-home-actions-fix">
+</style><style id="cineora-suggestion-ui">
+.footer .wrap{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.idea-link{border:0;background:none;color:#8f8b84;padding:0;cursor:pointer;font:inherit;transition:color .18s ease,opacity .18s ease}
+.idea-link:hover{color:#d8efb7;opacity:1}
+.suggestion-box textarea{display:block;width:100%;min-height:140px;resize:vertical;padding:13px;background:#171814;border:1px solid #fff2;border-radius:10px;color:#fff;box-sizing:border-box;margin:5px 0}
+body.cineora-home-dark .idea-link{color:#ddd}
+</style>
+<script id="cineora-suggestion-handler">
+(function(){
+  const open=document.getElementById("ideaLink"),modal=document.getElementById("ideaModal"),close=document.getElementById("ideaClose"),send=document.getElementById("ideaSend");
+  if(!open||!modal||!send)return;
+  const status=document.getElementById("ideaStatus"),name=document.getElementById("ideaName"),idea=document.getElementById("ideaText");
+  open.onclick=()=>{modal.classList.remove("hidden");setTimeout(()=>idea.focus(),30)};
+  close.onclick=()=>modal.classList.add("hidden");
+  modal.addEventListener("click",e=>{if(e.target===modal)modal.classList.add("hidden")});
+  send.onclick=async()=>{
+    const text=(idea.value||"").trim(), user=(name.value||"").trim()||"Гость";
+    if(text.length<3){status.textContent="Напишите идею чуть подробнее.";return}
+    send.disabled=true;status.textContent="Отправляем…";
+    try{
+      const r=await fetch("/api/suggestions",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({name:user,text})});
+      const d=await r.json().catch(()=>({}));
+      if(!r.ok)throw new Error(d.error||"Не удалось отправить предложение.");
+      status.textContent="✓ Спасибо! Предложение отправлено.";
+      idea.value="";
+      setTimeout(()=>modal.classList.add("hidden"),1200);
+    }catch(e){status.textContent=e.message||"Не удалось отправить предложение."}
+    finally{send.disabled=false}
+  };
+})();
+</script>
+<script id="cineora-home-actions-fix">
 (function(){
   function wire(){
     const join=document.getElementById("join");
