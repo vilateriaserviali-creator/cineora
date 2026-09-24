@@ -2588,7 +2588,7 @@ function startRoom(roomId,pageParams){
       privateRoom:roomPrivate?"1":"0",
       accessToken:roomAccessKey
     },
-    auth:{roomId:String(roomId||""),name:myName||"Гость",privateRoom:roomPrivate,accessToken:roomAccessKey}
+    auth:{roomId:String(roomId||""),name:myName||"Гость",avatar:myAvatar,privateRoom:roomPrivate,accessToken:roomAccessKey}
   });
   let roomJoined=false;
   const achievementKey="cineora_achievements_v1_"+encodeURIComponent(myName||"Гость").slice(0,80);
