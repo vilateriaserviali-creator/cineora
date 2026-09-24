@@ -3257,13 +3257,24 @@ function renderUsers(users){
       osc.start(now);osc.stop(now+0.2);
     }catch(e){}
   }
+  function formatChatTime(m){
+    // Время форматируется в часовом поясе самого участника.
+    // Сервер хранит UTC, поэтому каждый браузер показывает локальное время.
+    if(m?.createdAt){
+      const d=new Date(m.createdAt);
+      if(!Number.isNaN(d.getTime())){
+        return new Intl.DateTimeFormat(undefined,{hour:"2-digit",minute:"2-digit"}).format(d);
+      }
+    }
+    return String(m?.time||"");
+  }
   function addMessage(m, incoming=false){
     const wasNearBottom=(chatMessages.scrollHeight-chatMessages.scrollTop-chatMessages.clientHeight)<48;
     const el=document.createElement("div");
     const own=m.userId===socket.id;
     el.className="chat-msg"+(own?" own":"");
     el.dataset.messageId=m.id||"";
-    el.innerHTML="<div class=\"chat-msg-head\"><b>"+escapeHtml(m.name||"Гость")+(m.isAdmin?'<span class="admin-sticker">✦ Админ</span>':"")+"</b><small>"+escapeHtml(m.time||"")+"</small></div><span>"+escapeHtml(m.text)+"</span>";
+    el.innerHTML="<div class=\"chat-msg-head\"><b>"+escapeHtml(m.name||"Гость")+(m.isAdmin?'<span class="admin-sticker">✦ Админ</span>':"")+"</b><small>"+escapeHtml(formatChatTime(m))+"</small></div><span>"+escapeHtml(m.text)+"</span>";
     chatMessages.appendChild(el);
     if(wasNearBottom||own||incoming)chatMessages.scrollTo({top:chatMessages.scrollHeight,behavior:"smooth"});
     updateChatCount();
