@@ -968,6 +968,20 @@ io.on("connection", socket => {
     });
   });
   socket.on("user-progress", ({ position, playing, duration }) => { const roomId = socket.data.roomId; if (!roomId) return; const room = roomState(roomId); const user = room.users.get(socket.id); if (!user) return; user.position = Math.max(0, Number(position) || 0); user.playing = !!playing; user.progressUpdatedAt = Date.now(); user.duration = Math.max(0, Number(duration) || 0); socket.to(roomId).emit("user-progress", { id: socket.id, position: user.position, playing: user.playing }); broadcastRoom(roomId); });
+  socket.on("room-reaction", ({ emoji } = {}) => {
+    const roomId = socket.data.roomId;
+    if (!roomId) return;
+    const allowed = ["😂","😭","😱","❤️","🔥","👏"];
+    const clean = String(emoji || "").trim();
+    if (!allowed.includes(clean)) return;
+    io.to(roomId).emit("room-reaction", {
+      id: socket.id + "-" + Date.now(),
+      userId: socket.id,
+      name: socket.data.name || "Гость",
+      emoji: clean
+    });
+  });
+
   socket.on("chat-typing", ({ active } = {}) => {
     const roomId = socket.data.roomId;
     if (!roomId) return;
