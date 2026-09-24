@@ -1525,7 +1525,7 @@ html.cineora-dark .room-sync-indicator{background:#26352b;border-color:#405846;c
 html.cineora-dark .empty-player{background:radial-gradient(circle at 50% 35%,rgba(155,120,158,.18),transparent 35%),linear-gradient(145deg,#111014,#19151b)}
 .person-row{animation:cineoraParticipantIn .42s cubic-bezier(.22,1,.36,1) both;animation-delay:calc(var(--participant-index,0) * 55ms)}
 @keyframes cineoraParticipantIn{from{opacity:0;transform:translateY(9px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
-.participant-avatar{transition:transform .22s cubic-bezier(.22,1,.36,1)}.person-row:hover .participant-avatar{transform:scale(1.07)}
+.participant-avatar{transition:none!important;transform:none!important}.person-row:hover .participant-avatar{transform:none!important}
 @media(prefers-reduced-motion:reduce){.person-row{animation:none!important}.room-sync-indicator,.participant-avatar{transition:none!important}}
 @media(max-width:600px){.room-sync-indicator span{display:none}.room-sync-indicator{width:28px;height:28px;padding:0;justify-content:center}}
 </style><style id="cineora-home-theme-contrast">
