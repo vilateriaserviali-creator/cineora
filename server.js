@@ -918,11 +918,12 @@ function publicUsers(room) {
 }
 function broadcastRoom(roomId) { const room = rooms.get(roomId); if (room) io.to(roomId).emit("room-users", publicUsers(room)); }
 
-async function joinRoomForSocket(socket, { roomId, name, avatar, frame, privateRoom, accessToken } = {}) {
+async function joinRoomForSocket(socket, { roomId, name, avatar, frame, privateRoom, accessToken, clientId } = {}) {
   roomId = String(roomId || "").trim().toUpperCase().slice(0, 16);
   name = String(name || "Гость").trim().slice(0, 24);
   privateRoom = !!privateRoom;
   accessToken = String(accessToken || "").trim().slice(0, 96);
+  clientId = String(clientId || "").trim().slice(0, 80);
   const allowedAvatars = new Set(["star","film","popcorn","moon","heart","spark","play","smile"]);
   const allowedFrames = new Set(["classic","neon","gold","cineora","achievement"]);
   frame = allowedFrames.has(String(frame || "")) ? String(frame) : "classic";
@@ -946,6 +947,7 @@ async function joinRoomForSocket(socket, { roomId, name, avatar, frame, privateR
   socket.data.roomId = roomId;
   socket.data.name = name;
   socket.data.avatar = avatar;
+  socket.data.clientId = clientId;
   room.emptySince = null;
 
   if (!room.hostId) room.hostId = socket.id;
@@ -996,6 +998,7 @@ async function joinRoomForSocket(socket, { roomId, name, avatar, frame, privateR
       const stored = result.rows.reverse().map(row => ({
         id: row.id,
         userId: row.user_id,
+        clientUserId: "",
         name: row.name,
         isAdmin: !!row.is_admin,
         text: row.text,
