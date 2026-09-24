@@ -549,7 +549,7 @@ app.get("/admin", (req, res) => {
 <title>CINEORA — Админ-панель</title>
 <style>
 :root{--bg:#101016;--panel:#171720;--panel2:#1d1d28;--line:#2d2d3a;--text:#f4f2f7;--muted:#9a97a5;--pink:#f1b8cf;--lilac:#cbbcf5;--green:#9edc9d;--danger:#ef9caa;--shadow:0 18px 50px rgba(0,0,0,.25)}
-*{box-sizing:border-box}html{background:var(--bg)}body{margin:0;min-height:100vh;background:radial-gradient(circle at 15% 0%,rgba(203,188,245,.12),transparent 32%),radial-gradient(circle at 90% 10%,rgba(241,184,207,.1),transparent 30%),var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.wrap{width:min(1280px,calc(100% - 32px));margin:0 auto;padding:26px 0 44px}.top{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:4px 2px 22px}.brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--text)}.brand-mark{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,var(--pink),var(--lilac));color:#15151c;display:grid;place-items:center;font-weight:900;box-shadow:0 10px 28px rgba(203,188,245,.16)}.brand-name{font-weight:850;letter-spacing:.12em;font-size:20px}.brand-name span{opacity:.75}.site-link{color:var(--muted);text-decoration:none;border:1px solid var(--line);background:rgba(255,255,255,.03);padding:10px 14px;border-radius:999px}.site-link:hover{color:var(--text);background:rgba(255,255,255,.06)}.login{background:rgba(23,23,32,.86);border:1px solid var(--line);border-radius:24px;padding:22px;box-shadow:var(--shadow);display:flex;gap:10px;align-items:center;flex-wrap:wrap}.login input{flex:1;min-width:220px;padding:13px 15px;border-radius:13px;border:1px solid var(--line);background:#111119;color:var(--text);outline:none}.login input:focus{border-color:var(--lilac);box-shadow:0 0 0 3px rgba(203,188,245,.1)}button{font:inherit}.btn{border:1px solid transparent;border-radius:13px;padding:12px 16px;background:linear-gradient(135deg,var(--pink),var(--lilac));color:#181720;font-weight:800;cursor:pointer}.btn:hover{transform:translateY(-1px);filter:brightness(1.04)}.btn.secondary{background:var(--panel2);border-color:var(--line);color:var(--text)}.status{font-size:13px;color:var(--muted)}.error{color:var(--danger);margin-top:10px}.dashboard{display:none}.dashboard.show{display:block}.hero{display:flex;align-items:end;justify-content:space-between;gap:20px;margin:28px 0 18px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);margin-bottom:8px}.hero h1{font-size:clamp(30px,5vw,46px);line-height:1.05;margin:0;letter-spacing:-.04em}.hero p{margin:10px 0 0;color:var(--muted)}.hero-actions{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.updated{font-size:12px;color:var(--muted)}.nav{display:flex;gap:7px;overflow:auto;padding:6px;background:rgba(23,23,32,.8);border:1px solid var(--line);border-radius:16px;margin:18px 0}.nav button{white-space:nowrap;border:0;background:transparent;color:var(--muted);padding:11px 15px;border-radius:11px;cursor:pointer;font-weight:700}.nav button.active{background:#292937;color:var(--text);box-shadow:inset 0 0 0 1px #3a3a4b}.view{display:none}.view.active{display:block}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.stat{background:linear-gradient(145deg,rgba(29,29,40,.98),rgba(23,23,32,.98));border:1px solid var(--line);border-radius:20px;padding:19px;min-height:120px}.stat-icon{font-size:20px}.stat b{display:block;font-size:34px;letter-spacing:-.04em;margin-top:10px}.stat span{color:var(--muted);font-size:13px}.grid{display:grid;grid-template-columns:1.2fr .8fr;gap:14px;margin-top:14px}.card{background:rgba(23,23,32,.94);border:1px solid var(--line);border-radius:20px;padding:20px;box-shadow:0 12px 34px rgba(0,0,0,.14)}.card h2{font-size:18px;margin:0}.card-head{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:15px}.room-list,.cards{display:grid;gap:10px}.room,.idea,.news{background:#13131b;border:1px solid #292936;border-radius:16px;padding:15px}.room-head,.idea-head,.news-head{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}.room-code{font-weight:850;letter-spacing:.08em}.pill{display:inline-flex;align-items:center;gap:6px;padding:6px 9px;border-radius:999px;background:#20202b;color:var(--muted);font-size:12px}.pill.live{color:var(--green);background:rgba(158,220,157,.09)}.room-meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:11px}.people{margin-top:11px;color:var(--muted);font-size:13px;line-height:1.6}.person-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--green);margin-right:6px;box-shadow:0 0 10px rgba(158,220,157,.7)}.toolbar{display:flex;gap:9px;flex-wrap:wrap;margin:15px 0}.toolbar input,.toolbar select{padding:12px 13px;border-radius:12px;border:1px solid var(--line);background:#111119;color:var(--text);outline:none}.toolbar input{flex:1;min-width:220px}.toolbar input:focus,.toolbar select:focus{border-color:var(--lilac)}.idea-text,.news-text{margin:13px 0;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.6;color:#ddd9e3}.person{font-weight:800}.date{font-size:12px;color:var(--muted);margin-top:4px}.actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.select{padding:9px 11px;border-radius:10px;border:1px solid var(--line);background:#1a1a24;color:var(--text)}.smallbtn{border:1px solid var(--line);background:#1a1a24;color:var(--text);border-radius:10px;padding:9px 12px;cursor:pointer}.smallbtn:hover{background:#242432}.smallbtn.primary{background:rgba(241,184,207,.14);border-color:rgba(241,184,207,.28)}.smallbtn.danger{color:var(--danger);background:rgba(239,156,170,.07)}.editor{background:#13131b;border:1px solid #292936;border-radius:18px;padding:17px;margin-bottom:14px}.editor h2{font-size:18px;margin:0 0 13px}.editor input,.editor textarea{width:100%;padding:12px 13px;border-radius:11px;border:1px solid var(--line);background:#0f0f16;color:var(--text);margin-bottom:9px;outline:none}.editor textarea{min-height:125px;resize:vertical}.editor-row{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.check{color:var(--muted);font-size:13px}.published{color:var(--green);font-size:12px;font-weight:800}.unpublished{color:#d8b679;font-size:12px;font-weight:800}.empty{text-align:center;padding:42px 15px;color:var(--muted);border:1px dashed var(--line);border-radius:16px}.danger-note{color:var(--danger);font-size:12px}.footer-note{margin-top:16px;color:var(--muted);font-size:12px;text-align:center}@media(max-width:900px){.stats{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}}@media(max-width:600px){.wrap{width:calc(100% - 20px);padding-top:14px}.top{padding-bottom:12px}.brand-mark{width:38px;height:38px}.brand-name{font-size:17px}.site-link{padding:8px 11px}.login{padding:15px}.login input{min-width:100%;flex-basis:100%}.hero{align-items:flex-start;flex-direction:column}.hero-actions{width:100%}.hero-actions .btn{flex:1}.stats{grid-template-columns:1fr 1fr;gap:8px}.stat{padding:14px;min-height:105px}.stat b{font-size:28px}.card{padding:14px}.room-head,.idea-head,.news-head{display:block}.actions{margin-top:10px}.toolbar input{min-width:100%}}\n</style>
+*{box-sizing:border-box}html{background:var(--bg)}body{margin:0;min-height:100vh;background:radial-gradient(circle at 15% 0%,rgba(203,188,245,.12),transparent 32%),radial-gradient(circle at 90% 10%,rgba(241,184,207,.1),transparent 30%),var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.wrap{width:min(1280px,calc(100% - 32px));margin:0 auto;padding:26px 0 44px}.top{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:4px 2px 22px}.brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--text)}.brand-mark{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,var(--pink),var(--lilac));color:#15151c;display:grid;place-items:center;font-weight:900;box-shadow:0 10px 28px rgba(203,188,245,.16)}.brand-name{font-weight:850;letter-spacing:.12em;font-size:20px}.brand-name span{opacity:.75}.site-link{color:var(--muted);text-decoration:none;border:1px solid var(--line);background:rgba(255,255,255,.03);padding:10px 14px;border-radius:999px}.site-link:hover{color:var(--text);background:rgba(255,255,255,.06)}.login{background:rgba(23,23,32,.86);border:1px solid var(--line);border-radius:24px;padding:22px;box-shadow:var(--shadow);display:flex;gap:10px;align-items:center;flex-wrap:wrap}.login input{flex:1;min-width:220px;padding:13px 15px;border-radius:13px;border:1px solid var(--line);background:#111119;color:var(--text);outline:none}.login input:focus{border-color:var(--lilac);box-shadow:0 0 0 3px rgba(203,188,245,.1)}button{font:inherit}.btn{border:1px solid transparent;border-radius:13px;padding:12px 16px;background:linear-gradient(135deg,var(--pink),var(--lilac));color:#181720;font-weight:800;cursor:pointer}.btn:hover{transform:translateY(-1px);filter:brightness(1.04)}.btn.secondary{background:var(--panel2);border-color:var(--line);color:var(--text)}.status{font-size:13px;color:var(--muted)}.error{color:var(--danger);margin-top:10px}.dashboard{display:none}.dashboard.show{display:block}.hero{display:flex;align-items:end;justify-content:space-between;gap:20px;margin:28px 0 18px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);margin-bottom:8px}.hero h1{font-size:clamp(30px,5vw,46px);line-height:1.05;margin:0;letter-spacing:-.04em}.hero p{margin:10px 0 0;color:var(--muted)}.hero-actions{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.updated{font-size:12px;color:var(--muted)}.nav{display:flex;gap:7px;overflow:auto;padding:6px;background:rgba(23,23,32,.8);border:1px solid var(--line);border-radius:16px;margin:18px 0}.nav button{white-space:nowrap;border:0;background:transparent;color:var(--muted);padding:11px 15px;border-radius:11px;cursor:pointer;font-weight:700}.nav button.active{background:#292937;color:var(--text);box-shadow:inset 0 0 0 1px #3a3a4b}.view{display:none}.view.active{display:block}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.stat{background:linear-gradient(145deg,rgba(29,29,40,.98),rgba(23,23,32,.98));border:1px solid var(--line);border-radius:20px;padding:19px;min-height:120px}.stat-icon{font-size:20px}.stat b{display:block;font-size:34px;letter-spacing:-.04em;margin-top:10px}.stat span{color:var(--muted);font-size:13px}.grid{display:grid;grid-template-columns:1.2fr .8fr;gap:14px;margin-top:14px}.card{background:rgba(23,23,32,.94);border:1px solid var(--line);border-radius:20px;padding:20px;box-shadow:0 12px 34px rgba(0,0,0,.14)}.card h2{font-size:18px;margin:0}.card-head{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:15px}.room-list,.cards{display:grid;gap:10px}.room,.idea,.news{background:#13131b;border:1px solid #292936;border-radius:16px;padding:15px}.room-head,.idea-head,.news-head{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}.room-code{font-weight:850;letter-spacing:.08em}.pill{display:inline-flex;align-items:center;gap:6px;padding:6px 9px;border-radius:999px;background:#20202b;color:var(--muted);font-size:12px}.pill.live{color:var(--green);background:rgba(158,220,157,.09)}.room-meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:11px}.people{margin-top:11px;color:var(--muted);font-size:13px;line-height:1.6}.person-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--green);margin-right:6px;box-shadow:0 0 10px rgba(158,220,157,.7)}.toolbar{display:flex;gap:9px;flex-wrap:wrap;margin:15px 0}.toolbar input,.toolbar select{padding:12px 13px;border-radius:12px;border:1px solid var(--line);background:#111119;color:var(--text);outline:none}.toolbar input{flex:1;min-width:220px}.toolbar input:focus,.toolbar select:focus{border-color:var(--lilac)}.idea-text,.news-text{margin:13px 0;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.6;color:#ddd9e3}.person{font-weight:800}.date{font-size:12px;color:var(--muted);margin-top:4px}.actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.select{padding:9px 11px;border-radius:10px;border:1px solid var(--line);background:#1a1a24;color:var(--text)}.smallbtn{border:1px solid var(--line);background:#1a1a24;color:var(--text);border-radius:10px;padding:9px 12px;cursor:pointer}.smallbtn:hover{background:#242432}.smallbtn.primary{background:rgba(241,184,207,.14);border-color:rgba(241,184,207,.28)}.user-card{display:flex;align-items:center;justify-content:space-between;gap:14px;background:#13131b;border:1px solid #292936;border-radius:16px;padding:15px}.user-main{display:flex;align-items:center;gap:12px;min-width:0}.user-avatar{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,var(--pink),var(--lilac));color:#171720;display:grid;place-items:center;font-weight:900;flex:0 0 auto}.user-name{font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.user-sub{color:var(--muted);font-size:12px;margin-top:3px}.achievement{background:#13131b;border:1px solid #292936;border-radius:16px;padding:16px;display:flex;gap:13px;align-items:center}.achievement-icon{width:46px;height:46px;border-radius:15px;background:linear-gradient(135deg,rgba(241,184,207,.2),rgba(203,188,245,.2));display:grid;place-items:center;font-size:22px}.achievement h3{font-size:15px;margin:0 0 4px}.achievement p{font-size:12px;color:var(--muted);margin:0;line-height:1.45}.achievement label{margin-left:auto;color:var(--muted);font-size:11px;white-space:nowrap}.achievement input{accent-color:#cbbcf5}.smallbtn.danger{color:var(--danger);background:rgba(239,156,170,.07)}.editor{background:#13131b;border:1px solid #292936;border-radius:18px;padding:17px;margin-bottom:14px}.editor h2{font-size:18px;margin:0 0 13px}.editor input,.editor textarea{width:100%;padding:12px 13px;border-radius:11px;border:1px solid var(--line);background:#0f0f16;color:var(--text);margin-bottom:9px;outline:none}.editor textarea{min-height:125px;resize:vertical}.editor-row{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.check{color:var(--muted);font-size:13px}.published{color:var(--green);font-size:12px;font-weight:800}.unpublished{color:#d8b679;font-size:12px;font-weight:800}.empty{text-align:center;padding:42px 15px;color:var(--muted);border:1px dashed var(--line);border-radius:16px}.danger-note{color:var(--danger);font-size:12px}.footer-note{margin-top:16px;color:var(--muted);font-size:12px;text-align:center}@media(max-width:900px){.stats{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}}@media(max-width:600px){.wrap{width:calc(100% - 20px);padding-top:14px}.top{padding-bottom:12px}.brand-mark{width:38px;height:38px}.brand-name{font-size:17px}.site-link{padding:8px 11px}.login{padding:15px}.login input{min-width:100%;flex-basis:100%}.hero{align-items:flex-start;flex-direction:column}.hero-actions{width:100%}.hero-actions .btn{flex:1}.stats{grid-template-columns:1fr 1fr;gap:8px}.stat{padding:14px;min-height:105px}.stat b{font-size:28px}.card{padding:14px}.room-head,.idea-head,.news-head{display:block}.actions{margin-top:10px}.toolbar input{min-width:100%}}\n</style>
 </head>
 <body>
 <div class="wrap">
@@ -583,7 +583,10 @@ app.get("/admin", (req, res) => {
     <nav class="nav">
       <button class="active" data-view="overview" onclick="showView('overview')">Обзор</button>
       <button data-view="rooms" onclick="showView('rooms')">Комнаты</button>
+      <button data-view="users" onclick="showView('users')">Пользователи</button>
+      <button data-view="moderation" onclick="showView('moderation')">Модерация</button>
       <button data-view="ideas" onclick="showView('ideas')">Предложения</button>
+      <button data-view="achievements" onclick="showView('achievements')">Достижения</button>
       <button data-view="news" onclick="showView('news')">Обновления</button>
     </nav>
 
@@ -606,6 +609,35 @@ app.get("/admin", (req, res) => {
 
     <section class="view" id="view-rooms">
       <div class="card"><div class="card-head"><h2>Активные комнаты</h2><span id="roomsCount" class="pill">0 комнат</span></div><div id="roomsList" class="room-list"></div></div>
+    </section>
+
+    <section class="view" id="view-users">
+      <div class="card">
+        <div class="card-head"><h2>Пользователи онлайн</h2><span id="usersCount" class="pill">0</span></div>
+        <div class="toolbar"><input id="userSearch" placeholder="Поиск по имени..." oninput="renderUsers()"></div>
+        <div id="usersList" class="cards"></div>
+      </div>
+    </section>
+
+    <section class="view" id="view-moderation">
+      <div class="stats">
+        <div class="stat"><div class="stat-icon">🆕</div><span>Новые предложения</span><b id="modNew">0</b></div>
+        <div class="stat"><div class="stat-icon">🔧</div><span>В работе</span><b id="modProgress">0</b></div>
+        <div class="stat"><div class="stat-icon">🚫</div><span>Отклонённые</span><b id="modRejected">0</b></div>
+        <div class="stat"><div class="stat-icon">✅</div><span>Добавленные</span><b id="modDone">0</b></div>
+      </div>
+      <div class="card" style="margin-top:14px">
+        <div class="card-head"><h2>Быстрая модерация</h2><button class="smallbtn primary" onclick="showView('ideas');document.getElementById('filter').value='new';renderIdeas()">Открыть новые</button></div>
+        <div class="empty">Здесь собраны предложения пользователей и их текущие статусы. Используйте вкладку «Предложения», чтобы обработать каждое из них.</div>
+      </div>
+    </section>
+
+    <section class="view" id="view-achievements">
+      <div class="card">
+        <div class="card-head"><h2>Достижения CINEORA</h2><span class="pill">Система</span></div>
+        <div id="achievementList" class="cards"></div>
+      </div>
+      <div class="footer-note">Переключатели сохраняются для этого браузера администратора. Начисление достижений подключим к общей статистике после появления постоянного профиля пользователя.</div>
     </section>
 
     <section class="view" id="view-ideas">
@@ -681,6 +713,47 @@ function renderRooms(){
   document.getElementById("roomsList").innerHTML=html;
   document.getElementById("overviewRooms").innerHTML=rooms.slice(0,6).map(roomMarkup).join("")||"<div class='empty'>Пока никто не смотрит.</div>";
   document.getElementById("roomsCount").textContent=rooms.length+" "+(rooms.length===1?"комната":"комнат");
+  renderUsers();
+}
+function renderUsers(){
+  const q=(document.getElementById("userSearch")?.value||"").toLowerCase().trim();
+  const map=new Map();
+  rooms.forEach(room=>(room.users||[]).forEach(u=>{
+    const name=u.name||"Гость";
+    const key=String(u.id||name).toLowerCase();
+    if(!map.has(key))map.set(key,{name,rooms:[],count:0});
+    const item=map.get(key);item.count++;if(!item.rooms.includes(room.id))item.rooms.push(room.id);
+  }));
+  const users=[...map.values()].filter(u=>u.name.toLowerCase().includes(q)).sort((a,b)=>a.name.localeCompare(b.name,"ru"));
+  const el=document.getElementById("usersList");if(!el)return;
+  document.getElementById("usersCount").textContent=users.length;
+  el.innerHTML=users.length?users.map(u=>"<article class='user-card'><div class='user-main'><div class='user-avatar'>"+esc((u.name||"Г").slice(0,1).toUpperCase())+"</div><div><div class='user-name'>"+esc(u.name)+"</div><div class='user-sub'>Онлайн · комнат: "+u.rooms.length+" · участников: "+u.count+"</div></div></div><span class='pill live'>● онлайн</span></article>").join(""):"<div class='empty'>Сейчас онлайн никого нет.</div>";
+}
+function renderModeration(){
+  const counts={new:0,in_progress:0,done:0,rejected:0};
+  items.forEach(x=>{if(counts[x.status]!==undefined)counts[x.status]++});
+  document.getElementById("modNew").textContent=counts.new;
+  document.getElementById("modProgress").textContent=counts.in_progress;
+  document.getElementById("modRejected").textContent=counts.rejected;
+  document.getElementById("modDone").textContent=counts.done;
+}
+const achievementDefs=[
+  ["🎬","Первый просмотр","Посмотреть первый фильм"],
+  ["🍿","Киноман","Посмотреть 10 фильмов"],
+  ["🌙","Ночной зритель","Смотреть фильм после полуночи"],
+  ["👑","Хозяин киносеанса","Создать первую комнату"],
+  ["💬","Болтун","Отправить 50 сообщений"],
+  ["👥","Собрал компанию","Пригласить друзей в комнату"],
+  ["🔥","Кино-марафон","Провести длинный совместный просмотр"],
+  ["✨","Душа CINEORA","Активно пользоваться сервисом"]
+];
+function renderAchievements(){
+  const el=document.getElementById("achievementList");if(!el)return;
+  const saved=JSON.parse(localStorage.getItem("cineora_admin_achievements")||"{}");
+  el.innerHTML=achievementDefs.map((a,i)=>"<article class='achievement'><div class='achievement-icon'>"+a[0]+"</div><div><h3>"+a[1]+"</h3><p>"+a[2]+"</p></div><label><input type='checkbox' "+(saved[i]!==false?"checked":"")+" onchange='toggleAchievement("+i+",this.checked)'> Включено</label></article>").join("");
+}
+function toggleAchievement(i,on){
+  const saved=JSON.parse(localStorage.getItem("cineora_admin_achievements")||"{}");saved[i]=on;localStorage.setItem("cineora_admin_achievements",JSON.stringify(saved));
 }
 function renderIdeas(){
   const q=(document.getElementById("search").value||"").toLowerCase().trim();
@@ -689,7 +762,7 @@ function renderIdeas(){
   document.getElementById("ideasCount").textContent=visible.length+" из "+items.length;
   document.getElementById("list").innerHTML=visible.length?visible.map(x=>"<article class='idea'><div class='idea-head'><div><div class='person'>"+esc(x.name||"Гость")+"</div><div class='date'>"+fmtDate(x.createdAt)+"</div></div><span class='pill'>"+labels[x.status]+"</span></div><div class='idea-text'>"+esc(x.text)+"</div><div class='actions'><select class='select' onchange='setStatus(\""+esc(x.id)+"\",this.value)'><option value='new' "+(x.status==="new"?"selected":"")+">Новое</option><option value='in_progress' "+(x.status==="in_progress"?"selected":"")+">В работе</option><option value='done' "+(x.status==="done"?"selected":"")+">Добавлено</option><option value='rejected' "+(x.status==="rejected"?"selected":"")+">Отклонено</option></select><button class='smallbtn danger' onclick='deleteIdea(\""+esc(x.id)+"\")'>Удалить</button></div></article>").join(""):"<div class='empty'>По этому фильтру ничего нет.</div>";
 }
-async function loadIdeas(){const d=await api("/api/admin/suggestions");items=d.suggestions||[];renderIdeas()}
+async function loadIdeas(){const d=await api("/api/admin/suggestions");items=d.suggestions||[];renderIdeas();renderModeration()}
 async function setStatus(id,status){try{await api("/api/admin/suggestions/"+encodeURIComponent(id),{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({status})});const x=items.find(i=>i.id===id);if(x)x.status=status;renderIdeas()}catch(e){alert(e.message)}}
 async function deleteIdea(id){if(!confirm("Удалить предложение?"))return;try{await api("/api/admin/suggestions/"+encodeURIComponent(id),{method:"DELETE"});await loadIdeas();loadStats()}catch(e){alert(e.message)}}
 function renderNews(){
@@ -729,6 +802,7 @@ async function refreshAll(){
   if(!adminAuthenticated)return;
   try{
     await Promise.all([loadStats(),loadIdeas(),loadNews()]);
+    renderUsers();renderModeration();renderAchievements();
     document.getElementById("dashboard").classList.add("show");
     document.getElementById("loginBox").style.display="none";
     document.getElementById("loginStatus").textContent="";
