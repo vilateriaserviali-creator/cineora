@@ -3374,7 +3374,7 @@ function renderUsers(users){
   function addMessage(m, incoming=false){
     const wasNearBottom=(chatMessages.scrollHeight-chatMessages.scrollTop-chatMessages.clientHeight)<48;
     const el=document.createElement("div");
-    const own=m.userId===socket.id;
+    const own=(m.clientUserId&&m.clientUserId===cineoraClientId)||m.userId===socket.id||(m.userId!==socket.id&&m.name===myName);
     el.className="chat-msg"+(own?" own":"");
     el.dataset.messageId=m.id||"";
     const stickerMap={lol:["😂","Смешно"],cry:["😭","Плачу"],love:["❤️","Люблю"],wow:["🤯","ВОТ ЭТО"],sus:["🤨","Ну-ну"],eyes:["👀","Смотрю"],cute:["🥹","Мило"],fire:["🔥","Огонь"],popcorn:["🍿","Смотрим"],dead:["💀","Я умер"],sleep:["😴","Уснул"],cineora:["✦","CINEORA"]};
@@ -3652,6 +3652,7 @@ function renderUsers(users){
   socket.on("connect_error",()=>{setStatus("Нет соединения с комнатой — переподключаемся…");const el=document.getElementById("chatConnection");if(el)el.textContent="● нет связи";const voiceEl=document.getElementById("voiceConnection");if(voiceEl)voiceEl.textContent="● нет связи"});
   let joinRetryTimer=null;
   let joinInFlight=false;
+  const cineoraClientId=(()=>{try{let v=localStorage.getItem("cineora_client_id");if(!v){v=crypto.randomUUID?crypto.randomUUID():("c-"+Date.now()+"-"+Math.random().toString(36).slice(2));localStorage.setItem("cineora_client_id",v)}return v}catch(e){return "c-"+Date.now()}})();
   function joinCurrentRoom(){
     if(!socket.connected || joinInFlight || roomJoined)return;
     joinInFlight=true;
@@ -3662,7 +3663,8 @@ function renderUsers(users){
       name:localStorage.getItem("cineora_name")||myName||"Гость",
       avatar:myAvatar,
       privateRoom:roomPrivate,
-      accessToken:roomAccessKey
+      accessToken:roomAccessKey,
+      clientId:cineoraClientId
     },ack=>{
       joinInFlight=false;
       if(ack?.ok){
