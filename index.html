@@ -2773,8 +2773,9 @@ function startRoom(roomId,pageParams){
   let suppress=false,lastProgress=0,currentType="",player=null,currentUrl="",hostId="",roomPlaying=false,roomPosition=0,roomServerTime=Date.now();
   let lastLocalControl=0;
   function publishSync(playing,position){
+    // Only the room host may change the shared playback clock.
+    if(!isHost()||!socket.connected||!roomJoined)return;
     lastLocalControl=Date.now();
-    if(!socket.connected||!roomJoined)return;
     socket.emit("sync",{playing:!!playing,position:Math.max(0,Number(position)||0)});
   }
   let embedPlayer=null,embedFrame=null,embedTime=0,embedDuration=0,embedPlaying=false;
@@ -3181,9 +3182,9 @@ function startRoom(roomId,pageParams){
       currentType="video";host.innerHTML="";
       const v=document.createElement("video");v.id="roomVideo";v.controls=false;v.playsInline=true;v.preload="metadata";v.src=d.url;host.appendChild(v);
       setStatus("Видео из интернета");
-      v.addEventListener("play",()=>{if(!suppress)socket.emit("sync",{playing:true,position:v.currentTime})});
-      v.addEventListener("pause",()=>{if(!suppress)socket.emit("sync",{playing:false,position:v.currentTime})});
-      v.addEventListener("seeked",()=>{if(!suppress)socket.emit("sync",{playing:!v.paused,position:v.currentTime})});
+      v.addEventListener("play",()=>{if(!suppress)publishSync(true,v.currentTime)});
+      v.addEventListener("pause",()=>{if(!suppress)publishSync(false,v.currentTime)});
+      v.addEventListener("seeked",()=>{if(!suppress)publishSync(!v.paused,v.currentTime)});
       v.addEventListener("loadedmetadata",()=>{
         setStatus("Видео · готово к просмотру");
         /* Initial progress is restored only once by the normal media-load flow. */
@@ -3252,12 +3253,7 @@ function startRoom(roomId,pageParams){
     }catch(e){}
     return null;
   }
-  setInterval(()=>{
-    if(!roomJoined||!currentUrl||!roomPlaying||suppress)return;
-    const local=getLocalPlaybackPosition(); if(local===null)return;
-    const target=targetPosition(roomPosition,roomServerTime,true);
-    if(Math.abs(local-target)>2.5){applySync(true,target,Date.now());setStatus("Автосинхронизация · "+fmt(target))}
-  },4000);
+  // No periodic hard seeks: they can mistake buffering/network lag for a rewind.
   function applySync(playing,pos,serverTime){
     roomPlaying=!!playing;roomPosition=Number(pos)||0;roomServerTime=Number(serverTime)||Date.now();
     suppress=true;
