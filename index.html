@@ -2335,6 +2335,36 @@ html.cineora-dark .reaction-bar{background:rgba(20,17,24,.82)!important;border-c
   .reaction-bar button{width:32px!important;height:32px!important;font-size:17px!important}
 }
 </style>
+<style id="cineora-voice-polish">
+.voice-user{position:relative;display:inline-flex!important;align-items:center!important;gap:6px!important}
+.voice-user .voice-speaking-dot{
+  width:7px!important;height:7px!important;border-radius:50%!important;
+  background:#8d818f!important;display:inline-block!important;
+  box-shadow:0 0 0 0 rgba(141,129,143,0)!important;
+  transition:background .15s ease,box-shadow .15s ease,transform .15s ease!important;
+}
+.voice-user.speaking .voice-speaking-dot{
+  background:#7fbd91!important;
+  box-shadow:0 0 0 4px rgba(127,189,145,.14)!important;
+  transform:scale(1.15)!important;
+}
+.voice-user.speaking{
+  background:#d9c8d7!important;
+  box-shadow:0 0 0 1px rgba(127,189,145,.22)!important;
+}
+.voice-name{min-width:0;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.voice-mute{
+  border:0!important;background:transparent!important;padding:0!important;
+  cursor:pointer!important;font-size:11px!important;line-height:1!important;
+}
+.voice-volume{width:58px!important;accent-color:#9f829d!important}
+.voice-panel.voice-connected{box-shadow:inset 3px 0 0 #8f7290}
+@media(max-width:600px){
+  .voice-user{max-width:100%!important}
+  .voice-name{max-width:110px}
+  .voice-volume{width:48px!important}
+}
+</style>
 </head>
 <body>
 
@@ -2658,6 +2688,14 @@ function startRoom(roomId,pageParams){
     updateVoiceButton();
   }
   voiceToggle?.addEventListener("click",()=>setVoiceEnabled(!voiceEnabled));
+
+  // После включения микрофона сразу подключаемся к уже говорящим участникам.
+  socket.on("voice-user-state",u=>{
+    if(voiceEnabled)ensureVoicePeers(u.users||[]);
+  });
+  socket.on("connect",()=>{
+    if(voiceEnabled)socket.emit("voice-state",{enabled:true});
+  });
   updateSpeaking();
   noiseSuppression?.addEventListener("change",e=>setNoiseSuppression(e.target.checked));
   updateVoiceButton();
@@ -3461,7 +3499,8 @@ function renderUsers(users){
     }catch(e){}
   });
   function ensureVoicePeers(users){
-    if(!voiceEnabled)return;
+    // Слушать голос можно и без включённого собственного микрофона.
+    // WebRTC-пир создаём для каждого участника, который сейчас говорит.
     (users||[]).filter(u=>u.id!==socket.id && u.voiceEnabled).forEach(u=>{
       const initiator=String(socket.id)<String(u.id);
       createVoicePeer(u.id,u.name,initiator);
@@ -3478,6 +3517,10 @@ function renderUsers(users){
   });
   socket.on("voice-peer-left",id=>removeVoicePeer(id));
 
+  socket.on("disconnect",()=>{
+    for(const [id] of voicePeers)removeVoicePeer(id);
+    if(voiceStatus)voiceStatus.textContent="Соединение с голосовым чатом потеряно";
+  });
   socket.on("disconnect",()=>{roomJoined=false;window.cineoraRoomJoined=false;setStatus("Соединение потеряно — переподключаемся…");const el=document.getElementById("chatConnection");if(el)el.textContent="● нет связи";const voiceEl=document.getElementById("voiceConnection");if(voiceEl)voiceEl.textContent="● нет связи";window.dispatchEvent(new Event("cineora:disconnected"))});
   socket.on("connect_error",()=>{setStatus("Нет соединения с комнатой — переподключаемся…");const el=document.getElementById("chatConnection");if(el)el.textContent="● нет связи";const voiceEl=document.getElementById("voiceConnection");if(voiceEl)voiceEl.textContent="● нет связи"});
   let joinRetryTimer=null;
