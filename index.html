@@ -2585,6 +2585,7 @@ function startRoom(roomId,pageParams){
     query:{
       roomId:String(roomId||""),
       name:myName||"Гость",
+      avatar:myAvatar,
       privateRoom:roomPrivate?"1":"0",
       accessToken:roomAccessKey
     },
