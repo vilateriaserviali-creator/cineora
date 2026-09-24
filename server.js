@@ -567,7 +567,7 @@ app.get("/admin", (req, res) => {
 </div>
 
 <script>
-let password="",items=[],newsItems=[],rooms=[];
+let password="",adminAuthenticated=false,items=[],newsItems=[],rooms=[];
 const labels={new:"Новое",in_progress:"В работе",done:"Добавлено",rejected:"Отклонено"};
 function esc(s){return String(s).replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;","\"":"&quot;"}[c]));}
 function fmtDate(v){try{return new Date(v).toLocaleString("ru-RU",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"})}catch(e){return ""}}
@@ -590,6 +590,7 @@ async async function openAdmin(){
     let d={};try{d=await r.json()}catch(e){}
     if(!r.ok)throw new Error(d.error||"Ошибка входа");
     password="";
+    adminAuthenticated=true;
     document.getElementById("pass").value="";
     await refreshAll();
   }catch(e){
@@ -650,13 +651,14 @@ async function loadStats(){
 async function logoutAdmin(){
   try{await fetch("/api/admin/logout",{method:"POST",credentials:"same-origin"})}catch(e){}
   password="";
+  adminAuthenticated=false;
   document.getElementById("dashboard").classList.remove("show");
   document.getElementById("loginBox").style.display="";
   document.getElementById("pass").value="";
   document.getElementById("loginStatus").textContent="Вы вышли из панели администратора.";
 }
 async function refreshAll(){
-  try{
+  if(!adminAuthenticated)return;
   try{
     await Promise.all([loadStats(),loadIdeas(),loadNews()]);
     document.getElementById("dashboard").classList.add("show");
@@ -665,6 +667,7 @@ async function refreshAll(){
   }catch(e){
     document.getElementById("loginStatus").innerHTML="<span class='error'>"+esc(e.message)+"</span>";
     document.getElementById("dashboard").classList.remove("show");
+    if(String(e.message).includes("Неверный пароль")) adminAuthenticated=false;
   }
 }
 document.getElementById("pass").addEventListener("keydown",e=>{if(e.key==="Enter")openAdmin()});
