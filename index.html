@@ -1334,13 +1334,8 @@ html,body{max-width:100%;overflow-x:hidden}
 
 .participant-card{animation:cineoraPersonIn .35s var(--cineora-ease) both}
 @keyframes cineoraPersonIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
-.participant-avatar{transition:transform .2s var(--cineora-ease),box-shadow .2s ease}
-.participant-card:hover .participant-avatar{transform:scale(1.05)}
-.participant-card.watching .participant-avatar{animation:cineoraPulse 2.2s ease-in-out infinite}
-@keyframes cineoraPulse{
-  0%,100%{box-shadow:0 0 0 3px rgba(216,232,220,.7),0 5px 12px rgba(91,72,96,.12)}
-  50%{box-shadow:0 0 0 5px rgba(216,232,220,.25),0 5px 16px rgba(91,72,96,.14)}
-}
+.participant-avatar{transition:box-shadow .2s ease}
+.participant-card.watching .participant-avatar{box-shadow:0 0 0 3px rgba(216,232,220,.7),0 5px 12px rgba(91,72,96,.12)}
 .person-progress i{transition:width .45s linear}
 
 .chat-msg{animation:cineoraMessageIn .25s var(--cineora-ease) both}
