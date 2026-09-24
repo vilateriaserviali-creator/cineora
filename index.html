@@ -2365,15 +2365,22 @@ html.cineora-dark .reaction-bar{background:rgba(20,17,24,.82)!important;border-c
   .voice-volume{width:48px!important}
 }
 </style>
-</head>
+<style id="cineora-achievements-creator">
+.achievements-btn{position:relative}.achievements-btn .achievement-dot{position:absolute;right:6px;top:5px;width:6px;height:6px;border-radius:50%;background:#d9a9ef;box-shadow:0 0 0 3px #d9a9ef22}
+.cineora-achievements{display:none;position:fixed;inset:0;z-index:100000;background:rgba(10,8,14,.58);backdrop-filter:blur(10px);padding:20px;align-items:center;justify-content:center}.cineora-achievements.show{display:flex}
+.achievements-box{width:min(620px,100%);max-height:min(720px,90vh);overflow:auto;background:#f7f1f6;border:1px solid #d5c6d8;border-radius:26px;box-shadow:0 30px 90px #17111d55;color:#403943}.achievements-head{display:flex;align-items:center;justify-content:space-between;padding:22px 24px;border-bottom:1px solid #e2d8e3}.achievements-head h2{margin:0;font:500 28px "Playfair Display"}.achievements-close{border:0;background:#fff;border:1px solid #ddd2df;width:36px;height:36px;border-radius:50%;font-size:20px;color:#665a68}.achievement-progress{padding:16px 24px;background:linear-gradient(135deg,#eee3ef,#e6e8ef);font-size:12px;color:#675b69}.achievement-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:18px 24px 24px}.achievement-card{padding:15px;border:1px solid #ded2df;border-radius:17px;background:#fff;display:flex;gap:12px;align-items:center}.achievement-card.locked{opacity:.45;filter:saturate(.35)}.achievement-card.unlocked{box-shadow:0 10px 24px #6e587520;border-color:#c5acc8}.achievement-icon{width:42px;height:42px;flex:0 0 42px;border-radius:14px;background:#eaddec;display:grid;place-items:center;font-size:21px}.achievement-card b{display:block;font-size:12px}.achievement-card small{display:block;margin-top:3px;color:#817582;font-size:10px;line-height:1.35}
+.creator-badge{display:inline-flex!important;align-items:center!important;gap:4px!important;padding:4px 8px!important;border-radius:999px!important;background:linear-gradient(135deg,#e7c8f0,#cbb4df)!important;color:#4d3a57!important;border:1px solid #b99bc7!important;font-size:9px!important;font-weight:800!important;white-space:nowrap!important;box-shadow:0 4px 12px #87669220!important}.creator-badge .creator-spark{font-size:10px}
+html.cineora-dark .cineora-achievements{background:rgba(4,3,7,.72)}html.cineora-dark .achievements-box{background:#29242d;color:#f1ebf3;border-color:#4b4050}html.cineora-dark .achievements-head{border-color:#403642}html.cineora-dark .achievements-close{background:#342e38;color:#eee;border-color:#4b4050}html.cineora-dark .achievement-progress{background:#342d38;color:#cfc4d2}html.cineora-dark .achievement-card{background:#332d37;border-color:#4a414d}html.cineora-dark .achievement-icon{background:#46394a}html.cineora-dark .achievement-card small{color:#aaa0ad}html.cineora-dark .creator-badge{background:linear-gradient(135deg,#674b70,#50405d)!important;color:#f2e7f4!important;border-color:#80618a!important}
+@media(max-width:600px){.achievement-grid{grid-template-columns:1fr;padding:14px}.achievements-head{padding:18px}.achievement-progress{padding:13px 18px}}
+</style></head>
 <body>
 
 
-<section class="room-view" id="roomView">
+<div class="cineora-achievements" id="achievementsModal" aria-hidden="true"><div class="achievements-box" role="dialog" aria-modal="true"><div class="achievements-head"><h2>🏆 Достижения CINEORA</h2><button class="achievements-close" id="achievementsClose" type="button">×</button></div><div class="achievement-progress" id="achievementProgress"></div><div class="achievement-grid" id="achievementGrid"></div></div></div><section class="room-view" id="roomView">
   <header class="room-top">
     <a class="room-brand" href="/" aria-label="CINEORA — на главную">CINE<span class="accent">ORA</span></a>
     <div class="top-invite" title="Ссылка на комнату"><span id="inviteTitle">🔗 Ссылка комнаты</span><span id="inviteLinkPreview" class="invite-link-preview">cineora…/?room=—</span><button id="inviteJoin" type="button">Скопировать ссылку</button><span id="inviteSub" class="top-invite-sub">Отправьте её друзьям</span></div>
-    <div class="room-actions"><button id="roomThemeToggle" class="room-btn" type="button" title="Переключить оформление комнаты">◐ Тема</button>
+    <div class="room-actions"><button class="room-btn achievements-btn" id="achievementsBtn" type="button" title="Ваши достижения">🏆 <span>Достижения</span><i class="achievement-dot"></i></button><button id="roomThemeToggle" class="room-btn" type="button" title="Переключить оформление комнаты">◐ Тема</button>
       <span class="room-code">Сессия: <b id="roomCodeLabel">—</b></span><span class="room-code room-title-chip" id="roomTitleLabel">🎬 Киносеанс</span><span class="room-code room-mode-chip public" id="roomModeLabel">🌐 Обычная</span><span class="room-code">👥 Смотрят: <b id="viewerCount">0</b></span>
       <button class="room-btn" id="changeName">✎ Изменить имя</button>
       
@@ -2382,7 +2389,7 @@ html.cineora-dark .reaction-bar{background:rgba(20,17,24,.82)!important;border-c
   </header>
   <main class="room-layout">
     <section class="watch-card">
-      <div class="watch-head"><div><div class="watch-title">Совместный просмотр</div><div class="source-pill" id="mediaStatus">Видео пока не добавлено</div></div><div class="watch-head-tools"><button class="room-btn" id="syncBtn" type="button">↻ Синхронизировать</button><button class="room-btn cinema-toggle" id="cinemaModeBtn" type="button" aria-pressed="false" title="Видео почти на весь экран, чат — сбоку">🌓 Кинотеатр</button><div class="source-pill" id="myRoomName"></div></div></div>
+      <div class="watch-head"><div><div class="watch-title">Совместный просмотр</div><div class="source-pill" id="mediaStatus">Видео пока не добавлено</div></div><div class="watch-head-tools"><button class="room-btn" id="skipBackBtn" type="button" title="Назад на 10 секунд">↶ 10</button><button class="room-btn" id="skipForwardBtn" type="button" title="Вперёд на 10 секунд">10 ↷</button><button class="room-btn" id="syncBtn" type="button">↻ Синхронизировать</button><button class="room-btn cinema-toggle" id="cinemaModeBtn" type="button" aria-pressed="false" title="Видео почти на весь экран, чат — сбоку">🌓 Кинотеатр</button><div class="source-pill" id="myRoomName"></div></div></div>
       <div class="reaction-bar" id="reactionBar" aria-label="Реакции">
   <button type="button" data-reaction="😂" aria-label="Смешно">😂</button>
   <button type="button" data-reaction="😭" aria-label="Плачу">😭</button>
@@ -2581,6 +2588,26 @@ function startRoom(roomId,pageParams){
     auth:{roomId:String(roomId||""),name:myName||"Гость",privateRoom:roomPrivate,accessToken:roomAccessKey}
   });
   let roomJoined=false;
+  const achievementKey="cineora_achievements_v1_"+encodeURIComponent(myName||"Гость").slice(0,80);
+  const achievementState=(()=>{try{return Object.assign({sessions:0,minutes:0,messages:0,reactions:0,creator:false},JSON.parse(localStorage.getItem(achievementKey)||"{}"))}catch(e){return {sessions:0,minutes:0,messages:0,reactions:0,creator:false}}})();
+  let achievementSessionCounted=false,achievementMinuteTimer=null;
+  const achievementDefs=[
+    ["first","🎬","Первый сеанс","Впервые вошли в комнату",s=>s.sessions>=1],
+    ["minutes10","🍿","Киновечер","Провели в CINEORA 10 минут",s=>s.minutes>=10],
+    ["talker","💬","Есть что сказать","Отправили 10 сообщений",s=>s.messages>=10],
+    ["reaction","🔥","Эмоции","Отправили 5 реакций",s=>s.reactions>=5],
+    ["regular","🌙","Постоянный зритель","Побывали в 5 сеансах",s=>s.sessions>=5],
+    ["creator","✦","Создатель CINEORA","Статус владельца сайта",s=>!!s.creator]
+  ];
+  function saveAchievements(){try{localStorage.setItem(achievementKey,JSON.stringify(achievementState))}catch(e){}}
+  function renderAchievements(){const grid=document.getElementById("achievementGrid"),p=document.getElementById("achievementProgress");if(!grid)return;const unlocked=achievementDefs.filter(x=>x[4](achievementState)).length;if(p)p.textContent="Открыто "+unlocked+" из "+achievementDefs.length+" · Продолжайте смотреть, общаться и реагировать";grid.innerHTML=achievementDefs.map(x=>{const ok=x[4](achievementState);return '<div class="achievement-card '+(ok?"unlocked":"locked")+'"><div class="achievement-icon">'+x[1]+'</div><div><b>'+x[2]+'</b><small>'+x[3]+'</small></div></div>'}).join("")}
+  function bumpAchievement(field,amount=1){achievementState[field]=(Number(achievementState[field])||0)+amount;saveAchievements();renderAchievements()}
+  function openAchievements(){const m=document.getElementById("achievementsModal");if(m){m.classList.add("show");m.setAttribute("aria-hidden","false");renderAchievements()}}
+  function closeAchievements(){const m=document.getElementById("achievementsModal");if(m){m.classList.remove("show");m.setAttribute("aria-hidden","true")}}
+  document.getElementById("achievementsBtn")?.addEventListener("click",openAchievements);
+  document.getElementById("achievementsClose")?.addEventListener("click",closeAchievements);
+  document.getElementById("achievementsModal")?.addEventListener("click",e=>{if(e.target.id==="achievementsModal")closeAchievements()});
+  function startAchievementTracking(){if(!achievementSessionCounted){achievementSessionCounted=true;bumpAchievement("sessions")}if(!achievementMinuteTimer)achievementMinuteTimer=setInterval(()=>{if(roomJoined)bumpAchievement("minutes")},60000)}
   window.cineoraRoomJoined=false;
   window.socket=socket;
   window.dispatchEvent(new Event("cineora:socket-ready")); const roomTitle=pageParams?.get("title")||"Киносеанс"; const scheduledAt=Number(pageParams?.get("at")||0); const roomTitleLabel=document.getElementById("roomTitleLabel"),inviteTitle=document.getElementById("inviteTitle"),countdown=document.getElementById("sessionCountdown"); if(roomTitleLabel)roomTitleLabel.textContent="🎬 "+roomTitle; if(inviteTitle)inviteTitle.textContent="🍿 "+roomTitle; if(scheduledAt&&countdown){let scheduledStarted=false;const tick=()=>{const left=scheduledAt-Date.now();if(left<=0){countdown.textContent="🍿 Киносеанс начинается сейчас";countdown.classList.add("show");if(!scheduledStarted&&socket.connected){scheduledStarted=true;socket.emit("sync",{playing:true,position:0});setTimeout(()=>applySync(true,0,Date.now()),300)}return}const s=Math.floor(left/1000),d=Math.floor(s/86400),hh=Math.floor(s%86400/3600),mm=Math.floor(s%3600/60),ss=s%60;countdown.textContent="🍿 Сеанс начнётся через "+(d?d+" д ":"")+String(hh).padStart(2,"0")+":"+String(mm).padStart(2,"0")+":"+String(ss).padStart(2,"0");countdown.classList.add("show")};tick();setInterval(tick,1000)}
@@ -3156,6 +3183,9 @@ function startRoom(roomId,pageParams){
     return base+Math.max(0,(Date.now()-stamp)/1000);
   }
 
+  function seekRelative(delta){const amount=Number(delta)||0;try{if(currentType==="youtube"&&player?.getCurrentTime&&player?.seekTo){const p=Math.max(0,player.getCurrentTime()+amount);player.seekTo(p,true);socket.emit("sync",{playing:!!roomPlaying,position:p});return}if(currentType==="video"){const v=document.getElementById("roomVideo");if(v){const p=Math.max(0,(v.currentTime||0)+amount);v.currentTime=p;socket.emit("sync",{playing:!v.paused,position:p});return}}if((currentType==="rutube"||currentType==="vk")&&embedPlayer?.getCurrentTime){const p=Math.max(0,embedPlayer.getCurrentTime()+amount);if(embedPlayer.seek)embedPlayer.seek(p);socket.emit("sync",{playing:roomPlaying,position:p});return}const p=Math.max(0,targetPosition(roomPosition,roomServerTime,roomPlaying)+amount);socket.emit("sync",{playing:roomPlaying,position:p})}catch(e){}}
+  document.getElementById("skipBackBtn")?.addEventListener("click",()=>seekRelative(-10));
+  document.getElementById("skipForwardBtn")?.addEventListener("click",()=>seekRelative(10));
   function applySync(playing,pos,serverTime){
     roomPlaying=!!playing;roomPosition=Number(pos)||0;roomServerTime=Number(serverTime)||Date.now();
     suppress=true;
@@ -3204,6 +3234,7 @@ function renderUsers(users){
       const duration=Math.max(0,Number(u.duration)||0);
       const pct=duration?Math.min(100,Math.max(0,pos/duration*100)):0;
       const isMe=u.id===socket.id;
+      if(isMe&&u.isAdmin&&!achievementState.creator){achievementState.creator=true;saveAchievements();}
       const isHost=u.id===hostId;
       let status="Ожидает видео",statusClass="waiting",statusIcon="○";
       if(currentUrl){
@@ -3218,7 +3249,7 @@ function renderUsers(users){
         '<div class="participant-main">'+
           '<div class="participant-avatar">'+escapeHtml((u.name||"Г").trim().charAt(0).toUpperCase())+'</div>'+
           '<div class="participant-info">'+
-            '<div class="participant-name-line"><span class="person-name">'+escapeHtml(u.name||"Гость")+'</span>'+(u.isAdmin?'<span class="admin-sticker">✦ Админ</span>':"")+(isMe?'<span class="me-badge">вы</span>':"")+(isHost?'<span class="host-badge">хост</span>':"")+'</div>'+
+            '<div class="participant-name-line"><span class="person-name">'+escapeHtml(u.name||"Гость")+'</span>'+(u.isAdmin?'<span class="creator-badge"><span class="creator-spark">✦</span> Создатель CINEORA</span>':"")+(isMe?'<span class="me-badge">вы</span>':"")+(isHost?'<span class="host-badge">хост</span>':"")+'</div>'+
             '<div class="participant-status '+statusClass+'"><span class="status-icon">'+statusIcon+'</span><span>'+status+'</span>'+(syncLabel?'<span class="sync-label">'+syncLabel+'</span>':"")+'</div>'+
             '<div class="person-progress"><i style="width:'+pct+'%"></i></div>'+
           '</div>'+
@@ -3325,6 +3356,8 @@ function renderUsers(users){
       setStatus("Соединение с комнатой потеряно — переподключаемся…");
       window.addEventListener("cineora:connected",send,{once:true});
       socket.connect();
+  startAchievementTracking();
+  document.querySelectorAll("#reactionBar button").forEach(b=>b.addEventListener("click",()=>bumpAchievement("reactions")));
     }
   };
   {const roomParams=new URLSearchParams(location.search);const isPrivateRoom=roomParams.get("private")==="1";const hasPrivateKey=!!roomParams.get("key");document.body.classList.toggle("room-private",isPrivateRoom);document.body.classList.toggle("room-public",!isPrivateRoom);const modeLabel=document.getElementById("roomModeLabel");if(modeLabel){modeLabel.className="room-code room-mode-chip "+(isPrivateRoom?"private":"public");modeLabel.textContent=isPrivateRoom?"🔒 Приватная":"🌐 Обычная"}const inviteTitleMode=document.getElementById("inviteTitle"),inviteSub=document.getElementById("inviteSub");if(isPrivateRoom){if(inviteTitleMode)inviteTitleMode.textContent="🔒 Приватное приглашение";if(inviteSub)inviteSub.textContent="Эта ссылка ведёт прямо в закрытую комнату."}else{if(inviteTitleMode)inviteTitleMode.textContent="🍿 Присоединяйтесь к просмотру";if(inviteSub)inviteSub.textContent="Отправьте ссылку друзьям — фильм уже ждёт."}}
@@ -3709,6 +3742,7 @@ function renderUsers(users){
 
   socket.on("chat-message",message=>{
     addMessage(message, message?.userId!==socket.id);
+    if(message?.userId===socket.id)bumpAchievement("messages");
     if(message?.userId!==socket.id)playChatSound();
     if(message?.userId!==socket.id && chatTyping){chatTyping.textContent="";chatTyping.classList.remove("show");}
   });
