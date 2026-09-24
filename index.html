@@ -1692,6 +1692,11 @@ body:not(.room-page):not(.cineora-home-dark) .secondary{
 body:not(.room-page):not(.cineora-home-dark) .home-theme-toggle{
   background:#e8e1e9!important;border-color:#c8bccb!important;color:#514954!important;
 }
+</style><style id="cineora-home-citations-fix">
+/* Контраст источников и кнопок без влияния на кликабельность */
+body:not(.room-page):not(.cineora-home-dark) .source{background:#e7e0e8!important;border-color:#c1b5c5!important}
+body:not(.room-page):not(.cineora-home-dark) .source-icon{background:#dcd2df!important}
+body:not(.room-page):not(.cineora-home-dark) .primary{background:#d2e1b8!important}
 </style></head>
 <body>
 
@@ -3439,5 +3444,14 @@ html.cineora-dark ::selection{
   background:#6a5370;
   color:#fff;
 }
-</style></body>
+</style><script id="cineora-home-actions-fix">
+(function(){
+  function wire(){
+    const join=document.getElementById("join"),create=document.getElementById("create");
+    if(join&&!join.dataset.wired){join.dataset.wired="1";join.addEventListener("click",()=>{const el=document.getElementById("joinModal");if(el)el.classList.add("open");});}
+    if(create&&!create.dataset.wired){create.dataset.wired="1";create.addEventListener("click",()=>{const el=document.getElementById("createModal");if(el)el.classList.add("open");});}
+  }
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",wire);else wire();
+})();
+</script></body>
 </html>
