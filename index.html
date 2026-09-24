@@ -3093,7 +3093,7 @@ function startRoom(roomId,pageParams){
       const iframe=makeIframe("https://rutube.ru/play/embed/"+encodeURIComponent(d.id)+d.query);
       iframe.addEventListener("load",()=>{
         setStatus("RUTUBE · готово к просмотру");
-        setTimeout(()=>restoreSavedProgress(),900);
+        /* Do not rewind a playing remote player when the iframe reports loaded. */
       },{once:true});
       setStatus("RUTUBE · загружаем…");return
     }
@@ -3152,7 +3152,7 @@ function startRoom(roomId,pageParams){
       v.addEventListener("seeked",()=>{if(!suppress)socket.emit("sync",{playing:!v.paused,position:v.currentTime})});
       v.addEventListener("loadedmetadata",()=>{
         setStatus("Видео · готово к просмотру");
-        setTimeout(()=>restoreSavedProgress(),50);
+        /* Initial progress is restored only once by the normal media-load flow. */
       });
       v.addEventListener("error",()=>showError("Не удалось воспроизвести видео. Для страниц Lordfilm вставляйте ссылку на страницу сериала/фильма, а для других сайтов — прямую ссылку на видео."));
       return;
@@ -3497,13 +3497,13 @@ function renderUsers(users){
   setInterval(()=>{
     if(!socket.connected||suppress)return;
     const syncable=currentType==="youtube"||currentType==="video";
-    if(syncable&&roomJoined&&Date.now()-lastProgress>1200){
+    if(syncable&&roomJoined&&Date.now()-lastProgress>1200&&Date.now()-lastLocalControl>1800){
       lastProgress=Date.now();
       const target=targetPosition(roomPosition,roomServerTime,roomPlaying);
       const now=getPosition();
-      const tolerance=roomPlaying?0.65:0.35;
+      const tolerance=roomPlaying?1.5:0.75;
       // Never fight a fresh local Play/Pause/Seek action.
-      if(Date.now()-lastLocalControl>1500 && Math.abs(now-target)>tolerance){
+      if(Date.now()-lastLocalControl>2500 && Math.abs(now-target)>tolerance){
         applySync(roomPlaying,roomPosition,roomServerTime);
       }
     }
@@ -3680,7 +3680,7 @@ function renderUsers(users){
     loadMedia(mediaUrl);
     setTimeout(()=>{
       applySync(state.playing,state.position,state.serverTime);
-      setTimeout(()=>restoreSavedProgress(),350);
+      /* Do not restore local progress after every remote media update; it can rewind active playback. */
     },1200);
   });
   socket.on("media-changed",state=>{
