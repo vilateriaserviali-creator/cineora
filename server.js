@@ -688,7 +688,8 @@ function publicUsers(room) {
     name: u.name,
     position: u.playing ? u.position + Math.max(0, now - (u.progressUpdatedAt || now)) / 1000 : u.position,
     playing: u.playing,
-    duration: u.duration || 0
+    duration: u.duration || 0,
+    isAdmin: !!u.isAdmin
   }));
 }
 function broadcastRoom(roomId) { const room = rooms.get(roomId); if (room) io.to(roomId).emit("room-users", publicUsers(room)); }
@@ -727,7 +728,8 @@ function joinRoomForSocket(socket, { roomId, name, privateRoom, accessToken } = 
     playing: existing?.playing ?? room.playing,
     progressUpdatedAt: Date.now(),
     duration: existing?.duration || 0,
-    voiceEnabled: !!existing?.voiceEnabled
+    voiceEnabled: !!existing?.voiceEnabled,
+    isAdmin: !!socket.data.isAdmin
   });
 
   socket.emit("voice-peer-list", [...room.users.values()].map(u => ({
@@ -760,6 +762,8 @@ io.on("connection", socket => {
   const h = socket.handshake || {};
   const hAuth = h.auth || {};
   const hQuery = h.query || {};
+  const adminCookieReq = { headers: { cookie: h.headers?.cookie || "" } };
+  socket.data.isAdmin = adminAllowed(adminCookieReq);
   const handshakeRoomId = hAuth.roomId || hQuery.roomId || "";
   if (handshakeRoomId) {
     const autoJoin = joinRoomForSocket(socket, {
@@ -805,7 +809,10 @@ io.on("connection", socket => {
     if (!clean) return;
     socket.data.name = clean;
     const user = room.users.get(socket.id);
-    if (user) user.name = clean;
+    if (user) {
+      user.name = clean;
+      user.isAdmin = !!socket.data.isAdmin;
+    }
     broadcastRoom(roomId);
     io.to(roomId).emit("voice-user-state", { users: [...room.users.values()].map(u => ({ id:u.id, name:u.name, voiceEnabled:!!u.voiceEnabled })) });
   });
