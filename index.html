@@ -899,6 +899,93 @@ window.CINEORA_LIRA_DESIGN=Object.freeze({
 });
 </script>
 
+
+<style id="cineora-large-video-room">
+/* Большой экран — комната строится вокруг видео */
+.room-view{min-height:100vh;overflow-x:hidden}
+.room-top{height:68px;padding:0 24px;position:sticky;top:0;z-index:100}
+.room-layout{
+  width:min(1720px,calc(100% - 32px));
+  margin:16px auto 24px;
+  grid-template-columns:minmax(0,1fr) 320px;
+  gap:16px;
+  align-items:start;
+}
+.watch-card{
+  min-width:0;
+  border-radius:18px;
+  overflow:hidden;
+}
+.watch-head{padding:13px 17px;min-height:62px}
+.watch-title{font-size:22px}
+.watch-head-tools{display:flex;align-items:center;gap:8px}
+.watch-head-tools .room-btn{padding:8px 11px;font-size:12px}
+.player-wrap{
+  width:100%;
+  aspect-ratio:16/9;
+  height:auto;
+  min-height:0;
+  max-height:calc(100vh - 190px);
+  display:grid;
+  place-items:center;
+}
+.player-wrap video,.player-wrap iframe,.player-wrap .universal-player{width:100%;height:100%;object-fit:contain}
+.media-bar{padding:10px 12px}
+.media-bar input{padding:10px 12px}
+.sync-note{padding:9px 14px;font-size:10px}
+.side-card{
+  min-height:0;
+  height:calc(100vh - 100px);
+  max-height:900px;
+  border-radius:18px;
+  position:sticky;
+  top:84px;
+}
+.side-card .session-countdown{flex:0 0 auto}
+.side-card .side-title{padding:13px 15px 10px;font-size:19px}
+.side-card .participants{max-height:150px;padding:0 10px 9px}
+.side-card .person-row{padding:8px 10px}
+.side-card .voice-panel{flex:0 0 auto;padding:10px 12px}
+.side-card .voice-users{max-height:74px;overflow:auto}
+.side-card .chat{height:auto;min-height:0;flex:1}
+.side-card .chat-messages{min-height:0;padding:11px}
+.side-card .chat-form{padding:9px}
+
+/* На широком экране видео получает визуальный приоритет */
+@media(min-width:1300px){
+  .room-layout{grid-template-columns:minmax(0,1fr) 330px;gap:18px}
+  .player-wrap{max-height:calc(100vh - 176px)}
+}
+@media(min-width:1600px){
+  .room-layout{grid-template-columns:minmax(0,1fr) 350px}
+  .room-top{padding:0 30px}
+}
+
+/* Планшет/ноутбук: видео почти на всю ширину, чат ниже */
+@media(max-width:1000px){
+  .room-top{height:auto;min-height:68px}
+  .room-layout{width:calc(100% - 20px);margin:12px auto 20px;grid-template-columns:1fr;gap:12px}
+  .player-wrap{aspect-ratio:16/9;max-height:none;min-height:0}
+  .side-card{position:static;height:auto;max-height:none;min-height:460px}
+}
+@media(max-width:600px){
+  .room-layout{width:100%;margin:8px 0 14px;gap:8px}
+  .watch-card,.side-card{border-radius:14px}
+  .watch-head{padding:11px 12px}
+  .watch-title{font-size:19px}
+  .source-pill{font-size:10px}
+  .watch-head-tools #syncBtn{font-size:0;width:38px;height:38px;padding:0}
+  .watch-head-tools #syncBtn:before{content:"↻";font-size:18px}
+  .media-bar{padding:8px}
+  .sync-note{display:none}
+}
+
+/* Тёмная тема остаётся цельной */
+html.cineora-dark .side-card{background:#211d25!important}
+html.cineora-dark .watch-card{background:#211d25!important}
+html.cineora-dark .watch-head{background:linear-gradient(180deg,#2d2730,#252029)!important}
+html.cineora-dark .side-card .chat{background:#211d25!important}
+</style>
 </head>
 <body>
 
