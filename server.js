@@ -576,7 +576,7 @@ function showView(view){
   document.querySelectorAll(".nav button").forEach(x=>x.classList.toggle("active",x.dataset.view===view));
   const el=document.getElementById("view-"+view);if(el)el.classList.add("active");
 }
-async async function openAdmin(){
+async function openAdmin(){
   const entered=document.getElementById("pass").value.trim();
   if(!entered){document.getElementById("loginStatus").textContent="Введите пароль";return}
   document.getElementById("loginStatus").textContent="Проверяем доступ…";
