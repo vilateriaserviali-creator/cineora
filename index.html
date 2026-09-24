@@ -1022,6 +1022,279 @@ html.cineora-dark .top-invite #inviteJoin.invite-copied{background:#304437!impor
 @media(max-width:900px){.top-invite{min-width:190px;max-width:240px}.top-invite-sub{display:none}.invite-link-preview{max-width:100px}}
 @media(max-width:600px){.top-invite{min-width:0;max-width:170px;grid-template-columns:1fr auto}.top-invite #inviteTitle{display:none}.invite-link-preview{grid-column:1;max-width:90px}.top-invite #inviteJoin{grid-column:2;grid-row:1;padding:7px 8px;font-size:9px}}
 </style>
+
+<style id="cineora-mobile-final">
+/* Полноценная мобильная версия комнаты */
+html,body{max-width:100%;overflow-x:hidden}
+@media(max-width:800px){
+  .room-view{min-height:100dvh}
+  .room-top{
+    height:auto!important;
+    min-height:64px;
+    padding:10px 12px!important;
+    display:grid!important;
+    grid-template-columns:auto 1fr auto;
+    align-items:center;
+    gap:8px!important;
+  }
+  .room-brand{
+    font-size:21px!important;
+    letter-spacing:.12em!important;
+    white-space:nowrap;
+  }
+  .room-actions{
+    display:flex!important;
+    align-items:center;
+    justify-content:flex-end;
+    gap:6px!important;
+    flex-wrap:nowrap!important;
+    min-width:0;
+  }
+  .room-actions .room-code,
+  .room-actions .room-title-chip,
+  .room-actions .room-mode-chip,
+  .room-actions #changeName{
+    display:none!important;
+  }
+  .room-actions #roomThemeToggle,
+  .room-actions #leaveRoom{
+    padding:8px 10px!important;
+    min-height:36px;
+    font-size:11px!important;
+  }
+  .room-actions #roomThemeToggle{font-size:0!important}
+  .room-actions #roomThemeToggle:before{content:"◐";font-size:16px}
+  .room-actions #leaveRoom{font-size:0!important}
+  .room-actions #leaveRoom:before{content:"×";font-size:20px;line-height:1}
+  .top-invite{
+    grid-column:1 / -1;
+    grid-row:2;
+    width:100%!important;
+    min-width:0!important;
+    margin:0!important;
+    padding:7px 8px!important;
+    border-radius:12px!important;
+    display:grid!important;
+    grid-template-columns:auto minmax(0,1fr) auto;
+    gap:7px!important;
+  }
+  .top-invite>span:first-child{
+    display:block!important;
+    font-size:10px!important;
+  }
+  .top-invite>span:first-child:after{display:none!important}
+  .invite-link-preview{
+    min-width:0;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    color:#8b7f8d!important;
+    font-size:9px!important;
+  }
+  .top-invite-sub{display:none!important}
+  .top-invite button{
+    padding:7px 9px!important;
+    font-size:9px!important;
+    white-space:nowrap;
+  }
+  .room-layout{
+    width:100%!important;
+    margin:10px 0 0!important;
+    display:flex!important;
+    flex-direction:column!important;
+    gap:10px!important;
+  }
+  .watch-card,.side-card{
+    width:100%!important;
+    border-radius:16px!important;
+  }
+  .watch-head{
+    padding:12px 13px!important;
+    gap:8px!important;
+  }
+  .watch-title{
+    font-size:21px!important;
+  }
+  .source-pill{
+    font-size:9px!important;
+    padding:5px 7px!important;
+    max-width:100%;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .watch-head-tools{
+    gap:5px!important;
+  }
+  .watch-head-tools .room-btn{
+    padding:7px 8px!important;
+    font-size:9px!important;
+  }
+  .watch-head-tools #myRoomName{display:none!important}
+  .player-wrap{
+    min-height:0!important;
+    height:auto!important;
+    aspect-ratio:16/9!important;
+    width:100%!important;
+  }
+  .player-wrap .empty-player{
+    max-width:calc(100% - 28px)!important;
+    padding:18px!important;
+    border-radius:16px!important;
+  }
+  .empty-player strong{font-size:20px!important}
+  .empty-player{font-size:11px!important}
+  .player-tools{
+    padding:8px 10px!important;
+    gap:6px!important;
+  }
+  .player-tools span{font-size:10px!important}
+  .player-fullscreen{
+    padding:7px 9px!important;
+    font-size:10px!important;
+  }
+  .media-bar{
+    padding:9px!important;
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) auto;
+    gap:6px!important;
+  }
+  .media-bar input{
+    width:100%!important;
+    min-width:0!important;
+    padding:10px!important;
+    font-size:11px!important;
+  }
+  .media-bar .room-btn{
+    padding:9px 11px!important;
+    font-size:10px!important;
+  }
+  .sync-note{
+    padding:9px 11px!important;
+    font-size:9px!important;
+  }
+  .side-card{
+    min-height:0!important;
+    display:flex!important;
+  }
+  .side-card .session-countdown{
+    padding:8px 12px!important;
+    font-size:9px!important;
+  }
+  .side-title{
+    padding:12px 13px 9px!important;
+    font-size:19px!important;
+  }
+  .participants{
+    padding:0 9px 9px!important;
+    max-height:235px!important;
+    gap:6px!important;
+  }
+  .participant-card{
+    padding:8px 9px!important;
+    border-radius:12px!important;
+  }
+  .participant-avatar{
+    width:31px!important;
+    height:31px!important;
+    flex-basis:31px!important;
+  }
+  .participant-name-line .person-name{font-size:12px!important}
+  .participant-status{font-size:8px!important;margin-top:3px!important}
+  .participant-time{font-size:9px!important}
+  .person-progress{margin-top:5px!important;height:3px!important}
+  .voice-panel{padding:10px!important}
+  .voice-title{font-size:15px!important}
+  .voice-status{font-size:9px!important}
+  .voice-toggle{padding:7px 9px!important;font-size:9px!important}
+  .voice-tools{flex-wrap:wrap}
+  .noise-option,.voice-note{font-size:9px!important}
+  .voice-users{gap:4px!important}
+  .voice-user{padding:4px 7px!important;font-size:9px!important}
+  .side-card .chat{
+    height:min(58dvh,430px)!important;
+    min-height:300px!important;
+  }
+  .chat-title-row{
+    padding:11px 13px 9px!important;
+  }
+  .chat-messages{
+    padding:10px!important;
+    gap:7px!important;
+  }
+  .chat-msg{
+    max-width:94%!important;
+    padding:8px 10px!important;
+    border-radius:12px 12px 12px 4px!important;
+  }
+  .chat-msg span{font-size:12px!important}
+  .chat-msg-head b{font-size:10px!important}
+  .chat-msg-head small{font-size:8px!important}
+  .chat-form{
+    padding:8px!important;
+    gap:5px!important;
+    padding-bottom:max(8px,env(safe-area-inset-bottom))!important;
+  }
+  .chat-form input{
+    height:40px!important;
+    min-height:40px!important;
+    padding:9px 10px!important;
+    font-size:12px!important;
+  }
+  .room-view .emoji-toggle{
+    width:40px!important;
+    height:40px!important;
+  }
+  .room-view .chat-form>button[type="submit"]{
+    width:40px!important;
+    height:40px!important;
+  }
+  .room-view .emoji-picker{
+    bottom:48px!important;
+    left:0!important;
+    width:min(290px,calc(100vw - 20px))!important;
+    max-height:44dvh!important;
+  }
+  .invite-card{
+    margin:10px!important;
+  }
+  .player-wrap .fullscreen-chat{
+    right:8px!important;
+    top:8px!important;
+    bottom:8px!important;
+    width:min(320px,calc(100% - 16px))!important;
+    max-width:none!important;
+  }
+}
+@media(max-width:480px){
+  .room-top{grid-template-columns:auto 1fr auto}
+  .room-brand{font-size:19px!important}
+  .room-layout{margin-top:8px!important}
+  .watch-title{font-size:19px!important}
+  .watch-head-tools #syncBtn{
+    font-size:0!important;
+    width:38px;
+    height:34px;
+    padding:0!important;
+  }
+  .watch-head-tools #syncBtn:before{content:"↻";font-size:16px}
+  .top-invite>span:first-child{font-size:9px!important}
+  .top-invite button{font-size:8px!important;padding:7px 8px!important}
+  .side-card .chat{height:55dvh!important;min-height:280px!important}
+}
+@media(max-width:360px){
+  .room-brand{font-size:17px!important}
+  .room-actions #roomThemeToggle,.room-actions #leaveRoom{padding:7px 8px!important}
+  .top-invite{grid-template-columns:auto minmax(0,1fr) auto}
+  .top-invite>span:first-child{font-size:8px!important}
+  .invite-link-preview{font-size:8px!important}
+  .top-invite button{font-size:8px!important;padding:6px 7px!important}
+}
+@media (pointer:coarse){
+  .room-btn,.chat-form button,.emoji-toggle,.player-fullscreen{min-height:40px}
+  .person-row:hover{transform:none!important}
+}
+</style>
 </head>
 <body>
 
