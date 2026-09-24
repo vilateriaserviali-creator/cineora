@@ -3537,9 +3537,17 @@ html.cineora-dark ::selection{
 </style><script id="cineora-home-actions-fix">
 (function(){
   function wire(){
-    const join=document.getElementById("join"),create=document.getElementById("create");
-    if(join&&!join.dataset.wired){join.dataset.wired="1";join.addEventListener("click",()=>{const el=document.getElementById("joinModal");if(el)el.classList.add("open");});}
-    if(create&&!create.dataset.wired){create.dataset.wired="1";create.addEventListener("click",()=>{const el=document.getElementById("createModal");if(el)el.classList.add("open");});}
+    const join=document.getElementById("join");
+    const create=document.getElementById("create");
+    const createTop=document.getElementById("createTop");
+    const login=document.getElementById("login");
+    const close=document.getElementById("close");
+    if(typeof openModal!=="function")return;
+    if(join)join.onclick=()=>openModal(false);
+    if(create)create.onclick=()=>openModal(true);
+    if(createTop)createTop.onclick=()=>openModal(true);
+    if(login)login.onclick=()=>openModal(false);
+    if(close&&typeof modal!=="undefined")close.onclick=()=>modal.classList.add("hidden");
   }
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",wire);else wire();
 })();
