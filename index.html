@@ -1965,6 +1965,120 @@ body:not(.room-page):not(.cineora-home-dark) .home-theme-toggle{
   border-color:#958899!important;
 }
 </style>
+<style id="cineora-phone-room-final">
+@media(max-width:600px){
+  .room-view.show{min-height:100dvh;background:#eee8ed}
+  .room-top{
+    min-height:58px!important;
+    padding:8px 10px!important;
+    grid-template-columns:auto 1fr auto!important;
+    gap:7px!important;
+    background:rgba(238,232,237,.96)!important;
+    border-bottom:1px solid #cfc4d0!important;
+  }
+  .room-brand{font-size:19px!important;letter-spacing:.1em!important}
+  .room-actions{gap:5px!important}
+  .room-actions #roomThemeToggle,.room-actions #leaveRoom{
+    width:36px!important;height:36px!important;min-height:36px!important;
+    padding:0!important;border-radius:10px!important;
+    background:#ddd3df!important;border-color:#bdb0c0!important;
+  }
+  .top-invite{
+    grid-column:1/-1!important;
+    grid-template-columns:minmax(0,1fr) auto!important;
+    align-items:center!important;
+    padding:8px 9px!important;
+    background:#e3d9e2!important;
+    border:1px solid #c8bac7!important;
+    box-shadow:0 3px 12px rgba(75,62,76,.07)!important;
+  }
+  .top-invite>span:first-child{font-size:10px!important;font-weight:700!important}
+  .invite-link-preview{font-size:9px!important;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .top-invite-sub{display:none!important}
+  .top-invite button{font-size:10px!important;padding:8px 10px!important;border-radius:9px!important}
+  .room-layout{
+    width:100%!important;
+    margin:0!important;
+    display:flex!important;
+    flex-direction:column!important;
+    gap:8px!important;
+  }
+  .watch-card,.side-card{
+    border-radius:0!important;
+    border-left:0!important;border-right:0!important;
+    box-shadow:none!important;
+  }
+  .watch-head{
+    min-height:58px!important;
+    padding:11px 13px!important;
+    background:#f2edf1!important;
+  }
+  .watch-title{font-size:19px!important}
+  .watch-head-tools{gap:5px!important}
+  .watch-head-tools #syncBtn{
+    width:36px!important;height:36px!important;
+    padding:0!important;font-size:0!important;border-radius:10px!important;
+  }
+  .watch-head-tools #syncBtn:after{content:"↻";font-size:17px!important}
+  .source-pill{font-size:9px!important}
+  .player-wrap{
+    width:100%!important;
+    aspect-ratio:16/9!important;
+    min-height:0!important;
+    height:auto!important;
+  }
+  .player-tools{padding:8px 10px!important;gap:7px!important}
+  .media-bar{
+    padding:9px!important;
+    gap:7px!important;
+    align-items:center!important;
+    background:#e8e0e6!important;
+  }
+  .media-bar input{
+    height:40px!important;
+    padding:9px 11px!important;
+    font-size:12px!important;
+    border-radius:10px!important;
+  }
+  .media-bar .room-btn.primary{
+    height:40px!important;width:42px!important;
+    min-width:42px!important;padding:0!important;border-radius:10px!important;
+  }
+  .sync-note{padding:8px 12px!important;font-size:9px!important}
+  .side-card{min-height:0!important}
+  .participants-title-row{
+    padding:13px 13px 9px!important;
+    font-size:19px!important;
+    background:#eee7ed!important;
+  }
+  .participants{padding:0 9px 9px!important;gap:6px!important;max-height:190px!important}
+  .person-row{padding:9px 10px!important;border-radius:12px!important}
+  .participant-avatar{width:34px!important;height:34px!important;min-width:34px!important}
+  .person-name{font-size:12px!important}
+  .person-time{font-size:9px!important}
+  .me-badge,.host-badge{font-size:7px!important;padding:3px 5px!important}
+  .chat{height:360px!important;min-height:360px!important}
+  .chat-title-row{padding:12px 13px!important;font-size:19px!important}
+  .chat-messages{padding:10px!important}
+  .chat-msg{max-width:88%!important;padding:9px 10px!important;border-radius:11px!important;font-size:12px!important}
+  .chat-form{padding:8px!important;gap:6px!important}
+  .chat-form input{height:40px!important;padding:9px 10px!important;font-size:12px!important}
+  .chat-form button{height:40px!important;min-width:40px!important;border-radius:10px!important}
+  .emoji-wrap button{width:40px!important;height:40px!important}
+  .voice-panel{padding:10px!important}
+}
+@media(max-width:380px){
+  .room-brand{font-size:17px!important}
+  .top-invite>span:first-child{display:none!important}
+  .top-invite{grid-template-columns:minmax(0,1fr) auto!important}
+  .watch-title{font-size:18px!important}
+  .chat{height:330px!important;min-height:330px!important}
+  .participants{max-height:160px!important}
+}
+@media(prefers-reduced-motion:reduce){
+  .room-view.show .watch-card,.room-view.show .side-card{animation:none!important}
+}
+</style>
 </head>
 <body>
 
