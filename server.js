@@ -248,6 +248,17 @@ async function initDatabase() {
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
       updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
+    CREATE TABLE IF NOT EXISTS chat_messages (
+      id TEXT PRIMARY KEY,
+      room_id VARCHAR(16) NOT NULL,
+      user_id VARCHAR(100) NOT NULL,
+      name VARCHAR(24) NOT NULL DEFAULT 'Гость',
+      is_admin BOOLEAN NOT NULL DEFAULT FALSE,
+      text TEXT NOT NULL,
+      created_at TIMESTAMPTZ NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS chat_messages_room_created_idx
+      ON chat_messages (room_id, created_at);
   `);
 }
 
@@ -808,6 +819,33 @@ function joinRoomForSocket(socket, { roomId, name, privateRoom, accessToken } = 
     }))
   });
 
+  // История чата хранится в PostgreSQL, поэтому не пропадает после перезагрузки
+  // страницы или перезапуска сервера. Память комнаты используется как быстрый кэш.
+  if (pool) {
+    try {
+      const result = await pool.query(
+        `SELECT id, user_id, name, is_admin, text, created_at
+         FROM chat_messages
+         WHERE room_id = $1
+         ORDER BY created_at DESC
+         LIMIT 100`,
+        [roomId]
+      );
+      const stored = result.rows.reverse().map(row => ({
+        id: row.id,
+        userId: row.user_id,
+        name: row.name,
+        isAdmin: !!row.is_admin,
+        text: row.text,
+        createdAt: new Date(row.created_at).toISOString()
+      }));
+      room.messages = stored;
+      if (stored.length) socket.emit("chat-history", stored);
+    } catch (err) {
+      console.error("[chat] history load failed:", err.message);
+    }
+  }
+
   return { ok:true, roomId };
 }
 
@@ -1014,6 +1052,20 @@ io.on("connection", socket => {
     };
     room.messages.push(message);
     if (room.messages.length > 100) room.messages.splice(0, room.messages.length - 100);
+
+    if (pool) {
+      try {
+        await pool.query(
+          `INSERT INTO chat_messages (id, room_id, user_id, name, is_admin, text, created_at)
+           VALUES ($1,$2,$3,$4,$5,$6,$7)
+           ON CONFLICT (id) DO NOTHING`,
+          [message.id, roomId, message.userId, message.name, message.isAdmin, message.text, message.createdAt]
+        );
+      } catch (err) {
+        console.error("[chat] history save failed:", err.message);
+      }
+    }
+
     io.to(roomId).emit("chat-message", message);
     if (typeof ack === "function") ack({ ok: true });
   });
