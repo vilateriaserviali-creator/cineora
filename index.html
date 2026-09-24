@@ -1515,6 +1515,24 @@ body:not(.room-page) #how .card h3{position:relative;z-index:1}
   body:not(.room-page) #how .card,
   body:not(.room-page) #how .card .num{transition:none!important}
 }
+</style><style id="cineora-room-premium-upgrade">
+.room-top{gap:12px!important}.room-actions{gap:7px!important}.room-actions .room-code{padding:8px 11px!important;font-size:12px}.top-invite{flex:0 1 auto;min-width:0}
+@media(min-width:1001px){.room-top{padding:0 22px!important}.room-actions .room-title-chip,.room-actions .room-mode-chip{display:none}}
+@media(max-width:1000px){.room-actions .room-title-chip,.room-actions .room-mode-chip,.room-actions .room-code:first-of-type{display:none}}
+.participants-title-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.room-sync-indicator{display:inline-flex;align-items:center;gap:7px;padding:6px 9px;border:1px solid #cbdccf;border-radius:999px;background:#f1f8f2;color:#59735f;font:600 10px "DM Sans",sans-serif;white-space:nowrap;opacity:0;transform:translateY(3px);transition:opacity .3s ease,transform .3s ease}
+.room-sync-indicator.visible{opacity:1;transform:translateY(0)}.room-sync-indicator i{width:7px;height:7px;border-radius:50%;background:#7fa98a;box-shadow:0 0 0 4px #7fa98a20}.room-sync-indicator.pulse i{animation:cineoraSyncPulse 1.8s ease-in-out infinite}
+@keyframes cineoraSyncPulse{0%,100%{box-shadow:0 0 0 3px #7fa98a18}50%{box-shadow:0 0 0 6px #7fa98a30}}
+html.cineora-dark .room-sync-indicator{background:#26352b;border-color:#405846;color:#a9c4ad}html.cineora-dark .room-sync-indicator i{background:#91bb99}
+.empty-player{background:radial-gradient(circle at 50% 35%,rgba(216,198,223,.16),transparent 34%),linear-gradient(145deg,#11120f,#18161b);width:100%;height:100%;min-height:0!important;position:absolute!important;inset:0;display:flex!important;align-items:center;justify-content:center}
+.empty-player:before{content:"";position:absolute;width:92px;height:92px;border-radius:28px;border:1px solid rgba(216,198,223,.24);background:rgba(255,255,255,.035);box-shadow:0 18px 55px rgba(0,0,0,.28)}
+.empty-player strong,.empty-player span{position:relative;z-index:1}.empty-player strong{font-size:27px!important;margin-bottom:7px!important}.empty-player span{max-width:360px}
+html.cineora-dark .empty-player{background:radial-gradient(circle at 50% 35%,rgba(155,120,158,.18),transparent 35%),linear-gradient(145deg,#111014,#19151b)}
+.person-row{animation:cineoraParticipantIn .42s cubic-bezier(.22,1,.36,1) both;animation-delay:calc(var(--participant-index,0) * 55ms)}
+@keyframes cineoraParticipantIn{from{opacity:0;transform:translateY(9px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
+.participant-avatar{transition:transform .22s cubic-bezier(.22,1,.36,1)}.person-row:hover .participant-avatar{transform:scale(1.07)}
+@media(prefers-reduced-motion:reduce){.person-row{animation:none!important}.room-sync-indicator,.participant-avatar{transition:none!important}}
+@media(max-width:600px){.room-sync-indicator span{display:none}.room-sync-indicator{width:28px;height:28px;padding:0;justify-content:center}}
 </style></head>
 <body>
 
@@ -1540,7 +1558,7 @@ body:not(.room-page) #how .card h3{position:relative;z-index:1}
       
     </div>
     <aside class="side-card" id="sideCard"><div class="session-countdown" id="sessionCountdown"></div>
-      <div class="side-title">Участники <span id="participantCount">0</span></div>
+      <div class="side-title participants-title-row"><span>Участники <span id="participantCount">0</span></span><span class="room-sync-indicator" id="roomSyncIndicator"><i></i><span>Все синхронизированы</span></span></div>
       <div class="participants" id="participants"></div>
       <div class="voice-panel" id="voicePanel">
         <div class="voice-head">
@@ -2318,14 +2336,20 @@ function startRoom(roomId,pageParams){
     setTimeout(()=>suppress=false,900);
   }
 
-  function renderUsers(users){
-    const list=Array.isArray(users)?users:[];
+  function updateRoomSyncIndicator(){
+  const el=document.getElementById("roomSyncIndicator");
+  if(!el)return;
+  const list=Array.isArray(window.__cineoraUsers)?window.__cineoraUsers:[];
+  const ok=!!currentUrl && roomPlaying && list.length>0 && list.every(u=>u.playing && Math.abs((Number(u.position)||0)-targetPosition(roomPosition,roomServerTime,roomPlaying))<2);
+  el.classList.toggle("visible",ok); el.classList.toggle("pulse",ok);
+}\nfunction renderUsers(users){
+    const list=Array.isArray(users)?users:[]; window.__cineoraUsers=list; updateRoomSyncIndicator();
     const countEl=document.getElementById("participantCount");
     const viewerEl=document.getElementById("viewerCount");
     if(countEl)countEl.textContent=list.length;
     if(viewerEl)viewerEl.textContent=list.length;
 
-    participants.innerHTML=list.map(u=>{
+    participants.innerHTML=list.map((u,index)=>{
       const pos=Math.max(0,Number(u.position)||0);
       const duration=Math.max(0,Number(u.duration)||0);
       const pct=duration?Math.min(100,Math.max(0,pos/duration*100)):0;
