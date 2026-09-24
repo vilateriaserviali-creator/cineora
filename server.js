@@ -4,6 +4,7 @@ const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
 const nodemailer = require("nodemailer");
+const crypto = require("crypto");
 
 const app = express();
 const server = http.createServer(app);
@@ -254,11 +255,65 @@ app.get("/api/news", async (req, res) => {
   }
 });
 
+const ADMIN_COOKIE = "cineora_admin";
+const ADMIN_SESSION_TTL = 12 * 60 * 60 * 1000;
+
+function adminToken() {
+  const secret = String(process.env.ADMIN_PASSWORD || "");
+  if (!secret) return "";
+  const issued = Date.now().toString();
+  const payload = Buffer.from(issued).toString("base64url");
+  const signature = crypto.createHmac("sha256", secret).update(payload).digest("base64url");
+  return payload + "." + signature;
+}
+
+function validAdminToken(token) {
+  const secret = String(process.env.ADMIN_PASSWORD || "");
+  if (!secret || !token) return false;
+  const parts = String(token).split(".");
+  if (parts.length !== 2) return false;
+  const [payload, signature] = parts;
+  try {
+    const issued = Number(Buffer.from(payload, "base64url").toString("utf8"));
+    if (!Number.isFinite(issued) || Date.now() - issued > ADMIN_SESSION_TTL || issued > Date.now() + 60000) return false;
+    const expected = crypto.createHmac("sha256", secret).update(payload).digest("base64url");
+    return crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expected));
+  } catch {
+    return false;
+  }
+}
+
+function getAdminCookie(req) {
+  const raw = String(req.headers.cookie || "");
+  const match = raw.match(/(?:^|;\\s*)cineora_admin=([^;]+)/);
+  return match ? decodeURIComponent(match[1]) : "";
+}
+
 function adminAllowed(req) {
   const configured = process.env.ADMIN_PASSWORD;
   if (!configured) return false;
-  return String(req.headers["x-admin-password"] || "") === configured;
+  const headerPassword = String(req.headers["x-admin-password"] || "");
+  if (headerPassword === configured) return true;
+  return validAdminToken(getAdminCookie(req));
 }
+
+app.post("/api/admin/login", (req, res) => {
+  const configured = String(process.env.ADMIN_PASSWORD || "");
+  const password = String(req.body?.password || "");
+  if (!configured || password !== configured) {
+    return res.status(401).json({ ok: false, error: "Неверный пароль администратора." });
+  }
+  const token = adminToken();
+  res.setHeader("Set-Cookie", [
+    ADMIN_COOKIE + "=" + encodeURIComponent(token) + "; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=" + Math.floor(ADMIN_SESSION_TTL / 1000)
+  ]);
+  res.json({ ok: true });
+});
+
+app.post("/api/admin/logout", (req, res) => {
+  res.setHeader("Set-Cookie", ADMIN_COOKIE + "=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0");
+  res.json({ ok: true });
+});
 
 app.get("/api/admin/news", async (req, res) => {
   if (!adminAllowed(req)) return res.status(401).json({ ok: false, error: "Неверный пароль администратора." });
