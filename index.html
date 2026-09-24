@@ -3186,6 +3186,20 @@ function startRoom(roomId,pageParams){
   function seekRelative(delta){const amount=Number(delta)||0;try{if(currentType==="youtube"&&player?.getCurrentTime&&player?.seekTo){const p=Math.max(0,player.getCurrentTime()+amount);player.seekTo(p,true);socket.emit("sync",{playing:!!roomPlaying,position:p});return}if(currentType==="video"){const v=document.getElementById("roomVideo");if(v){const p=Math.max(0,(v.currentTime||0)+amount);v.currentTime=p;socket.emit("sync",{playing:!v.paused,position:p});return}}if((currentType==="rutube"||currentType==="vk")&&embedPlayer?.getCurrentTime){const p=Math.max(0,embedPlayer.getCurrentTime()+amount);if(embedPlayer.seek)embedPlayer.seek(p);socket.emit("sync",{playing:roomPlaying,position:p});return}const p=Math.max(0,targetPosition(roomPosition,roomServerTime,roomPlaying)+amount);socket.emit("sync",{playing:roomPlaying,position:p})}catch(e){}}
   document.getElementById("skipBackBtn")?.addEventListener("click",()=>seekRelative(-10));
   document.getElementById("skipForwardBtn")?.addEventListener("click",()=>seekRelative(10));
+  function getLocalPlaybackPosition(){
+    try{
+      if(currentType==="youtube"&&player?.getCurrentTime)return Number(player.getCurrentTime())||0;
+      if(currentType==="video"){const v=document.getElementById("roomVideo");return Number(v?.currentTime)||0}
+      if((currentType==="rutube"||currentType==="vk")&&embedPlayer?.getCurrentTime)return Number(embedPlayer.getCurrentTime())||0;
+    }catch(e){}
+    return null;
+  }
+  setInterval(()=>{
+    if(!roomJoined||!currentUrl||!roomPlaying||suppress)return;
+    const local=getLocalPlaybackPosition(); if(local===null)return;
+    const target=targetPosition(roomPosition,roomServerTime,true);
+    if(Math.abs(local-target)>2.5){applySync(true,target,Date.now());setStatus("Автосинхронизация · "+fmt(target))}
+  },4000);
   function applySync(playing,pos,serverTime){
     roomPlaying=!!playing;roomPosition=Number(pos)||0;roomServerTime=Number(serverTime)||Date.now();
     suppress=true;
