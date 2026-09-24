@@ -3264,7 +3264,7 @@ function renderUsers(users){
       const syncLabel=synced?"Синхронно":(currentUrl&&u.playing?"Небольшая задержка":"");
       return '<div class="person-row participant-card '+statusClass+(isMe?" is-me":"")+'">'+
         '<div class="participant-main">'+
-          '<div class="participant-avatar" data-avatar="'+"'+escapeHtml(u.avatar||"star")+'"">'+"'+escapeHtml(avatarMap[u.avatar]||"✦")+'"</div>'+
+          '<div class="participant-avatar" data-avatar="'+escapeHtml(u.avatar||"star")+'">'+escapeHtml(avatarMap[u.avatar]||"✦")+'</div>'+
           '<div class="participant-info">'+
             '<div class="participant-name-line"><span class="person-name">'+escapeHtml(u.name||"Гость")+'</span>'+(u.isAdmin?'<span class="creator-badge"><span class="creator-spark">✦</span> Создатель CINEORA</span>':"")+(isMe?'<span class="me-badge">вы</span>':"")+(isHost?'<span class="host-badge">хост</span>':"")+'</div>'+
             '<div class="participant-status '+statusClass+'"><span class="status-icon">'+statusIcon+'</span><span>'+status+'</span>'+(syncLabel?'<span class="sync-label">'+syncLabel+'</span>':"")+'</div>'+
