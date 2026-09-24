@@ -143,25 +143,54 @@ app.get("/api/lordfilm-embed", async (req, res) => {
 app.get("/api/movies", async (req, res) => {
   const key = String(process.env.TMDB_API_KEY || "").trim();
   if (!key) return res.status(503).json({ ok:false, error:"TMDB_API_KEY не настроен в Render." });
+  const type = String(req.query.type || "trending").toLowerCase();
+  const endpoint = type === "popular"
+    ? "https://api.themoviedb.org/3/movie/popular"
+    : type === "top_rated"
+      ? "https://api.themoviedb.org/3/movie/top_rated"
+      : "https://api.themoviedb.org/3/trending/movie/week";
   try {
-    const url = new URL("https://api.themoviedb.org/3/trending/movie/week");
+    const url = new URL(endpoint);
     url.searchParams.set("language", "ru-RU");
+    url.searchParams.set("region", "RU");
     const response = await fetch(url, {
       headers: { Authorization: "Bearer " + key, accept: "application/json" }
     });
     if (!response.ok) return res.status(502).json({ ok:false, error:"TMDB временно недоступен." });
     const data = await response.json();
-    const movies = (data.results || []).filter(m => !m.adult).slice(0, 12).map(m => ({
-      id: m.id,
-      title: m.title || m.original_title || "Без названия",
-      year: String(m.release_date || "").slice(0,4),
-      rating: Number(m.vote_average || 0).toFixed(1),
-      poster: m.poster_path ? "https://image.tmdb.org/t/p/w500" + m.poster_path : "",
-      overview: m.overview || "",
-      genreIds: Array.isArray(m.genre_ids) ? m.genre_ids : []
+    const base = (data.results || []).filter(m => !m.adult).slice(0, 12);
+    const movies = await Promise.all(base.map(async m => {
+      let runtime = 0;
+      let detailGenres = [];
+      try {
+        const detailUrl = new URL("https://api.themoviedb.org/3/movie/" + encodeURIComponent(m.id));
+        detailUrl.searchParams.set("language", "ru-RU");
+        const detailResponse = await fetch(detailUrl, {
+          headers: { Authorization: "Bearer " + key, accept: "application/json" }
+        });
+        if (detailResponse.ok) {
+          const detail = await detailResponse.json();
+          runtime = Number(detail.runtime || 0);
+          detailGenres = Array.isArray(detail.genres) ? detail.genres.map(g => ({ id:g.id, name:g.name })) : [];
+        }
+      } catch (detailErr) {
+        console.warn("TMDB movie detail error:", detailErr.message);
+      }
+      return {
+        id: m.id,
+        title: m.title || m.original_title || "Без названия",
+        originalTitle: m.original_title || "",
+        year: String(m.release_date || "").slice(0,4),
+        rating: Number(m.vote_average || 0).toFixed(1),
+        poster: m.poster_path ? "https://image.tmdb.org/t/p/w500" + m.poster_path : "",
+        overview: m.overview || "",
+        genreIds: Array.isArray(m.genre_ids) ? m.genre_ids : [],
+        genres: detailGenres,
+        runtime
+      };
     }));
     res.set("Cache-Control","public, max-age=600, stale-while-revalidate=1800");
-    res.json({ ok:true, movies });
+    res.json({ ok:true, type, movies });
   } catch (err) {
     console.error("TMDB movies error:", err.message);
     res.status(502).json({ ok:false, error:"Не удалось загрузить киноафишу." });
