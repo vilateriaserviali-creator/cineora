@@ -2631,7 +2631,7 @@ function startRoom(roomId,pageParams){
   function startAchievementTracking(){if(!achievementSessionCounted){achievementSessionCounted=true;bumpAchievement("sessions")}if(!achievementMinuteTimer)achievementMinuteTimer=setInterval(()=>{if(roomJoined)bumpAchievement("minutes")},60000)}
   window.cineoraRoomJoined=false;
   window.socket=socket;
-  window.dispatchEvent(new Event("cineora:socket-ready")); const roomTitle=pageParams?.get("title")||"Киносеанс"; const scheduledAt=Number(pageParams?.get("at")||0); const roomTitleLabel=document.getElementById("roomTitleLabel"),inviteTitle=document.getElementById("inviteTitle"),countdown=document.getElementById("sessionCountdown"); if(roomTitleLabel)roomTitleLabel.textContent="🎬 "+roomTitle; if(inviteTitle)inviteTitle.textContent="🍿 "+roomTitle; if(scheduledAt&&countdown){let scheduledStarted=false;const tick=()=>{const left=scheduledAt-Date.now();if(left<=0){countdown.textContent="🍿 Киносеанс начинается сейчас";countdown.classList.add("show");if(!scheduledStarted&&socket.connected){scheduledStarted=true;socket.emit("sync",{playing:true,position:0});setTimeout(()=>applySync(true,0,Date.now()),300)}return}const s=Math.floor(left/1000),d=Math.floor(s/86400),hh=Math.floor(s%86400/3600),mm=Math.floor(s%3600/60),ss=s%60;countdown.textContent="🍿 Сеанс начнётся через "+(d?d+" д ":"")+String(hh).padStart(2,"0")+":"+String(mm).padStart(2,"0")+":"+String(ss).padStart(2,"0");countdown.classList.add("show")};tick();setInterval(tick,1000)}
+  window.dispatchEvent(new Event("cineora:socket-ready")); const roomTitle=pageParams?.get("title")||"Киносеанс"; const scheduledAt=Number(pageParams?.get("at")||0); const roomTitleLabel=document.getElementById("roomTitleLabel"),inviteTitle=document.getElementById("inviteTitle"),countdown=document.getElementById("sessionCountdown"); if(roomTitleLabel)roomTitleLabel.textContent="🎬 "+roomTitle; if(inviteTitle)inviteTitle.textContent="🍿 "+roomTitle; if(scheduledAt&&countdown){let scheduledStarted=false;const tick=()=>{const left=scheduledAt-Date.now();if(left<=0){countdown.textContent="🍿 Киносеанс начинается сейчас";countdown.classList.add("show");if(!scheduledStarted&&socket.connected){scheduledStarted=true;publishSync(true,0);setTimeout(()=>applySync(true,0,Date.now()),300)}return}const s=Math.floor(left/1000),d=Math.floor(s/86400),hh=Math.floor(s%86400/3600),mm=Math.floor(s%3600/60),ss=s%60;countdown.textContent="🍿 Сеанс начнётся через "+(d?d+" д ":"")+String(hh).padStart(2,"0")+":"+String(mm).padStart(2,"0")+":"+String(ss).padStart(2,"0");countdown.classList.add("show")};tick();setInterval(tick,1000)}
   // Real-time voice chat: WebRTC mesh with Socket.IO signaling.
   const voicePeers=new Map();
   const voiceMuted=new Map();
@@ -2975,7 +2975,7 @@ function startRoom(roomId,pageParams){
         if(data.time!=null)embedTime=Number(data.time)||0;
         if(data.duration!=null)embedDuration=Number(data.duration)||embedDuration;
         if(!suppress && (data.state==="playing" || data.state==="paused" || data.state==="ended")){
-          socket.emit("sync",{playing:data.state==="playing",position:embedTime});
+          publishSync(data.state==="playing",embedTime);
         }
       }
     }
@@ -2993,7 +2993,7 @@ function startRoom(roomId,pageParams){
             if(!suppress && (eventName==="started" || eventName==="resumed" || eventName==="paused" || eventName==="ended")){
               /* VK can fire pause/time events while seeking or buffering. Do not let a transient player event rewind the shared clock. */
               if(eventName==="paused" && roomPlaying && !document.hidden)return;
-              socket.emit("sync",{playing:eventName==="started"||eventName==="resumed",position:embedTime});
+              publishSync(eventName==="started"||eventName==="resumed",embedTime);
             }
           };
           ["inited","timeupdate","started","resumed","paused","ended"].forEach(name=>{
@@ -3023,8 +3023,16 @@ function startRoom(roomId,pageParams){
         },
         onStateChange:e=>{
           if(suppress)return;
-          if(e.data===1)socket.emit("sync",{playing:true,position:player.getCurrentTime()});
-          if(e.data===2||e.data===0)socket.emit("sync",{playing:false,position:player.getCurrentTime()});
+          if(e.data===1)publishSync(true,player.getCurrentTime());
+          if(e.data===2){
+            clearTimeout(window.__cineoraPauseTimer);
+            window.__cineoraPauseTimer=setTimeout(()=>{
+              if(suppress)return;
+              const state=player?.getPlayerState?.();
+              if(state===2)publishSync(false,player.getCurrentTime());
+            },1200);
+          }
+          if(e.data===0)publishSync(false,player.getCurrentTime());
         },
         onAutoplayBlocked:()=>setStatus("Нажмите ▶ в плеере — браузер заблокировал автозапуск"),
         onError:e=>showError("YouTube не разрешил этот ролик во встроенном плеере. Код ошибки: "+e.data)
@@ -3137,9 +3145,15 @@ function startRoom(roomId,pageParams){
         }
       };
       startHls();
-      v.addEventListener("play",()=>{if(!suppress)socket.emit("sync",{playing:true,position:v.currentTime})});
-      v.addEventListener("pause",()=>{if(!suppress)socket.emit("sync",{playing:false,position:v.currentTime})});
-      v.addEventListener("seeked",()=>{if(!suppress)socket.emit("sync",{playing:!v.paused,position:v.currentTime})});
+      v.addEventListener("play",()=>{if(!suppress)publishSync(true,v.currentTime)});
+      v.addEventListener("pause",()=>{
+        if(suppress)return;
+        clearTimeout(v.__cineoraPauseTimer);
+        v.__cineoraPauseTimer=setTimeout(()=>{
+          if(!suppress&&v.paused)publishSync(false,v.currentTime);
+        },900);
+      });
+      v.addEventListener("seeked",()=>{if(!suppress)publishSync(!v.paused,v.currentTime)});
       v.addEventListener("error",()=>showError("Браузер не может воспроизвести этот видеоформат. Попробуйте MP4, WebM или HLS (M3U8)."));
       return;
     }
@@ -3207,7 +3221,7 @@ function startRoom(roomId,pageParams){
     return base+Math.max(0,(Date.now()-stamp)/1000);
   }
 
-  function seekRelative(delta){const amount=Number(delta)||0;try{if(currentType==="youtube"&&player?.getCurrentTime&&player?.seekTo){const p=Math.max(0,player.getCurrentTime()+amount);player.seekTo(p,true);socket.emit("sync",{playing:!!roomPlaying,position:p});return}if(currentType==="video"){const v=document.getElementById("roomVideo");if(v){const p=Math.max(0,(v.currentTime||0)+amount);v.currentTime=p;socket.emit("sync",{playing:!v.paused,position:p});return}}if((currentType==="rutube"||currentType==="vk")&&embedPlayer?.getCurrentTime){const p=Math.max(0,embedPlayer.getCurrentTime()+amount);if(embedPlayer.seek)embedPlayer.seek(p);socket.emit("sync",{playing:roomPlaying,position:p});return}const p=Math.max(0,targetPosition(roomPosition,roomServerTime,roomPlaying)+amount);socket.emit("sync",{playing:roomPlaying,position:p})}catch(e){}}
+  function seekRelative(delta){const amount=Number(delta)||0;try{if(currentType==="youtube"&&player?.getCurrentTime&&player?.seekTo){const p=Math.max(0,player.getCurrentTime()+amount);player.seekTo(p,true);publishSync(!!roomPlaying,p);return}if(currentType==="video"){const v=document.getElementById("roomVideo");if(v){const p=Math.max(0,(v.currentTime||0)+amount);v.currentTime=p;publishSync(!v.paused,p);return}}if((currentType==="rutube"||currentType==="vk")&&embedPlayer?.getCurrentTime){const p=Math.max(0,embedPlayer.getCurrentTime()+amount);if(embedPlayer.seek)embedPlayer.seek(p);publishSync(roomPlaying,p);return}const p=Math.max(0,targetPosition(roomPosition,roomServerTime,roomPlaying)+amount);publishSync(roomPlaying,p)}catch(e){}}
   document.getElementById("skipBackBtn")?.addEventListener("click",()=>seekRelative(-10));
   document.getElementById("skipForwardBtn")?.addEventListener("click",()=>seekRelative(10));
   function getLocalPlaybackPosition(){
