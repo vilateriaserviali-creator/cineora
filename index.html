@@ -3651,7 +3651,18 @@ function renderUsers(users){
     for(const [id] of voicePeers)removeVoicePeer(id);
     if(voiceStatus)voiceStatus.textContent="Соединение с голосовым чатом потеряно";
   });
-  socket.on("disconnect",()=>{roomJoined=false;window.cineoraRoomJoined=false;setStatus("Соединение потеряно — переподключаемся…");const el=document.getElementById("chatConnection");if(el)el.textContent="● нет связи";const voiceEl=document.getElementById("voiceConnection");if(voiceEl)voiceEl.textContent="● нет связи";window.dispatchEvent(new Event("cineora:disconnected"))});
+  socket.on("disconnect",()=>{
+    // Save only the time actually spent connected to the room.
+    if(roomJoined) achievementWatchTick();
+    roomJoined=false;
+    achievementState.watchStartedAt=0;
+    saveAchievements();
+    window.cineoraRoomJoined=false;
+    setStatus("Соединение потеряно — переподключаемся…");
+    const el=document.getElementById("chatConnection");if(el)el.textContent="● нет связи";
+    const voiceEl=document.getElementById("voiceConnection");if(voiceEl)voiceEl.textContent="● нет связи";
+    window.dispatchEvent(new Event("cineora:disconnected"))
+  });
   socket.on("connect_error",()=>{setStatus("Нет соединения с комнатой — переподключаемся…");const el=document.getElementById("chatConnection");if(el)el.textContent="● нет связи";const voiceEl=document.getElementById("voiceConnection");if(voiceEl)voiceEl.textContent="● нет связи"});
   let joinRetryTimer=null;
   let joinInFlight=false;
@@ -3673,6 +3684,8 @@ function renderUsers(users){
       if(ack?.ok){
         roomJoined=true;
         if(!achievementSessionCounted){achievementSessionCounted=true;bumpAchievement("sessions")}
+        // Start the persistent watch-time timer after the room is actually connected.
+        startAchievementTracking();
         achievementWatchTick();
         window.cineoraRoomJoined=true;
         setStatus("Комната подключена");
