@@ -2419,7 +2419,7 @@ html.cineora-dark .reaction-bar{background:rgba(20,17,24,.82)!important;border-c
         <div class="side-title chat-title-row">Чат <span id="chatConnection">● нет связи</span></div>
         <div class="chat-messages" id="chatMessages" role="log" aria-live="polite"></div>
         <div class="chat-typing" id="chatTyping" aria-live="polite"></div>
-        <form class="chat-form" id="chatForm"><div class="emoji-wrap"><button class="emoji-toggle" id="emojiToggle" type="button" aria-label="Смайлики">😊</button><div class="emoji-picker hidden" id="emojiPicker"><div class="sticker-title">Стикеры и эмоции</div><div class="sticker-grid"><button type="button">😂</button><button type="button">😍</button><button type="button">🥰</button><button type="button">😎</button><button type="button">🤭</button><button type="button">🥹</button><button type="button">😭</button><button type="button">😡</button><button type="button">🤯</button><button type="button">🤍</button><button type="button">❤️</button><button type="button">💜</button><button type="button">🔥</button><button type="button">✨</button><button type="button">🎉</button><button type="button">🍿</button><button type="button">👍</button><button type="button">👏</button><button type="button">💀</button><button type="button">👀</button><button type="button">💅</button><button type="button">🫶</button><button type="button">☕</button><button type="button">🎬</button></div></div></div><input id="chatInput" maxlength="500" placeholder="Напишите сообщение..."><button type="submit">→</button></form>
+        <form class="chat-form" id="chatForm"><div class="emoji-wrap"><button class="emoji-toggle" id="emojiToggle" type="button" aria-label="Смайлики">😊</button><div class="emoji-picker hidden" id="emojiPicker"><div class="sticker-title">Стикеры CINEORA</div><div class="sticker-grid"><button type="button" data-sticker="lol"><span>😂</span><small>Смешно</small></button><button type="button" data-sticker="cry"><span>😭</span><small>Плачу</small></button><button type="button" data-sticker="love"><span>❤️</span><small>Люблю</small></button><button type="button" data-sticker="wow"><span>🤯</span><small>ВОТ ЭТО</small></button><button type="button" data-sticker="sus"><span>🤨</span><small>Ну-ну</small></button><button type="button" data-sticker="eyes"><span>👀</span><small>Смотрю</small></button><button type="button" data-sticker="cute"><span>🥹</span><small>Мило</small></button><button type="button" data-sticker="fire"><span>🔥</span><small>Огонь</small></button><button type="button" data-sticker="popcorn"><span>🍿</span><small>Смотрим</small></button><button type="button" data-sticker="dead"><span>💀</span><small>Я умер</small></button><button type="button" data-sticker="sleep"><span>😴</span><small>Уснул</small></button><button type="button" data-sticker="cineora"><span>✦</span><small>CINEORA</small></button></div><div class="sticker-hint">Нажми на стикер — он сразу отправится в чат</div></div></div><input id="chatInput" maxlength="500" placeholder="Напишите сообщение..."><button type="submit">→</button></form>
       </div>
     </aside>
   </main>
@@ -3274,7 +3274,11 @@ function renderUsers(users){
     const own=m.userId===socket.id;
     el.className="chat-msg"+(own?" own":"");
     el.dataset.messageId=m.id||"";
-    el.innerHTML="<div class=\"chat-msg-head\"><b>"+escapeHtml(m.name||"Гость")+(m.isAdmin?'<span class="admin-sticker">✦ Админ</span>':"")+"</b><small>"+escapeHtml(formatChatTime(m))+"</small></div><span>"+escapeHtml(m.text)+"</span>";
+    const stickerMap={lol:["😂","Смешно"],cry:["😭","Плачу"],love:["❤️","Люблю"],wow:["🤯","ВОТ ЭТО"],sus:["🤨","Ну-ну"],eyes:["👀","Смотрю"],cute:["🥹","Мило"],fire:["🔥","Огонь"],popcorn:["🍿","Смотрим"],dead:["💀","Я умер"],sleep:["😴","Уснул"],cineora:["✦","CINEORA"]};
+    const stickerMatch=String(m.text||"").match(/^\\[sticker:([a-z]+)\\]$/i);
+    const sticker=stickerMatch?stickerMap[stickerMatch[1]]:null;
+    const body=sticker?'<div class="chat-sticker" data-sticker="'+escapeHtml(stickerMatch[1])+'"><span>'+sticker[0]+'</span><small>'+escapeHtml(sticker[1])+"</small></div>":'<span>'+escapeHtml(m.text)+'</span>';
+    el.innerHTML="<div class=\"chat-msg-head\"><b>"+escapeHtml(m.name||"Гость")+(m.isAdmin?'<span class="admin-sticker">✦ Админ</span>':"")+"</b><small>"+escapeHtml(formatChatTime(m))+"</small></div>"+body;
     chatMessages.appendChild(el);
     cacheLocalChat(m);
     if(wasNearBottom||own||incoming)chatMessages.scrollTo({top:chatMessages.scrollHeight,behavior:"smooth"});
@@ -3456,6 +3460,12 @@ function renderUsers(users){
     e.stopPropagation();
     const b=e.target.closest("button");
     if(!b)return;
+    const sticker=b.dataset.sticker;
+    if(sticker){
+      emojiPicker.classList.add("hidden");
+      sendChatMessage("[sticker:"+sticker+"]");
+      return;
+    }
     const emoji=b.textContent.trim();
     if(!emoji)return;
     const start=chatInput.selectionStart ?? chatInput.value.length;
@@ -3470,8 +3480,8 @@ function renderUsers(users){
     if(!emojiWrap || !emojiWrap.contains(e.target)) emojiPicker.classList.add("hidden");
   });
   let pendingChat="";
-  function sendChatMessage(){
-    const msg=chatInput.value.trim();
+  function sendChatMessage(forcedMessage){
+    const msg=String(forcedMessage ?? chatInput.value).trim();
     if(!msg)return;
     if(!socket.connected || !roomJoined || !window.cineoraRoomJoined){
       pendingChat=msg;
@@ -3485,7 +3495,7 @@ function renderUsers(users){
         return;
       }
       playChatSound();
-      chatInput.value="";
+      if(!forcedMessage)chatInput.value="";
       chatInput.focus();
     });
   }
@@ -3960,7 +3970,26 @@ html.cineora-dark .top-invite button{
   .top-invite button{padding:7px 10px}
   html.cineora-dark .top-invite-sub{color:#aaa0ad}
 }
-</style><style id="cineora-dark-chat-online-fix">
+</style><style id="cineora-chat-stickers">
+.room-view .sticker-title{grid-column:1/-1;font:700 12px "DM Sans",sans-serif;color:#62566a;padding:2px 3px 5px}
+.room-view .sticker-grid{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.room-view .sticker-grid button{min-height:76px;border:1px solid #e1d6e3;background:linear-gradient(145deg,#fff,#f5eef7);border-radius:14px;padding:7px 4px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease}
+.room-view .sticker-grid button:hover{transform:translateY(-2px);border-color:#c8b2cd;box-shadow:0 7px 15px rgba(105,86,110,.12)}
+.room-view .sticker-grid button span{font-size:31px;line-height:1}
+.room-view .sticker-grid button small{font-size:9px;color:#766a7d}
+.room-view .sticker-hint{grid-column:1/-1;text-align:center;color:#9a8f9e;font-size:9px;padding-top:3px}
+.room-view .chat-sticker{width:118px;min-height:105px;border-radius:20px;background:linear-gradient(145deg,#f6eafa,#e7d9ed);border:1px solid #d3bed9;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;box-shadow:0 8px 20px rgba(105,86,110,.12);animation:stickerPop .22s ease-out}
+.room-view .chat-sticker span{font-size:56px!important;line-height:1!important;margin:0!important;display:block!important}
+.room-view .chat-sticker small{font-size:10px;color:#76677b;display:block;margin:0}
+@keyframes stickerPop{from{opacity:0;transform:scale(.72) rotate(-4deg)}to{opacity:1;transform:scale(1) rotate(0)}}
+html.cineora-dark .sticker-title{color:#d9cadc!important}
+html.cineora-dark .sticker-grid button{background:linear-gradient(145deg,#39303d,#302932);border-color:#514454;color:#fff}
+html.cineora-dark .sticker-grid button small{color:#b6a9b9}
+html.cineora-dark .sticker-hint{color:#9f95a3}
+html.cineora-dark .chat-sticker{background:linear-gradient(145deg,#514058,#3c303f);border-color:#6b5572}
+html.cineora-dark .chat-sticker small{color:#d0c4d2}
+@media(max-width:600px){.room-view .sticker-grid{grid-template-columns:repeat(3,1fr)}.room-view .chat-sticker{width:105px;min-height:96px}.room-view .chat-sticker span{font-size:48px!important}}
+</style>\n<style id="cineora-dark-chat-online-fix">
 html.cineora-dark .side-card{
   background:#29242c!important;
   border-color:#4c414f!important;
