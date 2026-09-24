@@ -1105,13 +1105,16 @@ io.on("connection", socket => {
     const roomId = socket.data.roomId;
     if (!roomId) return;
     const room = roomState(roomId);
+
+    // Only the current host controls the shared playback clock.
+    // Viewer/iframe events (especially VK buffering/seek events) must never
+    // be able to overwrite the room position and pull everyone backwards.
+    if (room.hostId !== socket.id) return;
+
     const nextPlaying = !!playing;
     const nextPosition = Math.max(0, Number(position) || 0);
     const now = Date.now();
 
-    // Playback state is a single room clock. Every explicit Play/Pause/Seek
-    // becomes a new authoritative snapshot; the server timestamp lets every
-    // client calculate where the video should be right now.
     room.playing = nextPlaying;
     room.position = nextPosition;
     room.updatedAt = now;
@@ -1130,7 +1133,8 @@ io.on("connection", socket => {
       serverTime: now,
       sourceId: socket.id
     });
-    broadcastRoom(roomId);
+    // Do not rebuild participant cards on every playback tick.
+    socket.to(roomId).emit("room-users", publicUsers(room));
   });
   socket.on("request-room-users", () => {
     const roomId = socket.data.roomId;
@@ -1170,7 +1174,23 @@ io.on("connection", socket => {
       serverTime: Date.now()
     });
   });
-  socket.on("user-progress", ({ position, playing, duration }) => { const roomId = socket.data.roomId; if (!roomId) return; const room = roomState(roomId); const user = room.users.get(socket.id); if (!user) return; user.position = Math.max(0, Number(position) || 0); user.playing = !!playing; user.progressUpdatedAt = Date.now(); user.duration = Math.max(0, Number(duration) || 0); socket.to(roomId).emit("user-progress", { id: socket.id, position: user.position, playing: user.playing }); broadcastRoom(roomId); });
+  socket.on("user-progress", ({ position, playing, duration }) => {
+    const roomId = socket.data.roomId;
+    if (!roomId) return;
+    const room = roomState(roomId);
+    const user = room.users.get(socket.id);
+    if (!user) return;
+    user.position = Math.max(0, Number(position) || 0);
+    user.playing = !!playing;
+    user.progressUpdatedAt = Date.now();
+    user.duration = Math.max(0, Number(duration) || 0);
+    // Update only progress data; do not broadcast a full room-users render every 500ms.
+    socket.to(roomId).emit("user-progress", {
+      id: socket.id,
+      position: user.position,
+      playing: user.playing
+    });
+  });
   socket.on("room-reaction", ({ emoji } = {}) => {
     const roomId = socket.data.roomId;
     if (!roomId) return;
