@@ -748,19 +748,35 @@ io.on("connection", socket => {
     broadcastRoom(roomId);
     if (typeof ack === "function") ack({ ok: true });
   });
-  socket.on("sync", ({ playing, position }) => {
-    const roomId = socket.data.roomId; if (!roomId) return;
+  socket.on("sync", ({ playing, position } = {}) => {
+    const roomId = socket.data.roomId;
+    if (!roomId) return;
     const room = roomState(roomId);
-    // Keep the existing room host. Any participant may control playback,
-    // but a normal sync event must not silently transfer the internal host state.
-    room.playing = !!playing;
-    room.position = Math.max(0, Number(position) || 0);
-    room.updatedAt = Date.now();
+    const nextPlaying = !!playing;
+    const nextPosition = Math.max(0, Number(position) || 0);
+    const now = Date.now();
+
+    // Playback state is a single room clock. Every explicit Play/Pause/Seek
+    // becomes a new authoritative snapshot; the server timestamp lets every
+    // client calculate where the video should be right now.
+    room.playing = nextPlaying;
+    room.position = nextPosition;
+    room.updatedAt = now;
     room.emptySince = null;
+
     const user = room.users.get(socket.id);
-    if (user) { user.position = room.position; user.playing = room.playing; user.progressUpdatedAt = Date.now(); }
-    socket.to(roomId).emit("sync", { playing: room.playing, position: room.position, serverTime: room.updatedAt });
-    io.to(roomId).emit("room-host", { hostId: room.hostId });
+    if (user) {
+      user.position = nextPosition;
+      user.playing = nextPlaying;
+      user.progressUpdatedAt = now;
+    }
+
+    socket.to(roomId).emit("sync", {
+      playing: nextPlaying,
+      position: nextPosition,
+      serverTime: now,
+      sourceId: socket.id
+    });
     broadcastRoom(roomId);
   });
   socket.on("request-room-users", () => {
