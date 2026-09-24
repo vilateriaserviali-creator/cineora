@@ -285,7 +285,7 @@ function validAdminToken(token) {
 
 function getAdminCookie(req) {
   const raw = String(req.headers.cookie || "");
-  const match = raw.match(/(?:^|;\\s*)cineora_admin=([^;]+)/);
+  const match = raw.match(/(?:^|;\s*)cineora_admin=([^;]+)/);
   return match ? decodeURIComponent(match[1]) : "";
 }
 
