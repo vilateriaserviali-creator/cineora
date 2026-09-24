@@ -802,6 +802,16 @@ io.on("connection", socket => {
     });
   });
   socket.on("user-progress", ({ position, playing, duration }) => { const roomId = socket.data.roomId; if (!roomId) return; const room = roomState(roomId); const user = room.users.get(socket.id); if (!user) return; user.position = Math.max(0, Number(position) || 0); user.playing = !!playing; user.progressUpdatedAt = Date.now(); user.duration = Math.max(0, Number(duration) || 0); socket.to(roomId).emit("user-progress", { id: socket.id, position: user.position, playing: user.playing }); broadcastRoom(roomId); });
+  socket.on("chat-typing", ({ active } = {}) => {
+    const roomId = socket.data.roomId;
+    if (!roomId) return;
+    socket.to(roomId).emit("chat-typing", {
+      id: socket.id,
+      name: socket.data.name || "Гость",
+      active: !!active
+    });
+  });
+
   socket.on("chat-message", (payload, ack) => {
     const roomId = socket.data.roomId;
     if (!roomId) { if (typeof ack === "function") ack({ ok: false, error: "Вы ещё не вошли в комнату." }); return; }
@@ -827,6 +837,8 @@ io.on("connection", socket => {
     if (typeof ack === "function") ack({ ok: true });
   });
   socket.on("disconnect", () => {
+    const typingRoomId = socket.data.roomId;
+    if (typingRoomId) socket.to(typingRoomId).emit("chat-typing", { id: socket.id, active: false });
     console.log("[socket] disconnected", socket.id, socket.data.roomId || "-");
     const roomId = socket.data.roomId; if (!roomId || !rooms.has(roomId)) return;
     const room = rooms.get(roomId);
