@@ -583,10 +583,13 @@ app.get("/admin", (req, res) => {
     <nav class="nav">
       <button class="active" data-view="overview" onclick="showView('overview')">Обзор</button>
       <button data-view="rooms" onclick="showView('rooms')">Комнаты</button>
+      <button data-view="analytics" onclick="showView('analytics')">Аналитика</button>
       <button data-view="users" onclick="showView('users')">Пользователи</button>
       <button data-view="moderation" onclick="showView('moderation')">Модерация</button>
       <button data-view="ideas" onclick="showView('ideas')">Предложения</button>
       <button data-view="achievements" onclick="showView('achievements')">Достижения</button>
+      <button data-view="features" onclick="showView('features')">Функции</button>
+      <button data-view="log" onclick="showView('log')">Журнал</button>
       <button data-view="news" onclick="showView('news')">Обновления</button>
     </nav>
 
@@ -604,6 +607,37 @@ app.get("/admin", (req, res) => {
           <button class="btn secondary" onclick="showView('ideas')">💡 Проверить предложения</button>
           <button class="btn secondary" onclick="showView('news')">📰 Управлять обновлениями</button>
         </div></div>
+      </div>
+    </section>
+
+    <section class="view" id="view-analytics">
+      <div class="stats">
+        <div class="stat"><div class="stat-icon">💬</div><span>Сообщений в комнатах</span><b id="analyticsMessages">0</b></div>
+        <div class="stat"><div class="stat-icon">▶️</div><span>Комнаты с видео</span><b id="analyticsMedia">0</b></div>
+        <div class="stat"><div class="stat-icon">👥</div><span>Средняя компания</span><b id="analyticsAvg">0</b></div>
+        <div class="stat"><div class="stat-icon">⏱️</div><span>Активность</span><b id="analyticsActive">—</b></div>
+      </div>
+      <div class="grid">
+        <div class="card"><div class="card-head"><h2>Сводка активности</h2><span class="pill">LIVE</span></div><div id="analyticsSummary" class="cards"></div></div>
+        <div class="card"><div class="card-head"><h2>Система</h2></div><div class="cards">
+          <div class="room"><b>🟢 Сервер</b><div class="date">CINEORA работает и принимает подключения.</div></div>
+          <div class="room"><b>🔐 Админ-сессия</b><div class="date">Доступ к панели защищён серверной авторизацией.</div></div>
+        </div></div>
+      </div>
+    </section>
+
+    <section class="view" id="view-features">
+      <div class="card">
+        <div class="card-head"><h2>Функции CINEORA</h2><span class="pill">Локальные настройки</span></div>
+        <div id="featureList" class="cards"></div>
+      </div>
+      <div class="footer-note">Переключатели сохраняются в браузере администратора. Они подготовлены как центр управления функциями; серверные feature flags можно подключить следующим этапом.</div>
+    </section>
+
+    <section class="view" id="view-log">
+      <div class="card">
+        <div class="card-head"><h2>Журнал действий</h2><span class="pill">Этот браузер</span></div>
+        <div id="adminLog" class="cards"></div>
       </div>
     </section>
 
@@ -668,6 +702,24 @@ app.get("/admin", (req, res) => {
 
 <script>
 let password="",adminAuthenticated=false,items=[],newsItems=[],rooms=[];
+const featureDefs=[["🎭","Аватарки","Создание персональной аватарки"],["🖼️","Рамки","Рамки профиля и достижения"],["🏆","Достижения","Награды за активность"],["💬","Чат","Общий чат комнаты"],["😂","Смешные слова","Автоматические фразы CINEORA"],["🎬","Совместный просмотр","Синхронизация видео"],["🎵","Музыка","Музыкальные функции"],["✨","Новые эффекты","Экспериментальные визуальные эффекты"]];
+function featureState(){try{return JSON.parse(localStorage.getItem("cineora_admin_features")||"{}")}catch(e){return {}}}
+function renderFeatures(){
+  const state=featureState(),el=document.getElementById("featureList");if(!el)return;
+  el.innerHTML=featureDefs.map(([icon,name,desc],i)=>{const on=state[name]!==false&&i<6;return "<div class='achievement'><div class='achievement-icon'>"+icon+"</div><div><h3>"+name+"</h3><p>"+desc+"</p></div><label><input type='checkbox' "+(on?"checked":"")+" onchange='toggleFeature(""+esc(name)+"",this.checked)'> ON</label></div>"}).join("");
+}
+function toggleFeature(name,on){const s=featureState();s[name]=!!on;localStorage.setItem("cineora_admin_features",JSON.stringify(s));addLog("Изменена функция: "+name+" — "+(on?"включена":"выключена"));renderFeatures()}
+function getLogs(){try{return JSON.parse(localStorage.getItem("cineora_admin_log")||"[]")}catch(e){return []}}
+function addLog(text){const a=getLogs();a.unshift({text,time:new Date().toISOString()});localStorage.setItem("cineora_admin_log",JSON.stringify(a.slice(0,50)));renderLog()}
+function renderLog(){const el=document.getElementById("adminLog");if(!el)return;const a=getLogs();el.innerHTML=a.length?a.map(x=>"<div class='room'><b>⚙️ "+esc(x.text)+"</b><div class='date'>"+fmtDate(x.time)+"</div></div>").join(""):"<div class='empty'>Действий пока нет.</div>"}
+function renderAnalytics(){
+ const msgs=rooms.reduce((n,r)=>n+((r.messages&&r.messages.length)||0),0),media=rooms.filter(r=>r.mediaUrl).length,users=rooms.reduce((n,r)=>n+(r.userCount||0),0);
+ document.getElementById("analyticsMessages").textContent=msgs;document.getElementById("analyticsMedia").textContent=media;
+ document.getElementById("analyticsAvg").textContent=rooms.length?(users/rooms.length).toFixed(1):"0";
+ document.getElementById("analyticsActive").textContent=users?"Сейчас":"Тихо";
+ document.getElementById("analyticsSummary").innerHTML=rooms.length?rooms.slice(0,8).map(r=>"<div class='room'><b>🎬 "+esc(r.id)+"</b><div class='date'>"+(r.userCount||0)+" участников · "+(r.messages?.length||0)+" сообщений · "+(r.mediaUrl?"видео есть":"без видео")+"</div></div>").join(""):"<div class='empty'>Нет данных для аналитики.</div>";
+}
+
 const labels={new:"Новое",in_progress:"В работе",done:"Добавлено",rejected:"Отклонено"};
 function esc(s){return String(s).replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;","\"":"&quot;"}[c]));}
 function fmtDate(v){try{return new Date(v).toLocaleString("ru-RU",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"})}catch(e){return ""}}
