@@ -2944,7 +2944,7 @@ function renderUsers(users){
         '<div class="participant-main">'+
           '<div class="participant-avatar">'+escapeHtml((u.name||"Г").trim().charAt(0).toUpperCase())+'</div>'+
           '<div class="participant-info">'+
-            '<div class="participant-name-line"><span class="person-name">'+escapeHtml(u.name||"Гость")+'</span>'+(isMe?'<span class="me-badge">вы</span>':"")+(isHost?'<span class="host-badge">хост</span>':"")+'</div>'+
+            '<div class="participant-name-line"><span class="person-name">'+escapeHtml(u.name||"Гость")+'</span>'+(u.isAdmin?'<span class="admin-sticker">✦ Админ</span>':"")+(isMe?'<span class="me-badge">вы</span>':"")+(isHost?'<span class="host-badge">хост</span>':"")+'</div>'+
             '<div class="participant-status '+statusClass+'"><span class="status-icon">'+statusIcon+'</span><span>'+status+'</span>'+(syncLabel?'<span class="sync-label">'+syncLabel+'</span>':"")+'</div>'+
             '<div class="person-progress"><i style="width:'+pct+'%"></i></div>'+
           '</div>'+
@@ -2989,7 +2989,7 @@ function renderUsers(users){
     const own=m.userId===socket.id;
     el.className="chat-msg"+(own?" own":"");
     el.dataset.messageId=m.id||"";
-    el.innerHTML="<div class=\"chat-msg-head\"><b>"+escapeHtml(m.name||"Гость")+"</b><small>"+escapeHtml(m.time||"")+"</small></div><span>"+escapeHtml(m.text)+"</span>";
+    el.innerHTML="<div class=\"chat-msg-head\"><b>"+escapeHtml(m.name||"Гость")+(m.isAdmin?'<span class="admin-sticker">✦ Админ</span>':"")+"</b><small>"+escapeHtml(m.time||"")+"</small></div><span>"+escapeHtml(m.text)+"</span>";
     chatMessages.appendChild(el);
     if(wasNearBottom||own||incoming)chatMessages.scrollTo({top:chatMessages.scrollHeight,behavior:"smooth"});
     updateChatCount();
@@ -3504,6 +3504,26 @@ function renderUsers(users){
   display:block;
   overflow-wrap:anywhere;
   word-break:break-word;
+}
+.room-view .admin-sticker{
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  margin-left:6px;
+  padding:2px 7px;
+  border-radius:999px;
+  background:linear-gradient(135deg,#d8c6df,#b99bb5);
+  color:#fff!important;
+  font:700 9px/1 "DM Sans",sans-serif;
+  letter-spacing:.02em;
+  vertical-align:middle;
+  box-shadow:0 3px 8px rgba(105,86,110,.14);
+}
+.room-view .person-name-line .admin-sticker{margin-left:5px}
+html.cineora-dark .room-view .admin-sticker{
+  background:linear-gradient(135deg,#6b5572,#59465f);
+  color:#fff!important;
+  box-shadow:0 3px 9px rgba(0,0,0,.22);
 }
 .room-view .chat-typing{
   height:0;
