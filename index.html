@@ -1839,6 +1839,18 @@ body:not(.room-page):not(.cineora-home-dark) .home-theme-toggle{
   background:linear-gradient(135deg,#ddd2df,#d2c8d7)!important;
 }
 </style>
+<style id="cineora-dark-cover-final-fix">
+/* Финальный приоритет: обложка главной не исчезает в тёмной теме */
+body.cineora-home-dark .hero{
+  background-image:
+    linear-gradient(90deg,rgba(7,6,18,.78) 0%,rgba(10,8,23,.42) 38%,rgba(10,9,25,.14) 72%,rgba(8,7,18,.48) 100%),
+    linear-gradient(180deg,rgba(7,6,18,.10) 0%,rgba(7,6,18,0) 52%,rgba(7,6,18,.50) 100%),
+    url("/cineora-cover.svg?v=3")!important;
+  background-size:cover!important;
+  background-position:center!important;
+  background-repeat:no-repeat!important;
+}
+</style>
 </head>
 <body>
 
