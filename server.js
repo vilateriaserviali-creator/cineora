@@ -1010,7 +1010,7 @@ io.on("connection", socket => {
       name: socket.data.name || "Гость",
       isAdmin: !!socket.data.isAdmin,
       text: clean,
-      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+      createdAt: new Date().toISOString()
     };
     room.messages.push(message);
     if (room.messages.length > 100) room.messages.splice(0, room.messages.length - 100);
