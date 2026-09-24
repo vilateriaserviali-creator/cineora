@@ -1786,6 +1786,59 @@ body:not(.room-page):not(.cineora-home-dark) .login:hover{
   color:#654768!important;
 }
 </style>
+<style id="cineora-no-white-ui">
+/* Единая палитра CINEORA: без чистого белого в интерфейсе */
+:root{
+  --cine-paper:#e8e1e9;
+  --cine-surface:#ded5e0;
+  --cine-surface-2:#d6ccd8;
+  --cine-border:#bdb0c0;
+  --cine-text:#403a44;
+}
+body:not(.room-page):not(.cineora-home-dark) .header{
+  background:#c8bdca!important;
+}
+body:not(.room-page):not(.cineora-home-dark) .card,
+body:not(.room-page):not(.cineora-home-dark) .platform,
+body:not(.room-page):not(.cineora-home-dark) .news-card{
+  background:var(--cine-surface)!important;
+}
+body:not(.room-page):not(.cineora-home-dark) #funLine{
+  background:#d8cdd9!important;
+  border-color:#bdb0c0!important;
+  color:#5c5360!important;
+}
+body:not(.room-page):not(.cineora-home-dark) .source,
+body:not(.room-page):not(.cineora-home-dark) .feature-card,
+body:not(.room-page):not(.cineora-home-dark) .feature-icon,
+body:not(.room-page):not(.cineora-home-dark) .source-icon{
+  background:var(--cine-surface-2)!important;
+}
+body:not(.room-page):not(.cineora-home-dark) .home-theme-toggle{
+  background:#c6bbc8!important;
+}
+.room-view:not(.cineora-dark) .room-top{
+  background:#d9d0da!important;
+}
+.room-view:not(.cineora-dark) .watch-card,
+.room-view:not(.cineora-dark) .side-card{
+  background:#e1d9e2!important;
+}
+.room-view:not(.cineora-dark) .chat-messages{
+  background:#ddd4df!important;
+}
+.room-view:not(.cineora-dark) .chat-form input,
+.room-view:not(.cineora-dark) .emoji-toggle,
+.room-view:not(.cineora-dark) .emoji-picker,
+.room-view:not(.cineora-dark) .player-fullscreen{
+  background:#d8ceda!important;
+  color:#403a44!important;
+  border-color:#b9adbc!important;
+}
+.room-view:not(.cineora-dark) .invite-card{
+  background:linear-gradient(135deg,#ddd2df,#d2c8d7)!important;
+}
+</style>
 </head>
 <body>
 
