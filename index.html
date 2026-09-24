@@ -18,6 +18,25 @@
 .modal{position:fixed;inset:0;background:#090909c9;backdrop-filter:blur(12px);z-index:10;display:grid;place-items:center;padding:20px}.modal.hidden{display:none}.modal-box{width:min(430px,100%);background:#24241f;color:#fff;border:1px solid #fff2;border-radius:22px;padding:28px}.modal-box h2{font:500 30px "Playfair Display";margin:0 0 8px}.modal-box p{color:#c9c5bd}.modal-box input{width:100%;padding:13px;margin:5px 0;background:#171814;border:1px solid #fff2;border-radius:10px;color:#fff}.go{width:100%;margin-top:8px;padding:14px;border:0;border-radius:999px;background:var(--lime);font-weight:700}.close{float:right;background:none;border:0;color:#aaa;font-size:25px}
 @media(max-width:900px){.wrap{width:calc(100% - 32px)}.nav{display:none}.hero{min-height:auto}.hero-content{padding:55px 0 0}.brand-big{font-size:50px}.hero h1{font-size:43px}.features{grid-template-columns:1fr}.feature{padding:15px 0;border-right:0;border-bottom:1px solid #fff3}.feature:last-child{border:0}.intro,.cards,.features-grid,.platforms{grid-template-columns:1fr}.section{padding:65px 0}}
 </style>
+.cinema-catalog{background:linear-gradient(180deg,#f8f5ee 0%,#f0eaf1 100%);border-top:1px solid #e2dbe2;border-bottom:1px solid #e2dbe2}
+.catalog-head{display:flex;align-items:flex-end;justify-content:space-between;gap:25px}
+.catalog-random{border:1px solid #bcaec4;background:#fff8;color:#51495a;border-radius:999px;padding:12px 16px;font-weight:700;white-space:nowrap}
+.movie-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:34px}.catalog-loading{grid-column:1/-1;min-height:180px;display:grid;place-items:center;border:1px dashed #d7ced9;border-radius:20px;color:#8a7e8d;font-size:14px}.movie-card{overflow:hidden;border:1px solid #d7ced9;border-radius:20px;background:rgba(255,255,255,.78);box-shadow:0 14px 38px rgba(91,78,96,.09);transition:transform .2s ease,box-shadow .2s ease}
+.movie-card:hover{transform:translateY(-4px);box-shadow:0 20px 48px rgba(91,78,96,.14)}
+.movie-info{padding:19px}
+.movie-meta{display:flex;justify-content:space-between;gap:12px;font-size:11px;color:#7b717f}
+.movie-meta b{color:#7c657e}
+.movie-info h3{font:500 24px/1.15 "Playfair Display";margin:10px 0 8px;color:#403a44}
+.movie-duration{margin:0 0 16px;color:#827984;font-size:12px}
+.movie-watch{width:100%;border:0;border-radius:12px;padding:12px;background:#d8c6df;color:#403746;font-weight:700}
+.movie-watch:hover,.catalog-random:hover{transform:translateY(-1px);box-shadow:0 7px 18px rgba(91,78,96,.12)}
+html.cineora-home-dark .cinema-catalog{background:linear-gradient(180deg,#1d1a20,#211c24);border-color:#3e3442}
+html.cineora-home-dark .movie-card{background:#29242c;border-color:#4c414f;box-shadow:0 14px 38px rgba(0,0,0,.22)}
+html.cineora-home-dark .movie-info h3{color:#f1edf2}
+html.cineora-home-dark .movie-meta,html.cineora-home-dark .movie-duration{color:#aaa0ad}
+html.cineora-home-dark .catalog-random{background:#302a33;color:#eee;border-color:#564a59}
+@media(max-width:900px){.catalog-head{align-items:flex-start;flex-direction:column}.movie-grid{grid-template-columns:1fr}}
+
 <style>
 .room-view{display:none;min-height:100vh;background:linear-gradient(135deg,#fbf7f1 0%,#f1eee8 52%,#e9edf0 100%);color:#302f2d}.room-view.show{display:block}.room-top{height:76px;border-bottom:1px solid #ffffff18;display:flex;align-items:center;justify-content:space-between;gap:18px;padding:0 28px}.room-brand{color:#fff;text-decoration:none;cursor:pointer;font:500 26px "Playfair Display";letter-spacing:.16em}.room-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.room-code{padding:10px 14px;border:1px solid #ffffff20;border-radius:999px;color:#d8efb7;background:#ffffff08}.room-btn{border:1px solid #ffffff25;background:#ffffff08;color:#fff;border-radius:999px;padding:10px 15px}.room-btn.primary{background:#d8efb7;color:#1b2115;border-color:#d8efb7;font-weight:700}.room-layout{width:min(1500px,calc(100% - 40px));margin:22px auto;display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:18px}.watch-card,.side-card{background:rgba(255,255,255,.82);border:1px solid #d9d6d0;border-radius:22px;overflow:hidden;box-shadow:0 12px 40px #aaa6a22b}.side-card .chat{height:430px;min-height:430px;display:flex;flex-direction:column;overflow:hidden;flex-shrink:0}.side-card .chat-messages{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;scroll-behavior:smooth}.side-card .chat-form{flex:0 0 auto}\n.chat-form{display:flex;align-items:center;gap:8px;width:100%;box-sizing:border-box}.chat-form input{flex:1 1 auto;min-width:0;box-sizing:border-box}.chat-form button{flex:0 0 auto}.emoji-wrap{flex:0 0 auto}.watch-head{padding:18px 20px;border-bottom:1px solid #ffffff10;display:flex;justify-content:space-between;align-items:center;gap:15px}.watch-title{font:500 25px "Playfair Display"}.source-pill{font-size:12px;color:#bcb8af}.player-wrap{background:#090a09;aspect-ratio:16/9;width:100%;height:auto;min-height:520px;display:grid;place-items:center;position:relative}.player-wrap:fullscreen{width:100vw;height:100vh;aspect-ratio:auto;border-radius:0}.player-wrap:fullscreen video,.player-wrap:fullscreen iframe,.player-wrap:fullscreen .universal-player{width:100%;height:100%;object-fit:contain}.player-tools{display:flex;align-items:center;gap:10px;padding:10px 14px;border-top:1px solid #d9d6d0;background:#f8f6f2;flex-wrap:wrap}.player-tools span{font-size:12px;color:#77736c}.player-fullscreen{border:1px solid #d7d2ca;background:#fff;color:#444;border-radius:10px;padding:9px 12px}.player-fullscreen:hover{background:#f0ede8}.player-wrap video{width:100%;height:100%;display:block;background:#000}.player-wrap .fullscreen-chat{position:absolute!important;right:20px;top:20px;bottom:20px;width:360px;max-width:34vw;z-index:50;display:flex;background:rgba(255,252,247,.97);color:#333;border:1px solid #d7d2ca;box-shadow:0 18px 60px #0005}.player-wrap:fullscreen .fullscreen-chat{display:flex}.player-wrap:fullscreen{background:#000}.player-wrap:fullscreen .universal-player,.player-wrap:fullscreen video,.player-wrap:fullscreen iframe{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}.player-wrap iframe{width:100%;height:100%;display:block;border:0;background:#000}.universal-player{width:100%;height:100%;min-height:0}.player-error{color:#c9c5bd;text-align:center;padding:30px;line-height:1.6}.player-error strong{display:block;color:#f4f0e8;font:500 23px "Playfair Display";margin-bottom:8px}.empty-player{color:#a7a39b;text-align:center;padding:30px}.empty-player strong{display:block;color:#f4f0e8;font:500 24px "Playfair Display";margin-bottom:8px}.media-bar{padding:15px 18px;border-top:1px solid #ffffff10;display:flex;gap:10px}.media-bar input{flex:1;min-width:0;background:#171814;color:#fff;border:1px solid #ffffff18;border-radius:10px;padding:12px}.side-card{display:flex;flex-direction:column;min-height:100%;overflow:hidden}.chat-overlay{position:fixed!important;right:18px;bottom:18px;width:360px;height:70vh;z-index:20;box-shadow:0 18px 60px #000b}.chat-overlay .participants{max-height:120px}.side-title{padding:18px 18px 13px;font:500 22px "Playfair Display"}.participants{padding:0 12px 12px;display:flex;flex-direction:column;gap:7px;max-height:220px;overflow:auto}.person-row{display:flex;align-items:center;justify-content:space-between;padding:10px 11px;background:#ffffff06;border-radius:12px}.person-name{font-size:14px}.person-time{font-size:11px;color:#8f8c84}.chat{border-top:1px solid #ffffff10;display:flex;flex-direction:column;flex:1;min-height:350px}.chat-messages{padding:13px;overflow:auto;flex:1;display:flex;flex-direction:column;gap:9px}.chat-msg{background:#ffffff07;border-radius:12px;padding:9px 11px}.chat-msg b{font-size:12px;color:#d8efb7}.chat-msg span{display:block;margin-top:4px;color:#eeeae2;font-size:13px;line-height:1.45;white-space:pre-wrap}.chat-msg small{display:block;margin-top:5px;color:#77756e;font-size:10px}.emoji-wrap{position:relative}.emoji-toggle{border:1px solid #d7d2ca;background:#fff;border-radius:10px;padding:0 11px;font-size:20px;height:42px}.emoji-picker{position:absolute;bottom:50px;left:0;width:270px;padding:10px;display:grid;grid-template-columns:repeat(7,1fr);gap:5px;background:#fffdf9;border:1px solid #d7d2ca;border-radius:14px;box-shadow:0 15px 40px #8d888033;z-index:30}.emoji-picker.hidden{display:none}.emoji-picker button{border:0;background:transparent;border-radius:8px;padding:7px;font-size:20px}.emoji-picker button:hover{background:#f0ece6}.chat-form{display:flex;gap:7px;padding:12px;border-top:1px solid #d9d6d0}.chat-form input{flex:1;background:#fff;color:#333;border:1px solid #d7d2ca;border-radius:10px;padding:11px}.chat-form button{border:0;border-radius:10px;background:#dbe8c8;color:#38422f;padding:0 15px;font-weight:700}.sync-note{padding:12px 18px;color:#8f8c84;font-size:12px;border-top:1px solid #ffffff10}.leave{color:#f0aaa0!important;border-color:#f0aaa033!important}@media(max-width:1000px){.room-layout{grid-template-columns:1fr}.side-card{min-height:500px}.side-card .chat{height:360px;min-height:360px}.side-card .chat-messages{min-height:0}.room-top{padding:0 15px}.room-layout{width:calc(100% - 20px)}.player-wrap{aspect-ratio:16/9;width:100%;height:auto;min-height:360px}}
 </style>
@@ -2106,7 +2125,1491 @@ body:not(.room-page):not(.cineora-home-dark) .home-theme-toggle{
   .chat-form input{min-width:0!important;width:1px!important}
   .emoji-wrap{flex:0 0 40px!important}
 }
-</style><style id="cineora-invite-copy-fix">
+</style>
+<style id="cineora-cinema-mode">
+.room-view.cinema-mode{
+  position:fixed!important;
+  inset:0!important;
+  z-index:500!important;
+  width:100vw!important;
+  height:100dvh!important;
+  min-height:100dvh!important;
+  overflow:hidden!important;
+  background:#0d0c10!important;
+}
+.room-view.cinema-mode .room-top{
+  height:58px!important;
+  min-height:58px!important;
+  position:relative!important;
+  top:auto!important;
+  z-index:80!important;
+  padding:0 18px!important;
+  background:rgba(22,19,27,.96)!important;
+  border-bottom:1px solid #39313d!important;
+  box-shadow:0 8px 30px rgba(0,0,0,.22)!important;
+}
+.room-view.cinema-mode .room-brand{color:#f1eaf2!important;font-size:22px!important}
+.room-view.cinema-mode .room-code,
+.room-view.cinema-mode .room-btn{
+  background:#2b2530!important;
+  color:#eee6ef!important;
+  border-color:#4a3f4d!important;
+}
+.room-view.cinema-mode .room-btn.primary{background:#59465f!important;color:#fff!important;border-color:#6b5572!important}
+.room-view.cinema-mode .top-invite{background:#2b2530!important;border-color:#4a3f4d!important;color:#eee6ef!important}
+.room-view.cinema-mode .top-invite button{background:#59465f!important;color:#fff!important}
+.room-view.cinema-mode .room-layout{
+  width:100%!important;
+  max-width:none!important;
+  height:calc(100dvh - 58px)!important;
+  min-height:0!important;
+  margin:0!important;
+  padding:0!important;
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) 360px!important;
+  gap:0!important;
+  align-items:stretch!important;
+}
+.room-view.cinema-mode .watch-card{
+  height:100%!important;
+  min-width:0!important;
+  border:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  background:#09090b!important;
+  display:flex!important;
+  flex-direction:column!important;
+}
+.room-view.cinema-mode .watch-head{
+  flex:0 0 58px!important;
+  min-height:58px!important;
+  padding:0 16px!important;
+  background:#17141a!important;
+  border-bottom:1px solid #302a33!important;
+}
+.room-view.cinema-mode .watch-title{font-size:20px!important;color:#f1eaf2!important}
+.room-view.cinema-mode .source-pill{background:#2b2530!important;border-color:#473b4b!important;color:#aaa0ad!important}
+.room-view.cinema-mode .watch-head-tools{gap:6px!important}
+.room-view.cinema-mode .player-wrap{
+  flex:1 1 auto!important;
+  width:100%!important;
+  height:auto!important;
+  min-height:0!important;
+  max-height:none!important;
+  aspect-ratio:auto!important;
+  border-radius:0!important;
+  background:#050506!important;
+}
+.room-view.cinema-mode .media-bar{
+  flex:0 0 auto!important;
+  padding:9px 12px!important;
+  background:#17141a!important;
+  border-top:1px solid #302a33!important;
+}
+.room-view.cinema-mode .media-bar input{
+  background:#252129!important;color:#eee!important;border-color:#4b404f!important;
+}
+.room-view.cinema-mode .side-card{
+  height:100%!important;
+  max-height:none!important;
+  min-height:0!important;
+  position:relative!important;
+  top:auto!important;
+  border:0!important;
+  border-left:1px solid #3a323f!important;
+  border-radius:0!important;
+  box-shadow:-18px 0 45px rgba(0,0,0,.18)!important;
+  background:#211d25!important;
+  overflow:hidden!important;
+}
+.room-view.cinema-mode .side-card .invite-card{margin:10px!important}
+.room-view.cinema-mode .side-card .participants{max-height:135px!important}
+.room-view.cinema-mode .side-card .chat{min-height:0!important;height:auto!important;flex:1 1 auto!important}
+.room-view.cinema-mode .side-card .chat-messages{min-height:0!important}
+.room-view.cinema-mode .cinema-toggle{
+  background:#6a526f!important;
+  border-color:#7b6280!important;
+  color:#fff!important;
+  box-shadow:0 5px 16px rgba(0,0,0,.18)!important;
+}
+.room-view.cinema-mode .cinema-toggle[aria-pressed="true"]{background:#8b6b8f!important}
+.room-view.cinema-mode .chat-title-row{background:#2b2530!important;border-bottom:1px solid #3d3442!important}
+.room-view.cinema-mode .chat-form{background:#2b2530!important}
+.room-view.cinema-mode .chat-messages{background:linear-gradient(180deg,#211d25,#1c1920)!important}
+
+/* В обычном режиме всё остаётся как раньше. */
+@media(max-width:1000px){
+  .room-view.cinema-mode .room-layout{
+    display:block!important;
+    height:calc(100dvh - 58px)!important;
+    position:relative!important;
+  }
+  .room-view.cinema-mode .watch-card{height:100%!important}
+  .room-view.cinema-mode .watch-head{height:52px!important;min-height:52px!important;flex-basis:52px!important}
+  .room-view.cinema-mode .watch-title{font-size:18px!important}
+  .room-view.cinema-mode .player-wrap{height:auto!important}
+  .room-view.cinema-mode .media-bar{display:none!important}
+  .room-view.cinema-mode .side-card{
+    position:absolute!important;
+    top:0!important;
+    right:0!important;
+    width:min(370px,88vw)!important;
+    height:100%!important;
+    max-height:none!important;
+    z-index:70!important;
+    transform:translateX(102%)!important;
+    transition:transform .25s ease,box-shadow .25s ease!important;
+    box-shadow:-24px 0 60px rgba(0,0,0,.38)!important;
+  }
+  .room-view.cinema-mode.cinema-chat-open .side-card{transform:translateX(0)!important}
+  .room-view.cinema-mode .cinema-chat-open-btn{display:inline-flex!important}
+  .room-view.cinema-mode .cinema-chat-open-btn:after{content:""}
+  .room-view.cinema-mode .cinema-chat-open-btn{font-size:0!important;width:38px!important;padding:0!important}
+  .room-view.cinema-mode .cinema-chat-open-btn:before{content:"💬";font-size:16px!important}
+}
+@media(min-width:1001px){
+  .cinema-chat-open-btn{display:none!important}
+}
+@media(max-width:600px){
+  .room-view.cinema-mode .room-top{
+    height:52px!important;
+    min-height:52px!important;
+    padding:0 9px!important;
+  }
+  .room-view.cinema-mode .room-layout{height:calc(100dvh - 52px)!important}
+  .room-view.cinema-mode .room-brand{font-size:18px!important}
+  .room-view.cinema-mode .room-actions .room-code,
+  .room-view.cinema-mode .room-actions .room-title-chip,
+  .room-view.cinema-mode .room-actions .room-mode-chip{display:none!important}
+  .room-view.cinema-mode .top-invite{display:none!important}
+  .room-view.cinema-mode .watch-head{
+    padding:0 10px!important;
+  }
+  .room-view.cinema-mode .watch-head-tools .room-btn{height:34px!important;min-height:34px!important;padding:0 8px!important}
+  .room-view.cinema-mode .player-wrap{height:calc(100dvh - 104px)!important;aspect-ratio:auto!important}
+}
+</style>
+</head>
+<body>
+
+
+<section class="room-view" id="roomView">
+  <header class="room-top">
+    <a class="room-brand" href="/" aria-label="CINEORA — на главную">CINE<span class="accent">ORA</span></a>
+    <div class="top-invite" title="Ссылка на комнату"><span id="inviteTitle">🔗 Ссылка комнаты</span><span id="inviteLinkPreview" class="invite-link-preview">cineora…/?room=—</span><button id="inviteJoin" type="button">Скопировать ссылку</button><span id="inviteSub" class="top-invite-sub">Отправьте её друзьям</span></div>
+    <div class="room-actions"><button id="roomThemeToggle" class="room-btn" type="button" title="Переключить оформление комнаты">◐ Тема</button>
+      <span class="room-code">Сессия: <b id="roomCodeLabel">—</b></span><span class="room-code room-title-chip" id="roomTitleLabel">🎬 Киносеанс</span><span class="room-code room-mode-chip public" id="roomModeLabel">🌐 Обычная</span><span class="room-code">👥 Смотрят: <b id="viewerCount">0</b></span>
+      <button class="room-btn" id="changeName">✎ Изменить имя</button>
+      
+      <button class="room-btn leave" id="leaveRoom">Выйти</button>
+    </div>
+  </header>
+  <main class="room-layout">
+    <section class="watch-card">
+      <div class="watch-head"><div><div class="watch-title">Совместный просмотр</div><div class="source-pill" id="mediaStatus">Видео пока не добавлено</div></div><div class="watch-head-tools"><button class="room-btn" id="syncBtn" type="button">↻ Синхронизировать</button><button class="room-btn cinema-toggle" id="cinemaModeBtn" type="button" aria-pressed="false" title="Видео почти на весь экран, чат — сбоку">🌓 Кинотеатр</button><div class="source-pill" id="myRoomName"></div></div></div>
+      <div class="player-wrap" id="playerWrap"><div id="universalPlayer"></div><div class="empty-player" id="emptyPlayer"><strong>Добавьте видео</strong><span>Вставьте ссылку на YouTube, VK Видео, RUTUBE или прямую ссылку на видео.</span></div></div><div class="media-bar"><input id="mediaUrlRoom" placeholder="YouTube / VK / RUTUBE / ссылка на видео"><button class="room-btn primary" id="setMediaRoom" type="button">Загрузить</button></div>
+      <div class="sync-note">YouTube, VK Видео, RUTUBE и прямые видео синхронизируются по воспроизведению, паузе, перемотке и времени просмотра. Страницы сторонних сайтов без API доступны только как встроенный плеер без гарантии синхронизации.</div>
+    </section>
+    
+      
+    </div>
+    <aside class="side-card" id="sideCard"><div class="session-countdown" id="sessionCountdown"></div>
+      <div class="side-title participants-title-row"><span>Участники <span id="participantCount">0</span></span><span class="room-sync-indicator" id="roomSyncIndicator"><i></i><span>Все синхронизированы</span></span></div>
+      <div class="participants" id="participants"></div>
+      <div class="voice-panel" id="voicePanel">
+        <div class="voice-head">
+          <div>
+            <div class="voice-title">🎙 Голосовая комната</div>
+            <div class="voice-status" id="voiceStatus">Микрофон выключен</div>
+          </div>
+          <button class="voice-toggle" id="voiceToggle" type="button">🎙 Включить микрофон</button>
+        </div>
+        <div class="voice-tools">
+          <label class="noise-option"><input type="checkbox" id="noiseSuppression" checked> Шумоподавление</label>
+          <span class="voice-note" id="voiceConnection">● нет связи</span>
+        </div>
+        <div class="voice-users" id="voiceUsers"></div>
+      </div>
+      <div class="chat">
+        <div class="side-title chat-title-row">Чат <span id="chatConnection">● нет связи</span></div>
+        <div class="chat-messages" id="chatMessages" role="log" aria-live="polite"></div>
+        <div class="chat-typing" id="chatTyping" aria-live="polite"></div>
+        <form class="chat-form" id="chatForm"><div class="emoji-wrap"><button class="emoji-toggle" id="emojiToggle" type="button" aria-label="Смайлики">😊</button><div class="emoji-picker hidden" id="emojiPicker"><div class="sticker-title">Стикеры и эмоции</div><div class="sticker-grid"><button type="button">😂</button><button type="button">😍</button><button type="button">🥰</button><button type="button">😎</button><button type="button">🤭</button><button type="button">🥹</button><button type="button">😭</button><button type="button">😡</button><button type="button">🤯</button><button type="button">🤍</button><button type="button">❤️</button><button type="button">💜</button><button type="button">🔥</button><button type="button">✨</button><button type="button">🎉</button><button type="button">🍿</button><button type="button">👍</button><button type="button">👏</button><button type="button">💀</button><button type="button">👀</button><button type="button">💅</button><button type="button">🫶</button><button type="button">☕</button><button type="button">🎬</button></div></div></div><input id="chatInput" maxlength="500" placeholder="Напишите сообщение..."><button type="submit">→</button></form>
+      </div>
+    </aside>
+  </main>
+</section>
+
+<section class="hero">
+<div class="wrap">
+<header class="header">
+<a class="logo" href="/">CINE<span>ORA</span></a>
+<nav class="nav"><a href="#about">О сервисе</a><a href="#features">Возможности</a><a href="#how">Как это работает</a></nav>
+<div class="home-head-actions"><button type="button" class="home-theme-toggle" id="homeThemeToggle" aria-label="Переключить тему" title="Тёмная тема">🌙</button><button type="button" class="login" id="login">Войти / Регистрация</button><button type="button" class="create-top" id="createTop">Создать сессию</button></div>
+</header>
+<div class="hero-content">
+<div class="eyebrow" id="funEyebrow">Совместный просмотр фильмов и видео</div>
+<div class="brand-big">CINE<span class="accent">O</span>RA</div>
+<h1>Кино становится <em class="accent">ближе.</em></h1>
+<p class="lead">Смотрите фильмы и видео вместе с друзьями — в одной синхронизированной сессии, где бы вы ни были.</p><div id="funLine" style="margin-top:16px;font-size:13px;color:#6f6470;min-height:20px"></div>
+<div class="actions"><button type="button" class="primary" id="join">▶ &nbsp;Присоединиться к сессии</button><button type="button" class="secondary" id="create">＋ &nbsp;Создать комнату</button></div>
+<div class="sources"><div class="sources-title">Поддерживаем популярные источники</div><div class="source-row"><div class="source"><span class="source-icon">▶</span>YouTube</div><div class="source"><span class="source-icon">VK</span>VK Видео</div><div class="source"><span class="source-icon">R</span>RUTUBE</div><div class="source"><span class="source-icon">↗</span>Видео из интернета</div></div></div>
+</div>
+
+<div class="home-visual" aria-hidden="true">
+  <div class="home-visual-glow"></div>
+  <div class="mock-window">
+    <div class="mock-top"><span class="mock-dot"></span><span class="mock-dot"></span><span class="mock-dot"></span><b>CINEORA</b><span class="mock-live">● LIVE</span></div>
+    <div class="mock-screen"><div class="mock-play">▶</div><div class="mock-caption">Совместный просмотр</div></div>
+    <div class="mock-bottom"><span>👥 4 смотрят</span><span>💬 12 сообщений</span><span>● онлайн</span></div>
+  </div>
+  <div class="float-card float-card-one"><span>🍿</span><div><b>Вечер начинается</b><small>Все уже в комнате</small></div></div>
+  <div class="float-card float-card-two"><span>✨</span><div><b>Синхронно</b><small>Никто не отстал</small></div></div>
+</div>
+<div class="features"><div class="feature"><span class="feature-icon">♧</span><span>Любое количество<br>участников</span></div><div class="feature"><span class="feature-icon">ϟ</span><span>Синхронизация<br>в реальном времени</span></div><div class="feature"><span class="feature-icon">✦</span><span>Телефон, планшет<br>и компьютер</span></div></div>
+</div>
+</section>
+
+<section class="section cream" id="about">
+<div class="wrap intro">
+<div><div class="section-kicker">О сервисе</div><h2 class="section-title">Смотрите вместе, даже если вы далеко</h2></div>
+<div class="about-copy"><p><strong>CINEORA</strong> — сервис для совместного просмотра фильмов и видео в одной онлайн-сессии.</p><p>Создайте комнату, отправьте друзьям ссылку или код и подключайтесь к просмотру вместе. Видео синхронизируется для участников, а чат позволяет общаться прямо во время сеанса.</p><p>Сервис рассчитан на компании, друзей и близких — неважно, сколько человек подключается к одной комнате.</p></div>
+</div>
+</section>
+
+<section class="section dark" id="features">
+<div class="wrap">
+<div class="section-kicker">Возможности</div>
+<h2 class="section-title">Всё необходимое для общего просмотра</h2>
+<div class="features-grid">
+<div class="feature-card"><h3>Синхронный просмотр</h3><p>Воспроизведение, пауза и перемотка передаются участникам комнаты, чтобы все оставались на одном моменте.</p></div>
+<div class="feature-card"><h3>Комнаты для компании</h3><p>В одну сессию могут подключаться несколько участников. Каждый видит список людей, находящихся в комнате.</p></div>
+<div class="feature-card"><h3>Общий чат</h3><p>Обсуждайте происходящее, отправляйте реакции и общайтесь, не покидая страницу просмотра.</p></div>
+<div class="feature-card"><h3>Подключение по коду</h3><p>Создайте короткий код комнаты и передайте его друзьям. Подключиться можно с любого устройства с браузером.</p></div>
+</div>
+<div class="platforms">
+<div class="platform"><span>▶</span><b>YouTube</b></div><div class="platform"><span>VK</span><b>VK Видео</b></div><div class="platform"><span>R</span><b>RUTUBE</b></div><div class="platform"><span>↗</span><b>Видео из интернета</b></div>
+</div>
+</div>
+</section>
+
+<section class="section cream" id="how">
+<div class="wrap">
+<div class="section-kicker">Как это работает</div>
+<h2 class="section-title">Три простых шага до совместного просмотра</h2>
+<div class="cards">
+<article class="card"><div class="num">1</div><h3>Создайте сессию</h3><p>Нажмите «Создать сессию», укажите имя и получите код комнаты.</p></article>
+<article class="card"><div class="num">2</div><h3>Пригласите друзей</h3><p>Отправьте друзьям код комнаты или ссылку на сессию.</p></article>
+<article class="card"><div class="num">3</div><h3>Смотрите вместе</h3><p>Добавьте видео, запускайте просмотр и оставайтесь синхронизированными.</p></article>
+</div>
+</div>
+</section>
+
+<section class="section cream" id="updates"><div class="wrap"><div class="section-kicker">Обновления CINEORA</div><h2 class="section-title">Что нового в сервисе</h2><div id="newsFeed" class="cards"><div class="card"><h3>Мы развиваем CINEORA вместе с вами</h3><p>Здесь будут появляться новые возможности, улучшения и важные новости сервиса.</p></div></div></div></section>
+
+<footer class="footer"><div class="wrap"><span>CINEORA</span><span>Кино становится ближе.</span><button type="button" class="idea-link" id="ideaLink">💡 Предложить идею</button><a class="admin-link" href="/admin" aria-label="Вход администратора">Администратор</a></div></footer>
+
+<div class="modal hidden" id="ideaModal"><div class="modal-box suggestion-box"><button class="close" id="ideaClose" type="button">×</button><h2>Предложить идею</h2><p>Расскажите, что стоит добавить или улучшить в CINEORA.</p><input id="ideaName" placeholder="Ваше имя" maxlength="40" autocomplete="nickname"><textarea id="ideaText" placeholder="Ваша идея..." maxlength="1000"></textarea><div id="ideaStatus" class="suggestion-status"></div><button type="button" class="go" id="ideaSend">Отправить предложение</button></div></div>\n\n<div class="modal hidden" id="modal"><div class="modal-box"><button class="close" id="close">×</button><h2 id="modalTitle">Войти в CINEORA</h2><p id="modalText">Введите имя. Для входа в существующую комнату укажите её код.</p><input id="name" placeholder="Ваше имя" maxlength="24" autocomplete="nickname"><input id="room" placeholder="Код сессии" maxlength="16" autocomplete="off"><input id="roomTitleInput" placeholder="Название киносеанса (необязательно)" maxlength="70" style="display:none"><input id="scheduleInput" type="datetime-local" style="display:none"><label id="privateOption" style="display:none;align-items:center;gap:7px;margin:8px 0;font-size:12px;color:#d9d0d8"><input id="privateRoom" type="checkbox"> 🔒 Приватная комната</label><div id="modalStatus" style="min-height:20px;color:#dbc5d8;font-size:13px;margin:6px 0"></div><button type="button" class="go" id="go">Войти</button><div id="authBenefits" style="margin-top:12px;color:#d9d0d8;font-size:12px;line-height:1.55"></div></div></div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+const modal=document.getElementById("modal"),nameInput=document.getElementById("name"),roomInput=document.getElementById("room"),title=document.getElementById("modalTitle"),text=document.getElementById("modalText");
+const modalStatus=document.getElementById("modalStatus"); const authBenefits=document.getElementById("authBenefits"); let modalCreate=false,modalAuth=false;
+function makeRoomCode(){return Math.random().toString(36).slice(2,10).toUpperCase()}
+const funnyLines=["🍿 Кто принёс попкорн — тот сегодня главный.","🎬 Фильм сам себя не посмотрит. К сожалению.","👀 Все пришли? Отлично. Никто не спойлерит.","🛋️ Диван виртуальный, но настроение настоящее.","😂 Если фильм плохой — хотя бы чат спасёт вечер.","🍕 Срочно собираем компанию. Пицца тоже приветствуется.","🎞️ Нажмите «Создать сессию» — приключение началось."]; 
+const funLine=document.getElementById("funLine"); if(funLine){let funIndex=Math.floor(Math.random()*funnyLines.length);funLine.textContent=funnyLines[funIndex];setInterval(()=>{funIndex=(funIndex+1)%funnyLines.length;funLine.style.opacity="0";setTimeout(()=>{funLine.textContent=funnyLines[funIndex];funLine.style.opacity="1"},180)},5000)}
+function openModal(create){
+  modalCreate=!!create; modalAuth=!create;
+  title.textContent=create?"Создать сессию":"Войти / Регистрация";
+  text.textContent=create?"Введите имя — мы создадим комнату и сразу откроем её.":"Можно продолжить как гость или сохранить имя CINEORA в этом браузере.";
+  roomInput.value=create?makeRoomCode():""; const roomTitleInput=document.getElementById("roomTitleInput"),scheduleInput=document.getElementById("scheduleInput"),privateOption=document.getElementById("privateOption"); if(roomTitleInput)roomTitleInput.style.display=create?"":"none"; if(scheduleInput)scheduleInput.style.display=create?"":"none"; if(privateOption)privateOption.style.display=create?"flex":"none"; if(create){roomTitleInput.value="";scheduleInput.value="";}
+  roomInput.readOnly=!!create;
+  roomInput.style.display=create?"":"block";
+  const savedName=localStorage.getItem("cineora_name")||sessionStorage.getItem("cineora_name")||"";
+  if(savedName)nameInput.value=savedName;
+  roomInput.placeholder=create?"Код новой комнаты":"Код сессии (необязательно)";
+  document.getElementById("go").textContent=create?"Создать комнату":"Продолжить";
+  authBenefits.innerHTML=create?"":"✨ <b>Что даёт регистрация:</b><br>• имя запоминается на этом устройстве;<br>• не нужно каждый раз вводить его заново;<br>• имя отображается в комнатах и чате.<br><br>🔓 Регистрация необязательна — можно заходить как гость.";
+  modalStatus.textContent="";
+  modal.classList.remove("hidden");
+  nameInput.focus()
+}
+document.getElementById("join").onclick=()=>openModal(false);document.getElementById("create").onclick=()=>openModal(true);document.getElementById("createTop").onclick=()=>openModal(true);document.getElementById("login").onclick=()=>openModal(false);document.getElementById("close").onclick=()=>modal.classList.add("hidden");
+function enterRoom(){
+  const n=nameInput.value.trim()||"Гость"; let r=roomInput.value.trim().toUpperCase();
+  try{localStorage.setItem("cineora_name",n);sessionStorage.setItem("cineora_name",n)}catch(e){}
+  document.cookie="cineora_name="+encodeURIComponent(n)+"; Max-Age=31536000; Path=/; SameSite=Lax";
+
+  // Вход/регистрация — самостоятельное действие. Код комнаты здесь необязателен.
+  if(modalAuth){
+    if(r){
+      modalStatus.textContent="Открываем комнату…";
+      location.assign("/?room="+encodeURIComponent(r));
+    }else{
+      modalStatus.textContent="✓ Готово! Вы вошли как "+n+". Имя сохранено на этом устройстве.";
+      nameInput.value=n;
+      roomInput.value="";
+    }
+    return;
+  }
+
+  if(!r){
+    r=makeRoomCode();
+    roomInput.value=r;
+  }
+  modalStatus.textContent="Создаём комнату "+r+"…";
+  localStorage.setItem("cineora_room",r);
+  sessionStorage.setItem("cineora_room",r);
+  const isPrivate=document.getElementById("privateRoom")?.checked===true; const accessToken=isPrivate?Array.from(crypto.getRandomValues(new Uint8Array(24)),b=>b.toString(16).padStart(2,"0")).join(""):""; const params=new URLSearchParams({room:r}); const rt=(document.getElementById("roomTitleInput")?.value||"").trim(); const at=document.getElementById("scheduleInput")?.value; if(rt)params.set("title",rt); if(at){const ts=Date.parse(at);if(Number.isFinite(ts))params.set("at",String(ts))} params.set("private",isPrivate?"1":"0"); if(accessToken)params.set("key",accessToken); window.location.href=window.location.origin+"/?"+params.toString();
+}
+document.getElementById("go").onclick=enterRoom;
+[nameInput,roomInput].forEach(el=>el.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();enterRoom()}}));
+
+const newsFeed=document.getElementById("newsFeed");
+async function loadNews(){try{const r=await fetch("/api/news");const d=await r.json();if(!r.ok||!d.news?.length)return;newsFeed.innerHTML=d.news.map(x=>`<article class="news-card"><div class="news-date">${new Date(x.createdAt).toLocaleDateString("ru-RU")}</div><h3>${escapeHtml(x.title)}</h3><p>${escapeHtml(x.text)}</p></article>`).join("")}catch(e){}}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]))}
+loadNews();
+
+const pageParams=new URLSearchParams(location.search); const q=pageParams.get("room");
+if(q){
+  document.querySelector(".hero").style.display="none";
+  document.querySelectorAll(".section,.footer").forEach(el=>el.style.display="none");
+  document.getElementById("modal").classList.add("hidden");
+  document.getElementById("roomView").classList.add("show");
+  startRoom(q.toUpperCase(),pageParams);
+}
+
+function startRoom(roomId,pageParams){
+  const cookieName=(document.cookie.match(/(?:^|; )cineora_name=([^;]*)/)||[])[1];
+  const myName=localStorage.getItem("cineora_name")||sessionStorage.getItem("cineora_name")||(cookieName?decodeURIComponent(cookieName):"Гость");
+  const roomAccessKey=new URLSearchParams(location.search).get("key")||"";
+  const roomPrivate=new URLSearchParams(location.search).get("private")==="1";
+  const socket=io({
+    autoConnect:false,
+    transports:["polling","websocket"],
+    query:{
+      roomId:String(roomId||""),
+      name:myName||"Гость",
+      privateRoom:roomPrivate?"1":"0",
+      accessToken:roomAccessKey
+    },
+    auth:{roomId:String(roomId||""),name:myName||"Гость",privateRoom:roomPrivate,accessToken:roomAccessKey}
+  });
+  let roomJoined=false;
+  window.cineoraRoomJoined=false;
+  window.socket=socket;
+  window.dispatchEvent(new Event("cineora:socket-ready")); const roomTitle=pageParams?.get("title")||"Киносеанс"; const scheduledAt=Number(pageParams?.get("at")||0); const roomTitleLabel=document.getElementById("roomTitleLabel"),inviteTitle=document.getElementById("inviteTitle"),countdown=document.getElementById("sessionCountdown"); if(roomTitleLabel)roomTitleLabel.textContent="🎬 "+roomTitle; if(inviteTitle)inviteTitle.textContent="🍿 "+roomTitle; if(scheduledAt&&countdown){let scheduledStarted=false;const tick=()=>{const left=scheduledAt-Date.now();if(left<=0){countdown.textContent="🍿 Киносеанс начинается сейчас";countdown.classList.add("show");if(!scheduledStarted&&socket.connected){scheduledStarted=true;socket.emit("sync",{playing:true,position:0});setTimeout(()=>applySync(true,0,Date.now()),300)}return}const s=Math.floor(left/1000),d=Math.floor(s/86400),hh=Math.floor(s%86400/3600),mm=Math.floor(s%3600/60),ss=s%60;countdown.textContent="🍿 Сеанс начнётся через "+(d?d+" д ":"")+String(hh).padStart(2,"0")+":"+String(mm).padStart(2,"0")+":"+String(ss).padStart(2,"0");countdown.classList.add("show")};tick();setInterval(tick,1000)}
+  // Real-time voice chat: WebRTC mesh with Socket.IO signaling.
+  const voicePeers=new Map();
+  const voiceMuted=new Map();
+  let voiceStream=null, voiceEnabled=false, voiceNoiseEnabled=true;
+  const voiceToggle=document.getElementById("voiceToggle");
+  const noiseSuppression=document.getElementById("noiseSuppression");
+  const voiceStatus=document.getElementById("voiceStatus");
+  const voiceConnection=document.getElementById("voiceConnection");
+  const voiceUsers=document.getElementById("voiceUsers");
+
+  function updateVoiceButton(){
+    if(!voiceToggle)return;
+    voiceToggle.classList.toggle("on",voiceEnabled);
+    voiceToggle.textContent=voiceEnabled?"🎙 Выключить микрофон":"🎙 Включить микрофон";
+    if(voiceStatus)voiceStatus.textContent=voiceEnabled?(voiceNoiseEnabled?"Микрофон включён · шумоподавление":"Микрофон включён · без шумоподавления"):"Микрофон выключен";
+  }
+  function renderVoiceUsers(users){
+    if(!voiceUsers)return;
+    voiceUsers.innerHTML=(users||[]).map(u=>{
+      const name=escapeHtml(u.name||"Гость");
+      return '<span class="voice-user '+(u.voiceEnabled?"active":"muted")+'" data-voice-id="'+escapeHtml(u.id||"")+'"><i class="voice-speaking-dot"></i><span class="voice-name">🎙 '+name+'</span><button type="button" class="voice-mute" title="Отключить звук">🔊</button><input class="voice-volume" type="range" min="0" max="1" step=".05" value="'+(voiceMuted.get(u.id)?0:.85)+'"></span>';
+    }).join("");
+  }
+  voiceUsers?.addEventListener("input",e=>{if(!e.target.classList.contains("voice-volume"))return;const row=e.target.closest(".voice-user"),id=row?.dataset.voiceId,p=voicePeers.get(id);if(!id||!p?.audio)return;const v=Number(e.target.value);voiceMuted.set(id,v===0);p.audio.volume=v;const b=row.querySelector(".voice-mute");if(b)b.textContent=v===0?"🔇":"🔊"});
+  voiceUsers?.addEventListener("click",e=>{const b=e.target.closest(".voice-mute");if(!b)return;const row=b.closest(".voice-user"),id=row?.dataset.voiceId,p=voicePeers.get(id);if(!id||!p?.audio)return;const v=p.audio.volume>0?0:.85;p.audio.volume=v;voiceMuted.set(id,v===0);b.textContent=v===0?"🔇":"🔊";const s=row.querySelector(".voice-volume");if(s)s.value=v});
+  function updateSpeaking(){for(const [id,p] of voicePeers){if(!p.analyser)continue;try{if(p.analyser.ctx.state==="suspended")p.analyser.ctx.resume();p.analyser.node.getByteFrequencyData(p.analyser.data);let sum=0;for(const n of p.analyser.data)sum+=n;const row=voiceUsers.querySelector('[data-voice-id="'+CSS.escape(id)+'"]');if(row)row.classList.toggle("speaking",sum/p.analyser.data.length>22)}catch(e){}}requestAnimationFrame(updateSpeaking)}
+  function removeVoicePeer(id){
+    const peer=voicePeers.get(id);
+    if(!peer)return;
+    try{peer.pc.close()}catch(e){}
+    if(peer.audio)peer.audio.remove();
+    voicePeers.delete(id);
+  }
+  function createVoicePeer(id,name,initiator){
+    if(voicePeers.has(id))return voicePeers.get(id).pc;
+    const pc=new RTCPeerConnection({
+      iceServers:[
+        {urls:"stun:stun.l.google.com:19302"},
+        {urls:"stun:stun1.l.google.com:19302"}
+      ]
+    });
+    const peer={pc,audio:null,name:name||"Гость",analyser:null};
+    voicePeers.set(id,peer);
+    if(voiceStream)voiceStream.getTracks().forEach(track=>pc.addTrack(track,voiceStream));
+    pc.onicecandidate=e=>{if(e.candidate)socket.emit("voice-signal",{to:id,data:{type:"candidate",candidate:e.candidate}})};
+    pc.ontrack=e=>{
+      let audio=peer.audio;
+      if(!audio){audio=document.createElement("audio");audio.autoplay=true;audio.playsInline=true;audio.volume=voiceMuted.get(id)?0:.85;audio.dataset.voicePeer=id;document.body.appendChild(audio);peer.audio=audio;try{const ctx=new (window.AudioContext||window.webkitAudioContext)();const src=ctx.createMediaElementSource(audio);const node=ctx.createAnalyser();node.fftSize=256;src.connect(node);node.connect(ctx.destination);peer.analyser={ctx,node,data:new Uint8Array(node.frequencyBinCount)}}catch(e){}}
+      if(e.streams&&e.streams[0])audio.srcObject=e.streams[0];
+    };
+    pc.onconnectionstatechange=()=>{
+      if(["failed","closed","disconnected"].includes(pc.connectionState))removeVoicePeer(id);
+    };
+    if(initiator){
+      pc.createOffer().then(o=>pc.setLocalDescription(o)).then(()=>socket.emit("voice-signal",{to:id,data:{type:"offer",sdp:pc.localDescription}})).catch(()=>{});
+    }
+    return pc;
+  }
+  async function ensureVoiceStream(){
+    if(voiceStream)return voiceStream;
+    if(!navigator.mediaDevices?.getUserMedia)throw new Error("Браузер не поддерживает доступ к микрофону.");
+    voiceStream=await navigator.mediaDevices.getUserMedia({
+      audio:{
+        echoCancellation:true,
+        noiseSuppression:voiceNoiseEnabled,
+        autoGainControl:true,
+        channelCount:1
+      },
+      video:false
+    });
+    voiceStream.getAudioTracks().forEach(t=>t.enabled=voiceEnabled);
+    return voiceStream;
+  }
+  async function setVoiceEnabled(enabled){
+    try{
+      if(enabled){
+        await ensureVoiceStream();
+        voiceEnabled=true;
+        voiceStream.getAudioTracks().forEach(t=>t.enabled=true);
+        for(const peer of voicePeers.values()){
+          const sender=peer.pc.getSenders().find(s=>s.track&&s.track.kind==="audio");
+          if(sender)await sender.replaceTrack(voiceStream.getAudioTracks()[0]);
+        }
+        socket.emit("voice-state",{enabled:true});
+      }else{
+        voiceEnabled=false;
+        if(voiceStream)voiceStream.getAudioTracks().forEach(t=>t.enabled=false);
+        socket.emit("voice-state",{enabled:false});
+      }
+      updateVoiceButton();
+    }catch(e){
+      voiceEnabled=false;
+      updateVoiceButton();
+      if(voiceStatus)voiceStatus.textContent=e.name==="NotAllowedError"?"Разрешите доступ к микрофону в браузере":"Не удалось включить микрофон";
+    }
+  }
+  async function setNoiseSuppression(enabled){
+    voiceNoiseEnabled=!!enabled;
+    if(!voiceStream)return;
+    const track=voiceStream.getAudioTracks()[0];
+    try{await track.applyConstraints({noiseSuppression:voiceNoiseEnabled,echoCancellation:true,autoGainControl:true})}catch(e){}
+    updateVoiceButton();
+  }
+  voiceToggle?.addEventListener("click",()=>setVoiceEnabled(!voiceEnabled));
+  updateSpeaking();
+  noiseSuppression?.addEventListener("change",e=>setNoiseSuppression(e.target.checked));
+  updateVoiceButton();
+
+  const wrap=document.getElementById("playerWrap"), host=document.getElementById("universalPlayer"), empty=document.getElementById("emptyPlayer");
+  const participants=document.getElementById("participants"), chatMessages=document.getElementById("chatMessages");
+  let suppress=false,lastProgress=0,currentType="",player=null,currentUrl="",hostId="",roomPlaying=false,roomPosition=0,roomServerTime=Date.now();
+  let lastLocalControl=0;
+  function publishSync(playing,position){
+    lastLocalControl=Date.now();
+    if(!socket.connected||!roomJoined)return;
+    socket.emit("sync",{playing:!!playing,position:Math.max(0,Number(position)||0)});
+  }
+  let embedPlayer=null,embedFrame=null,embedTime=0,embedDuration=0,embedPlaying=false;
+
+  document.getElementById("roomCodeLabel").textContent=roomId;
+  document.getElementById("myRoomName").textContent="Имя: "+myName;
+  document.getElementById("changeName").onclick=()=>{
+    const current=localStorage.getItem("cineora_name")||myName||"Гость";
+    const next=prompt("Введите новое имя",current);
+    if(next===null)return;
+    const clean=next.trim().slice(0,24);
+    if(!clean)return;
+    localStorage.setItem("cineora_name",clean);
+    sessionStorage.setItem("cineora_name",clean);
+    document.getElementById("myRoomName").textContent="Имя: "+clean;
+    socket.emit("rename",{name:clean});
+  };
+
+  function fmt(sec){
+    sec=Math.max(0,Math.floor(Number(sec)||0));
+    const h=Math.floor(sec/3600),m=Math.floor((sec%3600)/60),s=String(sec%60).padStart(2,"0");
+    return h? h+":"+String(m).padStart(2,"0")+":"+s : m+":"+s;
+  }
+
+  function normalizeUrl(raw){
+    const value=String(raw||"").trim();
+    if(!value)return "";
+    try{
+      // Accept a pasted URL even when the user copied surrounding whitespace.
+      return new URL(value,location.href).href;
+    }catch(e){
+      return "";
+    }
+  }
+
+  function cleanMediaId(value){
+    return String(value||"").trim().replace(/[?#].*$/,"").replace(/[^A-Za-z0-9_-]/g,"");
+  }
+
+  function getYouTubeId(raw){
+    try{
+      const u=new URL(raw);
+      const hostName=u.hostname.toLowerCase().replace(/^www\./,"");
+      if(hostName==="youtu.be"){
+        return cleanMediaId(u.pathname.split("/").filter(Boolean)[0]||"");
+      }
+      if(hostName==="youtube.com"||hostName.endsWith(".youtube.com")||hostName==="youtube-nocookie.com"||hostName.endsWith(".youtube-nocookie.com")){
+        if(u.pathname==="/watch")return cleanMediaId(u.searchParams.get("v")||"");
+        const parts=u.pathname.split("/").filter(Boolean);
+        if(["shorts","embed","live","v"].includes(parts[0]))return cleanMediaId(parts[1]||"");
+      }
+    }catch(e){}
+    return "";
+  }
+
+  function getRutube(raw){
+    try{
+      const u=new URL(raw);
+      const hostName=u.hostname.toLowerCase().replace(/^www\./,"");
+      if(hostName!=="rutube.ru"&&!hostName.endsWith(".rutube.ru"))return null;
+      const parts=u.pathname.split("/").filter(Boolean);
+      // Public links: /video/ID, /shorts/ID and /play/embed/ID.
+      const idx=parts.findIndex(x=>x.toLowerCase()==="video"||x.toLowerCase()==="shorts");
+      if(idx>=0&&parts[idx+1])return {id:cleanMediaId(parts[idx+1]),query:u.search};
+      if(parts[0]?.toLowerCase()==="play"&&parts[1]?.toLowerCase()==="embed"&&parts[2]){
+        return {id:cleanMediaId(parts[2]),query:u.search};
+      }
+    }catch(e){}
+    return null;
+  }
+
+  function getVkEmbed(raw){
+    try{
+      const u=new URL(raw);
+      const hostName=u.hostname.toLowerCase().replace(/^www\./,"");
+      if(!["vk.com","vk.ru","m.vk.com","vkvideo.ru"].includes(hostName))return "";
+
+      // Official VK embed link: /video_ext.php?oid=...&id=...
+      if(u.pathname.toLowerCase()==="/video_ext.php"){
+        const oid=u.searchParams.get("oid");
+        const id=u.searchParams.get("id");
+        if(oid&&id)return "https://vkvideo.ru/video_ext.php?oid="+encodeURIComponent(oid)+"&id="+encodeURIComponent(id)+(u.searchParams.get("hash")?"&hash="+encodeURIComponent(u.searchParams.get("hash")):"")+"&hd="+encodeURIComponent(u.searchParams.get("hd")||"2")+"&js_api=1";
+        return "";
+      }
+
+      // VK share links commonly arrive as ?z=video-123_456.
+      const z=u.searchParams.get("z")||"";
+      const zMatch=decodeURIComponent(z).match(/(?:^|\b)video(-?\d+)_([0-9]+)/i);
+      if(zMatch){
+        const oid=zMatch[1].startsWith("-")?zMatch[1]:"-"+zMatch[1];
+        const id=zMatch[2];
+        const hash=u.searchParams.get("hash");
+        return "https://vkvideo.ru/video_ext.php?oid="+encodeURIComponent(oid)+"&id="+encodeURIComponent(id)+(hash?"&hash="+encodeURIComponent(hash):"")+"&hd=2&js_api=1";
+      }
+
+      // VK / VK Video public page: /video-123_456, /video123_456.
+      const m=u.pathname.match(/(?:^|\/)video(-?\d+)_([0-9]+)/i);
+      if(m){
+        const oid=m[1].startsWith("-")?m[1]:"-"+m[1];
+        const id=m[2];
+        const hash=u.searchParams.get("hash");
+        return "https://vkvideo.ru/video_ext.php?oid="+encodeURIComponent(oid)+"&id="+encodeURIComponent(id)+(hash?"&hash="+encodeURIComponent(hash):"")+"&hd=2&js_api=1";
+      }
+
+      // Some VK Video share URLs put the video id in a query parameter.
+      const queryVideo=(u.searchParams.get("video")||u.searchParams.get("video_id")||"").match(/^(-?\d+)_([0-9]+)$/);
+      if(queryVideo){
+        const oid=queryVideo[1].startsWith("-")?queryVideo[1]:"-"+queryVideo[1];
+        return "https://vkvideo.ru/video_ext.php?oid="+encodeURIComponent(oid)+"&id="+encodeURIComponent(queryVideo[2])+"&hd=2&js_api=1";
+      }
+    }catch(e){}
+    return "";
+  }
+
+  function detect(raw){
+    const url=normalizeUrl(raw);
+    if(!url)return {type:"error"};
+    const yt=getYouTubeId(url);if(yt)return {type:"youtube",id:yt};
+    const rt=getRutube(url);if(rt?.id)return {type:"rutube",...rt};
+    const vk=getVkEmbed(url);if(vk)return {type:"vk",url:vk};
+    try{
+      const u=new URL(url);
+      const h=u.hostname.toLowerCase();
+      if(h==="lordfilm5.pro"||h.endsWith(".lordfilm5.pro"))return {type:"lordfilm",url};
+      if(h==="youtube.com"||h.endsWith(".youtube.com")||h==="youtu.be"||h==="youtube-nocookie.com")return {type:"unsupported-youtube",url};
+      if(h==="rutube.ru"||h.endsWith(".rutube.ru"))return {type:"unsupported-rutube",url};
+      if(h==="vk.com"||h==="vk.ru"||h==="m.vk.com"||h==="vkvideo.ru")return {type:"unsupported-vk",url};
+    }catch(e){}
+    if(/\.(m3u8)(?:[?#]|$)/i.test(url))return {type:"hls",url};
+    if(/\.(mp4|webm|ogg|ogv|mov|m4v)(?:[?#]|$)/i.test(url))return {type:"video",url};
+    return {type:"page",url};
+  }
+
+  function clearPlayer(){
+    try{if(embedPlayer?.destroy)embedPlayer.destroy()}catch(e){}
+    player=null;embedPlayer=null;embedFrame=null;embedTime=0;embedDuration=0;embedPlaying=false;
+    currentType="";currentUrl="";host.innerHTML="";empty.style.display="grid";
+  }
+  function setStatus(label){document.getElementById("mediaStatus").textContent=label}
+  function mediaStorageKey(roomId){return "cineora_media_"+String(roomId||"").trim().toUpperCase()}
+  function saveRoomMedia(roomId,url){
+    try{
+      const value=String(url||"").trim();
+      if(value)localStorage.setItem(mediaStorageKey(roomId),value);
+      else localStorage.removeItem(mediaStorageKey(roomId));
+    }catch(e){}
+  }
+  function getSavedRoomMedia(roomId){
+    try{return localStorage.getItem(mediaStorageKey(roomId))||""}catch(e){return ""}
+  }
+  function progressStorageKey(roomId){return "cineora_progress_"+String(roomId||"").trim().toUpperCase()}
+  function saveRoomProgress(roomId,url,position){
+    try{
+      const value=Number(position);
+      if(!url||!Number.isFinite(value)||value<0)return;
+      localStorage.setItem(progressStorageKey(roomId),JSON.stringify({url:String(url),position:value,savedAt:Date.now()}));
+    }catch(e){}
+  }
+  function getSavedRoomProgress(roomId,url){
+    try{
+      const raw=localStorage.getItem(progressStorageKey(roomId));
+      if(!raw)return null;
+      const data=JSON.parse(raw);
+      if(!data||String(data.url||"")!==String(url||""))return null;
+      const position=Number(data.position);
+      return Number.isFinite(position)&&position>=0?position:null;
+    }catch(e){return null}
+  }
+  function restoreSavedProgress(){
+    const saved=getSavedRoomProgress(roomId,currentUrl);
+    if(saved===null)return false;
+    suppress=true;
+    try{
+      if(currentType==="youtube"&&player?.seekTo){
+        player.seekTo(saved,true);
+      }else if(currentType==="video"){
+        const v=document.getElementById("roomVideo");
+        if(v)v.currentTime=saved;
+      }else if((currentType==="rutube"||currentType==="vk")&&embedPlayer?.seek){
+        embedPlayer.seek(saved);
+      }else if((currentType==="rutube"||currentType==="vk")&&embedFrame){
+        embedFrame.contentWindow.postMessage(JSON.stringify({type:"player:setCurrentTime",data:{time:saved}}),"*");
+      }else{
+        suppress=false;
+        return false;
+      }
+    }catch(e){}
+    setTimeout(()=>suppress=false,500);
+    setStatus("Продолжаем с "+fmt(saved));
+    return true;
+  }
+  function showError(message){player=null;embedPlayer=null;embedFrame=null;currentType="error";host.innerHTML='<div class="player-error"><strong>Не удалось открыть видео</strong><span>'+escapeHtml(message)+'</span></div>';empty.style.display="none"}
+
+  function makeIframe(src){
+    host.innerHTML="";
+    const iframe=document.createElement("iframe");
+    iframe.src=src;iframe.allow="autoplay; fullscreen; picture-in-picture; encrypted-media; screen-wake-lock";iframe.allowFullscreen=true;iframe.referrerPolicy="strict-origin-when-cross-origin";
+    host.appendChild(iframe);
+    embedFrame=iframe;
+    return iframe;
+  }
+
+  // RUTUBE sends player events to the parent window. VK exposes a JS API when
+  // js_api=1 is present in the embed URL. Both paths let CINEORA report the
+  // real current position and duration to the participant list.
+  window.addEventListener("message",event=>{
+    if(!embedFrame || event.source!==embedFrame.contentWindow)return;
+    let msg=event.data;
+    try{if(typeof msg==="string")msg=JSON.parse(msg)}catch(e){return}
+    if(!msg||typeof msg!=="object")return;
+    const data=msg.data&&typeof msg.data==="object"?msg.data:msg;
+    const type=msg.type||msg.event||"";
+    if(currentType==="rutube"){
+      if(type==="player:currentTime")embedTime=Number(data.time)||0;
+      if(type==="player:durationChange")embedDuration=Number(data.duration)||embedDuration;
+      if(type==="player:changeState"){
+        embedPlaying=data.state==="playing";
+        if(data.time!=null)embedTime=Number(data.time)||0;
+        if(data.duration!=null)embedDuration=Number(data.duration)||embedDuration;
+        if(!suppress && (data.state==="playing" || data.state==="paused" || data.state==="ended")){
+          socket.emit("sync",{playing:data.state==="playing",position:embedTime});
+        }
+      }
+    }
+  });
+
+  function loadVkApi(iframe){
+    const init=()=>{
+      try{
+        if(window.VK&&typeof window.VK.VideoPlayer==="function"){
+          embedPlayer=window.VK.VideoPlayer(iframe);
+          const onState=(state,eventName)=>{
+            if(!state)return;
+            if(state.time!=null)embedTime=Number(state.time)||0;
+            if(state.duration!=null)embedDuration=Number(state.duration)||embedDuration;
+            if(!suppress && (eventName==="started" || eventName==="resumed" || eventName==="paused" || eventName==="ended")){
+              socket.emit("sync",{playing:eventName==="started"||eventName==="resumed",position:embedTime});
+            }
+          };
+          ["inited","timeupdate","started","resumed","paused","ended"].forEach(name=>{
+            try{embedPlayer.on(name,state=>onState(state,name))}catch(e){}
+          });
+        }
+      }catch(e){}
+    };
+    if(window.VK&&typeof window.VK.VideoPlayer==="function"){init();return}
+    if(document.querySelector('script[data-vk-video-api]')){setTimeout(init,150);return}
+    const s=document.createElement("script");
+    s.src="https://vk.com/js/api/videoplayer.js";
+    s.async=true;s.dataset.vkVideoApi="1";s.onload=init;
+    document.head.appendChild(s);
+  }
+
+  function loadYouTube(id){
+    currentType="youtube";embedPlayer=null;embedFrame=null;embedTime=0;embedDuration=0;embedPlaying=false;
+    host.innerHTML='<div id="ytPlayer" class="universal-player"></div>';
+    const build=()=>{
+      if(!window.YT||!YT.Player){setTimeout(build,100);return}
+      player=new YT.Player("ytPlayer",{width:"100%",height:"100%",videoId:id,playerVars:{playsinline:1,rel:0,origin:location.origin,enablejsapi:1},events:{
+        onReady:()=>{
+          setStatus("YouTube · готово к просмотру");
+          try{embedDuration=player.getDuration()||0}catch(e){}
+          setTimeout(()=>restoreSavedProgress(),150);
+        },
+        onStateChange:e=>{
+          if(suppress)return;
+          if(e.data===1)socket.emit("sync",{playing:true,position:player.getCurrentTime()});
+          if(e.data===2||e.data===0)socket.emit("sync",{playing:false,position:player.getCurrentTime()});
+        },
+        onAutoplayBlocked:()=>setStatus("Нажмите ▶ в плеере — браузер заблокировал автозапуск"),
+        onError:e=>showError("YouTube не разрешил этот ролик во встроенном плеере. Код ошибки: "+e.data)
+      }});
+    };
+    window.onYouTubeIframeAPIReady=build;
+    if(window.YT&&YT.Player)build();
+    else if(!document.querySelector('script[data-youtube-api]')){
+      const s=document.createElement("script");s.src="https://www.youtube.com/iframe_api";s.async=true;s.dataset.youtubeApi="1";document.head.appendChild(s);
+    }
+  }
+
+  function ytCommand(func,args=[]){
+    try{if(player&&player[func])player[func](...args)}catch(e){}
+  }
+
+  async function loadLordfilm(url){
+    currentType="iframe";
+    host.innerHTML="";
+    setStatus("Lordfilm · ищем плеер…");
+    try{
+      const response=await fetch("/api/lordfilm-embed?url="+encodeURIComponent(url),{headers:{"Accept":"application/json"}});
+      const data=await response.json();
+      if(!response.ok||!data.ok)throw new Error(data.error||"Плеер не найден");
+      const embedUrl=String(data.embedUrl||"").trim();
+      if(!embedUrl)throw new Error("Плеер не найден");
+      const provider=detect(embedUrl);
+      if(provider.type==="youtube"){
+        currentType="youtube";
+        loadYouTube(provider.id);
+        setStatus("Lordfilm · YouTube-плеер");
+        return;
+      }
+      if(provider.type==="rutube"){
+        currentType="rutube";embedTime=0;embedDuration=0;embedPlaying=false;
+        const iframe=makeIframe("https://rutube.ru/play/embed/"+encodeURIComponent(provider.id)+provider.query);
+        iframe.addEventListener("load",()=>setStatus("Lordfilm · RUTUBE-плеер"),{once:true});
+        return;
+      }
+      if(provider.type==="vk"){
+        currentType="vk";embedTime=0;embedDuration=0;embedPlaying=false;
+        const sep=embedUrl.includes("?")?"&":"?";
+        const iframe=makeIframe(embedUrl+(embedUrl.includes("js_api=")?"":sep+"js_api=1"));
+        iframe.addEventListener("load",()=>{loadVkApi(iframe);setStatus("Lordfilm · VK-плеер")},{once:true});
+        return;
+      }
+      const iframe=makeIframe(embedUrl);
+      iframe.addEventListener("load",()=>setStatus("Lordfilm · плеер готов"),{once:true});
+    }catch(e){
+      currentType="error";
+      showError(e.message||"Не удалось найти плеер Lordfilm.");
+    }
+  }
+
+  function loadMedia(raw){
+    const nextUrl=String(raw||"").trim();
+    if(nextUrl&&nextUrl===currentUrl&&currentType&&currentType!=="error")return;
+    const d=detect(nextUrl);currentUrl=nextUrl;
+    if(!nextUrl){clearPlayer();setStatus("Видео пока не добавлено");return}
+    empty.style.display="none";
+    if(d.type==="youtube"){loadYouTube(d.id);setStatus("YouTube · загружаем…");return}
+    if(d.type==="lordfilm"){loadLordfilm(d.url);return}
+    if(d.type==="rutube"){
+      currentType="rutube";embedTime=0;embedDuration=0;embedPlaying=false;
+      const iframe=makeIframe("https://rutube.ru/play/embed/"+encodeURIComponent(d.id)+d.query);
+      iframe.addEventListener("load",()=>{
+        setStatus("RUTUBE · готово к просмотру");
+        setTimeout(()=>restoreSavedProgress(),900);
+      },{once:true});
+      setStatus("RUTUBE · загружаем…");return
+    }
+    if(d.type==="vk"){
+      currentType="vk";embedTime=0;embedDuration=0;embedPlaying=false;
+      const iframe=makeIframe(d.url);
+      iframe.addEventListener("load",()=>{
+        loadVkApi(iframe);
+        setStatus("VK Видео · готово к просмотру");
+        setTimeout(()=>restoreSavedProgress(),900);
+      },{once:true});
+      setStatus("VK Видео · загружаем…");return
+    }
+    if(d.type==="unsupported-youtube"||d.type==="unsupported-vk"||d.type==="unsupported-rutube"){
+      const names={"unsupported-youtube":"YouTube","unsupported-vk":"VK Видео","unsupported-rutube":"RUTUBE"};
+      showError("Ссылка распознана как "+names[d.type]+", но формат ссылки не содержит идентификатор видео. Откройте конкретный ролик и вставьте ссылку ещё раз.");
+      return
+    }
+    if(d.type==="hls"){
+      currentType="video";host.innerHTML="";
+      const v=document.createElement("video");v.id="roomVideo";v.controls=false;v.playsInline=true;v.preload="metadata";host.appendChild(v);
+      const startHls=()=>{
+        if(v.canPlayType("application/vnd.apple.mpegurl")){
+          v.src=d.url;
+          setStatus("HLS · готово к просмотру");
+        }else if(window.Hls){
+          const hls=new Hls({enableWorker:true,lowLatencyMode:false});
+          hls.loadSource(d.url);hls.attachMedia(v);
+          hls.on(Hls.Events.MANIFEST_PARSED,()=>{
+            setStatus("HLS · готово к просмотру");
+            setTimeout(()=>restoreSavedProgress(),100);
+          });
+          hls.on(Hls.Events.ERROR,(ev,data)=>{
+            if(data?.fatal)showError("Не удалось открыть HLS-поток. Проверьте ссылку или доступ к потоку.");
+          });
+          v._cineoraHls=hls;
+        }else{
+          const sc=document.createElement("script");sc.src="https://cdn.jsdelivr.net/npm/hls.js@latest";sc.async=true;
+          sc.onload=()=>startHls();sc.onerror=()=>showError("Не удалось загрузить поддержку HLS.");
+          document.head.appendChild(sc);
+        }
+      };
+      startHls();
+      v.addEventListener("play",()=>{if(!suppress)socket.emit("sync",{playing:true,position:v.currentTime})});
+      v.addEventListener("pause",()=>{if(!suppress)socket.emit("sync",{playing:false,position:v.currentTime})});
+      v.addEventListener("seeked",()=>{if(!suppress)socket.emit("sync",{playing:!v.paused,position:v.currentTime})});
+      v.addEventListener("error",()=>showError("Браузер не может воспроизвести этот видеоформат. Попробуйте MP4, WebM или HLS (M3U8)."));
+      return;
+    }
+    if(d.type==="video"){
+      currentType="video";host.innerHTML="";
+      const v=document.createElement("video");v.id="roomVideo";v.controls=false;v.playsInline=true;v.preload="metadata";v.src=d.url;host.appendChild(v);
+      setStatus("Видео из интернета");
+      v.addEventListener("play",()=>{if(!suppress)socket.emit("sync",{playing:true,position:v.currentTime})});
+      v.addEventListener("pause",()=>{if(!suppress)socket.emit("sync",{playing:false,position:v.currentTime})});
+      v.addEventListener("seeked",()=>{if(!suppress)socket.emit("sync",{playing:!v.paused,position:v.currentTime})});
+      v.addEventListener("loadedmetadata",()=>{
+        setStatus("Видео · готово к просмотру");
+        setTimeout(()=>restoreSavedProgress(),50);
+      });
+      v.addEventListener("error",()=>showError("Не удалось воспроизвести видео. Для страниц Lordfilm вставляйте ссылку на страницу сериала/фильма, а для других сайтов — прямую ссылку на видео."));
+      return;
+    }
+    currentType="iframe";makeIframe(d.url);setStatus("Страница с видео");
+  }
+
+  function getPosition(){
+    try{
+      if(currentType==="youtube"&&player?.getCurrentTime)return player.getCurrentTime()||0;
+      if(currentType==="video")return document.getElementById("roomVideo")?.currentTime||0;
+      if(currentType==="rutube"||currentType==="vk"){
+        if(embedPlayer?.getCurrentTime){
+          const t=embedPlayer.getCurrentTime();
+          if(typeof t==="number")embedTime=t;
+        }
+        return Number(embedTime)||0;
+      }
+    }catch(e){}
+    return 0;
+  }
+
+  function getDuration(){
+    try{
+      if(currentType==="youtube"&&player?.getDuration)return player.getDuration()||0;
+      if(currentType==="video")return document.getElementById("roomVideo")?.duration||0;
+      if(currentType==="rutube"||currentType==="vk"){
+        if(embedPlayer?.getDuration){
+          const d=embedPlayer.getDuration();
+          if(typeof d==="number"&&d>0)embedDuration=d;
+        }
+        return Number(embedDuration)||0;
+      }
+    }catch(e){}
+    return 0;
+  }
+
+  function isPlaying(){
+    try{
+      if(currentType==="youtube"&&player?.getPlayerState)return player.getPlayerState()===1;
+      if(currentType==="video"){const v=document.getElementById("roomVideo");return !!v&&!v.paused}
+      if(currentType==="rutube"||currentType==="vk")return !!embedPlaying;
+    }catch(e){}
+    return false;
+  }
+
+  function isHost(){return !!socket&&socket.id===hostId}
+  function targetPosition(pos,serverTime,playing){
+    const base=Number(pos)||0;
+    if(!playing)return base;
+    const stamp=Number(serverTime)||Date.now();
+    return base+Math.max(0,(Date.now()-stamp)/1000);
+  }
+
+  function applySync(playing,pos,serverTime){
+    roomPlaying=!!playing;roomPosition=Number(pos)||0;roomServerTime=Number(serverTime)||Date.now();
+    suppress=true;
+    try{
+      if(currentType==="youtube"){
+        ytCommand("seekTo",[targetPosition(pos,serverTime,playing),true]);
+        ytCommand(playing?"playVideo":"pauseVideo");
+      }else if(currentType==="video"){
+        const v=document.getElementById("roomVideo");
+        if(v){const target=targetPosition(pos,serverTime,playing);if(Math.abs((v.currentTime||0)-target)>0.7)v.currentTime=target;if(playing)v.play().catch(()=>setStatus("Нажмите ▶ в плеере — браузер заблокировал автозапуск"));else v.pause()}
+      }else if(currentType==="rutube"){
+        const iframe=host.querySelector("iframe");
+        if(iframe){
+          const target=targetPosition(pos,serverTime,playing);
+          iframe.contentWindow.postMessage(JSON.stringify({type:"player:setCurrentTime",data:{time:target}}),"*");
+          iframe.contentWindow.postMessage(JSON.stringify({type:playing?"player:play":"player:pause",data:{}}),"*");
+        }
+      }else if(currentType==="vk"){
+        const target=targetPosition(pos,serverTime,playing);
+        if(embedPlayer){
+          if(embedPlayer.seek)embedPlayer.seek(target);
+          if(playing&&embedPlayer.play)embedPlayer.play();
+          if(!playing&&embedPlayer.pause)embedPlayer.pause();
+        }
+      }
+    }catch(e){}
+    setTimeout(()=>suppress=false,900);
+  }
+
+  function updateRoomSyncIndicator(){
+  const el=document.getElementById("roomSyncIndicator");
+  if(!el)return;
+  const list=Array.isArray(window.__cineoraUsers)?window.__cineoraUsers:[];
+  const ok=!!currentUrl && roomPlaying && list.length>0 && list.every(u=>u.playing && Math.abs((Number(u.position)||0)-targetPosition(roomPosition,roomServerTime,roomPlaying))<2);
+  el.classList.toggle("visible",ok); el.classList.toggle("pulse",ok);
+}
+function renderUsers(users){
+    const list=Array.isArray(users)?users:[]; window.__cineoraUsers=list; updateRoomSyncIndicator();
+    const countEl=document.getElementById("participantCount");
+    const viewerEl=document.getElementById("viewerCount");
+    if(countEl)countEl.textContent=list.length;
+    if(viewerEl)viewerEl.textContent=list.length;
+
+    participants.innerHTML=list.map((u,index)=>{
+      const pos=Math.max(0,Number(u.position)||0);
+      const duration=Math.max(0,Number(u.duration)||0);
+      const pct=duration?Math.min(100,Math.max(0,pos/duration*100)):0;
+      const isMe=u.id===socket.id;
+      const isHost=u.id===hostId;
+      let status="Ожидает видео",statusClass="waiting",statusIcon="○";
+      if(currentUrl){
+        if(u.playing){status="Смотрит";statusClass="watching";statusIcon="▶";}
+        else{status="На паузе";statusClass="paused";statusIcon="Ⅱ";}
+      }
+      const roomNow=targetPosition(roomPosition,roomServerTime,roomPlaying);
+      const drift=Math.abs(pos-roomNow);
+      const synced=currentUrl&&u.playing&&roomPlaying&&drift<2;
+      const syncLabel=synced?"Синхронно":(currentUrl&&u.playing?"Небольшая задержка":"");
+      return '<div class="person-row participant-card '+statusClass+(isMe?" is-me":"")+'">'+
+        '<div class="participant-main">'+
+          '<div class="participant-avatar">'+escapeHtml((u.name||"Г").trim().charAt(0).toUpperCase())+'</div>'+
+          '<div class="participant-info">'+
+            '<div class="participant-name-line"><span class="person-name">'+escapeHtml(u.name||"Гость")+'</span>'+(u.isAdmin?'<span class="admin-sticker">✦ Админ</span>':"")+(isMe?'<span class="me-badge">вы</span>':"")+(isHost?'<span class="host-badge">хост</span>':"")+'</div>'+
+            '<div class="participant-status '+statusClass+'"><span class="status-icon">'+statusIcon+'</span><span>'+status+'</span>'+(syncLabel?'<span class="sync-label">'+syncLabel+'</span>':"")+'</div>'+
+            '<div class="person-progress"><i style="width:'+pct+'%"></i></div>'+
+          '</div>'+
+        '</div>'+
+        '<div class="participant-time"><span>'+fmt(pos)+'</span>'+(duration?'<small>/ '+fmt(duration)+'</small>':"")+'</div>'+
+      '</div>';
+    }).join("");
+  }
+  let cineoraChatAudio=null;
+  let cineoraAudioReady=false;
+  function prepareChatAudio(){
+    if(cineoraChatAudio)return;
+    try{
+      cineoraChatAudio=new (window.AudioContext||window.webkitAudioContext)();
+      cineoraAudioReady=true;
+      if(cineoraChatAudio.state==="suspended")cineoraChatAudio.resume().catch(()=>{});
+    }catch(e){}
+  }
+  document.addEventListener("pointerdown",prepareChatAudio,{once:true});
+  document.addEventListener("keydown",prepareChatAudio,{once:true});
+  function playIncomingMessageSound(){
+    if(!cineoraChatAudio||!cineoraAudioReady)return;
+    try{
+      const ctx=cineoraChatAudio;
+      if(ctx.state==="suspended")ctx.resume().catch(()=>{});
+      const now=ctx.currentTime;
+      const osc=ctx.createOscillator();
+      const gain=ctx.createGain();
+      osc.type="sine";
+      osc.frequency.setValueAtTime(720,now);
+      osc.frequency.exponentialRampToValueAtTime(980,now+0.08);
+      gain.gain.setValueAtTime(0.0001,now);
+      gain.gain.exponentialRampToValueAtTime(0.055,now+0.012);
+      gain.gain.exponentialRampToValueAtTime(0.0001,now+0.18);
+      osc.connect(gain);gain.connect(ctx.destination);
+      osc.start(now);osc.stop(now+0.2);
+    }catch(e){}
+  }
+  function addMessage(m, incoming=false){
+    const wasNearBottom=(chatMessages.scrollHeight-chatMessages.scrollTop-chatMessages.clientHeight)<48;
+    const el=document.createElement("div");
+    const own=m.userId===socket.id;
+    el.className="chat-msg"+(own?" own":"");
+    el.dataset.messageId=m.id||"";
+    el.innerHTML="<div class=\"chat-msg-head\"><b>"+escapeHtml(m.name||"Гость")+(m.isAdmin?'<span class="admin-sticker">✦ Админ</span>':"")+"</b><small>"+escapeHtml(m.time||"")+"</small></div><span>"+escapeHtml(m.text)+"</span>";
+    chatMessages.appendChild(el);
+    if(wasNearBottom||own||incoming)chatMessages.scrollTo({top:chatMessages.scrollHeight,behavior:"smooth"});
+    updateChatCount();
+    if(incoming)playIncomingMessageSound();
+  }
+  function updateChatCount(){
+    const count=document.querySelectorAll("#chatMessages .chat-msg").length;
+    const badge=document.getElementById("chatMessageCount");
+    if(badge)badge.textContent=count;
+  }
+
+  async function submitMedia(){
+    const input=document.getElementById("mediaUrlRoom");
+    const button=document.getElementById("setMediaRoom");
+    const url=input.value.trim();
+    if(!url){
+      setStatus("Вставьте ссылку на видео");
+      input.focus();
+      return;
+    }
+    button.disabled=true;
+    const oldText=button.textContent;
+    button.textContent="Загрузка…";
+    const send=()=>{
+      if(!roomJoined||!window.cineoraRoomJoined){
+        setStatus("Сначала подключаемся к комнате…");
+        button.disabled=false;button.textContent=oldText;
+        return;
+      }
+      socket.emit("set-media",{url},reply=>{
+        if(reply && !reply.ok){
+          setStatus(reply.error||"Не удалось загрузить видео");
+        }else{
+          saveRoomMedia(roomId,url);
+          const detected=detect(url);
+          if(detected.type==="lordfilm")setStatus("Lordfilm · загружаем плеер…");
+        }
+        button.disabled=false;button.textContent=oldText;
+      });
+    };
+    if(socket.connected)send();
+    else{
+      setStatus("Соединение с комнатой потеряно — переподключаемся…");
+      window.addEventListener("cineora:connected",send,{once:true});
+      socket.connect();
+    }
+  };
+  {const roomParams=new URLSearchParams(location.search);const isPrivateRoom=roomParams.get("private")==="1";const hasPrivateKey=!!roomParams.get("key");document.body.classList.toggle("room-private",isPrivateRoom);document.body.classList.toggle("room-public",!isPrivateRoom);const modeLabel=document.getElementById("roomModeLabel");if(modeLabel){modeLabel.className="room-code room-mode-chip "+(isPrivateRoom?"private":"public");modeLabel.textContent=isPrivateRoom?"🔒 Приватная":"🌐 Обычная"}const inviteTitleMode=document.getElementById("inviteTitle"),inviteSub=document.getElementById("inviteSub");if(isPrivateRoom){if(inviteTitleMode)inviteTitleMode.textContent="🔒 Приватное приглашение";if(inviteSub)inviteSub.textContent="Эта ссылка ведёт прямо в закрытую комнату."}else{if(inviteTitleMode)inviteTitleMode.textContent="🍿 Присоединяйтесь к просмотру";if(inviteSub)inviteSub.textContent="Отправьте ссылку друзьям — фильм уже ждёт."}}
+  document.getElementById("setMediaRoom").onclick=submitMedia;
+  window.addEventListener("pagehide",()=>{try{saveRoomProgress(roomId,currentUrl,getPosition())}catch(e){}});
+  window.addEventListener("beforeunload",()=>{try{saveRoomProgress(roomId,currentUrl,getPosition())}catch(e){}});
+  document.getElementById("mediaUrlRoom").addEventListener("keydown",e=>{
+    if(e.key==="Enter"){
+      e.preventDefault();
+      if(!e.isComposing)submitMedia();
+    }
+  });
+  document.getElementById("mediaUrlRoom").addEventListener("paste",()=>{
+    setTimeout(()=>{
+      const input=document.getElementById("mediaUrlRoom");
+      if(input&&input.value.trim())submitMedia();
+    },0);
+  });
+  const roomLayout=document.querySelector(".room-layout"),sideCard=document.getElementById("sideCard");
+  const setFullscreenChat=()=>{sideCard.classList.remove("is-open","fullscreen-chat")};
+  const fullscreenBtn=document.getElementById("fullscreenBtn");
+  if(fullscreenBtn) fullscreenBtn.onclick=async()=>{
+    try{
+      if(document.fullscreenElement){await document.exitFullscreen();return}
+      await wrap.requestFullscreen();
+    }catch(e){
+      setStatus("Полный экран недоступен в этом браузере");
+    }
+  };
+  document.addEventListener("fullscreenchange",()=>{
+    const b=document.getElementById("fullscreenBtn");
+    const full=document.fullscreenElement===wrap;
+    if(b)b.textContent=full?"⛶ Выйти из полного экрана":"⛶ На весь экран";
+    setFullscreenChat();
+  });
+  document.getElementById("syncBtn").onclick=()=>{
+    const b=document.getElementById("syncBtn");
+    if(!socket.connected){
+      b.textContent="Подключение…";
+      socket.connect();
+      socket.once("connect",()=>{socket.emit("request-sync");b.textContent="✓ Синхронизировано";setTimeout(()=>b.textContent="↻ Синхронизировать",1400)});
+      return;
+    }
+    b.textContent="Синхронизация…";
+    socket.emit("request-sync");
+    setTimeout(()=>{b.textContent="✓ Синхронизировано";setTimeout(()=>b.textContent="↻ Синхронизировать",1200)},350);
+  };
+  document.querySelector(".chat-close")?.addEventListener("click",()=>{setFullscreenChat()});
+  document.getElementById("inviteJoin")?.addEventListener("click",async function(e){
+    e.preventDefault();
+    e.stopPropagation();
+
+    const currentParams=new URLSearchParams(window.location.search); const inviteParams=new URLSearchParams(); inviteParams.set("room",roomId); const inviteKey=currentParams.get("key"); const invitePrivate=currentParams.get("private")==="1" || !!inviteKey; if(invitePrivate)inviteParams.set("private","1"); if(inviteKey)inviteParams.set("key",inviteKey); const inviteTitle=currentParams.get("title"); const inviteAt=currentParams.get("at"); if(inviteTitle)inviteParams.set("title",inviteTitle); if(inviteAt)inviteParams.set("at",inviteAt); const inviteUrl=window.location.origin+"/?"+inviteParams.toString(); const preview=document.getElementById("inviteLinkPreview"); if(preview)preview.textContent=inviteUrl;
+    const button=this;
+
+    async function copyText(text){
+      try{
+        if(navigator.clipboard&&window.isSecureContext){
+          await navigator.clipboard.writeText(text);
+          return true;
+        }
+      }catch(_){}
+      try{
+        const ta=document.createElement("textarea");
+        ta.value=text;
+        ta.setAttribute("readonly","");
+        ta.style.position="fixed";
+        ta.style.left="-9999px";
+        ta.style.top="0";
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        const ok=document.execCommand("copy");
+        ta.remove();
+        if(ok)return true;
+      }catch(_){}
+      return false;
+    }
+
+    const copied=await copyText(inviteUrl);
+    if(copied){
+      const old=button.textContent;
+      button.textContent="✓ Ссылка скопирована";
+      button.classList.add("invite-copied");
+      setTimeout(()=>{button.textContent=old;button.classList.remove("invite-copied")},2200);
+      return;
+    }
+
+    const answer=window.prompt("Скопируйте ссылку приглашения:",inviteUrl);
+    if(answer!==null){
+      const old=button.textContent;
+      button.textContent="✓ Ссылка готова";
+      setTimeout(()=>button.textContent=old,1800);
+    }
+  });
+
+  document.getElementById("leaveRoom").onclick=()=>{location.href="/"};
+
+  setInterval(()=>{
+    if(!socket.connected||suppress)return;
+    const syncable=currentType==="youtube"||currentType==="video"||currentType==="rutube"||currentType==="vk";
+    if(syncable&&roomJoined&&Date.now()-lastProgress>1200){
+      lastProgress=Date.now();
+      const target=targetPosition(roomPosition,roomServerTime,roomPlaying);
+      const now=getPosition();
+      const tolerance=roomPlaying?0.65:0.35;
+      // Never fight a fresh local Play/Pause/Seek action.
+      if(Date.now()-lastLocalControl>1500 && Math.abs(now-target)>tolerance){
+        applySync(roomPlaying,roomPosition,roomServerTime);
+      }
+    }
+    if(currentType){
+      const duration=getDuration();
+      const currentPosition=getPosition();
+      socket.emit("user-progress",{position:currentPosition,playing:isPlaying(),duration});
+      if(currentUrl&&currentType!=="error")saveRoomProgress(roomId,currentUrl,currentPosition);
+    }
+  },500);
+
+  const chatForm=document.getElementById("chatForm");
+  const chatInput=document.getElementById("chatInput");
+  const emojiToggle=document.getElementById("emojiToggle");
+  const emojiPicker=document.getElementById("emojiPicker");
+  const emojiWrap=document.querySelector(".emoji-wrap");
+  function toggleEmojiPicker(){
+    const isHidden=emojiPicker.classList.contains("hidden");
+    emojiPicker.classList.toggle("hidden",!isHidden);
+  }
+  emojiToggle.onclick=(e)=>{e.preventDefault();e.stopPropagation();toggleEmojiPicker()};
+  emojiToggle.onpointerdown=(e)=>{e.preventDefault();e.stopPropagation()};
+  emojiPicker.onclick=(e)=>{
+    e.preventDefault();
+    e.stopPropagation();
+    const b=e.target.closest("button");
+    if(!b)return;
+    const emoji=b.textContent.trim();
+    if(!emoji)return;
+    const start=chatInput.selectionStart ?? chatInput.value.length;
+    const end=chatInput.selectionEnd ?? chatInput.value.length;
+    chatInput.value=chatInput.value.slice(0,start)+emoji+chatInput.value.slice(end);
+    chatInput.focus();
+    const cursor=start+emoji.length;
+    try{chatInput.setSelectionRange(cursor,cursor)}catch(_){}
+    emojiPicker.classList.add("hidden");
+  };
+  document.addEventListener("click",e=>{
+    if(!emojiWrap || !emojiWrap.contains(e.target)) emojiPicker.classList.add("hidden");
+  });
+  let pendingChat="";
+  function sendChatMessage(){
+    const msg=chatInput.value.trim();
+    if(!msg)return;
+    if(!socket.connected || !roomJoined || !window.cineoraRoomJoined){
+      pendingChat=msg;
+      setStatus(!socket.connected?"Подключаемся к комнате…":"Входим в комнату…");
+      if(!socket.connected){try{socket.connect()}catch(e){}}
+      return;
+    }
+    socket.emit("chat-message",{text:msg},ack=>{
+      if(!ack?.ok){
+        setStatus(ack?.error||"Не удалось отправить сообщение");
+        return;
+      }
+      playChatSound();
+      chatInput.value="";
+      chatInput.focus();
+    });
+  }
+  chatForm.addEventListener("submit",e=>{ prepareChatAudio();e.preventDefault();sendChatMessage()});
+  chatInput.addEventListener("input",()=>{refreshTyping()});
+  chatInput.addEventListener("blur",()=>{clearTimeout(typingTimer);setTyping(false)});
+  chatInput.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();clearTimeout(typingTimer);setTyping(false);sendChatMessage()}});
+  socket.on("voice-signal",async({from,name,data})=>{
+    try{
+      let peer=voicePeers.get(from);
+      if(data?.type==="offer"){
+        const pc=createVoicePeer(from,name,false);
+        await pc.setRemoteDescription(new RTCSessionDescription(data.sdp));
+        const answer=await pc.createAnswer();
+        await pc.setLocalDescription(answer);
+        socket.emit("voice-signal",{to:from,data:{type:"answer",sdp:pc.localDescription}});
+      }else if(data?.type==="answer"){
+        if(!peer)peer={pc:createVoicePeer(from,name,false),name:name||"Гость"};
+        await peer.pc.setRemoteDescription(new RTCSessionDescription(data.sdp));
+      }else if(data?.type==="candidate"&&peer){
+        try{await peer.pc.addIceCandidate(data.candidate)}catch(e){}
+      }
+    }catch(e){}
+  });
+  function ensureVoicePeers(users){
+    if(!voiceEnabled)return;
+    (users||[]).filter(u=>u.id!==socket.id && u.voiceEnabled).forEach(u=>{
+      const initiator=String(socket.id)<String(u.id);
+      createVoicePeer(u.id,u.name,initiator);
+    });
+  }
+  socket.on("voice-peer-list",users=>{
+    renderVoiceUsers(users);
+    ensureVoicePeers(users);
+  });
+  socket.on("voice-user-state",u=>{
+    const users=u.users||[];
+    renderVoiceUsers(users);
+    ensureVoicePeers(users);
+  });
+  socket.on("voice-peer-left",id=>removeVoicePeer(id));
+
+  socket.on("disconnect",()=>{roomJoined=false;window.cineoraRoomJoined=false;setStatus("Соединение потеряно — переподключаемся…");const el=document.getElementById("chatConnection");if(el)el.textContent="● нет связи";const voiceEl=document.getElementById("voiceConnection");if(voiceEl)voiceEl.textContent="● нет связи";window.dispatchEvent(new Event("cineora:disconnected"))});
+  socket.on("connect_error",()=>{setStatus("Нет соединения с комнатой — переподключаемся…");const el=document.getElementById("chatConnection");if(el)el.textContent="● нет связи";const voiceEl=document.getElementById("voiceConnection");if(voiceEl)voiceEl.textContent="● нет связи"});
+  let joinRetryTimer=null;
+  let joinInFlight=false;
+  function joinCurrentRoom(){
+    if(!socket.connected || joinInFlight || roomJoined)return;
+    joinInFlight=true;
+    setStatus("Подключаем комнату…");
+    const el=document.getElementById("chatConnection");if(el)el.textContent="● подключение…";const voiceEl=document.getElementById("voiceConnection");if(voiceEl)voiceEl.textContent="● подключение…";
+    socket.emit("join-room",{
+      roomId:String(roomId||""),
+      name:localStorage.getItem("cineora_name")||myName||"Гость",
+      privateRoom:roomPrivate,
+      accessToken:roomAccessKey
+    },ack=>{
+      joinInFlight=false;
+      if(ack?.ok){
+        roomJoined=true;
+        window.cineoraRoomJoined=true;
+        setStatus("Комната подключена");
+        if(el)el.textContent="● онлайн";const voiceEl=document.getElementById("voiceConnection");if(voiceEl)voiceEl.textContent="● онлайн";
+        window.dispatchEvent(new Event("cineora:connected"));
+        if(joinRetryTimer){clearTimeout(joinRetryTimer);joinRetryTimer=null;}
+      }else{
+        roomJoined=false;
+        window.cineoraRoomJoined=false;
+        setStatus(ack?.error ? "🔒 "+ack.error : "Не удалось войти в комнату — повторяем…");
+        if(el)el.textContent="● нет связи";
+        clearTimeout(joinRetryTimer);
+        joinRetryTimer=setTimeout(()=>{joinRetryTimer=null;joinCurrentRoom()},1200);
+      }
+    });
+  }
+  socket.on("connect",()=>{
+    setStatus("Соединение установлено — подключаем комнату…");
+    joinCurrentRoom();
+  });
+
+  socket.on("room-joined",result=>{
+    // join-room acknowledgement is the single source of truth.
+    // Keep this event only for compatibility with older server builds.
+  });
+
+  socket.on("room-access-denied",result=>{
+    roomJoined=false;
+    window.cineoraRoomJoined=false;
+    setStatus("🔒 "+(result?.error||"Нет доступа к комнате"));
+    document.body.classList.add("room-access-denied");
+    const el=document.getElementById("chatConnection");if(el)el.textContent="● нет связи";
+  });
+
+  socket.on("room-state",state=>{
+    hostId=state.hostId||"";
+    roomPlaying=!!state.playing;roomPosition=Number(state.position)||0;roomServerTime=Number(state.serverTime)||Date.now();
+    const serverMedia=String(state.mediaUrl||"").trim();
+    const savedMedia=getSavedRoomMedia(roomId);
+    const mediaUrl=serverMedia||savedMedia;
+    if(mediaUrl){
+      document.getElementById("mediaUrlRoom").value=mediaUrl;
+      saveRoomMedia(roomId,mediaUrl);
+    }
+    const syncStateEl=document.getElementById("syncState"); if(syncStateEl) syncStateEl.textContent="Видео синхронизируется между участниками";
+    loadMedia(mediaUrl);
+    setTimeout(()=>{
+      applySync(state.playing,state.position,state.serverTime);
+      setTimeout(()=>restoreSavedProgress(),350);
+    },1200);
+  });
+  socket.on("media-changed",state=>{
+    const data=typeof state==="string"?{url:state,playing:false,position:0,serverTime:Date.now()}:state;
+    const mediaUrl=String(data.url||"").trim();
+    document.getElementById("mediaUrlRoom").value=mediaUrl;
+    saveRoomMedia(roomId,mediaUrl);
+    loadMedia(mediaUrl);
+    setTimeout(()=>{
+      applySync(!!data.playing,Number(data.position)||0,data.serverTime);
+      setTimeout(()=>restoreSavedProgress(),350);
+    },1200);
+  });
+  socket.on("sync",state=>applySync(state.playing,state.position,state.serverTime));
+  socket.on("room-host",state=>{
+    hostId=state.hostId||"";
+    const syncStateEl=document.getElementById("syncState"); if(syncStateEl) syncStateEl.textContent="Видео синхронизируется между участниками";
+  });
+  socket.on("room-users",renderUsers);
+  socket.on("sync-state",state=>applySync(state.playing,state.position,state.serverTime));
+  socket.on("chat-history",messages=>{chatMessages.innerHTML="";(messages||[]).forEach(m=>addMessage(m,false));chatMessages.scrollTop=chatMessages.scrollHeight;updateChatCount()});
+  const chatTyping=document.getElementById("chatTyping");
+  let typingTimer=null;
+  let isTypingSent=false;
+  function setTyping(active){
+    if(!socket.connected||!roomJoined||!window.cineoraRoomJoined)return;
+    if(isTypingSent===active)return;
+    isTypingSent=active;
+    socket.emit("chat-typing",{active:!!active});
+  }
+  function refreshTyping(){
+    setTyping(true);
+    clearTimeout(typingTimer);
+    typingTimer=setTimeout(()=>setTyping(false),900);
+  }
+  socket.on("chat-typing",data=>{
+    if(!chatTyping)return;
+    if(data?.active){
+      chatTyping.textContent=(data.name||"Кто-то")+" печатает…";
+      chatTyping.classList.add("show");
+    }else{
+      chatTyping.textContent="";
+      chatTyping.classList.remove("show");
+    }
+  });
+  socket.on("chat-warning",data=>{setStatus(data?.text||"Сообщение заблокировано.");const el=document.getElementById("chatConnection");if(el)el.textContent="⚠️ сообщение заблокировано";setTimeout(()=>{if(el)el.textContent="● онлайн"},3000)});
+  let audioContext=null;
+  function enableChatSound(){
+    try{
+      if(!audioContext)audioContext=new (window.AudioContext||window.webkitAudioContext)();
+      if(audioContext.state==="suspended")audioContext.resume();
+    }catch(e){}
+  }
+  function playChatSound(){
+    try{
+      if(!audioContext)enableChatSound();
+      if(!audioContext||audioContext.state!=="running")return;
+      const osc=audioContext.createOscillator(),gain=audioContext.createGain();
+      osc.type="sine";osc.frequency.setValueAtTime(740,audioContext.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(980,audioContext.currentTime+0.09);
+      gain.gain.setValueAtTime(0.0001,audioContext.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.045,audioContext.currentTime+0.012);
+      gain.gain.exponentialRampToValueAtTime(0.0001,audioContext.currentTime+0.14);
+      osc.connect(gain);gain.connect(audioContext.destination);osc.start();osc.stop(audioContext.currentTime+0.15);
+    }catch(e){}
+  }
+  document.addEventListener("pointerdown",enableChatSound,{once:true});
+  document.addEventListener("keydown",enableChatSound,{once:true});
+  // Connect only after every room listener is registered, so the initial room-users event cannot be missed.
+  socket.connect();
+
+  socket.on("chat-message",message=>{
+    addMessage(message, message?.userId!==socket.id);
+    if(message?.userId!==socket.id)playChatSound();
+    if(message?.userId!==socket.id && chatTyping){chatTyping.textContent="";chatTyping.classList.remove("show");}
+  });
+}
+
+</script>
+<div id="cineoraConnectionBanner" class="cineora-connection-banner">● <b>Связь прервалась</b> — CINEORA переподключается…</div>
+
+<script id="cineora-home-theme-toggle">(function(){const b=document.getElementById("homeThemeToggle");if(!b)return;const k="cineora_home_theme";function apply(v){const dark=v==="dark";document.body.classList.toggle("cineora-home-dark",dark);b.textContent=dark?"☀️":"🌙";b.title=dark?"Светлая тема":"Тёмная тема";b.setAttribute("aria-label",b.title);try{localStorage.setItem(k,v)}catch(e){}}let saved="soft";try{saved=localStorage.getItem(k)||"soft"}catch(e){}apply(saved);b.addEventListener("click",()=>apply(document.body.classList.contains("cineora-home-dark")?"soft":"dark"));})();</script><script id="cineora-theme-toggle">
+(function(){
+ const b=document.getElementById("roomThemeToggle"),root=document.documentElement;
+ if(!b)return;
+ const key="cineora_theme";
+ function apply(v){
+   root.classList.toggle("cineora-dark",v==="dark");
+   b.textContent=v==="dark"?"☀ Светлая":"◐ Тёмная";
+   b.title=v==="dark"?"Переключить на светлую тему":"Переключить на тёмную тему";
+   localStorage.setItem(key,v);
+ }
+ apply(localStorage.getItem(key)==="dark"?"dark":"light");
+ b.onclick=()=>apply(root.classList.contains("cineora-dark")?"light":"dark");
+})();
+</script><style id="cineora-join-toast">
+.cineora-join-toast{
+  position:fixed;right:22px;top:88px;z-index:100001;
+  display:flex;align-items:center;gap:10px;
+  max-width:min(360px,calc(100% - 30px));
+  padding:12px 16px;border-radius:15px;
+  background:rgba(54,45,57,.94);color:#fff;
+  border:1px solid rgba(216,198,223,.45);
+  box-shadow:0 14px 40px rgba(45,35,50,.22);
+  backdrop-filter:blur(12px);
+  font:600 13px/1.35 "DM Sans",sans-serif;
+  opacity:0;transform:translateY(-10px);
+  transition:opacity .22s ease,transform .22s ease;
+  pointer-events:none;
+}
+.cineora-join-toast.show{opacity:1;transform:translateY(0)}
+.cineora-join-toast .join-icon{
+  width:30px;height:30px;min-width:30px;border-radius:50%;
+  display:grid;place-items:center;background:#b99bb5;color:#fff;font-size:14px;
+}
+.cineora-join-toast b{color:#eadcf0}
+@media(max-width:700px){
+  .cineora-join-toast{top:72px;right:12px;left:12px;max-width:none}
+}
+</style>
+<style id="cineora-invite-copy-fix">
 .invite-card button.invite-copied{background:#63896c!important;color:#fff!important}
 </style>
 <script id="cineora-link-fix">
@@ -2602,50 +4105,42 @@ body.cineora-home-dark .idea-link{color:#ddd}
   }
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",wire);else wire();
 })();
-</script><script id="cineora-catalog-actions">
+</script><script id="cineora-cinema-mode-js">
 (function(){
-  const grid=document.getElementById("movieGrid"), random=document.getElementById("catalogRandom");
-  if(!grid)return;
-  const genres={28:"Боевик",12:"Приключения",16:"Мультфильм",35:"Комедия",80:"Криминал",99:"Документальный",18:"Драма",10751:"Семейный",14:"Фэнтези",36:"История",27:"Ужасы",10402:"Музыка",9648:"Детектив",10749:"Романтика",878:"Фантастика",53:"Триллер",10752:"Военный",37:"Вестерн"};
-  let movies=[], activeType="trending";
-  function esc(v){return String(v||"").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[ch]));}
-  function duration(v){v=Number(v||0);return v?Math.floor(v/60)+" ч "+(v%60?String(v%60).padStart(2,"0")+" мин":""): "—";}
-  function startMovie(title){
-    if(typeof openModal==="function"){
-      openModal(true);
-      setTimeout(()=>{const name=document.getElementById("roomName");if(name)name.value=title+" — CINEORA";},60);
+  const room=document.getElementById("roomView");
+  const watchHeadTools=document.querySelector(".watch-head-tools");
+  const btn=document.getElementById("cinemaModeBtn");
+  if(!room||!watchHeadTools||!btn)return;
+
+  const chatBtn=document.createElement("button");
+  chatBtn.type="button";
+  chatBtn.className="room-btn cinema-chat-open-btn";
+  chatBtn.setAttribute("aria-label","Открыть чат");
+  chatBtn.title="Открыть чат";
+  chatBtn.textContent="💬";
+  watchHeadTools.insertBefore(chatBtn,btn);
+
+  const isCinema=()=>room.classList.contains("cinema-mode");
+  function setCinema(on){
+    room.classList.toggle("cinema-mode",!!on);
+    if(!on)room.classList.remove("cinema-chat-open");
+    btn.setAttribute("aria-pressed",String(!!on));
+    btn.textContent=on?"◐ Выйти из кинотеатра":"🌓 Кинотеатр";
+    btn.title=on?"Вернуться к обычному виду комнаты":"Видео почти на весь экран, чат — сбоку";
+    document.body.classList.toggle("cineora-cinema-active",!!on);
+  }
+  btn.addEventListener("click",()=>setCinema(!isCinema()));
+  chatBtn.addEventListener("click",()=>room.classList.toggle("cinema-chat-open"));
+
+  const closeOnResize=()=>{if(window.innerWidth>1000)room.classList.remove("cinema-chat-open")};
+  window.addEventListener("resize",closeOnResize);
+
+  document.addEventListener("keydown",e=>{
+    if(e.key==="Escape"&&isCinema()){
+      if(room.classList.contains("cinema-chat-open"))room.classList.remove("cinema-chat-open");
+      else setCinema(false);
     }
-  }
-  function render(list){
-    movies=list;
-    if(!list.length){grid.innerHTML='<div class="catalog-loading">Киноафиша пока недоступна.</div>';return}
-    grid.innerHTML=list.map((m,i)=>{
-      const detailGenres=(m.genres||[]).map(g=>g.name).filter(Boolean).slice(0,2);
-      const genre=detailGenres.join(" · ")||((m.genreIds||[]).map(x=>genres[x]).filter(Boolean).slice(0,2).join(" · "))||"Фильм";
-      const poster=m.poster?'<img loading="lazy" src="'+esc(m.poster)+'" alt="'+esc(m.title)+'">':'<span>🎬</span>';
-      return '<article class="movie-card"><div class="movie-poster">'+poster+'</div><div class="movie-info"><div class="movie-meta"><span>'+esc(genre)+' · '+esc(m.year||"—")+'</span><b>★ '+esc(m.rating)+'</b></div><h3>'+esc(m.title)+'</h3><p class="movie-duration">⏱ '+esc(duration(m.runtime))+'</p><p class="movie-overview">'+esc(m.overview||"Описание пока недоступно.")+'</p><button type="button" class="movie-watch" data-index="'+i+'">Смотреть вместе</button></div></article>';
-    }).join("");
-    grid.querySelectorAll(".movie-watch").forEach(b=>b.addEventListener("click",()=>startMovie(movies[Number(b.dataset.index)]?.title||"Фильм")));
-  }
-  async function load(type="trending"){
-    activeType=type;
-    grid.innerHTML='<div class="catalog-loading">Загружаем фильмы…</div>';
-    try{
-      const r=await fetch("/api/movies?type="+encodeURIComponent(type),{cache:"no-store"});
-      const d=await r.json().catch(()=>({}));
-      if(!r.ok)throw new Error(d.error||"Киноафиша недоступна.");
-      render(d.movies||[]);
-    }catch(e){grid.innerHTML='<div class="catalog-loading">Не удалось загрузить киноафишу. Попробуйте обновить страницу позже.</div>';}
-  }
-  document.querySelectorAll("[data-catalog-type]").forEach(btn=>{
-    btn.addEventListener("click",()=>{
-      document.querySelectorAll("[data-catalog-type]").forEach(x=>x.classList.remove("active"));
-      btn.classList.add("active");
-      load(btn.dataset.catalogType);
-    });
   });
-  if(random)random.addEventListener("click",()=>{if(movies.length)startMovie(movies[Math.floor(Math.random()*movies.length)].title)});
-  load();
 })();
 </script>
 </body>
