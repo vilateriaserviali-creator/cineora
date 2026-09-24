@@ -3028,7 +3028,7 @@ function startRoom(roomId,pageParams){
         onReady:()=>{
           setStatus("YouTube · готово к просмотру");
           try{embedDuration=player.getDuration()||0}catch(e){}
-          setTimeout(()=>restoreSavedProgress(),150);
+          /* Shared room clock is authoritative; do not restore stale browser progress. */
         },
         onStateChange:e=>{
           if(suppress)return;
@@ -3120,7 +3120,7 @@ function startRoom(roomId,pageParams){
       iframe.addEventListener("load",()=>{
         loadVkApi(iframe);
         setStatus("VK Видео · готово к просмотру");
-        setTimeout(()=>restoreSavedProgress(),900);
+        /* Shared room clock is authoritative; do not restore stale browser progress. */
       },{once:true});
       setStatus("VK Видео · загружаем…");return
     }
@@ -3141,7 +3141,7 @@ function startRoom(roomId,pageParams){
           hls.loadSource(d.url);hls.attachMedia(v);
           hls.on(Hls.Events.MANIFEST_PARSED,()=>{
             setStatus("HLS · готово к просмотру");
-            setTimeout(()=>restoreSavedProgress(),100);
+            /* Shared room clock is authoritative; do not restore stale browser progress. */
           });
           hls.on(Hls.Events.ERROR,(ev,data)=>{
             if(data?.fatal)showError("Не удалось открыть HLS-поток. Проверьте ссылку или доступ к потоку.");
@@ -3534,7 +3534,7 @@ function renderUsers(users){
       const duration=getDuration();
       const currentPosition=getPosition();
       socket.emit("user-progress",{position:currentPosition,playing:isPlaying(),duration});
-      if(currentUrl&&currentType!=="error")saveRoomProgress(roomId,currentUrl,currentPosition);
+      /* Do not persist local playback position: it can become stale and rewind a live room after reconnects. */
     }
   },500);
 
@@ -3714,7 +3714,7 @@ function renderUsers(users){
     loadMedia(mediaUrl);
     setTimeout(()=>{
       applySync(!!data.playing,Number(data.position)||0,data.serverTime);
-      setTimeout(()=>restoreSavedProgress(),350);
+      /* Shared room clock is authoritative; do not restore stale browser progress. */
     },1200);
   });
   socket.on("sync",state=>applySync(state.playing,state.position,state.serverTime));
