@@ -630,7 +630,7 @@ app.get("/admin", (req, res) => {
       <div class="card"><div class="card-head"><h2>Все обновления</h2><span id="newsCount" class="pill">0</span></div><div id="newsList" class="cards"></div></div>
     </section>
 
-    <div class="footer-note">Автообновление каждые 10 секунд · пароль хранится только в текущей вкладке</div>
+    <div class="footer-note">Сессия администратора сохраняется 12 часов · для выхода используйте кнопку «Выйти»</div>
   </section>
 </div>
 
@@ -738,8 +738,18 @@ async function refreshAll(){
     if(String(e.message).includes("Неверный пароль")) adminAuthenticated=false;
   }
 }
+async function restoreAdminSession(){
+  try{
+    const r=await fetch("/api/admin/stats",{credentials:"same-origin",cache:"no-store"});
+    if(!r.ok)return false;
+    adminAuthenticated=true;
+    await refreshAll();
+    return true;
+  }catch(e){return false}
+}
 document.getElementById("pass").addEventListener("keydown",e=>{if(e.key==="Enter")openAdmin()});
-setInterval(()=>{if(password&&document.getElementById("dashboard").classList.contains("show"))refreshAll()},10000);
+window.addEventListener("load",()=>{restoreAdminSession()});
+setInterval(()=>{if(adminAuthenticated&&document.getElementById("dashboard").classList.contains("show"))refreshAll()},10000);
 </script>
 </body>
 </html>`);
@@ -762,7 +772,7 @@ function publicUsers(room) {
 }
 function broadcastRoom(roomId) { const room = rooms.get(roomId); if (room) io.to(roomId).emit("room-users", publicUsers(room)); }
 
-function joinRoomForSocket(socket, { roomId, name, privateRoom, accessToken } = {}) {
+async function joinRoomForSocket(socket, { roomId, name, privateRoom, accessToken } = {}) {
   roomId = String(roomId || "").trim().toUpperCase().slice(0, 16);
   name = String(name || "Гость").trim().slice(0, 24);
   privateRoom = !!privateRoom;
@@ -810,7 +820,6 @@ function joinRoomForSocket(socket, { roomId, name, privateRoom, accessToken } = 
     serverTime: Date.now(),
     mediaUrl: room.mediaUrl
   });
-  if (room.messages.length) socket.emit("chat-history", room.messages.slice(-100));
   broadcastRoom(roomId);
   socket.emit("room-users", publicUsers(room));
   io.to(roomId).emit("voice-user-state", {
@@ -840,7 +849,7 @@ function joinRoomForSocket(socket, { roomId, name, privateRoom, accessToken } = 
         createdAt: new Date(row.created_at).toISOString()
       }));
       room.messages = stored;
-      if (stored.length) socket.emit("chat-history", stored);
+      socket.emit("chat-history", stored);
     } catch (err) {
       console.error("[chat] history load failed:", err.message);
     }
@@ -861,13 +870,14 @@ io.on("connection", socket => {
   socket.data.isAdmin = adminAllowed(adminCookieReq);
   const handshakeRoomId = hAuth.roomId || hQuery.roomId || "";
   if (handshakeRoomId) {
-    const autoJoin = joinRoomForSocket(socket, {
+    joinRoomForSocket(socket, {
       roomId: handshakeRoomId,
       name: hAuth.name || hQuery.name || "Гость",
       privateRoom: hAuth.privateRoom === true || hAuth.privateRoom === "1" || hQuery.privateRoom === "1",
       accessToken: hAuth.accessToken || hQuery.accessToken || ""
-    });
-    console.log("[socket] handshake join", socket.id, autoJoin.ok ? "ok" : autoJoin.error);
+    }).then(autoJoin => {
+      console.log("[socket] handshake join", socket.id, autoJoin.ok ? "ok" : autoJoin.error);
+    }).catch(err => console.error("[socket] handshake join failed", err.message));
   }
 
   socket.on("create-room", ({ roomId }, ack) => {
@@ -890,8 +900,8 @@ io.on("connection", socket => {
     socket.to(target.id).emit("voice-signal", { from: socket.id, name: socket.data.name || "Гость", data });
   });
 
-  socket.on("join-room", ({ roomId, name, privateRoom, accessToken } = {}, ack) => {
-    const result = joinRoomForSocket(socket, { roomId, name, privateRoom, accessToken });
+  socket.on("join-room", async ({ roomId, name, privateRoom, accessToken } = {}, ack) => {
+    const result = await joinRoomForSocket(socket, { roomId, name, privateRoom, accessToken });
     console.log("[socket] explicit join", socket.id, result.ok ? "ok" : result.error);
     if (typeof ack === "function") ack(result);
     if (result.ok) socket.emit("room-joined", result);
