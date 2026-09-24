@@ -3275,7 +3275,7 @@ function renderUsers(users){
     el.className="chat-msg"+(own?" own":"");
     el.dataset.messageId=m.id||"";
     const stickerMap={lol:["😂","Смешно"],cry:["😭","Плачу"],love:["❤️","Люблю"],wow:["🤯","ВОТ ЭТО"],sus:["🤨","Ну-ну"],eyes:["👀","Смотрю"],cute:["🥹","Мило"],fire:["🔥","Огонь"],popcorn:["🍿","Смотрим"],dead:["💀","Я умер"],sleep:["😴","Уснул"],cineora:["✦","CINEORA"]};
-    const stickerMatch=String(m.text||"").match(/^\\[sticker:([a-z]+)\\]$/i);
+    const stickerMatch=String(m.text||"").match(/^\[sticker:([a-z]+)\]$/i);
     const sticker=stickerMatch?stickerMap[stickerMatch[1]]:null;
     const body=sticker?'<div class="chat-sticker" data-sticker="'+escapeHtml(stickerMatch[1])+'"><span>'+sticker[0]+'</span><small>'+escapeHtml(sticker[1])+"</small></div>":'<span>'+escapeHtml(m.text)+'</span>';
     el.innerHTML="<div class=\"chat-msg-head\"><b>"+escapeHtml(m.name||"Гость")+(m.isAdmin?'<span class="admin-sticker">✦ Админ</span>':"")+"</b><small>"+escapeHtml(formatChatTime(m))+"</small></div>"+body;
