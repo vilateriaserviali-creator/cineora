@@ -29,6 +29,11 @@ io.engine.on("connection_error", err => {
 });
 
 app.use(express.json({ limit: "20kb" }));
+app.get("/favicon.ico", (req, res) => {
+  res.type("image/svg+xml");
+  res.set("Cache-Control", "public, max-age=86400");
+  res.sendFile(path.join(__dirname, "favicon.svg"));
+});
 app.get("/", (req, res) => { res.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate"); res.sendFile(path.join(__dirname, "index.html")); });
 app.get("/cineora-hero.png", (req, res) => res.sendFile(path.join(__dirname, "cineora-hero.png")));
 app.get("/cineora-cover.svg", (req, res) => {
@@ -546,6 +551,8 @@ app.get("/admin", (req, res) => {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#15151c">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="shortcut icon" href="/favicon.svg">
 <title>CINEORA — Админ-панель</title>
 <style>
 :root{--bg:#101016;--panel:#171720;--panel2:#1d1d28;--line:#2d2d3a;--text:#f4f2f7;--muted:#9a97a5;--pink:#f1b8cf;--lilac:#cbbcf5;--green:#9edc9d;--danger:#ef9caa;--shadow:0 18px 50px rgba(0,0,0,.25)}
