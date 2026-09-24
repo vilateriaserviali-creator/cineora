@@ -2270,6 +2270,71 @@ body:not(.room-page):not(.cineora-home-dark) .home-theme-toggle{
   .room-view.cinema-mode .player-wrap{height:calc(100dvh - 104px)!important;aspect-ratio:auto!important}
 }
 </style>
+<style id="cineora-reactions">
+.player-wrap{position:relative!important}
+.reaction-bar{
+  position:absolute!important;
+  z-index:30!important;
+  top:12px!important;
+  left:50%!important;
+  transform:translateX(-50%)!important;
+  display:flex!important;
+  align-items:center!important;
+  gap:6px!important;
+  padding:6px 8px!important;
+  border:1px solid rgba(255,255,255,.14)!important;
+  border-radius:999px!important;
+  background:rgba(12,10,15,.72)!important;
+  backdrop-filter:blur(14px)!important;
+  box-shadow:0 10px 28px rgba(0,0,0,.25)!important;
+  opacity:0!important;
+  transition:opacity .2s ease,transform .2s ease!important;
+  pointer-events:none!important;
+}
+.player-wrap:hover .reaction-bar,.player-wrap:focus-within .reaction-bar{
+  opacity:1!important;
+  pointer-events:auto!important;
+}
+.reaction-bar button{
+  width:36px!important;height:36px!important;
+  padding:0!important;border:0!important;
+  border-radius:50%!important;
+  background:rgba(255,255,255,.08)!important;
+  color:#fff!important;
+  font-size:19px!important;
+  cursor:pointer!important;
+  transition:transform .16s ease,background .16s ease!important;
+}
+.reaction-bar button:hover{transform:scale(1.14)!important;background:rgba(255,255,255,.16)!important}
+.reaction-bar button:active{transform:scale(.92)!important}
+.reaction-layer{
+  position:absolute!important;
+  inset:0!important;
+  z-index:25!important;
+  overflow:hidden!important;
+  pointer-events:none!important;
+}
+.room-reaction{
+  position:absolute!important;
+  bottom:10%!important;
+  left:var(--reaction-x,50%)!important;
+  font-size:clamp(30px,4vw,52px)!important;
+  line-height:1!important;
+  filter:drop-shadow(0 5px 10px rgba(0,0,0,.35))!important;
+  animation:cineoraReactionFloat 2.8s ease-out forwards!important;
+}
+@keyframes cineoraReactionFloat{
+  0%{opacity:0;transform:translate(-50%,18px) scale(.55)}
+  12%{opacity:1;transform:translate(-50%,0) scale(1)}
+  72%{opacity:1;transform:translate(-50%,-105px) scale(1.05)}
+  100%{opacity:0;transform:translate(-50%,-155px) scale(.85)}
+}
+html.cineora-dark .reaction-bar{background:rgba(20,17,24,.82)!important;border-color:#4a3e4e!important}
+@media(max-width:600px){
+  .reaction-bar{top:8px!important;gap:3px!important;padding:4px 5px!important}
+  .reaction-bar button{width:32px!important;height:32px!important;font-size:17px!important}
+}
+</style>
 </head>
 <body>
 
@@ -2288,7 +2353,16 @@ body:not(.room-page):not(.cineora-home-dark) .home-theme-toggle{
   <main class="room-layout">
     <section class="watch-card">
       <div class="watch-head"><div><div class="watch-title">Совместный просмотр</div><div class="source-pill" id="mediaStatus">Видео пока не добавлено</div></div><div class="watch-head-tools"><button class="room-btn" id="syncBtn" type="button">↻ Синхронизировать</button><button class="room-btn cinema-toggle" id="cinemaModeBtn" type="button" aria-pressed="false" title="Видео почти на весь экран, чат — сбоку">🌓 Кинотеатр</button><div class="source-pill" id="myRoomName"></div></div></div>
-      <div class="player-wrap" id="playerWrap"><div id="universalPlayer"></div><div class="empty-player" id="emptyPlayer"><strong>Добавьте видео</strong><span>Вставьте ссылку на YouTube, VK Видео, RUTUBE или прямую ссылку на видео.</span></div></div><div class="media-bar"><input id="mediaUrlRoom" placeholder="YouTube / VK / RUTUBE / ссылка на видео"><button class="room-btn primary" id="setMediaRoom" type="button">Загрузить</button></div>
+      <div class="reaction-bar" id="reactionBar" aria-label="Реакции">
+  <button type="button" data-reaction="😂" aria-label="Смешно">😂</button>
+  <button type="button" data-reaction="😭" aria-label="Плачу">😭</button>
+  <button type="button" data-reaction="😱" aria-label="Ужас">😱</button>
+  <button type="button" data-reaction="❤️" aria-label="Любовь">❤️</button>
+  <button type="button" data-reaction="🔥" aria-label="Огонь">🔥</button>
+  <button type="button" data-reaction="👏" aria-label="Аплодисменты">👏</button>
+</div>
+<div class="reaction-layer" id="reactionLayer" aria-live="polite"></div>
+<div class="player-wrap" id="playerWrap"><div id="universalPlayer"></div><div class="empty-player" id="emptyPlayer"><strong>Добавьте видео</strong><span>Вставьте ссылку на YouTube, VK Видео, RUTUBE или прямую ссылку на видео.</span></div></div><div class="media-bar"><input id="mediaUrlRoom" placeholder="YouTube / VK / RUTUBE / ссылка на видео"><button class="room-btn primary" id="setMediaRoom" type="button">Загрузить</button></div>
       <div class="sync-note">YouTube, VK Видео, RUTUBE и прямые видео синхронизируются по воспроизведению, паузе, перемотке и времени просмотра. Страницы сторонних сайтов без API доступны только как встроенный плеер без гарантии синхронизации.</div>
     </section>
     
@@ -4121,6 +4195,32 @@ body.cineora-home-dark .idea-link{color:#ddd}
       if(room.classList.contains("cinema-chat-open"))room.classList.remove("cinema-chat-open");
       else setCinema(false);
     }
+  });
+})();
+</script>
+<script id="cineora-reactions-js">
+(function(){
+  const bar=document.getElementById("reactionBar");
+  const layer=document.getElementById("reactionLayer");
+  if(!bar||!layer||typeof socket==="undefined")return;
+  const allowed=new Set(["😂","😭","😱","❤️","🔥","👏"]);
+  bar.addEventListener("click",e=>{
+    const button=e.target.closest("button[data-reaction]");
+    if(!button)return;
+    const emoji=button.dataset.reaction;
+    if(!allowed.has(emoji))return;
+    socket.emit("room-reaction",{emoji});
+  });
+  socket.on("room-reaction",data=>{
+    const emoji=String(data?.emoji||"");
+    if(!allowed.has(emoji))return;
+    const el=document.createElement("span");
+    el.className="room-reaction";
+    el.textContent=emoji;
+    el.style.setProperty("--reaction-x",(18+Math.random()*64)+"%");
+    el.setAttribute("aria-label","Реакция "+emoji);
+    layer.appendChild(el);
+    window.setTimeout(()=>el.remove(),2900);
   });
 })();
 </script>
