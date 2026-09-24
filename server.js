@@ -1104,6 +1104,18 @@ io.on("connection", socket => {
     broadcastRoom(roomId);
     if (typeof ack === "function") ack({ ok: true });
   });
+  socket.on("request-sync", () => {
+    const roomId = socket.data.roomId;
+    if (!roomId) return;
+    const room = roomState(roomId);
+    socket.emit("sync", {
+      playing: !!room.playing,
+      position: Number(room.position) || 0,
+      serverTime: room.updatedAt || Date.now(),
+      sourceId: room.hostId || ""
+    });
+  });
+
   socket.on("sync", ({ playing, position } = {}) => {
     const roomId = socket.data.roomId;
     if (!roomId) return;
