@@ -2991,6 +2991,8 @@ function startRoom(roomId,pageParams){
             if(state.time!=null)embedTime=Number(state.time)||0;
             if(state.duration!=null)embedDuration=Number(state.duration)||embedDuration;
             if(!suppress && (eventName==="started" || eventName==="resumed" || eventName==="paused" || eventName==="ended")){
+              /* VK can fire pause/time events while seeking or buffering. Do not let a transient player event rewind the shared clock. */
+              if(eventName==="paused" && roomPlaying && !document.hidden)return;
               socket.emit("sync",{playing:eventName==="started"||eventName==="resumed",position:embedTime});
             }
           };
@@ -3494,7 +3496,7 @@ function renderUsers(users){
 
   setInterval(()=>{
     if(!socket.connected||suppress)return;
-    const syncable=currentType==="youtube"||currentType==="video"||currentType==="rutube"||currentType==="vk";
+    const syncable=currentType==="youtube"||currentType==="video";
     if(syncable&&roomJoined&&Date.now()-lastProgress>1200){
       lastProgress=Date.now();
       const target=targetPosition(roomPosition,roomServerTime,roomPlaying);
