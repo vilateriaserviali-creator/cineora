@@ -2609,9 +2609,20 @@ function startRoom(roomId,pageParams){
     auth:{roomId:String(roomId||""),name:myName||"Гость",avatar:myAvatar,privateRoom:roomPrivate,accessToken:roomAccessKey}
   });
   let roomJoined=false;
-  const achievementKey="cineora_achievements_v1_"+encodeURIComponent(myName||"Гость").slice(0,80);
-  const achievementState=(()=>{try{return Object.assign({sessions:0,minutes:0,messages:0,reactions:0,creator:false},JSON.parse(localStorage.getItem(achievementKey)||"{}"))}catch(e){return {sessions:0,minutes:0,messages:0,reactions:0,creator:false}}})();
+  const achievementKey="cineora_achievements_v2_"+encodeURIComponent(String(myName||"Гость").trim().toLowerCase()).slice(0,80);
+  const achievementDefaults={sessions:0,minutes:0,messages:0,reactions:0,creator:false,watchStartedAt:0,watchAccumulatedMs:0};
+  const achievementState=(()=>{try{return Object.assign({},achievementDefaults,JSON.parse(localStorage.getItem(achievementKey)||"{}"))}catch(e){return {...achievementDefaults}}})();
   let achievementSessionCounted=false,achievementMinuteTimer=null;
+  function achievementWatchTick(){
+    if(!roomJoined)return;
+    const now=Date.now();
+    if(!achievementState.watchStartedAt)achievementState.watchStartedAt=now;
+    achievementState.watchAccumulatedMs=Math.max(0,Number(achievementState.watchAccumulatedMs)||0)+(now-achievementState.watchStartedAt);
+    achievementState.watchStartedAt=now;
+    const mins=Math.floor(achievementState.watchAccumulatedMs/60000);
+    if(mins>achievementState.minutes)achievementState.minutes=mins;
+    saveAchievements();renderAchievements();
+  }
   const achievementDefs=[
     ["first","🎬","Первый сеанс","Впервые вошли в комнату",s=>s.sessions>=1],
     ["minutes10","🍿","Киновечер","Провели в CINEORA 10 минут",s=>s.minutes>=10],
@@ -2637,7 +2648,7 @@ function startRoom(roomId,pageParams){
   document.getElementById("achievementsClose")?.addEventListener("click",closeAchievements);
   document.getElementById("achievementsModal")?.addEventListener("click",e=>{if(e.target.id==="achievementsModal")closeAchievements()});
   if(isCreatorUser()&&!achievementState.creator){achievementState.creator=true;saveAchievements()}
-  function startAchievementTracking(){if(!achievementSessionCounted){achievementSessionCounted=true;bumpAchievement("sessions")}if(!achievementMinuteTimer)achievementMinuteTimer=setInterval(()=>{if(roomJoined)bumpAchievement("minutes")},60000)}
+  function startAchievementTracking(){if(!achievementSessionCounted&&roomJoined){achievementSessionCounted=true;bumpAchievement("sessions")}if(!achievementMinuteTimer)achievementMinuteTimer=setInterval(achievementWatchTick,10000)}
   window.cineoraRoomJoined=false;
   window.socket=socket;
   window.dispatchEvent(new Event("cineora:socket-ready")); const roomTitle=pageParams?.get("title")||"Киносеанс"; const scheduledAt=Number(pageParams?.get("at")||0); const roomTitleLabel=document.getElementById("roomTitleLabel"),inviteTitle=document.getElementById("inviteTitle"),countdown=document.getElementById("sessionCountdown"); if(roomTitleLabel)roomTitleLabel.textContent="🎬 "+roomTitle; if(inviteTitle)inviteTitle.textContent="🍿 "+roomTitle; if(scheduledAt&&countdown){let scheduledStarted=false;const tick=()=>{const left=scheduledAt-Date.now();if(left<=0){countdown.textContent="🍿 Киносеанс начинается сейчас";countdown.classList.add("show");if(!scheduledStarted&&socket.connected){scheduledStarted=true;publishSync(true,0);setTimeout(()=>applySync(true,0,Date.now()),300)}return}const s=Math.floor(left/1000),d=Math.floor(s/86400),hh=Math.floor(s%86400/3600),mm=Math.floor(s%3600/60),ss=s%60;countdown.textContent="🍿 Сеанс начнётся через "+(d?d+" д ":"")+String(hh).padStart(2,"0")+":"+String(mm).padStart(2,"0")+":"+String(ss).padStart(2,"0");countdown.classList.add("show")};tick();setInterval(tick,1000)}
@@ -3656,6 +3667,8 @@ function renderUsers(users){
       joinInFlight=false;
       if(ack?.ok){
         roomJoined=true;
+        if(!achievementSessionCounted){achievementSessionCounted=true;bumpAchievement("sessions")}
+        achievementWatchTick();
         window.cineoraRoomJoined=true;
         setStatus("Комната подключена");
         if(el)el.textContent="● онлайн";const voiceEl=document.getElementById("voiceConnection");if(voiceEl)voiceEl.textContent="● онлайн";
