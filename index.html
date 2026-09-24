@@ -244,7 +244,28 @@
 .chat-form input{background:#f8f3f6!important;color:#403943!important;border:1px solid #cfc1cc!important}
 .chat-form input:focus{outline:2px solid #cdb7ce!important;border-color:#b49eb8!important}
 .chat-form>button{min-width:44px!important;height:44px!important;background:#c8aec6!important;color:#403746!important;cursor:pointer!important}
-</style><style id="cineora-participant-progress-fix">.person-progress{height:4px!important;background:#b7aab5!important;border-radius:99px!important;overflow:hidden!important;margin-top:6px!important}.person-progress i{display:block!important;height:100%!important;background:#8f748f!important;border-radius:99px!important;transition:width .25s linear!important}</style><style id="cineora-name-button-fix">#changeName{white-space:nowrap}#myRoomName{cursor:default}</style><style id="cineora-soft-theme">
+</style><style id="cineora-participant-progress-fix">.person-progress{height:4px!important;background:#b7aab5!important;border-radius:99px!important;overflow:hidden!important;margin-top:6px!important}.person-progress i{display:block!important;height:100%!important;background:#8f748f!important;border-radius:99px!important;transition:width .25s linear!important}</style><style id="cineora-participants-statuses">
+.participants{gap:8px!important}
+.participant-card{display:flex!important;align-items:center!important;gap:10px!important;padding:10px 11px!important;border-radius:14px!important}
+.participant-main{display:flex;align-items:center;gap:9px;min-width:0;flex:1}
+.participant-avatar{width:34px;height:34px;flex:0 0 34px;border-radius:50%;display:grid;place-items:center;background:#b99bb5;color:#fff;font-size:13px;font-weight:700;box-shadow:0 4px 10px rgba(91,72,96,.12)}
+.participant-info{min-width:0;flex:1}
+.participant-name-line{display:flex;align-items:center;gap:5px;min-width:0;line-height:1.2}
+.participant-name-line .person-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
+.me-badge,.host-badge{font-size:8px;line-height:1;padding:4px 6px;border-radius:999px;white-space:nowrap}
+.me-badge{background:#e4d7e4;color:#725d70}.host-badge{background:#d7c8d9;color:#5d4e5c}
+.participant-status{display:flex;align-items:center;gap:4px;margin-top:4px;font-size:9px;color:#8b7d89}
+.status-icon{font-size:9px;width:10px;text-align:center}
+.participant-status.watching{color:#6e9a78}.participant-status.paused{color:#9a7f98}.participant-status.waiting{color:#99909a}
+.sync-label{margin-left:3px;padding-left:6px;border-left:1px solid #d7cbd7;color:#9a8f9b}
+.participant-time{flex:0 0 auto;text-align:right;color:#665d68;font-size:10px;font-variant-numeric:tabular-nums}
+.participant-time small{font-size:9px;color:#968d96}
+.participant-card.watching .participant-avatar{box-shadow:0 0 0 3px #d8e8dc,0 5px 12px rgba(91,72,96,.12)}
+.participant-card.paused .participant-avatar{background:#a992a9}.participant-card.waiting .participant-avatar{background:#9d969e}
+.person-progress{margin-top:6px!important;height:3px!important}
+@media(max-width:1000px){.participants{max-height:220px!important}.participant-card{padding:9px!important}}
+</style>
+<style id="cineora-name-button-fix">#changeName{white-space:nowrap}#myRoomName{cursor:default}</style><style id="cineora-soft-theme">
 :root{--ink:#403943;--paper:#e8dfe4;--cream:#ddd1d9;--soft:#cdbdc9;--line:#bdaeb9;--accent:#b99bb5;--accent2:#aebbc8;--muted:#756b75}
 body{background:#e8dfe4;color:var(--ink)}
 .hero{color:#403943!important;background:radial-gradient(circle at 78% 28%,#cdb9cc 0%,transparent 34%),linear-gradient(125deg,#d9cbd2 0%,#c9bdc9 48%,#b9c4cf 100%)!important}
@@ -1759,16 +1780,40 @@ function startRoom(roomId,pageParams){
   }
 
   function renderUsers(users){
-    document.getElementById("participantCount").textContent=users.length;
-    document.getElementById("viewerCount").textContent=users.length;
-    participants.innerHTML=users.map(u=>{
+    const list=Array.isArray(users)?users:[];
+    const countEl=document.getElementById("participantCount");
+    const viewerEl=document.getElementById("viewerCount");
+    if(countEl)countEl.textContent=list.length;
+    if(viewerEl)viewerEl.textContent=list.length;
+
+    participants.innerHTML=list.map(u=>{
       const pos=Math.max(0,Number(u.position)||0);
-      const duration=Number(u.duration)||0;
+      const duration=Math.max(0,Number(u.duration)||0);
       const pct=duration?Math.min(100,Math.max(0,pos/duration*100)):0;
-      return '<div class="person-row is-online"><div style="min-width:0;flex:1"><span class="person-name"><i class="online-dot" aria-label="онлайн"></i>'+escapeHtml(u.name)+(u.id===socket.id?" · вы":"")+'</span><div class="online-status"><span class="status-dot">●</span><span>онлайн</span></div><div class="person-progress"><i style="width:'+pct+'%"></i></div></div><span class="person-time">'+fmt(pos)+" "+(u.playing?"▶":"Ⅱ")+"</span></div>";
+      const isMe=u.id===socket.id;
+      const isHost=u.id===hostId;
+      let status="Ожидает видео",statusClass="waiting",statusIcon="○";
+      if(currentUrl){
+        if(u.playing){status="Смотрит";statusClass="watching";statusIcon="▶";}
+        else{status="На паузе";statusClass="paused";statusIcon="Ⅱ";}
+      }
+      const roomNow=targetPosition(roomPosition,roomServerTime,roomPlaying);
+      const drift=Math.abs(pos-roomNow);
+      const synced=currentUrl&&u.playing&&roomPlaying&&drift<2;
+      const syncLabel=synced?"Синхронно":(currentUrl&&u.playing?"Небольшая задержка":"");
+      return '<div class="person-row participant-card '+statusClass+(isMe?" is-me":"")+'">'+
+        '<div class="participant-main">'+
+          '<div class="participant-avatar">'+escapeHtml((u.name||"Г").trim().charAt(0).toUpperCase())+'</div>'+
+          '<div class="participant-info">'+
+            '<div class="participant-name-line"><span class="person-name">'+escapeHtml(u.name||"Гость")+'</span>'+(isMe?'<span class="me-badge">вы</span>':"")+(isHost?'<span class="host-badge">хост</span>':"")+'</div>'+
+            '<div class="participant-status '+statusClass+'"><span class="status-icon">'+statusIcon+'</span><span>'+status+'</span>'+(syncLabel?'<span class="sync-label">'+syncLabel+'</span>':"")+'</div>'+
+            '<div class="person-progress"><i style="width:'+pct+'%"></i></div>'+
+          '</div>'+
+        '</div>'+
+        '<div class="participant-time"><span>'+fmt(pos)+'</span>'+(duration?'<small>/ '+fmt(duration)+'</small>':"")+'</div>'+
+      '</div>';
     }).join("");
   }
-
   let cineoraChatAudio=null;
   let cineoraAudioReady=false;
   function prepareChatAudio(){
