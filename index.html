@@ -2596,7 +2596,8 @@ function startRoom(roomId,pageParams){
   const list=Array.isArray(window.__cineoraUsers)?window.__cineoraUsers:[];
   const ok=!!currentUrl && roomPlaying && list.length>0 && list.every(u=>u.playing && Math.abs((Number(u.position)||0)-targetPosition(roomPosition,roomServerTime,roomPlaying))<2);
   el.classList.toggle("visible",ok); el.classList.toggle("pulse",ok);
-}\nfunction renderUsers(users){
+}
+function renderUsers(users){
     const list=Array.isArray(users)?users:[]; window.__cineoraUsers=list; updateRoomSyncIndicator();
     const countEl=document.getElementById("participantCount");
     const viewerEl=document.getElementById("viewerCount");
