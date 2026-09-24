@@ -1220,6 +1220,12 @@ function startRoom(roomId,pageParams){
   const wrap=document.getElementById("playerWrap"), host=document.getElementById("universalPlayer"), empty=document.getElementById("emptyPlayer");
   const participants=document.getElementById("participants"), chatMessages=document.getElementById("chatMessages");
   let suppress=false,lastProgress=0,currentType="",player=null,currentUrl="",hostId="",roomPlaying=false,roomPosition=0,roomServerTime=Date.now();
+  let lastLocalControl=0;
+  function publishSync(playing,position){
+    lastLocalControl=Date.now();
+    if(!socket.connected||!roomJoined)return;
+    socket.emit("sync",{playing:!!playing,position:Math.max(0,Number(position)||0)});
+  }
   let embedPlayer=null,embedFrame=null,embedTime=0,embedDuration=0,embedPlaying=false;
 
   document.getElementById("roomCodeLabel").textContent=roomId;
@@ -1662,7 +1668,7 @@ function startRoom(roomId,pageParams){
         }
       }
     }catch(e){}
-    setTimeout(()=>suppress=false,350);
+    setTimeout(()=>suppress=false,900);
   }
 
   function renderUsers(users){
@@ -1859,14 +1865,15 @@ function startRoom(roomId,pageParams){
   setInterval(()=>{
     if(!socket.connected||suppress)return;
     const syncable=currentType==="youtube"||currentType==="video"||currentType==="rutube"||currentType==="vk";
-    if(isHost()&&syncable&&Date.now()-lastProgress>700){
+    if(syncable&&roomJoined&&Date.now()-lastProgress>1200){
       lastProgress=Date.now();
-      socket.emit("sync",{playing:isPlaying(),position:getPosition()});
-    }else if(!isHost()&&roomPlaying&&syncable&&Date.now()-lastProgress>900){
-      lastProgress=Date.now();
-      const target=targetPosition(roomPosition,roomServerTime,true);
+      const target=targetPosition(roomPosition,roomServerTime,roomPlaying);
       const now=getPosition();
-      if(Math.abs(now-target)>0.8) applySync(true,roomPosition,roomServerTime);
+      const tolerance=roomPlaying?0.65:0.35;
+      // Never fight a fresh local Play/Pause/Seek action.
+      if(Date.now()-lastLocalControl>1500 && Math.abs(now-target)>tolerance){
+        applySync(roomPlaying,roomPosition,roomServerTime);
+      }
     }
     if(currentType){
       const duration=getDuration();
