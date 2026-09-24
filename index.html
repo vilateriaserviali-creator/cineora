@@ -1371,16 +1371,32 @@ function startRoom(roomId,pageParams){
     return h? h+":"+String(m).padStart(2,"0")+":"+s : m+":"+s;
   }
 
-  function normalizeUrl(raw){try{return new URL(raw,location.href).href}catch(e){return ""}}
+  function normalizeUrl(raw){
+    const value=String(raw||"").trim();
+    if(!value)return "";
+    try{
+      // Accept a pasted URL even when the user copied surrounding whitespace.
+      return new URL(value,location.href).href;
+    }catch(e){
+      return "";
+    }
+  }
+
+  function cleanMediaId(value){
+    return String(value||"").trim().replace(/[?#].*$/,"").replace(/[^A-Za-z0-9_-]/g,"");
+  }
 
   function getYouTubeId(raw){
     try{
       const u=new URL(raw);
-      if(u.hostname.includes("youtu.be")) return u.pathname.slice(1).split("/")[0]||"";
-      if(u.hostname.includes("youtube.com")){
-        if(u.pathname==="/watch") return u.searchParams.get("v")||"";
+      const hostName=u.hostname.toLowerCase().replace(/^www\./,"");
+      if(hostName==="youtu.be"){
+        return cleanMediaId(u.pathname.split("/").filter(Boolean)[0]||"");
+      }
+      if(hostName==="youtube.com"||hostName.endsWith(".youtube.com")||hostName==="youtube-nocookie.com"||hostName.endsWith(".youtube-nocookie.com")){
+        if(u.pathname==="/watch")return cleanMediaId(u.searchParams.get("v")||"");
         const parts=u.pathname.split("/").filter(Boolean);
-        if(["shorts","embed","live"].includes(parts[0])) return parts[1]||"";
+        if(["shorts","embed","live","v"].includes(parts[0]))return cleanMediaId(parts[1]||"");
       }
     }catch(e){}
     return "";
@@ -1389,11 +1405,15 @@ function startRoom(roomId,pageParams){
   function getRutube(raw){
     try{
       const u=new URL(raw);
-      if(!u.hostname.includes("rutube.ru")) return null;
+      const hostName=u.hostname.toLowerCase().replace(/^www\./,"");
+      if(hostName!=="rutube.ru"&&!hostName.endsWith(".rutube.ru"))return null;
       const parts=u.pathname.split("/").filter(Boolean);
-      const idx=parts.findIndex(x=>x==="video"||x==="shorts");
-      if(idx>=0&&parts[idx+1]) return {id:parts[idx+1],query:u.search};
-      if(parts[0]==="play"&&parts[1]==="embed"&&parts[2]) return {id:parts[2],query:u.search};
+      // Public links: /video/ID, /shorts/ID and /play/embed/ID.
+      const idx=parts.findIndex(x=>x.toLowerCase()==="video"||x.toLowerCase()==="shorts");
+      if(idx>=0&&parts[idx+1])return {id:cleanMediaId(parts[idx+1]),query:u.search};
+      if(parts[0]?.toLowerCase()==="play"&&parts[1]?.toLowerCase()==="embed"&&parts[2]){
+        return {id:cleanMediaId(parts[2]),query:u.search};
+      }
     }catch(e){}
     return null;
   }
@@ -1401,34 +1421,41 @@ function startRoom(roomId,pageParams){
   function getVkEmbed(raw){
     try{
       const u=new URL(raw);
-      const hostName=u.hostname.replace(/^www\./,"");
-      if(!["vk.com","vk.ru","m.vk.com","vkvideo.ru"].includes(hostName)) return "";
+      const hostName=u.hostname.toLowerCase().replace(/^www\./,"");
+      if(!["vk.com","vk.ru","m.vk.com","vkvideo.ru"].includes(hostName))return "";
 
-      // Already an official VK embed URL: keep its parameters (hash, hd, etc.).
-      if(u.pathname==="/video_ext.php"){
+      // Official VK embed link: /video_ext.php?oid=...&id=...
+      if(u.pathname.toLowerCase()==="/video_ext.php"){
         const oid=u.searchParams.get("oid");
         const id=u.searchParams.get("id");
-        if(oid&&id) return u.href;
+        if(oid&&id)return "https://vkvideo.ru/video_ext.php?oid="+encodeURIComponent(oid)+"&id="+encodeURIComponent(id)+(u.searchParams.get("hash")?"&hash="+encodeURIComponent(u.searchParams.get("hash")):"")+"&hd="+encodeURIComponent(u.searchParams.get("hd")||"2")+"&js_api=1";
         return "";
       }
 
-      // VK links may use ?z=video-123_456 or ?z=video123_456.
+      // VK share links commonly arrive as ?z=video-123_456.
       const z=u.searchParams.get("z")||"";
-      const zMatch=z.match(/^video(-?\d+)_(-?\d+)/i);
+      const zMatch=decodeURIComponent(z).match(/(?:^|\b)video(-?\d+)_([0-9]+)/i);
       if(zMatch){
         const oid=zMatch[1].startsWith("-")?zMatch[1]:"-"+zMatch[1];
         const id=zMatch[2];
         const hash=u.searchParams.get("hash");
-        return "https://vkvideo.ru/video_ext.php?oid="+encodeURIComponent(oid)+"&id="+encodeURIComponent(id)+(hash?"&hash="+encodeURIComponent(hash):"")+"&hd=2";
+        return "https://vkvideo.ru/video_ext.php?oid="+encodeURIComponent(oid)+"&id="+encodeURIComponent(id)+(hash?"&hash="+encodeURIComponent(hash):"")+"&hd=2&js_api=1";
       }
 
-      // Standard VK Video page: /video-123_456 or /video123_456.
+      // VK / VK Video public page: /video-123_456, /video123_456.
       const m=u.pathname.match(/(?:^|\/)video(-?\d+)_([0-9]+)/i);
       if(m){
         const oid=m[1].startsWith("-")?m[1]:"-"+m[1];
         const id=m[2];
         const hash=u.searchParams.get("hash");
-        return "https://vkvideo.ru/video_ext.php?oid="+encodeURIComponent(oid)+"&id="+encodeURIComponent(id)+(hash?"&hash="+encodeURIComponent(hash):"")+"&hd=2";
+        return "https://vkvideo.ru/video_ext.php?oid="+encodeURIComponent(oid)+"&id="+encodeURIComponent(id)+(hash?"&hash="+encodeURIComponent(hash):"")+"&hd=2&js_api=1";
+      }
+
+      // Some VK Video share URLs put the video id in a query parameter.
+      const queryVideo=(u.searchParams.get("video")||u.searchParams.get("video_id")||"").match(/^(-?\d+)_([0-9]+)$/);
+      if(queryVideo){
+        const oid=queryVideo[1].startsWith("-")?queryVideo[1]:"-"+queryVideo[1];
+        return "https://vkvideo.ru/video_ext.php?oid="+encodeURIComponent(oid)+"&id="+encodeURIComponent(queryVideo[2])+"&hd=2&js_api=1";
       }
     }catch(e){}
     return "";
@@ -1438,19 +1465,18 @@ function startRoom(roomId,pageParams){
     const url=normalizeUrl(raw);
     if(!url)return {type:"error"};
     const yt=getYouTubeId(url);if(yt)return {type:"youtube",id:yt};
-    const rt=getRutube(url);if(rt)return {type:"rutube",...rt};
+    const rt=getRutube(url);if(rt?.id)return {type:"rutube",...rt};
     const vk=getVkEmbed(url);if(vk)return {type:"vk",url:vk};
     try{
       const u=new URL(url);
       const h=u.hostname.toLowerCase();
       if(h==="lordfilm5.pro"||h.endsWith(".lordfilm5.pro"))return {type:"lordfilm",url};
+      if(h==="youtube.com"||h.endsWith(".youtube.com")||h==="youtu.be"||h==="youtube-nocookie.com")return {type:"unsupported-youtube",url};
+      if(h==="rutube.ru"||h.endsWith(".rutube.ru"))return {type:"unsupported-rutube",url};
+      if(h==="vk.com"||h==="vk.ru"||h==="m.vk.com"||h==="vkvideo.ru")return {type:"unsupported-vk",url};
     }catch(e){}
-    try{
-      const u=new URL(url);
-      const path=(u.pathname||"").toLowerCase();
-      if(/\.(m3u8)(?:[?#]|$)/i.test(url))return {type:"hls",url};
-      if(/\.(mp4|webm|ogg|ogv|mov|m4v)(?:[?#]|$)/i.test(url))return {type:"video",url};
-    }catch(e){}
+    if(/\.(m3u8)(?:[?#]|$)/i.test(url))return {type:"hls",url};
+    if(/\.(mp4|webm|ogg|ogv|mov|m4v)(?:[?#]|$)/i.test(url))return {type:"video",url};
     return {type:"page",url};
   }
 
@@ -1649,7 +1675,7 @@ function startRoom(roomId,pageParams){
     const d=detect(nextUrl);currentUrl=nextUrl;
     if(!nextUrl){clearPlayer();setStatus("Видео пока не добавлено");return}
     empty.style.display="none";
-    if(d.type==="youtube"){loadYouTube(d.id);setStatus("YouTube");return}
+    if(d.type==="youtube"){loadYouTube(d.id);setStatus("YouTube · загружаем…");return}
     if(d.type==="lordfilm"){loadLordfilm(d.url);return}
     if(d.type==="rutube"){
       currentType="rutube";embedTime=0;embedDuration=0;embedPlaying=false;
@@ -1658,17 +1684,22 @@ function startRoom(roomId,pageParams){
         setStatus("RUTUBE · готово к просмотру");
         setTimeout(()=>restoreSavedProgress(),900);
       },{once:true});
-      setStatus("RUTUBE");return
+      setStatus("RUTUBE · загружаем…");return
     }
     if(d.type==="vk"){
       currentType="vk";embedTime=0;embedDuration=0;embedPlaying=false;
-      const sep=d.url.includes("?")?"&":"?";
-      const iframe=makeIframe(d.url+(d.url.includes("js_api=")?"":sep+"js_api=1"));
+      const iframe=makeIframe(d.url);
       iframe.addEventListener("load",()=>{
         loadVkApi(iframe);
+        setStatus("VK Видео · готово к просмотру");
         setTimeout(()=>restoreSavedProgress(),900);
       },{once:true});
-      setStatus("VK Видео");return
+      setStatus("VK Видео · загружаем…");return
+    }
+    if(d.type==="unsupported-youtube"||d.type==="unsupported-vk"||d.type==="unsupported-rutube"){
+      const names={"unsupported-youtube":"YouTube","unsupported-vk":"VK Видео","unsupported-rutube":"RUTUBE"};
+      showError("Ссылка распознана как "+names[d.type]+", но формат ссылки не содержит идентификатор видео. Откройте конкретный ролик и вставьте ссылку ещё раз.");
+      return
     }
     if(d.type==="hls"){
       currentType="video";host.innerHTML="";
