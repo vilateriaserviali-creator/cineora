@@ -768,17 +768,20 @@ function publicUsers(room) {
     playing: u.playing,
     duration: u.duration || 0,
     isAdmin: !!u.isAdmin,
-    avatar: u.avatar || "star"
+    avatar: u.avatar || "star",
+    frame: u.frame || "classic"
   }));
 }
 function broadcastRoom(roomId) { const room = rooms.get(roomId); if (room) io.to(roomId).emit("room-users", publicUsers(room)); }
 
-async function joinRoomForSocket(socket, { roomId, name, avatar, privateRoom, accessToken } = {}) {
+async function joinRoomForSocket(socket, { roomId, name, avatar, frame, privateRoom, accessToken } = {}) {
   roomId = String(roomId || "").trim().toUpperCase().slice(0, 16);
   name = String(name || "Гость").trim().slice(0, 24);
   privateRoom = !!privateRoom;
   accessToken = String(accessToken || "").trim().slice(0, 96);
   const allowedAvatars = new Set(["star","film","popcorn","moon","heart","spark","play","smile"]);
+  const allowedFrames = new Set(["classic","neon","gold","cineora","achievement"]);
+  frame = allowedFrames.has(String(frame || "")) ? String(frame) : "classic";
   avatar = allowedAvatars.has(String(avatar || "")) ? String(avatar) : "star";
 
   if (!roomId) return { ok:false, error:"Не указан код комнаты." };
@@ -812,7 +815,8 @@ async function joinRoomForSocket(socket, { roomId, name, avatar, privateRoom, ac
     duration: existing?.duration || 0,
     voiceEnabled: !!existing?.voiceEnabled,
     isAdmin: !!socket.data.isAdmin,
-    avatar
+    avatar,
+    frame: existing?.frame || "classic"
   });
 
   socket.emit("voice-peer-list", [...room.users.values()].map(u => ({
@@ -906,8 +910,8 @@ io.on("connection", socket => {
     socket.to(target.id).emit("voice-signal", { from: socket.id, name: socket.data.name || "Гость", data });
   });
 
-  socket.on("join-room", async ({ roomId, name, avatar, privateRoom, accessToken } = {}, ack) => {
-    const result = await joinRoomForSocket(socket, { roomId, name, avatar, privateRoom, accessToken });
+  socket.on("join-room", async ({ roomId, name, avatar, frame, privateRoom, accessToken } = {}, ack) => {
+    const result = await joinRoomForSocket(socket, { roomId, name, avatar, frame, privateRoom, accessToken });
     console.log("[socket] explicit join", socket.id, result.ok ? "ok" : result.error);
     if (typeof ack === "function") ack(result);
     if (result.ok) socket.emit("room-joined", result);
