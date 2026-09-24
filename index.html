@@ -2620,6 +2620,14 @@ function startRoom(roomId,pageParams){
     ["regular","🌙","Постоянный зритель","Побывали в 5 сеансах",s=>s.sessions>=5],
     ["creator","✦","Создатель CINEORA","Статус владельца сайта",s=>!!s.creator]
   ];
+  function isCreatorUser(){
+    try{
+      const name=String(myName||"").trim().toLowerCase();
+      const creatorNames=["виолетта","violetta"];
+      const isAdminRoomUser=window.cineoraAdminUser===true;
+      return isAdminRoomUser || creatorNames.includes(name);
+    }catch(e){return false}
+  }
   function saveAchievements(){try{localStorage.setItem(achievementKey,JSON.stringify(achievementState))}catch(e){}}
   function renderAchievements(){const grid=document.getElementById("achievementGrid"),p=document.getElementById("achievementProgress");if(!grid)return;const unlocked=achievementDefs.filter(x=>x[4](achievementState)).length;if(p)p.textContent="Открыто "+unlocked+" из "+achievementDefs.length+" · Продолжайте смотреть, общаться и реагировать";grid.innerHTML=achievementDefs.map(x=>{const ok=x[4](achievementState);return '<div class="achievement-card '+(ok?"unlocked":"locked")+'"><div class="achievement-icon">'+x[1]+'</div><div><b>'+x[2]+'</b><small>'+x[3]+'</small></div></div>'}).join("")}
   function bumpAchievement(field,amount=1){achievementState[field]=(Number(achievementState[field])||0)+amount;saveAchievements();renderAchievements()}
@@ -2628,6 +2636,7 @@ function startRoom(roomId,pageParams){
   document.getElementById("achievementsBtn")?.addEventListener("click",openAchievements);
   document.getElementById("achievementsClose")?.addEventListener("click",closeAchievements);
   document.getElementById("achievementsModal")?.addEventListener("click",e=>{if(e.target.id==="achievementsModal")closeAchievements()});
+  if(isCreatorUser()&&!achievementState.creator){achievementState.creator=true;saveAchievements()}
   function startAchievementTracking(){if(!achievementSessionCounted){achievementSessionCounted=true;bumpAchievement("sessions")}if(!achievementMinuteTimer)achievementMinuteTimer=setInterval(()=>{if(roomJoined)bumpAchievement("minutes")},60000)}
   window.cineoraRoomJoined=false;
   window.socket=socket;
