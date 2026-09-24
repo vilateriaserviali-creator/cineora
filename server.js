@@ -508,6 +508,7 @@ app.get("/admin", (req, res) => {
       <div class="hero-actions">
         <span id="updated" class="updated">Обновление…</span>
         <button class="btn secondary" onclick="refreshAll()">↻ Обновить</button>
+        <button class="btn secondary" onclick="logoutAdmin()">Выйти</button>
       </div>
     </div>
 
@@ -575,9 +576,28 @@ function showView(view){
   document.querySelectorAll(".nav button").forEach(x=>x.classList.toggle("active",x.dataset.view===view));
   const el=document.getElementById("view-"+view);if(el)el.classList.add("active");
 }
-async function openAdmin(){password=document.getElementById("pass").value.trim();if(!password){document.getElementById("loginStatus").textContent="Введите пароль";return}await refreshAll()}
+async async function openAdmin(){
+  const entered=document.getElementById("pass").value.trim();
+  if(!entered){document.getElementById("loginStatus").textContent="Введите пароль";return}
+  document.getElementById("loginStatus").textContent="Проверяем доступ…";
+  try{
+    const r=await fetch("/api/admin/login",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      credentials:"same-origin",
+      body:JSON.stringify({password:entered})
+    });
+    let d={};try{d=await r.json()}catch(e){}
+    if(!r.ok)throw new Error(d.error||"Ошибка входа");
+    password="";
+    document.getElementById("pass").value="";
+    await refreshAll();
+  }catch(e){
+    document.getElementById("loginStatus").innerHTML="<span class='error'>"+esc(e.message)+"</span>";
+  }
+}
 async function api(path,options={}){
-  options.headers={...(options.headers||{}),"x-admin-password":password};
+  options.credentials="same-origin";
   const r=await fetch(path,options);let d={};try{d=await r.json()}catch(e){}
   if(!r.ok)throw new Error(d.error||"Ошибка запроса");
   return d;
@@ -627,8 +647,16 @@ async function loadStats(){
   renderRooms();
   document.getElementById("updated").textContent="Обновлено в "+new Date().toLocaleTimeString("ru-RU",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
 }
+async function logoutAdmin(){
+  try{await fetch("/api/admin/logout",{method:"POST",credentials:"same-origin"})}catch(e){}
+  password="";
+  document.getElementById("dashboard").classList.remove("show");
+  document.getElementById("loginBox").style.display="";
+  document.getElementById("pass").value="";
+  document.getElementById("loginStatus").textContent="Вы вышли из панели администратора.";
+}
 async function refreshAll(){
-  if(!password)return;
+  try{
   try{
     await Promise.all([loadStats(),loadIdeas(),loadNews()]);
     document.getElementById("dashboard").classList.add("show");
