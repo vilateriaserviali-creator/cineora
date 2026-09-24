@@ -2840,7 +2840,7 @@ function startRoom(roomId,pageParams){
       }
 
       // VK / VK Video public page: /video-123_456, /video123_456.
-      const m=u.pathname.match(/(?:^|\/)video(-?\d+)_([0-9]+)/i);
+      const m=u.pathname.match(/(?:^|\/)(?:video|live)(-?\d+)_([0-9]+)/i);
       if(m){
         const oid=m[1].startsWith("-")?m[1]:"-"+m[1];
         const id=m[2];
