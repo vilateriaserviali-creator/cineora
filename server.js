@@ -706,7 +706,7 @@ const featureDefs=[["🎭","Аватарки","Создание персонал
 function featureState(){try{return JSON.parse(localStorage.getItem("cineora_admin_features")||"{}")}catch(e){return {}}}
 function renderFeatures(){
   const state=featureState(),el=document.getElementById("featureList");if(!el)return;
-  el.innerHTML=featureDefs.map(([icon,name,desc],i)=>{const on=state[name]!==false&&i<6;return "<div class='achievement'><div class='achievement-icon'>"+icon+"</div><div><h3>"+name+"</h3><p>"+desc+"</p></div><label><input type='checkbox' "+(on?"checked":"")+" onchange='toggleFeature(""+esc(name)+"",this.checked)'> ON</label></div>"}).join("");
+  el.innerHTML=featureDefs.map(([icon,name,desc],i)=>{const on=state[name]!==false&&i<6;return "<div class='achievement'><div class='achievement-icon'>"+icon+"</div><div><h3>"+name+"</h3><p>"+desc+"</p></div><label><input type='checkbox' "+(on?"checked":"")+" onchange='toggleFeature(&quot;"+esc(name)+"&quot;,this.checked)'> ON</label></div>"}).join("");
 }
 function toggleFeature(name,on){const s=featureState();s[name]=!!on;localStorage.setItem("cineora_admin_features",JSON.stringify(s));addLog("Изменена функция: "+name+" — "+(on?"включена":"выключена"));renderFeatures()}
 function getLogs(){try{return JSON.parse(localStorage.getItem("cineora_admin_log")||"[]")}catch(e){return []}}
