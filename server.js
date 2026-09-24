@@ -811,7 +811,8 @@ async function joinRoomForSocket(socket, { roomId, name, avatar, privateRoom, ac
     progressUpdatedAt: Date.now(),
     duration: existing?.duration || 0,
     voiceEnabled: !!existing?.voiceEnabled,
-    isAdmin: !!socket.data.isAdmin
+    isAdmin: !!socket.data.isAdmin,
+    avatar
   });
 
   socket.emit("voice-peer-list", [...room.users.values()].map(u => ({
