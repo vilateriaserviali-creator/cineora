@@ -41,6 +41,14 @@ app.get("/favicon.ico", (req, res) => {
 });
 app.get("/", (req, res) => { res.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate"); res.sendFile(path.join(__dirname, "index.html")); });
 app.get("/cineora-hero.png", (req, res) => res.sendFile(path.join(__dirname, "cineora-hero.png")));
+app.get("/stickers/:name.svg", (req, res) => {
+  const allowed = new Set(["haha","cry","love","wow","look","fire","popcorn","sleep"]);
+  const name = String(req.params.name || "");
+  if (!allowed.has(name)) return res.status(404).end();
+  res.type("image/svg+xml");
+  res.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+  res.sendFile(path.join(__dirname, "stickers", name + ".svg"));
+});
 app.get("/cineora-mascot.svg", (req, res) => {
   res.type("image/svg+xml");
   res.set("Cache-Control", "public, max-age=86400");
