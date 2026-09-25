@@ -393,6 +393,11 @@ app.post("/api/admin/logout", (req, res) => {
   res.json({ ok: true });
 });
 
+app.get("/api/admin/status", (req, res) => {
+  res.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+  res.json({ ok: true, isAdmin: adminAllowed(req) });
+});
+
 app.get("/api/admin/news", async (req, res) => {
   if (!adminAllowed(req)) return res.status(401).json({ ok: false, error: "Неверный пароль администратора." });
   if (!pool) return res.status(503).json({ ok: false, error: "PostgreSQL не подключён." });
@@ -924,10 +929,15 @@ async function joinRoomForSocket(socket, { roomId, name, avatar, frame, privateR
   privateRoom = !!privateRoom;
   accessToken = String(accessToken || "").trim().slice(0, 96);
   clientId = String(clientId || "").trim().slice(0, 80);
-  const allowedAvatars = new Set(["star","film","popcorn","moon","heart","spark","play","smile"]);
-  const allowedFrames = new Set(["classic","neon","gold","cineora","achievement"]);
-  frame = allowedFrames.has(String(frame || "")) ? String(frame) : "classic";
-  avatar = allowedAvatars.has(String(avatar || "")) ? String(avatar) : "star";
+  const allowedAvatars = new Set(["star","film","popcorn","moon","heart","spark","play","smile","mascot"]);
+  const allowedFrames = new Set(["classic","neon","gold","cineora","achievement","creator"]);
+  const creator = !!socket.data.isAdmin;
+  const requestedAvatar = String(avatar || "");
+  const requestedFrame = String(frame || "");
+  // Маскот и рамка создателя — серверные эксклюзивы. Скрыть кнопку в UI недостаточно:
+  // обычный пользователь не может передать эти идентификаторы вручную.
+  avatar = creator && requestedAvatar === "mascot" ? "mascot" : (allowedAvatars.has(requestedAvatar) && requestedAvatar !== "mascot" ? requestedAvatar : "star");
+  frame = creator && requestedFrame === "creator" ? "creator" : (allowedFrames.has(requestedFrame) && requestedFrame !== "creator" ? requestedFrame : "classic");
 
   if (!roomId) return { ok:false, error:"Не указан код комнаты." };
 
