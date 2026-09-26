@@ -1,136 +1,38 @@
 /* CINEORA compatibility layer: media links + Chrome WebAudio autoplay guard + final room sidebar layout. */
 (function(){
   "use strict";
-
   function clean(v){return String(v||"").trim();}
-  function yt(raw){
-    try{
-      const u=new URL(raw),h=u.hostname.toLowerCase().replace(/^www\./,"");let id="";
-      if(h==="youtu.be") id=u.pathname.split("/").filter(Boolean)[0]||"";
-      else if(h==="youtube.com"||h.endsWith(".youtube.com")||h==="youtube-nocookie.com"||h.endsWith(".youtube-nocookie.com")){
-        if(u.pathname==="/watch") id=u.searchParams.get("v")||"";
-        else {const p=u.pathname.split("/").filter(Boolean);if(["shorts","embed","live","v"].includes(p[0]))id=p[1]||"";}
-      }
-      id=id.replace(/[^a-zA-Z0-9_-]/g,"");return id.length>=6&&id.length<=20?id:"";
-    }catch(e){return "";}
-  }
+  function yt(raw){try{const u=new URL(raw),h=u.hostname.toLowerCase().replace(/^www\./,"");let id="";if(h==="youtu.be")id=u.pathname.split("/").filter(Boolean)[0]||"";else if(h==="youtube.com"||h.endsWith(".youtube.com")||h==="youtube-nocookie.com"||h.endsWith(".youtube-nocookie.com")){if(u.pathname==="/watch")id=u.searchParams.get("v")||"";else{const p=u.pathname.split("/").filter(Boolean);if(["shorts","embed","live","v"].includes(p[0]))id=p[1]||"";}}id=id.replace(/[^a-zA-Z0-9_-]/g,"");return id.length>=6&&id.length<=20?id:"";}catch(e){return "";}}
   function vk(raw){
     try{
       const u=new URL(raw),h=u.hostname.toLowerCase().replace(/^www\./,"");
       if(!["vk.com","vk.ru","m.vk.com","vkvideo.ru"].includes(h))return "";
+      /* VK's video_ext.php is already an embed URL. Preserve every supported parameter. */
       if(u.pathname.toLowerCase()==="/video_ext.php"){
         const oid=u.searchParams.get("oid"),id=u.searchParams.get("id");
-        if(oid&&id)return "https://vkvideo.ru/video_ext.php?oid="+encodeURIComponent(oid)+"&id="+encodeURIComponent(id)+"&hd="+encodeURIComponent(u.searchParams.get("hd")||"2")+"&js_api=1";
+        if(oid&&id){
+          const params=new URLSearchParams();
+          ["oid","id","hd","js_api","hash","autoplay"].forEach(k=>{const v=u.searchParams.get(k);if(v!==null&&v!=="")params.set(k,v);});
+          if(!params.has("js_api"))params.set("js_api","1");
+          return "https://vkvideo.ru/video_ext.php?"+params.toString();
+        }
       }
       const z=decodeURIComponent(u.searchParams.get("z")||"");let m=z.match(/video(-?\d+)_([0-9]+)/i);
-      if(!m)m=u.pathname.match(/(?:^|\/)(?:video|live)(-?\d+)_([0-9]+)/i);
+      if(!m)m=u.pathname.match(/(?:^|\/)(?:video|live|clip)(-?\d+)[_\/]([0-9]+)/i);
       if(m){const oid=m[1].startsWith("-")?m[1]:"-"+m[1];return "https://vkvideo.ru/video_ext.php?oid="+encodeURIComponent(oid)+"&id="+encodeURIComponent(m[2])+"&hd=2&js_api=1";}
       const q=(u.searchParams.get("video")||u.searchParams.get("video_id")||"").match(/^(-?\d+)_([0-9]+)$/);
       if(q){const oid=q[1].startsWith("-")?q[1]:"-"+q[1];return "https://vkvideo.ru/video_ext.php?oid="+encodeURIComponent(oid)+"&id="+encodeURIComponent(q[2])+"&hd=2&js_api=1";}
     }catch(e){}
     return "";
   }
-  function rt(raw){
-    try{
-      const u=new URL(raw),h=u.hostname.toLowerCase().replace(/^www\./,"");
-      if(h!=="rutube.ru"&&!h.endsWith(".rutube.ru"))return "";
-      const p=u.pathname.split("/").filter(Boolean);
-      if(p[0]==="play"&&p[1]==="embed"&&p[2])return "https://rutube.ru/play/embed/"+encodeURIComponent(p[2]);
-      if(p[0]==="video"&&p[1])return "https://rutube.ru/video/"+encodeURIComponent(p[1]);
-      if(p[0]==="shorts"&&p[1])return "https://rutube.ru/video/"+encodeURIComponent(p[1]);
-      const q=u.searchParams.get("v")||u.searchParams.get("video");if(q)return "https://rutube.ru/video/"+encodeURIComponent(q);
-    }catch(e){}
-    return "";
-  }
+  function rt(raw){try{const u=new URL(raw),h=u.hostname.toLowerCase().replace(/^www\./,"");if(h!=="rutube.ru"&&!h.endsWith(".rutube.ru"))return "";const p=u.pathname.split("/").filter(Boolean);if(p[0]==="play"&&p[1]==="embed"&&p[2])return "https://rutube.ru/play/embed/"+encodeURIComponent(p[2]);if(p[0]==="video"&&p[1])return "https://rutube.ru/video/"+encodeURIComponent(p[1]);if(p[0]==="shorts"&&p[1])return "https://rutube.ru/video/"+encodeURIComponent(p[1]);const q=u.searchParams.get("v")||u.searchParams.get("video");if(q)return "https://rutube.ru/video/"+encodeURIComponent(q);}catch(e){}return "";}
   function canonicalize(value){const raw=clean(value);if(!raw)return raw;return yt(raw)?"https://www.youtube.com/watch?v="+yt(raw):vk(raw)||rt(raw)||raw;}
   function fix(){const input=document.getElementById("mediaUrlRoom");if(!input)return;const next=canonicalize(input.value);if(next&&next!==input.value)input.value=next;}
-
-  document.addEventListener("DOMContentLoaded",()=>{
-    const input=document.getElementById("mediaUrlRoom");
-    if(input){input.addEventListener("input",fix);input.addEventListener("paste",()=>setTimeout(fix,0));}
-    const button=document.getElementById("setMediaRoom");if(button)button.addEventListener("pointerdown",fix,true);
-  });
-
-  /* Chrome blocks WebAudio until a real user gesture. Defer automatic chat-audio
-     startup instead of creating/resuming AudioContext on page load. */
-  const contexts=new Set();
-  const NativeAudioContext=window.AudioContext||window.webkitAudioContext;
-  if(NativeAudioContext && !window.__cineoraAudioPatched){
-    window.__cineoraAudioPatched=true;
-    function PatchedAudioContext(){
-      const C=new.target||PatchedAudioContext;
-      const ctx=Reflect.construct(NativeAudioContext,[],C);
-      contexts.add(ctx);
-      return ctx;
-    }
-    PatchedAudioContext.prototype=NativeAudioContext.prototype;
-    Object.setPrototypeOf(PatchedAudioContext,NativeAudioContext);
-    try{window.AudioContext=PatchedAudioContext;if(window.webkitAudioContext)window.webkitAudioContext=PatchedAudioContext;}catch(e){}
-  }
-  let gestureReady=false;
-  async function resumeAll(){
-    gestureReady=true;
-    for(const ctx of Array.from(contexts)){try{if(ctx.state==="suspended")await ctx.resume();}catch(e){}}
-  }
-  ["pointerdown","touchstart","keydown"].forEach(type=>document.addEventListener(type,resumeAll,{capture:true,passive:true,once:true}));
-
-  function wrapAudioFunction(name){
-    if(window["__cineoraWrapped_"+name])return true;
-    const original=window[name];if(typeof original!=="function")return false;
-    const wrapped=function(...args){
-      if(gestureReady)return original.apply(this,args);
-      const run=()=>{gestureReady=true;Promise.resolve(resumeAll()).finally(()=>{try{original.apply(this,args);}catch(e){console.warn("CINEORA audio startup skipped:",e);}});};
-      document.addEventListener("pointerdown",run,{once:true,capture:true});
-      document.addEventListener("touchstart",run,{once:true,capture:true});
-      document.addEventListener("keydown",run,{once:true,capture:true});
-      return null;
-    };
-    window[name]=wrapped;window["__cineoraWrapped_"+name]=true;return true;
-  }
-  function tryWrap(){const a=wrapAudioFunction("prepareChatAudio"),b=wrapAudioFunction("enableChatSound");return a&&b;}
-  if(!tryWrap()){
-    let n=0;const timer=setInterval(()=>{if(tryWrap()||++n>100)clearInterval(timer);},50);
-  }
-
-  /* The room already contains many historical inline CSS layers. The sidebar
-     fix is injected last so those older rules cannot collapse or overlap it. */
-  function installRoomSidebarFix(){
-    if(document.getElementById("cineora-sidebar-final-fix"))return;
-    const s=document.createElement("style");
-    s.id="cineora-sidebar-final-fix";
-    s.textContent=`
-      .room-view .room-layout{display:grid!important;grid-template-columns:minmax(0,1fr) 390px!important;gap:20px!important;align-items:start!important;width:min(1480px,calc(100% - 48px))!important;margin:24px auto 30px!important}
-      .room-view .watch-card{min-width:0!important;width:100%!important}
-      .room-view .side-card{width:390px!important;min-width:390px!important;max-width:390px!important;height:auto!important;min-height:0!important;display:flex!important;flex-direction:column!important;overflow:hidden!important;position:relative!important;transform:none!important;translate:none!important}
-      .room-view .side-card>.side-title{flex:0 0 auto!important;padding:14px 15px 8px!important;font-size:19px!important;line-height:1.1!important}
-      .room-view .side-card>.participants{flex:0 0 118px!important;height:118px!important;min-height:118px!important;max-height:118px!important;overflow:hidden!important;padding:0 10px 8px!important;display:flex!important;flex-direction:column!important;gap:5px!important;box-sizing:border-box!important}
-      .room-view .side-card .participants .person-row{flex:0 0 50px!important;height:50px!important;min-height:50px!important;max-height:50px!important;padding:6px 9px!important;box-sizing:border-box!important;overflow:hidden!important}
-      .room-view .side-card .person-row .person-name{font-size:13px!important}
-      .room-view .side-card .person-row .person-time{font-size:10px!important}
-      .room-view .side-card .person-row .person-progress{margin-top:4px!important;height:3px!important}
-      .room-view .side-card>.voice-panel{flex:0 0 86px!important;width:100%!important;height:86px!important;min-height:86px!important;max-height:86px!important;box-sizing:border-box!important;overflow:hidden!important;padding:8px 10px!important;margin:0!important}
-      .room-view .side-card .voice-head{height:28px!important;min-height:28px!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:8px!important}
-      .room-view .side-card .voice-title{font-size:15px!important;line-height:1.05!important;margin:0!important}
-      .room-view .side-card .voice-status{font-size:8px!important;margin:1px 0 0!important}
-      .room-view .side-card .voice-toggle{height:28px!important;min-height:28px!important;padding:0 10px!important;font-size:9px!important;white-space:nowrap!important}
-      .room-view .side-card .voice-tools{height:18px!important;min-height:18px!important;margin:2px 0 0!important;display:flex!important;align-items:center!important;gap:5px!important}
-      .room-view .side-card .voice-users{height:24px!important;min-height:24px!important;max-height:24px!important;margin:2px 0 0!important;overflow:hidden!important;display:flex!important;gap:4px!important;align-items:center!important}
-      .room-view .side-card .voice-user{font-size:8px!important;padding:3px 6px!important}
-      .room-view .side-card>.chat{flex:1 1 auto!important;width:100%!important;height:330px!important;min-height:330px!important;max-height:none!important;display:flex!important;flex-direction:column!important;overflow:hidden!important;border-top:1px solid #e1dbe1!important}
-      .room-view .side-card .chat-title-row{flex:0 0 46px!important;height:46px!important;min-height:46px!important;display:flex!important;align-items:center!important;justify-content:space-between!important;padding:0 13px!important;box-sizing:border-box!important}
-      .room-view .side-card .chat-title-row .side-title{padding:0!important;font-size:18px!important;white-space:nowrap!important}
-      .room-view .side-card .chat-messages{flex:1 1 auto!important;min-height:0!important;height:auto!important;overflow-y:auto!important;overflow-x:hidden!important;padding:10px!important;display:flex!important;flex-direction:column!important;gap:7px!important}
-      .room-view .side-card .chat-form{flex:0 0 58px!important;height:58px!important;min-height:58px!important;max-height:58px!important;width:100%!important;display:flex!important;flex-direction:row!important;align-items:center!important;gap:6px!important;padding:8px!important;box-sizing:border-box!important;position:relative!important;inset:auto!important}
-      .room-view .side-card .chat-form input{flex:1 1 auto!important;width:auto!important;min-width:0!important;height:40px!important;max-height:40px!important;box-sizing:border-box!important}
-      .room-view .side-card .chat-form>button{flex:0 0 44px!important;width:44px!important;height:40px!important;min-width:44px!important;padding:0!important}
-      .room-view .side-card .emoji-wrap{flex:0 0 40px!important;width:40px!important;height:40px!important;display:flex!important;align-items:center!important;position:relative!important}
-      .room-view .side-card .emoji-toggle{width:40px!important;min-width:40px!important;height:40px!important;padding:0!important}
-      @media(max-width:1000px){
-        .room-view .room-layout{display:flex!important;flex-direction:column!important;width:calc(100% - 20px)!important;margin:10px auto 20px!important;gap:10px!important}
-        .room-view .side-card{width:100%!important;min-width:0!important;max-width:none!important}
-      }
-    `;
-    (document.head||document.documentElement).appendChild(s);
-  }
-  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",installRoomSidebarFix,{once:true});else installRoomSidebarFix();
+  document.addEventListener("DOMContentLoaded",()=>{const input=document.getElementById("mediaUrlRoom");if(input){input.addEventListener("input",fix);input.addEventListener("paste",()=>setTimeout(fix,0));}const button=document.getElementById("setMediaRoom");if(button)button.addEventListener("pointerdown",fix,true);});
+  const contexts=new Set();const NativeAudioContext=window.AudioContext||window.webkitAudioContext;if(NativeAudioContext&&!window.__cineoraAudioPatched){window.__cineoraAudioPatched=true;function PatchedAudioContext(){const C=new.target||PatchedAudioContext;const ctx=Reflect.construct(NativeAudioContext,[],C);contexts.add(ctx);return ctx;}PatchedAudioContext.prototype=NativeAudioContext.prototype;Object.setPrototypeOf(PatchedAudioContext,NativeAudioContext);try{window.AudioContext=PatchedAudioContext;if(window.webkitAudioContext)window.webkitAudioContext=PatchedAudioContext;}catch(e){}}
+  let gestureReady=false;async function resumeAll(){gestureReady=true;for(const ctx of Array.from(contexts)){try{if(ctx.state==="suspended")await ctx.resume();}catch(e){}}}["pointerdown","touchstart","keydown"].forEach(type=>document.addEventListener(type,resumeAll,{capture:true,passive:true,once:true}));
+  function wrapAudioFunction(name){if(window["__cineoraWrapped_"+name])return true;const original=window[name];if(typeof original!=="function")return false;const wrapped=function(...args){if(gestureReady)return original.apply(this,args);const run=()=>{gestureReady=true;Promise.resolve(resumeAll()).finally(()=>{try{original.apply(this,args);}catch(e){console.warn("CINEORA audio startup skipped:",e);}});};document.addEventListener("pointerdown",run,{once:true,capture:true});document.addEventListener("touchstart",run,{once:true,capture:true});document.addEventListener("keydown",run,{once:true,capture:true});return null;};window[name]=wrapped;window["__cineoraWrapped_"+name]=true;return true;}function tryWrap(){const a=wrapAudioFunction("prepareChatAudio"),b=wrapAudioFunction("enableChatSound");return a&&b;}if(!tryWrap()){let n=0;const timer=setInterval(()=>{if(tryWrap()||++n>100)clearInterval(timer);},50);}
+  function installRoomSidebarFix(){if(document.getElementById("cineora-sidebar-final-fix"))return;const s=document.createElement("style");s.id="cineora-sidebar-final-fix";s.textContent=`
+      .room-view .room-layout{display:grid!important;grid-template-columns:minmax(0,1fr) 390px!important;gap:20px!important;align-items:start!important;width:min(1480px,calc(100% - 48px))!important;margin:24px auto 30px!important}.room-view .watch-card{min-width:0!important;width:100%!important}.room-view .side-card{width:390px!important;min-width:390px!important;max-width:390px!important;height:auto!important;min-height:0!important;display:flex!important;flex-direction:column!important;overflow:hidden!important;position:relative!important;transform:none!important;translate:none!important}.room-view .side-card>.side-title{flex:0 0 auto!important;padding:14px 15px 8px!important;font-size:19px!important;line-height:1.1!important}.room-view .side-card>.participants{flex:0 0 118px!important;height:118px!important;min-height:118px!important;max-height:118px!important;overflow:hidden!important;padding:0 10px 8px!important;display:flex!important;flex-direction:column!important;gap:5px!important;box-sizing:border-box!important}.room-view .side-card .participants .person-row{flex:0 0 50px!important;height:50px!important;min-height:50px!important;max-height:50px!important;padding:6px 9px!important;box-sizing:border-box!important;overflow:hidden!important}.room-view .side-card>.voice-panel{flex:0 0 86px!important;width:100%!important;height:86px!important;min-height:86px!important;max-height:86px!important;box-sizing:border-box!important;overflow:hidden!important;padding:8px 10px!important;margin:0!important}.room-view .side-card .voice-head{height:28px!important;min-height:28px!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:8px!important}.room-view .side-card .voice-title{font-size:15px!important;line-height:1.05!important;margin:0!important}.room-view .side-card .voice-toggle{height:28px!important;min-height:28px!important;padding:0 10px!important;font-size:9px!important;white-space:nowrap!important}.room-view .side-card>.chat{flex:1 1 auto!important;width:100%!important;height:330px!important;min-height:330px!important;max-height:none!important;display:flex!important;flex-direction:column!important;overflow:hidden!important;border-top:1px solid #e1dbe1!important}.room-view .side-card .chat-title-row{flex:0 0 46px!important;height:46px!important;min-height:46px!important;display:flex!important;align-items:center!important;justify-content:space-between!important;padding:0 13px!important;box-sizing:border-box!important}.room-view .side-card .chat-messages{flex:1 1 auto!important;min-height:0!important;height:auto!important;overflow-y:auto!important;overflow-x:hidden!important;padding:10px!important;display:flex!important;flex-direction:column!important;gap:7px!important}.room-view .side-card .chat-form{flex:0 0 58px!important;height:58px!important;min-height:58px!important;max-height:58px!important;width:100%!important;display:flex!important;flex-direction:row!important;align-items:center!important;gap:6px!important;padding:8px!important;box-sizing:border-box!important;position:relative!important;inset:auto!important}.room-view .side-card .chat-form input{flex:1 1 auto!important;width:auto!important;min-width:0!important;height:40px!important;max-height:40px!important;box-sizing:border-box!important}.room-view .side-card .chat-form>button{flex:0 0 44px!important;width:44px!important;height:40px!important;min-width:44px!important;padding:0!important}.room-view .side-card .emoji-wrap{flex:0 0 40px!important;width:40px!important;height:40px!important;display:flex!important;align-items:center!important;position:relative!important}.room-view .side-card .emoji-toggle{width:40px!important;min-width:40px!important;height:40px!important;padding:0!important}@media(max-width:1000px){.room-view .room-layout{display:flex!important;flex-direction:column!important;width:calc(100% - 20px)!important;margin:10px auto 20px!important;gap:10px!important}.room-view .side-card{width:100%!important;min-width:0!important;max-width:none!important}}
+    `;(document.head||document.documentElement).appendChild(s);}if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",installRoomSidebarFix,{once:true});else installRoomSidebarFix();
 })();
