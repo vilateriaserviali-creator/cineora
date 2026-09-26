@@ -1,4 +1,14 @@
-
+const roomUiFixStyle=document.createElement("style");roomUiFixStyle.textContent=`
+.room-view.show .room-sidebar{display:flex!important;flex-direction:column!important;gap:8px!important;max-height:none!important;height:auto!important;overflow:visible!important}
+.room-view.show .chat-panel{display:flex!important;flex-direction:column!important;height:auto!important;min-height:0!important;max-height:none!important;overflow:hidden!important}
+.room-view.show .chat-messages,#chatMessages{flex:1 1 auto!important;height:170px!important;min-height:150px!important;max-height:210px!important;overflow-y:auto!important;overflow-x:hidden!important;padding:10px!important}
+.room-view.show #chatForm{display:flex!important;visibility:visible!important;opacity:1!important;flex:0 0 auto!important;align-items:center!important;gap:7px!important;padding:8px!important;margin:0!important;background:#1d1921!important;border-top:1px solid #352b39!important;position:relative!important;z-index:20!important}
+.room-view.show #chatInput{display:block!important;visibility:visible!important;opacity:1!important;flex:1 1 auto!important;min-width:0!important;width:auto!important;height:42px!important;padding:0 12px!important;background:#211b25!important;color:#f3eaf5!important;border:1px solid #493c50!important;border-radius:12px!important;box-sizing:border-box!important}
+.room-view.show #chatForm button{display:flex!important;visibility:visible!important;opacity:1!important;flex:0 0 46px!important;width:46px!important;height:42px!important;align-items:center!important;justify-content:center!important;border-radius:12px!important}
+.room-view.show .room-sidebar .voice-card{margin:0!important}
+@media(max-width:1050px){.room-view.show .room-layout{grid-template-columns:minmax(0,1fr)!important}.room-view.show .room-sidebar{width:100%!important}}
+@media(max-width:650px){.room-view.show .room-layout{width:calc(100% - 18px)!important;margin:9px auto 14px!important}.room-view.show .room-sidebar{gap:7px!important}.room-view.show .chat-messages,#chatMessages{height:150px!important;min-height:120px!important;max-height:180px!important}.room-view.show #chatForm{padding:7px!important}.room-view.show #chatInput,.room-view.show #chatForm button{height:40px!important}}
+`;document.head.appendChild(roomUiFixStyle);
 
 const modal=document.getElementById("modal"),nameInput=document.getElementById("name"),roomInput=document.getElementById("room"),title=document.getElementById("modalTitle"),text=document.getElementById("modalText");
 function openModal(create){title.textContent=create?"Создать сессию":"Присоединиться к сессии";text.textContent=create?"Введите имя — код сессии будет создан автоматически.":"Введите имя и код сессии, который вам отправили.";roomInput.value=create?String(Math.floor(1000+Math.random()*9000)):"";roomInput.placeholder=create?"Код создан автоматически":"Код сессии";modal.classList.remove("hidden");nameInput.focus()}
@@ -13,22 +23,14 @@ function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":
 loadNews();
 
 const q=new URLSearchParams(location.search).get("room");
-if(q){
-  document.querySelector(".hero").style.display="none";
-  document.querySelectorAll(".section,.footer").forEach(el=>el.style.display="none");
-  document.getElementById("modal").classList.add("hidden");
-  document.getElementById("roomView").classList.add("show");
-  startRoom(q.toUpperCase());
-}
+if(q){document.querySelector(".hero").style.display="none";document.querySelectorAll(".section,.footer").forEach(el=>el.style.display="none");document.getElementById("modal").classList.add("hidden");document.getElementById("roomView").classList.add("show");startRoom(q.toUpperCase())}
 
 function startRoom(roomId){
-  const socket=io();
+  const socket=io();window.socket=socket;
   const myName=sessionStorage.getItem("cineora_name")||"Гость";
   const video=document.getElementById("roomVideo"),empty=document.getElementById("emptyPlayer"),participants=document.getElementById("participants"),chatMessages=document.getElementById("chatMessages");
   let suppress=false,lastProgress=0;
-  document.getElementById("roomCodeLabel").textContent=roomId;
-  document.getElementById("myRoomName").textContent=myName;
-  socket.emit("join-room",{roomId,name:myName});
+  document.getElementById("roomCodeLabel").textContent=roomId;document.getElementById("myRoomName").textContent=myName;socket.emit("join-room",{roomId,name:myName});
   function fmt(sec){sec=Math.max(0,Math.floor(Number(sec)||0));const m=Math.floor(sec/60),s=String(sec%60).padStart(2,"0");return m+":"+s}
   function applySync(playing,pos){suppress=true;try{if(Math.abs((video.currentTime||0)-pos)>0.6)video.currentTime=pos;if(playing)video.play().catch(()=>{});else video.pause()}finally{setTimeout(()=>suppress=false,180)}}
   function loadMedia(url){document.getElementById("mediaUrlRoom").value=url||"";if(!url){video.removeAttribute("src");video.load();empty.style.display="grid";document.getElementById("mediaStatus").textContent="Видео пока не добавлено";return}video.src=url;video.load();empty.style.display="none";document.getElementById("mediaStatus").textContent="Видео загружено"}
@@ -37,14 +39,8 @@ function startRoom(roomId){
   document.getElementById("setMediaRoom").onclick=()=>{const url=document.getElementById("mediaUrlRoom").value.trim();if(url)socket.emit("set-media",{url})};
   document.getElementById("copyRoom").onclick=async()=>{const url=location.origin+"/?room="+encodeURIComponent(roomId);try{await navigator.clipboard.writeText(url);document.getElementById("copyRoom").textContent="Ссылка скопирована";setTimeout(()=>document.getElementById("copyRoom").textContent="Скопировать ссылку",1500)}catch(e){prompt("Скопируйте ссылку:",url)}};
   document.getElementById("leaveRoom").onclick=()=>{location.href="/"};
-  video.addEventListener("play",()=>{if(!suppress)socket.emit("sync",{playing:true,position:video.currentTime})});
-  video.addEventListener("pause",()=>{if(!suppress)socket.emit("sync",{playing:false,position:video.currentTime})});
-  video.addEventListener("seeked",()=>{if(!suppress)socket.emit("sync",{playing:!video.paused,position:video.currentTime})});
-  video.addEventListener("timeupdate",()=>{if(Date.now()-lastProgress>1000){lastProgress=Date.now();socket.emit("user-progress",{position:video.currentTime,playing:!video.paused})}});
-  document.getElementById("chatForm").addEventListener("submit",e=>{e.preventDefault();const input=document.getElementById("chatInput"),msg=input.value.trim();if(!msg)return;socket.emit("chat-message",{text:msg});input.value=""});
-  socket.on("room-state",state=>{loadMedia(state.mediaUrl);applySync(state.playing,state.position)});
-  socket.on("media-changed",url=>loadMedia(url));
-  socket.on("sync",state=>applySync(state.playing,state.position));
-  socket.on("room-users",renderUsers);
-  socket.on("chat-message",addMessage);
+  video.addEventListener("play",()=>{if(!suppress)socket.emit("sync",{playing:true,position:video.currentTime})});video.addEventListener("pause",()=>{if(!suppress)socket.emit("sync",{playing:false,position:video.currentTime})});video.addEventListener("seeked",()=>{if(!suppress)socket.emit("sync",{playing:!video.paused,position:video.currentTime})});video.addEventListener("timeupdate",()=>{if(Date.now()-lastProgress>1000){lastProgress=Date.now();socket.emit("user-progress",{position:video.currentTime,playing:!video.paused})}});
+  const chatForm=document.getElementById("chatForm"),chatInput=document.getElementById("chatInput");
+  if(chatForm&&chatInput){chatForm.addEventListener("submit",e=>{e.preventDefault();const msg=chatInput.value.trim();if(!msg)return;socket.emit("chat-message",{text:msg});chatInput.value=""});chatForm.style.display="flex";chatInput.style.display="block"}
+  socket.on("room-state",state=>{loadMedia(state.mediaUrl);applySync(state.playing,state.position)});socket.on("media-changed",url=>loadMedia(url));socket.on("sync",state=>applySync(state.playing,state.position));socket.on("room-users",renderUsers);socket.on("chat-message",addMessage);
 }
