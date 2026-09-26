@@ -1,67 +1,14 @@
-/* CINEORA room recovery: mobile chat and side panel */
-.room-view .side-card{min-height:0!important}
-.room-view .chat{display:flex!important;flex-direction:column!important;min-height:0!important}
-.room-view .chat-messages{flex:1 1 auto!important;min-height:0!important;overflow-y:auto!important;overflow-x:hidden!important}
-.room-view .chat-form{flex:0 0 auto!important;display:flex!important;align-items:center!important;position:relative!important;z-index:300!important;visibility:visible!important;opacity:1!important}
-.room-view .chat-form input{display:block!important;visibility:visible!important;opacity:1!important;flex:1 1 auto!important;min-width:0!important}
-.room-view .chat-form>button[type="submit"]{display:inline-flex!important;visibility:visible!important;opacity:1!important;flex:0 0 44px!important}
-.room-view .emoji-wrap{display:flex!important;flex:0 0 auto!important;visibility:visible!important}
-.room-view .emoji-toggle{display:inline-flex!important;visibility:visible!important;opacity:1!important}
+/* CINEORA room recovery: keep the complete sidebar and chat composer visible */
+.room-view .side-card{min-height:0!important;overflow:visible!important}
+.room-view .side-card .chat{display:flex!important;flex-direction:column!important;min-height:240px!important;height:240px!important;max-height:none!important;flex:0 0 240px!important;overflow:hidden!important;position:relative!important}
+.room-view .chat-messages{flex:1 1 auto!important;min-height:0!important;height:auto!important;max-height:none!important;overflow-y:auto!important;overflow-x:hidden!important}
+.room-view .chat-form{flex:0 0 58px!important;min-height:58px!important;height:58px!important;display:flex!important;align-items:center!important;position:relative!important;bottom:auto!important;width:100%!important;box-sizing:border-box!important;z-index:300!important;visibility:visible!important;opacity:1!important;padding:8px!important;gap:6px!important}
+.room-view .chat-form input{display:block!important;visibility:visible!important;opacity:1!important;flex:1 1 auto!important;min-width:0!important;width:auto!important;height:42px!important;min-height:42px!important;box-sizing:border-box!important}
+.room-view .chat-form>button[type="submit"]{display:inline-flex!important;align-items:center!important;justify-content:center!important;visibility:visible!important;opacity:1!important;flex:0 0 44px!important;width:44px!important;min-width:44px!important;height:42px!important;min-height:42px!important;box-sizing:border-box!important}
+.room-view .emoji-wrap{display:flex!important;flex:0 0 auto!important;visibility:visible!important;opacity:1!important;position:relative!important}
+.room-view .emoji-toggle{display:inline-flex!important;align-items:center!important;justify-content:center!important;visibility:visible!important;opacity:1!important;width:42px!important;min-width:42px!important;height:42px!important;min-height:42px!important}
 .room-view .emoji-picker.hidden{display:none!important}
-@media(max-width:700px){
-  .room-view .side-card{
-    height:auto!important;
-    max-height:none!important;
-    min-height:0!important;
-    overflow:visible!important;
-    display:flex!important;
-    flex-direction:column!important;
-  }
-  .room-view .participants{max-height:none!important;overflow:visible!important}
-  .room-view .voice-panel{flex:0 0 auto!important}
-  .room-view .chat{
-    height:360px!important;
-    min-height:360px!important;
-    max-height:360px!important;
-    flex:0 0 360px!important;
-    overflow:hidden!important;
-    display:flex!important;
-    flex-direction:column!important;
-    position:relative!important;
-  }
-  .room-view .chat-messages{
-    flex:1 1 auto!important;
-    height:auto!important;
-    min-height:0!important;
-    max-height:none!important;
-    overflow-y:auto!important;
-  }
-  .room-view .chat-form{
-    flex:0 0 58px!important;
-    min-height:58px!important;
-    height:58px!important;
-    position:relative!important;
-    bottom:auto!important;
-    width:100%!important;
-    box-sizing:border-box!important;
-    z-index:500!important;
-  }
-  .room-view .chat-form input{height:42px!important;min-height:42px!important}
-  .room-view .chat-form>button[type="submit"]{height:42px!important;min-height:42px!important}
-  .room-view .emoji-toggle{height:42px!important;width:42px!important;min-width:42px!important}
-  .room-view .emoji-picker:not(.hidden){
-    display:block!important;
-    position:absolute!important;
-    left:0!important;
-    right:auto!important;
-    bottom:52px!important;
-    width:min(292px,calc(100vw - 24px))!important;
-    max-height:280px!important;
-    overflow-y:auto!important;
-    z-index:10000!important;
-  }
-}
-@media(max-width:480px){
-  .room-view .chat{height:340px!important;min-height:340px!important;max-height:340px!important;flex-basis:340px!important}
-  .room-view .chat-form{height:58px!important;min-height:58px!important;flex-basis:58px!important;padding:8px!important}
-}
+.room-view .emoji-picker:not(.hidden){position:absolute!important;left:0!important;bottom:52px!important;z-index:10000!important;max-height:280px!important;overflow-y:auto!important}
+@media(min-width:701px){.room-view .side-card{height:auto!important;max-height:none!important;overflow:visible!important}.room-view .side-card .participants{max-height:150px!important;overflow:auto!important}.room-view .side-card .voice-panel{flex:0 0 auto!important}}
+@media(max-width:700px){.room-view .side-card{height:auto!important;max-height:none!important;min-height:0!important;overflow:visible!important;display:flex!important;flex-direction:column!important}.room-view .participants{max-height:none!important;overflow:visible!important}.room-view .voice-panel{flex:0 0 auto!important}.room-view .side-card .chat{height:340px!important;min-height:340px!important;max-height:340px!important;flex:0 0 340px!important}.room-view .chat-form{flex:0 0 58px!important;min-height:58px!important;height:58px!important}}
+@media(max-width:480px){.room-view .side-card .chat{height:320px!important;min-height:320px!important;max-height:320px!important;flex-basis:320px!important}}
