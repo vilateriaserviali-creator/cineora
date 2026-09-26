@@ -3,10 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "node start.js"
-  },
-  "engines": {
-    "node": ">=20 <25"
+    "start": "node server.js"
   },
   "dependencies": {
     "express": "^4.21.2",
