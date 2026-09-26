@@ -1,211 +1,62 @@
-/* CINEORA room recovery v3: compact voice panel, stable chat */
-.room-view,
-.room-view.show{
-  height:auto!important;
-  min-height:100vh!important;
-  max-height:none!important;
-  overflow:visible!important;
+/* CINEORA — final room layout recovery
+   One clean layout override. Keeps the existing room markup and JS intact. */
+
+.room-view.show{display:block!important;min-height:100vh!important;height:auto!important;overflow:visible!important}
+.room-view .room-layout{width:min(1500px,calc(100% - 40px))!important;margin:18px auto 24px!important;display:grid!important;grid-template-columns:minmax(0,1fr) 360px!important;gap:16px!important;align-items:start!important}
+
+/* Right column: fixed to the viewport, no mystery empty rows. */
+.room-view .side-card{height:calc(100vh - 110px)!important;min-height:0!important;max-height:none!important;display:flex!important;flex-direction:column!important;overflow:hidden!important;align-self:start!important}
+.room-view .side-card>.side-title{flex:0 0 auto!important}
+.room-view .side-card>.participants{flex:0 0 142px!important;height:142px!important;min-height:142px!important;max-height:142px!important;overflow-y:auto!important;overflow-x:hidden!important}
+
+/* Voice is a compact block, never a flex spacer. */
+.room-view .side-card .voice-panel{flex:0 0 106px!important;height:106px!important;min-height:106px!important;max-height:106px!important;box-sizing:border-box!important;overflow:hidden!important;padding:8px 11px!important;display:block!important}
+.room-view .voice-panel .voice-head{height:38px!important;min-height:38px!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:8px!important}
+.room-view .voice-panel .voice-title{font-size:16px!important;line-height:1.05!important;margin:0!important}
+.room-view .voice-panel .voice-status{font-size:9px!important;margin:1px 0 0!important}
+.room-view .voice-panel .voice-toggle{height:34px!important;padding:0 11px!important;font-size:10px!important;white-space:nowrap!important}
+.room-view .voice-panel .voice-users{display:flex!important;flex-wrap:nowrap!important;gap:5px!important;margin:5px 0 0!important;max-height:45px!important;overflow:hidden!important}
+.room-view .voice-panel .voice-user{font-size:9px!important;padding:4px 6px!important;max-width:48%!important;overflow:hidden!important;white-space:nowrap!important}
+
+/* Chat gets all remaining height. No 280/300px mobile blocks and no pushed-down form. */
+.room-view .side-card>.chat{flex:1 1 auto!important;min-height:0!important;height:auto!important;max-height:none!important;display:flex!important;flex-direction:column!important;overflow:hidden!important;border-top:1px solid rgba(255,255,255,.1)!important}
+.room-view .chat-title-row{flex:0 0 48px!important;height:48px!important;min-height:48px!important;box-sizing:border-box!important;display:flex!important;align-items:center!important}
+.room-view .chat-title-row .side-title{padding:0 15px!important;margin:0!important}
+.room-view .chat-messages{flex:1 1 auto!important;min-height:0!important;height:auto!important;max-height:none!important;overflow-y:auto!important;overflow-x:hidden!important;padding:8px 10px!important}
+.room-view .chat-form{flex:0 0 58px!important;height:58px!important;min-height:58px!important;max-height:58px!important;width:100%!important;display:flex!important;align-items:center!important;box-sizing:border-box!important;padding:8px!important;gap:6px!important;position:relative!important;inset:auto!important;overflow:visible!important;z-index:100!important}
+.room-view .chat-form input{height:42px!important;min-height:42px!important;max-height:42px!important;flex:1 1 auto!important;min-width:0!important;width:auto!important}
+.room-view .chat-form>button[type="submit"]{height:42px!important;min-height:42px!important;width:44px!important;min-width:44px!important;flex:0 0 44px!important}
+.room-view .emoji-wrap{position:relative!important;display:flex!important;flex:0 0 auto!important;z-index:101!important}
+.room-view .emoji-toggle{height:42px!important;width:42px!important;min-width:42px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important}
+.room-view .emoji-picker:not(.hidden){position:absolute!important;left:0!important;right:auto!important;bottom:52px!important;width:min(280px,calc(100vw - 20px))!important;max-height:260px!important;overflow-y:auto!important;z-index:10000!important}
+
+/* Do not allow old rules to turn the sidebar into a second page. */
+.room-view .chat-overlay{position:absolute!important;display:none!important}
+.room-view .side-card .chat{transform:none!important;translate:none!important}
+
+@media(max-width:1000px){
+  .room-view .room-layout{width:100%!important;margin:0!important;display:flex!important;flex-direction:column!important;gap:10px!important}
+  .room-view .watch-card,.room-view .side-card{width:100%!important;border-radius:0!important;border-left:0!important;border-right:0!important}
+  .room-view .side-card{height:auto!important;min-height:0!important;max-height:none!important;overflow:hidden!important;display:flex!important;flex-direction:column!important}
+  .room-view .side-card>.side-title{flex:0 0 48px!important;height:48px!important}
+  .room-view .side-card>.participants{flex:0 0 142px!important;height:142px!important;min-height:142px!important;max-height:142px!important}
+  .room-view .side-card .voice-panel{flex:0 0 106px!important;height:106px!important;min-height:106px!important;max-height:106px!important}
+  .room-view .side-card>.chat{flex:0 0 154px!important;height:154px!important;min-height:154px!important;max-height:154px!important}
+  .room-view .chat-title-row{flex:0 0 44px!important;height:44px!important;min-height:44px!important}
+  .room-view .chat-messages{flex:1 1 auto!important;min-height:0!important;max-height:none!important;padding:6px 9px!important}
+  .room-view .chat-form{flex:0 0 58px!important;height:58px!important;min-height:58px!important;max-height:58px!important}
 }
-body.room-page,
-body:has(.room-view.show){
-  min-height:100vh!important;
-  height:auto!important;
-  overflow-y:auto!important;
-  overflow-x:hidden!important;
-}
-.room-view .room-layout{
-  align-items:start!important;
-  min-height:0!important;
-  height:auto!important;
-  max-height:none!important;
-  overflow:visible!important;
-}
-@media(min-width:701px){
-  .room-view .side-card{
-    height:calc(100vh - 122px)!important;
-    min-height:520px!important;
-    max-height:700px!important;
-    overflow:hidden!important;
-    display:grid!important;
-    grid-template-rows:auto auto minmax(250px,1fr)!important;
-    align-self:start!important;
-  }
-  .room-view .participants{
-    min-height:0!important;
-    max-height:150px!important;
-    overflow-y:auto!important;
-  }
-  /* Voice room is intentionally compact. It must not consume chat space. */
-  .room-view .voice-panel{
-    min-height:0!important;
-    height:118px!important;
-    max-height:118px!important;
-    overflow:hidden!important;
-    flex:none!important;
-    padding:10px 12px!important;
-  }
-  .room-view .voice-panel h3{
-    margin:0 0 4px!important;
-    font-size:18px!important;
-    line-height:1.05!important;
-  }
-  .room-view .voice-panel p{
-    margin:2px 0!important;
-    font-size:11px!important;
-  }
-  .room-view .voice-panel button{
-    padding:8px 12px!important;
-    font-size:12px!important;
-  }
-  .room-view .voice-panel .voice-users,
-  .room-view .voice-panel .voice-row,
-  .room-view .voice-panel .volume-row{
-    margin:3px 0!important;
-  }
-  .room-view .chat{
-    min-height:0!important;
-    height:auto!important;
-    max-height:none!important;
-    flex:1 1 auto!important;
-    display:flex!important;
-    flex-direction:column!important;
-    overflow:hidden!important;
-    position:relative!important;
-  }
-}
-.room-view .chat-messages{
-  flex:1 1 auto!important;
-  min-height:0!important;
-  height:auto!important;
-  max-height:none!important;
-  overflow-y:auto!important;
-  overflow-x:hidden!important;
-}
-.room-view .chat-form{
-  flex:0 0 58px!important;
-  width:100%!important;
-  height:58px!important;
-  min-height:58px!important;
-  max-height:58px!important;
-  display:flex!important;
-  align-items:center!important;
-  position:relative!important;
-  inset:auto!important;
-  z-index:1000!important;
-  visibility:visible!important;
-  opacity:1!important;
-  box-sizing:border-box!important;
-  padding:8px!important;
-  gap:6px!important;
-  background:inherit!important;
-}
-.room-view .chat-form input,
-.room-view .chat-form textarea{
-  display:block!important;
-  visibility:visible!important;
-  opacity:1!important;
-  flex:1 1 auto!important;
-  min-width:0!important;
-  width:auto!important;
-  height:42px!important;
-  min-height:42px!important;
-  max-height:42px!important;
-  box-sizing:border-box!important;
-}
-.room-view .chat-form>button[type="submit"]{
-  display:inline-flex!important;
-  align-items:center!important;
-  justify-content:center!important;
-  visibility:visible!important;
-  opacity:1!important;
-  flex:0 0 44px!important;
-  width:44px!important;
-  min-width:44px!important;
-  height:42px!important;
-  min-height:42px!important;
-  box-sizing:border-box!important;
-  position:relative!important;
-  z-index:1001!important;
-}
-.room-view .emoji-wrap{
-  display:flex!important;
-  flex:0 0 auto!important;
-  position:relative!important;
-  z-index:1002!important;
-  visibility:visible!important;
-  opacity:1!important;
-}
-.room-view .emoji-toggle{
-  display:inline-flex!important;
-  align-items:center!important;
-  justify-content:center!important;
-  visibility:visible!important;
-  opacity:1!important;
-  width:42px!important;
-  min-width:42px!important;
-  height:42px!important;
-  min-height:42px!important;
-}
-.room-view .emoji-picker.hidden{display:none!important}
-.room-view .emoji-picker:not(.hidden){
-  display:grid!important;
-  position:absolute!important;
-  left:0!important;
-  right:auto!important;
-  bottom:52px!important;
-  width:min(292px,calc(100vw - 24px))!important;
-  max-height:280px!important;
-  overflow-y:auto!important;
-  z-index:10000!important;
-}
-@media(max-width:700px){
-  .room-view .room-layout{
-    display:flex!important;
-    flex-direction:column!important;
-    gap:10px!important;
-  }
-  .room-view .side-card{
-    width:100%!important;
-    height:auto!important;
-    min-height:0!important;
-    max-height:none!important;
-    display:flex!important;
-    flex-direction:column!important;
-    overflow:visible!important;
-  }
-  .room-view .participants{
-    max-height:150px!important;
-    overflow-y:auto!important;
-  }
-  .room-view .voice-panel{
-    height:108px!important;
-    max-height:108px!important;
-    min-height:108px!important;
-    flex:0 0 108px!important;
-    padding:8px 10px!important;
-    overflow:hidden!important;
-  }
-  .room-view .voice-panel h3{font-size:17px!important;margin:0 0 3px!important}
-  .room-view .voice-panel p{font-size:10px!important;margin:1px 0!important}
-  .room-view .voice-panel button{padding:7px 10px!important;font-size:11px!important}
-  .room-view .chat{
-    height:300px!important;
-    min-height:300px!important;
-    max-height:300px!important;
-    flex:0 0 300px!important;
-  }
-}
+
 @media(max-width:480px){
-  .room-view .voice-panel{
-    height:100px!important;
-    max-height:100px!important;
-    min-height:100px!important;
-    flex-basis:100px!important;
-  }
-  .room-view .chat{
-    height:280px!important;
-    min-height:280px!important;
-    max-height:280px!important;
-    flex-basis:280px!important;
-  }
+  .room-view .side-card>.side-title{height:44px!important;flex-basis:44px!important}
+  .room-view .side-card>.participants{height:132px!important;min-height:132px!important;max-height:132px!important;flex-basis:132px!important}
+  .room-view .side-card .voice-panel{height:100px!important;min-height:100px!important;max-height:100px!important;flex-basis:100px!important;padding:7px 9px!important}
+  .room-view .voice-panel .voice-head{height:36px!important;min-height:36px!important}
+  .room-view .voice-panel .voice-title{font-size:15px!important}
+  .room-view .voice-panel .voice-toggle{height:32px!important;padding:0 9px!important}
+  .room-view .side-card>.chat{height:150px!important;min-height:150px!important;max-height:150px!important;flex-basis:150px!important}
+  .room-view .chat-title-row{height:42px!important;min-height:42px!important;flex-basis:42px!important}
+  .room-view .chat-form{height:56px!important;min-height:56px!important;max-height:56px!important;flex-basis:56px!important;padding:7px!important}
+  .room-view .chat-form input{height:40px!important;min-height:40px!important;max-height:40px!important}
+  .room-view .chat-form>button[type="submit"],.room-view .emoji-toggle{height:40px!important;min-height:40px!important}
 }
