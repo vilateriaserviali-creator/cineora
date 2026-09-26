@@ -1,4 +1,4 @@
-/* CINEORA compatibility layer: media links + Chrome WebAudio autoplay guard. */
+/* CINEORA compatibility layer: media links + Chrome WebAudio autoplay guard + final room sidebar layout. */
 (function(){
   "use strict";
 
@@ -91,4 +91,46 @@
   if(!tryWrap()){
     let n=0;const timer=setInterval(()=>{if(tryWrap()||++n>100)clearInterval(timer);},50);
   }
+
+  /* The room already contains many historical inline CSS layers. The sidebar
+     fix is injected last so those older rules cannot collapse or overlap it. */
+  function installRoomSidebarFix(){
+    if(document.getElementById("cineora-sidebar-final-fix"))return;
+    const s=document.createElement("style");
+    s.id="cineora-sidebar-final-fix";
+    s.textContent=`
+      .room-view .room-layout{display:grid!important;grid-template-columns:minmax(0,1fr) 390px!important;gap:20px!important;align-items:start!important;width:min(1480px,calc(100% - 48px))!important;margin:24px auto 30px!important}
+      .room-view .watch-card{min-width:0!important;width:100%!important}
+      .room-view .side-card{width:390px!important;min-width:390px!important;max-width:390px!important;height:auto!important;min-height:0!important;display:flex!important;flex-direction:column!important;overflow:hidden!important;position:relative!important;transform:none!important;translate:none!important}
+      .room-view .side-card>.side-title{flex:0 0 auto!important;padding:14px 15px 8px!important;font-size:19px!important;line-height:1.1!important}
+      .room-view .side-card>.participants{flex:0 0 118px!important;height:118px!important;min-height:118px!important;max-height:118px!important;overflow:hidden!important;padding:0 10px 8px!important;display:flex!important;flex-direction:column!important;gap:5px!important;box-sizing:border-box!important}
+      .room-view .side-card .participants .person-row{flex:0 0 50px!important;height:50px!important;min-height:50px!important;max-height:50px!important;padding:6px 9px!important;box-sizing:border-box!important;overflow:hidden!important}
+      .room-view .side-card .person-row .person-name{font-size:13px!important}
+      .room-view .side-card .person-row .person-time{font-size:10px!important}
+      .room-view .side-card .person-row .person-progress{margin-top:4px!important;height:3px!important}
+      .room-view .side-card>.voice-panel{flex:0 0 86px!important;width:100%!important;height:86px!important;min-height:86px!important;max-height:86px!important;box-sizing:border-box!important;overflow:hidden!important;padding:8px 10px!important;margin:0!important}
+      .room-view .side-card .voice-head{height:28px!important;min-height:28px!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:8px!important}
+      .room-view .side-card .voice-title{font-size:15px!important;line-height:1.05!important;margin:0!important}
+      .room-view .side-card .voice-status{font-size:8px!important;margin:1px 0 0!important}
+      .room-view .side-card .voice-toggle{height:28px!important;min-height:28px!important;padding:0 10px!important;font-size:9px!important;white-space:nowrap!important}
+      .room-view .side-card .voice-tools{height:18px!important;min-height:18px!important;margin:2px 0 0!important;display:flex!important;align-items:center!important;gap:5px!important}
+      .room-view .side-card .voice-users{height:24px!important;min-height:24px!important;max-height:24px!important;margin:2px 0 0!important;overflow:hidden!important;display:flex!important;gap:4px!important;align-items:center!important}
+      .room-view .side-card .voice-user{font-size:8px!important;padding:3px 6px!important}
+      .room-view .side-card>.chat{flex:1 1 auto!important;width:100%!important;height:330px!important;min-height:330px!important;max-height:none!important;display:flex!important;flex-direction:column!important;overflow:hidden!important;border-top:1px solid #e1dbe1!important}
+      .room-view .side-card .chat-title-row{flex:0 0 46px!important;height:46px!important;min-height:46px!important;display:flex!important;align-items:center!important;justify-content:space-between!important;padding:0 13px!important;box-sizing:border-box!important}
+      .room-view .side-card .chat-title-row .side-title{padding:0!important;font-size:18px!important;white-space:nowrap!important}
+      .room-view .side-card .chat-messages{flex:1 1 auto!important;min-height:0!important;height:auto!important;overflow-y:auto!important;overflow-x:hidden!important;padding:10px!important;display:flex!important;flex-direction:column!important;gap:7px!important}
+      .room-view .side-card .chat-form{flex:0 0 58px!important;height:58px!important;min-height:58px!important;max-height:58px!important;width:100%!important;display:flex!important;flex-direction:row!important;align-items:center!important;gap:6px!important;padding:8px!important;box-sizing:border-box!important;position:relative!important;inset:auto!important}
+      .room-view .side-card .chat-form input{flex:1 1 auto!important;width:auto!important;min-width:0!important;height:40px!important;max-height:40px!important;box-sizing:border-box!important}
+      .room-view .side-card .chat-form>button{flex:0 0 44px!important;width:44px!important;height:40px!important;min-width:44px!important;padding:0!important}
+      .room-view .side-card .emoji-wrap{flex:0 0 40px!important;width:40px!important;height:40px!important;display:flex!important;align-items:center!important;position:relative!important}
+      .room-view .side-card .emoji-toggle{width:40px!important;min-width:40px!important;height:40px!important;padding:0!important}
+      @media(max-width:1000px){
+        .room-view .room-layout{display:flex!important;flex-direction:column!important;width:calc(100% - 20px)!important;margin:10px auto 20px!important;gap:10px!important}
+        .room-view .side-card{width:100%!important;min-width:0!important;max-width:none!important}
+      }
+    `;
+    (document.head||document.documentElement).appendChild(s);
+  }
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",installRoomSidebarFix,{once:true});else installRoomSidebarFix();
 })();
