@@ -1,4 +1,4 @@
-/* CINEORA room recovery v2: keep the sidebar inside the viewport and keep chat visible */
+/* CINEORA room recovery v3: compact voice panel, stable chat */
 .room-view,
 .room-view.show{
   height:auto!important;
@@ -13,7 +13,6 @@ body:has(.room-view.show){
   overflow-y:auto!important;
   overflow-x:hidden!important;
 }
-
 .room-view .room-layout{
   align-items:start!important;
   min-height:0!important;
@@ -21,13 +20,11 @@ body:has(.room-view.show){
   max-height:none!important;
   overflow:visible!important;
 }
-
-/* Desktop: the whole right column fits the visible room instead of pushing chat down. */
 @media(min-width:701px){
   .room-view .side-card{
     height:calc(100vh - 122px)!important;
-    min-height:560px!important;
-    max-height:760px!important;
+    min-height:520px!important;
+    max-height:700px!important;
     overflow:hidden!important;
     display:grid!important;
     grid-template-rows:auto auto minmax(250px,1fr)!important;
@@ -35,14 +32,35 @@ body:has(.room-view.show){
   }
   .room-view .participants{
     min-height:0!important;
-    max-height:170px!important;
+    max-height:150px!important;
     overflow-y:auto!important;
   }
+  /* Voice room is intentionally compact. It must not consume chat space. */
   .room-view .voice-panel{
     min-height:0!important;
-    max-height:190px!important;
+    height:118px!important;
+    max-height:118px!important;
     overflow:hidden!important;
     flex:none!important;
+    padding:10px 12px!important;
+  }
+  .room-view .voice-panel h3{
+    margin:0 0 4px!important;
+    font-size:18px!important;
+    line-height:1.05!important;
+  }
+  .room-view .voice-panel p{
+    margin:2px 0!important;
+    font-size:11px!important;
+  }
+  .room-view .voice-panel button{
+    padding:8px 12px!important;
+    font-size:12px!important;
+  }
+  .room-view .voice-panel .voice-users,
+  .room-view .voice-panel .voice-row,
+  .room-view .voice-panel .volume-row{
+    margin:3px 0!important;
   }
   .room-view .chat{
     min-height:0!important;
@@ -55,7 +73,6 @@ body:has(.room-view.show){
     position:relative!important;
   }
 }
-
 .room-view .chat-messages{
   flex:1 1 auto!important;
   min-height:0!important;
@@ -64,7 +81,6 @@ body:has(.room-view.show){
   overflow-y:auto!important;
   overflow-x:hidden!important;
 }
-
 .room-view .chat-form{
   flex:0 0 58px!important;
   width:100%!important;
@@ -142,7 +158,6 @@ body:has(.room-view.show){
   overflow-y:auto!important;
   z-index:10000!important;
 }
-
 @media(max-width:700px){
   .room-view .room-layout{
     display:flex!important;
@@ -159,14 +174,20 @@ body:has(.room-view.show){
     overflow:visible!important;
   }
   .room-view .participants{
-    max-height:180px!important;
+    max-height:150px!important;
     overflow-y:auto!important;
   }
   .room-view .voice-panel{
-    flex:0 0 auto!important;
-    min-height:0!important;
-    max-height:none!important;
+    height:108px!important;
+    max-height:108px!important;
+    min-height:108px!important;
+    flex:0 0 108px!important;
+    padding:8px 10px!important;
+    overflow:hidden!important;
   }
+  .room-view .voice-panel h3{font-size:17px!important;margin:0 0 3px!important}
+  .room-view .voice-panel p{font-size:10px!important;margin:1px 0!important}
+  .room-view .voice-panel button{padding:7px 10px!important;font-size:11px!important}
   .room-view .chat{
     height:300px!important;
     min-height:300px!important;
@@ -175,6 +196,12 @@ body:has(.room-view.show){
   }
 }
 @media(max-width:480px){
+  .room-view .voice-panel{
+    height:100px!important;
+    max-height:100px!important;
+    min-height:100px!important;
+    flex-basis:100px!important;
+  }
   .room-view .chat{
     height:280px!important;
     min-height:280px!important;
