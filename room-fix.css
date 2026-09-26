@@ -1,8 +1,8 @@
 /* CINEORA ROOM — clean room layout refactor */
 .room-view.show{display:block!important;min-height:100vh!important}
-.room-layout{width:min(1500px,calc(100% - 40px))!important;margin:22px auto 28px!important;display:grid!important;grid-template-columns:minmax(0,1fr) 380px!important;gap:18px!important;align-items:start!important}
+.room-layout{width:min(1500px,calc(100% - 40px))!important;margin:22px auto 28px!important;display:grid!important;grid-template-columns:minmax(0,1fr) 410px!important;gap:18px!important;align-items:start!important}
 .room-layout>.watch-card{min-width:0!important;width:100%!important}
-#sideCard,.room-layout>.side-card{width:380px!important;min-width:380px!important;max-width:380px!important;min-height:0!important;height:auto!important;display:flex!important;flex-direction:column!important;align-self:start!important;position:relative!important;overflow:hidden!important;transform:none!important;translate:none!important;box-sizing:border-box!important}
+#sideCard,.room-layout>.side-card{width:410px!important;min-width:410px!important;max-width:410px!important;min-height:0!important;height:auto!important;display:flex!important;flex-direction:column!important;align-self:start!important;position:relative!important;overflow:hidden!important;transform:none!important;translate:none!important;box-sizing:border-box!important}
 #sideCard>.side-title,.side-card>.side-title{flex:0 0 auto!important;padding:14px 16px 9px!important;margin:0!important;line-height:1.15!important}
 #sideCard .participants,.side-card .participants{flex:0 0 auto!important;width:100%!important;max-height:none!important;overflow:visible!important;display:flex!important;flex-direction:column!important;gap:6px!important;padding:0 12px 10px!important;margin:0!important;box-sizing:border-box!important}
 #sideCard .person-row,.side-card .person-row{width:100%!important;min-height:42px!important;height:42px!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:8px!important;padding:6px 9px!important;margin:0!important;box-sizing:border-box!important;overflow:hidden!important}
@@ -13,6 +13,7 @@
 #sideCard .voice-toggle,.side-card .voice-toggle{height:24px!important;min-height:24px!important;padding:0 9px!important;font-size:9px!important;white-space:nowrap!important}
 #sideCard .voice-tools,.side-card .voice-tools{height:18px!important;min-height:18px!important;display:flex!important;align-items:center!important;gap:6px!important;margin:2px 0 0!important;overflow:hidden!important}
 #sideCard .voice-users,.side-card .voice-users{height:18px!important;min-height:18px!important;display:flex!important;align-items:center!important;gap:5px!important;margin:2px 0 0!important;overflow:hidden!important;white-space:nowrap!important}
+/* Wider chat: the chat gets the full 410px sidebar width. */
 #sideCard>.chat,.side-card>.chat{flex:0 0 330px!important;width:100%!important;height:330px!important;min-height:330px!important;max-height:330px!important;display:flex!important;flex-direction:column!important;overflow:hidden!important;margin:0!important;padding:0!important;box-sizing:border-box!important;position:relative!important;clear:both!important;transform:none!important;translate:none!important}
 #sideCard .chat-title-row,.side-card .chat-title-row{flex:0 0 42px!important;width:100%!important;height:42px!important;min-height:42px!important;display:flex!important;align-items:center!important;padding:0 14px!important;margin:0!important;box-sizing:border-box!important;white-space:nowrap!important}
 #sideCard .chat-title-row .side-title,.side-card .chat-title-row .side-title{font-size:16px!important;line-height:1!important;padding:0!important;margin:0!important}
