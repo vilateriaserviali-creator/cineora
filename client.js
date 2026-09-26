@@ -1,13 +1,22 @@
 const roomUiFixStyle=document.createElement("style");roomUiFixStyle.textContent=`
-.room-view.show .room-sidebar{display:flex!important;flex-direction:column!important;gap:8px!important;max-height:none!important;height:auto!important;overflow:visible!important}
-.room-view.show .chat-panel{display:flex!important;flex-direction:column!important;height:auto!important;min-height:0!important;max-height:none!important;overflow:hidden!important}
-.room-view.show .chat-messages,#chatMessages{flex:1 1 auto!important;height:170px!important;min-height:150px!important;max-height:210px!important;overflow-y:auto!important;overflow-x:hidden!important;padding:10px!important}
-.room-view.show #chatForm{display:flex!important;visibility:visible!important;opacity:1!important;flex:0 0 auto!important;align-items:center!important;gap:7px!important;padding:8px!important;margin:0!important;background:#1d1921!important;border-top:1px solid #352b39!important;position:relative!important;z-index:20!important}
-.room-view.show #chatInput{display:block!important;visibility:visible!important;opacity:1!important;flex:1 1 auto!important;min-width:0!important;width:auto!important;height:42px!important;padding:0 12px!important;background:#211b25!important;color:#f3eaf5!important;border:1px solid #493c50!important;border-radius:12px!important;box-sizing:border-box!important}
-.room-view.show #chatForm button{display:flex!important;visibility:visible!important;opacity:1!important;flex:0 0 46px!important;width:46px!important;height:42px!important;align-items:center!important;justify-content:center!important;border-radius:12px!important}
-.room-view.show .room-sidebar .voice-card{margin:0!important}
-@media(max-width:1050px){.room-view.show .room-layout{grid-template-columns:minmax(0,1fr)!important}.room-view.show .room-sidebar{width:100%!important}}
-@media(max-width:650px){.room-view.show .room-layout{width:calc(100% - 18px)!important;margin:9px auto 14px!important}.room-view.show .room-sidebar{gap:7px!important}.room-view.show .chat-messages,#chatMessages{height:150px!important;min-height:120px!important;max-height:180px!important}.room-view.show #chatForm{padding:7px!important}.room-view.show #chatInput,.room-view.show #chatForm button{height:40px!important}}
+/* CINEORA room: keep the sidebar compact and keep the chat composer visible. */
+.room-view.show .room-layout{align-items:start!important}
+.room-view.show .side-card{height:auto!important;max-height:none!important;min-height:0!important;position:static!important;overflow:hidden!important}
+.room-view.show .side-card .chat{display:flex!important;flex-direction:column!important;min-height:0!important;height:330px!important;overflow:hidden!important}
+.room-view.show .side-card .chat-messages{flex:1 1 auto!important;min-height:0!important;height:auto!important;max-height:none!important;overflow-y:auto!important;padding:11px!important}
+.room-view.show .side-card .chat-form{display:flex!important;visibility:visible!important;opacity:1!important;flex:0 0 auto!important;position:relative!important;bottom:auto!important;z-index:120!important;align-items:center!important;gap:6px!important;padding:9px!important}
+.room-view.show .side-card .chat-form input{display:block!important;visibility:visible!important;opacity:1!important;flex:1 1 auto!important;min-width:0!important;width:auto!important;height:42px!important;box-sizing:border-box!important}
+.room-view.show .side-card .chat-form>button{display:flex!important;visibility:visible!important;opacity:1!important;flex:0 0 46px!important;width:46px!important;height:42px!important;align-items:center!important;justify-content:center!important}
+.room-view.show .side-card .emoji-toggle{display:grid!important;flex:0 0 42px!important;width:42px!important;height:42px!important}
+.room-view.show #universalPlayer{position:absolute!important;inset:0!important;width:100%!important;height:100%!important}
+.room-view.show #universalPlayer iframe,.room-view.show #universalPlayer video{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;border:0!important}
+.room-view.show .player-wrap{position:relative!important;aspect-ratio:16/9!important;min-height:0!important}
+.cineora-media-frame{position:absolute;inset:0;width:100%;height:100%;border:0;background:#09080b}
+.cineora-media-video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000}
+.cineora-media-fallback{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;padding:25px;text-align:center;background:#0d0b10;color:#eee7f1;z-index:5}
+.cineora-media-fallback strong{font-size:17px}.cineora-media-fallback span{max-width:520px;color:#aaa0ad;font-size:12px;line-height:1.5}.cineora-media-fallback a{display:inline-flex;padding:10px 16px;border-radius:999px;background:#b996c4;color:#211722;font-weight:700;text-decoration:none}
+@media(max-width:1000px){.room-view.show .side-card .chat{height:360px!important}}
+@media(max-width:600px){.room-view.show .side-card .chat{height:320px!important}.room-view.show .side-card .chat-form{padding:8px!important}.room-view.show .side-card .chat-form input,.room-view.show .side-card .chat-form>button{height:40px!important}.room-view.show .player-wrap{aspect-ratio:16/9!important}}
 `;document.head.appendChild(roomUiFixStyle);
 
 const modal=document.getElementById("modal"),nameInput=document.getElementById("name"),roomInput=document.getElementById("room"),title=document.getElementById("modalTitle"),text=document.getElementById("modalText");
@@ -25,22 +34,114 @@ loadNews();
 const q=new URLSearchParams(location.search).get("room");
 if(q){document.querySelector(".hero").style.display="none";document.querySelectorAll(".section,.footer").forEach(el=>el.style.display="none");document.getElementById("modal").classList.add("hidden");document.getElementById("roomView").classList.add("show");startRoom(q.toUpperCase())}
 
+function mediaKind(url){
+  try{
+    const u=new URL(url,location.href),h=u.hostname.toLowerCase(),p=u.pathname.toLowerCase();
+    if(/youtube\.com$|youtu\.be$/.test(h)||h.endsWith(".youtube.com"))return"youtube";
+    if(h==="rutube.ru"||h.endsWith(".rutube.ru"))return"rutube";
+    if(h==="vk.com"||h.endsWith(".vk.com")||h==="vkvideo.ru"||h.endsWith(".vkvideo.ru"))return"vk";
+    if(/\.(mp4|webm|ogg|ogv|m4v|mov)(?:$|\?)/i.test(p))return"video";
+    if(/\.(m3u8)(?:$|\?)/i.test(p))return"video";
+    return"iframe";
+  }catch(e){return"iframe"}
+}
+function mediaEmbedUrl(url){
+  try{
+    const u=new URL(url,location.href),h=u.hostname.toLowerCase(),p=u.pathname;
+    if(h.includes("youtu.be")){const id=p.replace(/^\//,"").split("/")[0];return "https://www.youtube.com/embed/"+encodeURIComponent(id)+"?enablejsapi=1&origin="+encodeURIComponent(location.origin)}
+    if(h.includes("youtube.com")){
+      const id=u.searchParams.get("v")||((p.match(/\/shorts\/([^/]+)/)||[])[1]);
+      if(id)return "https://www.youtube.com/embed/"+encodeURIComponent(id)+"?enablejsapi=1&origin="+encodeURIComponent(location.origin);
+    }
+    if(h==="rutube.ru"||h.endsWith(".rutube.ru")){
+      const m=p.match(/\/video\/([a-zA-Z0-9_-]+)/);if(m)return "https://rutube.ru/play/embed/"+encodeURIComponent(m[1])+"/";
+    }
+    return url;
+  }catch(e){return url}
+}
+function clearMedia(){
+  const root=document.getElementById("universalPlayer");
+  const video=document.getElementById("roomVideo");
+  if(root)root.innerHTML="";
+  if(video){video.removeAttribute("src");video.load();video.style.display="none"}
+}
+function renderMedia(url){
+  const root=document.getElementById("universalPlayer"),video=document.getElementById("roomVideo"),empty=document.getElementById("emptyPlayer");
+  const clean=String(url||"").trim();
+  if(!clean){clearMedia();if(empty)empty.style.display="grid";const s=document.getElementById("mediaStatus");if(s)s.textContent="Видео пока не добавлено";return}
+  if(empty)empty.style.display="none";
+  const status=document.getElementById("mediaStatus");if(status)status.textContent="Видео загружено";
+  if(root)root.innerHTML="";
+  if(video)video.style.display="none";
+  const kind=mediaKind(clean);
+  if(kind==="video"){
+    const v=video||document.createElement("video");
+    v.className="cineora-media-video";v.controls=true;v.playsInline=true;v.preload="metadata";v.src=clean;
+    if(!video&&root)root.appendChild(v);else if(video){if(root)root.appendChild(video);}
+    v.style.display="block";v.onerror=()=>showMediaFallback(clean,"Не удалось открыть этот прямой видеофайл.");
+    return;
+  }
+  const frame=document.createElement("iframe");frame.className="cineora-media-frame";frame.allow="autoplay; fullscreen; picture-in-picture; encrypted-media";frame.allowFullscreen=true;frame.referrerPolicy="strict-origin-when-cross-origin";frame.src=mediaEmbedUrl(clean);
+  frame.addEventListener("error",()=>showMediaFallback(clean,"Внешний видеоплеер не ответил."));
+  if(root)root.appendChild(frame);
+  if(kind==="vk")setTimeout(()=>{if(frame.isConnected&&!frame.dataset.loaded)showMediaFallback(clean,"VK Video сейчас не отвечает.")},9000);
+  frame.addEventListener("load",()=>{frame.dataset.loaded="1"});
+}
+function showMediaFallback(url,message){
+  const root=document.getElementById("universalPlayer");if(!root)return;root.innerHTML="";
+  const box=document.createElement("div");box.className="cineora-media-fallback";
+  const strong=document.createElement("strong");strong.textContent=message;
+  const span=document.createElement("span");span.textContent="Комната и чат продолжают работать. Можно открыть источник напрямую.";
+  const a=document.createElement("a");a.href=url;a.target="_blank";a.rel="noopener";a.textContent="Открыть видео";
+  box.append(strong,span,a);root.appendChild(box);
+}
+
 function startRoom(roomId){
-  const socket=io();window.socket=socket;
+  const socket=io({
+    transports:["websocket","polling"],
+    timeout:60000,
+    reconnection:true,
+    reconnectionAttempts:Infinity,
+    reconnectionDelay:1000,
+    reconnectionDelayMax:10000,
+    auth:{roomId,name:sessionStorage.getItem("cineora_name")||"Гость",avatar:"mascot",frame:"creator",privateRoom:new URLSearchParams(location.search).get("private")==="1"}
+  });
+  window.socket=socket;
   const myName=sessionStorage.getItem("cineora_name")||"Гость";
   const video=document.getElementById("roomVideo"),empty=document.getElementById("emptyPlayer"),participants=document.getElementById("participants"),chatMessages=document.getElementById("chatMessages");
   let suppress=false,lastProgress=0;
-  document.getElementById("roomCodeLabel").textContent=roomId;document.getElementById("myRoomName").textContent=myName;socket.emit("join-room",{roomId,name:myName});
+  const roomCodeLabel=document.getElementById("roomCodeLabel"),myRoomName=document.getElementById("myRoomName");
+  if(roomCodeLabel)roomCodeLabel.textContent=roomId;if(myRoomName)myRoomName.textContent=myName;
   function fmt(sec){sec=Math.max(0,Math.floor(Number(sec)||0));const m=Math.floor(sec/60),s=String(sec%60).padStart(2,"0");return m+":"+s}
-  function applySync(playing,pos){suppress=true;try{if(Math.abs((video.currentTime||0)-pos)>0.6)video.currentTime=pos;if(playing)video.play().catch(()=>{});else video.pause()}finally{setTimeout(()=>suppress=false,180)}}
-  function loadMedia(url){document.getElementById("mediaUrlRoom").value=url||"";if(!url){video.removeAttribute("src");video.load();empty.style.display="grid";document.getElementById("mediaStatus").textContent="Видео пока не добавлено";return}video.src=url;video.load();empty.style.display="none";document.getElementById("mediaStatus").textContent="Видео загружено"}
-  function renderUsers(users){document.getElementById("participantCount").textContent=users.length;participants.innerHTML=users.map(u=>`<div class="person-row"><span class="person-name">${escapeHtml(u.name)}${u.id===socket.id?" · вы":""}</span><span class="person-time">${fmt(u.position)} ${u.playing?"▶":"Ⅱ"}</span></div>`).join("")}
-  function addMessage(m){const el=document.createElement("div");el.className="chat-msg";el.innerHTML=`<b>${escapeHtml(m.name||"Гость")}</b><span>${escapeHtml(m.text)}</span><small>${escapeHtml(m.time||"")}</small>`;chatMessages.appendChild(el);chatMessages.scrollTop=chatMessages.scrollHeight}
-  document.getElementById("setMediaRoom").onclick=()=>{const url=document.getElementById("mediaUrlRoom").value.trim();if(url)socket.emit("set-media",{url})};
-  document.getElementById("copyRoom").onclick=async()=>{const url=location.origin+"/?room="+encodeURIComponent(roomId);try{await navigator.clipboard.writeText(url);document.getElementById("copyRoom").textContent="Ссылка скопирована";setTimeout(()=>document.getElementById("copyRoom").textContent="Скопировать ссылку",1500)}catch(e){prompt("Скопируйте ссылку:",url)}};
-  document.getElementById("leaveRoom").onclick=()=>{location.href="/"};
-  video.addEventListener("play",()=>{if(!suppress)socket.emit("sync",{playing:true,position:video.currentTime})});video.addEventListener("pause",()=>{if(!suppress)socket.emit("sync",{playing:false,position:video.currentTime})});video.addEventListener("seeked",()=>{if(!suppress)socket.emit("sync",{playing:!video.paused,position:video.currentTime})});video.addEventListener("timeupdate",()=>{if(Date.now()-lastProgress>1000){lastProgress=Date.now();socket.emit("user-progress",{position:video.currentTime,playing:!video.paused})}});
+  function applySync(playing,pos){suppress=true;try{if(video&&Number.isFinite(Number(pos))&&Math.abs((video.currentTime||0)-Number(pos))>0.6)video.currentTime=Number(pos);if(video){if(playing)video.play().catch(()=>{});else video.pause()}}finally{setTimeout(()=>suppress=false,180)}}
+  function loadMedia(url){const input=document.getElementById("mediaUrlRoom");if(input)input.value=url||"";renderMedia(url)}
+  function renderUsers(users){if(!participants)return;const count=document.getElementById("participantCount");if(count)count.textContent=users.length;participants.innerHTML=users.map(u=>`<div class="person-row"><span class="person-name">${escapeHtml(u.name)}${u.id===socket.id?" · вы":""}</span><span class="person-time">${fmt(u.position)} ${u.playing?"▶":"Ⅱ"}</span></div>`).join("")}
+  function renderChatHistory(messages){if(!chatMessages)return;chatMessages.innerHTML="";(messages||[]).forEach(addMessage);chatMessages.scrollTop=chatMessages.scrollHeight}
+  function addMessage(m){if(!chatMessages)return;const el=document.createElement("div");el.className="chat-msg";el.innerHTML=`<b>${escapeHtml(m.name||"Гость")}</b><span>${escapeHtml(m.text)}</span><small>${escapeHtml(m.createdAt?new Date(m.createdAt).toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"}):(m.time||""))}</small>`;chatMessages.appendChild(el);chatMessages.scrollTop=chatMessages.scrollHeight}
+
+  const setMediaBtn=document.getElementById("setMediaRoom");
+  if(setMediaBtn)setMediaBtn.onclick=()=>{const url=(document.getElementById("mediaUrlRoom")?.value||"").trim();if(!url)return;setMediaBtn.disabled=true;socket.emit("set-media",{url},()=>{setMediaBtn.disabled=false})};
+  const copyBtn=document.getElementById("copyRoom");
+  if(copyBtn)copyBtn.onclick=async()=>{const url=location.origin+"/?room="+encodeURIComponent(roomId);try{await navigator.clipboard.writeText(url);copyBtn.textContent="Ссылка скопирована";setTimeout(()=>copyBtn.textContent="Скопировать ссылку",1500)}catch(e){prompt("Скопируйте ссылку:",url)}};
+  const leaveBtn=document.getElementById("leaveRoom");if(leaveBtn)leaveBtn.onclick=()=>{socket.disconnect();location.href="/"};
+
+  /* Playback is deliberately NOT broadcast automatically. A participant chooses when to sync. */
+  const syncBtn=document.getElementById("syncBtn");
+  if(syncBtn)syncBtn.onclick=()=>{const position=video?video.currentTime:0;const playing=video?!video.paused:false;socket.emit("sync",{playing,position});const state=document.getElementById("syncState");if(state){state.textContent="Синхронизация отправлена";state.classList.add("cineora-sync-ok");setTimeout(()=>state.textContent="Готово к синхронизации",1300)}};
+  if(video){video.addEventListener("timeupdate",()=>{if(Date.now()-lastProgress>1000){lastProgress=Date.now();socket.emit("user-progress",{position:video.currentTime,playing:!video.paused,duration:video.duration||0})}})}
+
   const chatForm=document.getElementById("chatForm"),chatInput=document.getElementById("chatInput");
-  if(chatForm&&chatInput){chatForm.addEventListener("submit",e=>{e.preventDefault();const msg=chatInput.value.trim();if(!msg)return;socket.emit("chat-message",{text:msg});chatInput.value=""});chatForm.style.display="flex";chatInput.style.display="block"}
-  socket.on("room-state",state=>{loadMedia(state.mediaUrl);applySync(state.playing,state.position)});socket.on("media-changed",url=>loadMedia(url));socket.on("sync",state=>applySync(state.playing,state.position));socket.on("room-users",renderUsers);socket.on("chat-message",addMessage);
+  if(chatForm&&chatInput){chatForm.onsubmit=e=>{e.preventDefault();const msg=chatInput.value.trim();if(!msg)return;chatInput.disabled=true;socket.emit("chat-message",{text:msg},()=>{chatInput.disabled=false;chatInput.value="";chatInput.focus()});setTimeout(()=>{chatInput.disabled=false},3000)};chatForm.style.display="flex";chatInput.style.display="block"}
+
+  socket.on("connect",()=>{document.querySelector(".room-view")?.classList.remove("connection-lost");socket.emit("join-room",{roomId,name:myName,avatar:"mascot",frame:"creator",privateRoom:new URLSearchParams(location.search).get("private")==="1"});socket.emit("request-room-state");socket.emit("request-room-users")});
+  socket.on("disconnect",()=>document.querySelector(".room-view")?.classList.add("connection-lost"));
+  socket.on("connect_error",err=>console.warn("[CINEORA] Socket.IO:",err.message));
+  socket.on("room-state",state=>{loadMedia(state.mediaUrl);if(video&&state.mediaUrl&&Number.isFinite(Number(state.position))){suppress=true;video.currentTime=Number(state.position)||0;setTimeout(()=>suppress=false,200)}});
+  socket.on("media-changed",data=>loadMedia(typeof data==="string"?data:data?.url));
+  socket.on("sync",state=>applySync(state.playing,state.position));
+  socket.on("sync-state",state=>applySync(state.playing,state.position));
+  socket.on("room-users",renderUsers);
+  socket.on("chat-history",renderChatHistory);
+  socket.on("chat-message",addMessage);
+  socket.on("chat-warning",m=>{if(!chatMessages)return;const el=document.createElement("div");el.className="chat-msg";el.innerHTML=`<span>${escapeHtml(m.text||"")}</span>`;chatMessages.appendChild(el);chatMessages.scrollTop=chatMessages.scrollHeight});
 }
