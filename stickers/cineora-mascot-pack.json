@@ -1,0 +1,14 @@
+{
+  "pack_name": "CINEORA Official Mascot Pack",
+  "version": "1.0.0",
+  "author": "CINEORA Team",
+  "exclusive": false,
+  "stickers": [
+    {
+      "id": "watch_together",
+      "title": "Смотрим вместе?",
+      "emoji": "🍿",
+      "file": "/stickers/watch_together.png"
+    }
+  ]
+}
