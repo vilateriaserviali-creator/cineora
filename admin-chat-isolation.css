@@ -1,0 +1,116 @@
+/* CINEORA — Admin widgets isolation
+   Keeps admin controls from collapsing into the room chat. */
+
+/* Generic admin containers */
+.admin-panel,
+.admin-dashboard,
+.admin-section,
+.admin-widget,
+.admin-card,
+.admin-tools,
+#adminPanel,
+#adminDashboard {
+  box-sizing: border-box !important;
+  min-width: 0 !important;
+  width: 100% !important;
+}
+
+.admin-panel,
+.admin-dashboard,
+.admin-section,
+.admin-tools {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: stretch !important;
+  gap: 10px !important;
+}
+
+.admin-widget,
+.admin-card {
+  flex: 1 1 220px !important;
+  min-width: 190px !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+.admin-widget * ,
+.admin-card * {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.admin-widget button,
+.admin-card button,
+.admin-tools button {
+  max-width: 100% !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.admin-widget input,
+.admin-widget select,
+.admin-widget textarea,
+.admin-card input,
+.admin-card select,
+.admin-card textarea {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+/* Never let an admin block stretch the chat */
+.room-view .chat,
+.room-view .chat-messages,
+.room-view .chat-form {
+  min-width: 0 !important;
+}
+
+.room-view .chat {
+  flex: 1 1 auto !important;
+  overflow: hidden !important;
+}
+
+.room-view .chat-messages {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  overflow-wrap: anywhere !important;
+}
+
+.room-view .chat-form {
+  flex: 0 0 auto !important;
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+/* Prevent long admin labels/statuses from pushing neighboring widgets */
+.admin-panel .status,
+.admin-panel .label,
+.admin-panel small,
+.admin-dashboard small,
+.admin-widget .status,
+.admin-card .status {
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+@media (max-width: 700px) {
+  .admin-panel,
+  .admin-dashboard,
+  .admin-section,
+  .admin-tools {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 8px !important;
+  }
+
+  .admin-widget,
+  .admin-card {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+}
