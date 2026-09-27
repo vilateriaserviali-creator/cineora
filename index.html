@@ -1157,6 +1157,31 @@ body.cineora-cinema-active{overflow:hidden!important}
   .room-view.cinema-mode .room-layout{height:calc(100dvh - 52px)!important}
 }
 </style>
+
+<!-- CINEORA ROOM PANEL RESTORE -->
+<style id="cineora-room-panel-restore">
+/* CINEORA — аккуратно восстановленная панель комнаты для ПК */
+@media (min-width:701px){
+  .room-view.show{min-height:100vh!important}
+  .room-view.show > .room-top{width:100%!important;min-height:72px!important;height:72px!important;padding:0 28px!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:18px!important;position:sticky!important;top:0!important;z-index:9000!important;box-sizing:border-box!important}
+  .room-view.show > .room-top .room-brand{flex:0 0 auto!important;display:flex!important;align-items:center!important;white-space:nowrap!important}
+  .room-view.show > .room-top .room-actions{flex:1 1 auto!important;min-width:0!important;display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:8px!important;flex-wrap:nowrap!important}
+  .room-view.show > .room-top .room-code,.room-view.show > .room-top .room-btn{flex:0 0 auto!important;white-space:nowrap!important}
+  .room-view.show > .room-layout{width:min(1480px,calc(100% - 48px))!important;margin:20px auto 30px!important;display:grid!important;grid-template-columns:minmax(0,1fr) 390px!important;gap:20px!important;align-items:stretch!important}
+  .room-view.show > .room-layout > .watch-card{min-width:0!important;width:auto!important}
+  .room-view.show > .room-layout > .side-card{width:390px!important;min-width:390px!important;max-width:390px!important;height:calc(100vh - 112px)!important;min-height:0!important;max-height:calc(100vh - 112px)!important;position:sticky!important;top:92px!important;align-self:start!important;display:flex!important;flex-direction:column!important;overflow:hidden!important}
+  .room-view.show > .room-layout > .side-card .participants{flex:0 0 auto!important;max-height:190px!important;overflow:auto!important}
+  .room-view.show > .room-layout > .side-card .voice-panel{flex:0 0 auto!important}
+  .room-view.show > .room-layout > .side-card .chat{flex:1 1 auto!important;min-height:0!important;height:auto!important;max-height:none!important;display:flex!important;flex-direction:column!important}
+  .room-view.show > .room-layout > .side-card .chat-messages{flex:1 1 auto!important;min-height:0!important;overflow-y:auto!important}
+  .room-view.show > .room-layout > .side-card .chat-form{flex:0 0 auto!important}
+}
+@media (max-width:700px){
+  .room-view.show > .room-top{position:relative!important}
+  .room-view.show > .room-layout{display:flex!important;flex-direction:column!important}
+  .room-view.show > .room-layout > .side-card{width:100%!important;min-width:0!important;max-width:none!important;height:auto!important;max-height:none!important;position:relative!important;top:auto!important}
+}
+</style>
 </head>
 <body>
 
