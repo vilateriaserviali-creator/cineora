@@ -208,3 +208,135 @@ function startRoom(roomId){
   socket.on("chat-message",addMessage);
   socket.on("chat-warning",m=>{if(!chatMessages)return;const el=document.createElement("div");el.className="chat-msg";el.innerHTML=`<span>${escapeHtml(m.text||"")}</span>`;chatMessages.appendChild(el);chatMessages.scrollTop=chatMessages.scrollHeight});
 }
+
+/* CINEORA FINAL DESKTOP ROOM FIX
+   The cinema CSS in index.html is loaded before client.js. The old restore rules
+   were therefore overriding cinema-mode. Keep the normal room layout, but give
+   cinema-mode its own final layer and keep the top room panel at the top. */
+(()=>{
+  const style=document.createElement("style");
+  style.id="cineora-final-desktop-room-fix";
+  style.textContent=`
+    .room-view.show .room-top{
+      position:sticky!important;
+      top:0!important;
+      z-index:900!important;
+      flex:0 0 76px!important;
+    }
+    .room-view.show .room-layout{position:relative!important;z-index:1!important}
+
+    .room-view.show.cinema-mode{
+      position:fixed!important;
+      inset:0!important;
+      width:100vw!important;
+      height:100dvh!important;
+      min-height:100dvh!important;
+      overflow:hidden!important;
+      z-index:500!important;
+      background:#0d0c10!important;
+    }
+    .room-view.show.cinema-mode .room-top{
+      position:relative!important;
+      top:auto!important;
+      height:58px!important;
+      min-height:58px!important;
+      flex:0 0 58px!important;
+      z-index:950!important;
+    }
+    .room-view.show.cinema-mode .room-layout{
+      width:100%!important;
+      max-width:none!important;
+      height:calc(100dvh - 58px)!important;
+      min-height:0!important;
+      margin:0!important;
+      display:grid!important;
+      grid-template-columns:minmax(0,1fr) 360px!important;
+      gap:0!important;
+      align-items:stretch!important;
+    }
+    .room-view.show.cinema-mode .watch-card{
+      height:100%!important;
+      min-width:0!important;
+      width:100%!important;
+      border-radius:0!important;
+      display:flex!important;
+      flex-direction:column!important;
+      background:#09090b!important;
+    }
+    .room-view.show.cinema-mode .watch-head{
+      flex:0 0 58px!important;
+      min-height:58px!important;
+    }
+    .room-view.show.cinema-mode .player-wrap{
+      flex:1 1 auto!important;
+      width:100%!important;
+      height:auto!important;
+      min-height:0!important;
+      max-height:none!important;
+      aspect-ratio:auto!important;
+      border-radius:0!important;
+    }
+    .room-view.show.cinema-mode #universalPlayer{
+      position:absolute!important;
+      inset:0!important;
+      width:100%!important;
+      height:100%!important;
+    }
+    .room-view.show.cinema-mode #universalPlayer iframe,
+    .room-view.show.cinema-mode #universalPlayer video{
+      position:absolute!important;
+      inset:0!important;
+      width:100%!important;
+      height:100%!important;
+      border:0!important;
+    }
+    .room-view.show.cinema-mode .side-card{
+      width:360px!important;
+      min-width:360px!important;
+      max-width:360px!important;
+      height:100%!important;
+      min-height:0!important;
+      max-height:none!important;
+      position:relative!important;
+      top:auto!important;
+      right:auto!important;
+      overflow:hidden!important;
+      border-radius:0!important;
+      display:flex!important;
+      flex-direction:column!important;
+    }
+    .room-view.show.cinema-mode .side-card>.chat{
+      flex:1 1 auto!important;
+      min-height:0!important;
+      height:auto!important;
+      max-height:none!important;
+    }
+    .room-view.show.cinema-mode .side-card .chat-messages{min-height:0!important}
+    .room-view.show.cinema-mode .side-card .chat-form{flex:0 0 58px!important;height:58px!important;min-height:58px!important;max-height:58px!important}
+    .room-view.show.cinema-mode .side-card .participants{max-height:135px!important}
+    .room-view.show.cinema-mode .cinema-toggle{background:#6a526f!important;color:#fff!important;border-color:#7b6280!important}
+
+    @media(max-width:1000px){
+      .room-view.show.cinema-mode .room-layout{display:block!important;height:calc(100dvh - 58px)!important;position:relative!important}
+      .room-view.show.cinema-mode .watch-card{height:100%!important}
+      .room-view.show.cinema-mode .side-card{
+        position:absolute!important;
+        top:0!important;
+        right:0!important;
+        width:min(370px,88vw)!important;
+        min-width:0!important;
+        max-width:none!important;
+        height:100%!important;
+        transform:translateX(102%)!important;
+        z-index:970!important;
+      }
+      .room-view.show.cinema-mode.cinema-chat-open .side-card{transform:translateX(0)!important}
+    }
+    @media(max-width:600px){
+      .room-view.show.cinema-mode .room-top{height:52px!important;min-height:52px!important;flex-basis:52px!important}
+      .room-view.show.cinema-mode .room-layout{height:calc(100dvh - 52px)!important}
+      .room-view.show.cinema-mode .player-wrap{height:calc(100dvh - 104px)!important}
+    }
+  `;
+  document.head.appendChild(style);
+})();
