@@ -1,86 +1,161 @@
-const roomUiFixStyle=document.createElement("style");roomUiFixStyle.textContent=`
-/* CINEORA room: keep the sidebar compact and keep the chat composer visible. */
-.room-view.show .room-layout{align-items:start!important}
-.room-view.show .side-card{height:auto!important;max-height:none!important;min-height:0!important;position:static!important;overflow:hidden!important}
-.room-view.show .side-card .chat{display:flex!important;flex-direction:column!important;min-height:0!important;height:330px!important;overflow:hidden!important}
-.room-view.show .side-card .chat-messages{flex:1 1 auto!important;min-height:0!important;height:auto!important;max-height:none!important;overflow-y:auto!important;padding:11px!important}
-.room-view.show .side-card .chat-form{display:flex!important;visibility:visible!important;opacity:1!important;flex:0 0 auto!important;position:relative!important;bottom:auto!important;z-index:120!important;align-items:center!important;gap:6px!important;padding:9px!important}
-.room-view.show .side-card .chat-form input{display:block!important;visibility:visible!important;opacity:1!important;flex:1 1 auto!important;min-width:0!important;width:auto!important;height:42px!important;box-sizing:border-box!important}
-.room-view.show .side-card .chat-form>button{display:flex!important;visibility:visible!important;opacity:1!important;flex:0 0 46px!important;width:46px!important;height:42px!important;align-items:center!important;justify-content:center!important}
-.room-view.show .side-card .emoji-toggle{display:grid!important;flex:0 0 42px!important;width:42px!important;height:42px!important}
-.room-view.show #universalPlayer{position:absolute!important;inset:0!important;width:100%!important;height:100%!important}
-.room-view.show #universalPlayer iframe,.room-view.show #universalPlayer video{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;border:0!important}
-.room-view.show .player-wrap{position:relative!important;aspect-ratio:16/9!important;min-height:0!important}
-.cineora-media-frame{position:absolute;inset:0;width:100%;height:100%;border:0;background:#09080b}
-.cineora-media-video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000}
-.cineora-media-fallback{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;padding:25px;text-align:center;background:#0d0b10;color:#eee7f1;z-index:5}
-.cineora-media-fallback strong{font-size:17px}.cineora-media-fallback span{max-width:520px;color:#aaa0ad;font-size:12px;line-height:1.5}.cineora-media-fallback a{display:inline-flex;padding:10px 16px;border-radius:999px;background:#b996c4;color:#211722;font-weight:700;text-decoration:none}
-@media(max-width:1000px){.room-view.show .side-card .chat{height:360px!important}}
-@media(max-width:600px){.room-view.show .side-card .chat{height:320px!important}.room-view.show .side-card .chat-form{padding:8px!important}.room-view.show .side-card .chat-form input,.room-view.show .side-card .chat-form>button{height:40px!important}.room-view.show .player-wrap{aspect-ratio:16/9!important}}
-`;document.head.appendChild(roomUiFixStyle);
+/* CINEORA ROOM LAYOUT — single source of truth */
+(()=>{
+  const style=document.createElement("style");
+  style.id="cineora-room-layout";
+  style.textContent=`
+    .room-view.show .room-top{
+      position:sticky!important; top:0!important; z-index:900!important;
+      flex:0 0 76px!important;
+    }
+    .room-view.show .room-layout{
+      width:min(1480px,calc(100% - 48px))!important;
+      margin:18px auto 28px!important;
+      grid-template-columns:minmax(0,1fr) 410px!important;
+      gap:18px!important;
+      align-items:start!important;
+      position:relative!important; z-index:1!important;
+    }
+    .room-view.show .watch-card{min-width:0!important;width:100%!important}
+    .room-view.show .side-card{
+      width:410px!important; min-width:410px!important; max-width:410px!important;
+      height:calc(100vh - 100px)!important; min-height:520px!important; max-height:900px!important;
+      position:sticky!important; top:84px!important; overflow:hidden!important;
+      display:flex!important; flex-direction:column!important; align-self:start!important;
+    }
+    .room-view.show .side-card>.side-title{
+      flex:0 0 42px!important;height:42px!important;min-height:42px!important;
+      padding:12px 16px!important;box-sizing:border-box!important;
+    }
+    .room-view.show .side-card>.participants{
+      flex:0 0 112px!important;height:112px!important;min-height:112px!important;max-height:112px!important;
+      overflow:hidden!important;padding:4px 10px 7px!important;gap:4px!important;
+    }
+    .room-view.show .side-card .person-row{
+      flex:0 0 50px!important;width:100%!important;height:50px!important;
+      min-height:50px!important;max-height:50px!important;padding:6px 9px!important;
+      box-sizing:border-box!important;overflow:hidden!important;
+    }
+    .room-view.show .side-card>.voice-panel{
+      flex:0 0 74px!important;width:100%!important;height:74px!important;
+      min-height:74px!important;max-height:74px!important;overflow:hidden!important;
+      padding:7px 11px!important;box-sizing:border-box!important;
+    }
+    .room-view.show .side-card .voice-head{height:23px!important;min-height:23px!important;margin:0!important}
+    .room-view.show .side-card .voice-title{font-size:13px!important;line-height:1!important;margin:0!important}
+    .room-view.show .side-card .voice-toggle{height:24px!important;min-height:24px!important;padding:0 9px!important;font-size:9px!important}
+    .room-view.show .side-card .voice-tools{height:13px!important;min-height:13px!important;margin:1px 0 0!important;overflow:hidden!important}
+    .room-view.show .side-card .voice-users{height:15px!important;min-height:15px!important;margin:1px 0 0!important;overflow:hidden!important;white-space:nowrap!important}
+    .room-view.show .side-card>.chat{
+      flex:1 1 auto!important;width:100%!important;min-width:0!important;min-height:0!important;
+      height:auto!important;max-height:none!important;display:flex!important;flex-direction:column!important;overflow:hidden!important;
+    }
+    .room-view.show .side-card .chat-title-row{
+      flex:0 0 46px!important;height:46px!important;min-height:46px!important;padding:0 14px!important;
+      box-sizing:border-box!important;display:flex!important;align-items:center!important;
+    }
+    .room-view.show .side-card .chat-title-row .side-title{padding:0!important;font-size:18px!important;line-height:1!important}
+    .room-view.show .side-card .chat-messages{
+      flex:1 1 auto!important;min-height:0!important;height:auto!important;max-height:none!important;
+      overflow-y:auto!important;padding:10px!important;
+    }
+    .room-view.show .side-card .chat-form{
+      flex:0 0 58px!important;width:100%!important;height:58px!important;min-height:58px!important;max-height:58px!important;
+      padding:8px!important;box-sizing:border-box!important;display:flex!important;visibility:visible!important;opacity:1!important;
+      align-items:center!important;position:relative!important;inset:auto!important;z-index:120!important;gap:6px!important;
+    }
+    .room-view.show .side-card .chat-form input{
+      display:block!important;visibility:visible!important;opacity:1!important;flex:1 1 auto!important;
+      min-width:0!important;width:auto!important;height:40px!important;min-height:40px!important;max-height:40px!important;
+      box-sizing:border-box!important;
+    }
+    .room-view.show .side-card .chat-form>button{
+      display:flex!important;visibility:visible!important;opacity:1!important;flex:0 0 42px!important;
+      width:42px!important;height:40px!important;min-height:40px!important;max-height:40px!important;
+      align-items:center!important;justify-content:center!important;
+    }
+    .room-view.show .side-card .emoji-toggle{
+      display:grid!important;flex:0 0 40px!important;width:40px!important;min-width:40px!important;height:40px!important;
+    }
+    .room-view.show #universalPlayer{position:absolute!important;inset:0!important;width:100%!important;height:100%!important}
+    .room-view.show #universalPlayer iframe,.room-view.show #universalPlayer video{
+      position:absolute!important;inset:0!important;width:100%!important;height:100%!important;border:0!important;
+    }
+    .room-view.show .player-wrap{position:relative!important;aspect-ratio:16/9!important;min-height:0!important}
+    .cineora-media-frame{position:absolute;inset:0;width:100%;height:100%;border:0;background:#09080b}
+    .cineora-media-video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000}
+    .cineora-media-fallback{
+      position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;
+      gap:10px;padding:25px;text-align:center;background:#0d0b10;color:#eee7f1;z-index:5;
+    }
+    .cineora-media-fallback strong{font-size:17px}
+    .cineora-media-fallback span{max-width:520px;color:#aaa0ad;font-size:12px;line-height:1.5}
+    .cineora-media-fallback a{display:inline-flex;padding:10px 16px;border-radius:999px;background:#b996c4;color:#211722;font-weight:700;text-decoration:none}
 
-/* FINAL ROOM RESTORE: override the later large-video layer without touching chat logic. */
-const roomLayoutRestoreStyle=document.createElement("style");roomLayoutRestoreStyle.id="cineora-room-layout-restore";roomLayoutRestoreStyle.textContent=`
-.room-view.show .room-layout{
-  width:min(1480px,calc(100% - 48px))!important;
-  margin:18px auto 28px!important;
-  grid-template-columns:minmax(0,1fr) 410px!important;
-  gap:18px!important;
-  align-items:start!important;
-}
-.room-view.show .watch-card{min-width:0!important;width:100%!important}
-.room-view.show .side-card{
-  width:410px!important;min-width:410px!important;max-width:410px!important;
-  height:calc(100vh - 100px)!important;min-height:520px!important;max-height:900px!important;
-  position:sticky!important;top:84px!important;overflow:hidden!important;
-  display:flex!important;flex-direction:column!important;align-self:start!important;
-}
-.room-view.show .side-card>.side-title{
-  flex:0 0 42px!important;height:42px!important;min-height:42px!important;padding:12px 16px!important;box-sizing:border-box!important;
-}
-.room-view.show .side-card>.participants{
-  flex:0 0 112px!important;height:112px!important;min-height:112px!important;max-height:112px!important;
-  overflow:hidden!important;padding:4px 10px 7px!important;gap:4px!important;
-}
-.room-view.show .side-card .person-row{
-  flex:0 0 50px!important;width:100%!important;height:50px!important;min-height:50px!important;max-height:50px!important;
-  padding:6px 9px!important;box-sizing:border-box!important;overflow:hidden!important;
-}
-.room-view.show .side-card>.voice-panel{
-  flex:0 0 74px!important;width:100%!important;height:74px!important;min-height:74px!important;max-height:74px!important;
-  overflow:hidden!important;padding:7px 11px!important;box-sizing:border-box!important;
-}
-.room-view.show .side-card .voice-head{height:23px!important;min-height:23px!important;margin:0!important}
-.room-view.show .side-card .voice-title{font-size:13px!important;line-height:1!important;margin:0!important}
-.room-view.show .side-card .voice-toggle{height:24px!important;min-height:24px!important;padding:0 9px!important;font-size:9px!important}
-.room-view.show .side-card .voice-tools{height:13px!important;min-height:13px!important;margin:1px 0 0!important;overflow:hidden!important}
-.room-view.show .side-card .voice-users{height:15px!important;min-height:15px!important;margin:1px 0 0!important;overflow:hidden!important;white-space:nowrap!important}
-.room-view.show .side-card>.chat{
-  flex:1 1 auto!important;width:100%!important;min-width:0!important;min-height:0!important;height:auto!important;max-height:none!important;
-  display:flex!important;flex-direction:column!important;overflow:hidden!important;
-}
-.room-view.show .side-card .chat-title-row{flex:0 0 46px!important;height:46px!important;min-height:46px!important;padding:0 14px!important;box-sizing:border-box!important;display:flex!important;align-items:center!important}
-.room-view.show .side-card .chat-title-row .side-title{padding:0!important;font-size:18px!important;line-height:1!important}
-.room-view.show .side-card .chat-messages{flex:1 1 auto!important;min-height:0!important;height:auto!important;max-height:none!important;overflow-y:auto!important;padding:10px!important}
-.room-view.show .side-card .chat-form{flex:0 0 58px!important;width:100%!important;height:58px!important;min-height:58px!important;max-height:58px!important;padding:8px!important;box-sizing:border-box!important;display:flex!important;align-items:center!important;position:relative!important;inset:auto!important}
-.room-view.show .side-card .chat-form input{height:40px!important;min-height:40px!important;max-height:40px!important}
-.room-view.show .side-card .chat-form>button{height:40px!important;min-height:40px!important;max-height:40px!important;flex:0 0 42px!important;width:42px!important}
-.room-view.show .side-card .emoji-toggle{width:40px!important;min-width:40px!important;height:40px!important}
-@media(max-width:1000px){
-  .room-view.show .room-layout{width:calc(100% - 20px)!important;margin:12px auto 20px!important;grid-template-columns:1fr!important;gap:12px!important}
-  .room-view.show .side-card{width:100%!important;min-width:0!important;max-width:none!important;height:auto!important;min-height:0!important;max-height:none!important;position:static!important}
-  .room-view.show .side-card>.participants{height:112px!important;min-height:112px!important;max-height:112px!important}
-  .room-view.show .side-card>.voice-panel{height:74px!important;min-height:74px!important;max-height:74px!important}
-  .room-view.show .side-card>.chat{height:440px!important;min-height:440px!important;max-height:440px!important}
-}
-@media(max-width:600px){
-  .room-view.show .room-layout{width:100%!important;margin:8px 0 14px!important;gap:8px!important}
-  .room-view.show .side-card>.participants{height:104px!important;min-height:104px!important;max-height:104px!important}
-  .room-view.show .side-card>.voice-panel{height:68px!important;min-height:68px!important;max-height:68px!important}
-  .room-view.show .side-card>.chat{height:360px!important;min-height:360px!important;max-height:360px!important}
-}
-`;
-document.head.appendChild(roomLayoutRestoreStyle);
+    /* Cinema mode: desktop = large video + chat on the right. */
+    .room-view.show.cinema-mode{
+      position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;
+      min-height:100dvh!important;overflow:hidden!important;z-index:500!important;background:#0d0c10!important;
+    }
+    .room-view.show.cinema-mode .room-top{
+      position:relative!important;top:auto!important;height:58px!important;min-height:58px!important;
+      flex:0 0 58px!important;z-index:950!important;
+    }
+    .room-view.show.cinema-mode .room-layout{
+      width:100%!important;max-width:none!important;height:calc(100dvh - 58px)!important;
+      min-height:0!important;margin:0!important;display:grid!important;
+      grid-template-columns:minmax(0,1fr) 360px!important;gap:0!important;align-items:stretch!important;
+    }
+    .room-view.show.cinema-mode .watch-card{
+      height:100%!important;min-width:0!important;width:100%!important;border-radius:0!important;
+      display:flex!important;flex-direction:column!important;background:#09090b!important;
+    }
+    .room-view.show.cinema-mode .watch-head{flex:0 0 58px!important;min-height:58px!important}
+    .room-view.show.cinema-mode .player-wrap{
+      flex:1 1 auto!important;width:100%!important;height:auto!important;min-height:0!important;
+      max-height:none!important;aspect-ratio:auto!important;border-radius:0!important;
+    }
+    .room-view.show.cinema-mode #universalPlayer{position:absolute!important;inset:0!important;width:100%!important;height:100%!important}
+    .room-view.show.cinema-mode #universalPlayer iframe,
+    .room-view.show.cinema-mode #universalPlayer video{
+      position:absolute!important;inset:0!important;width:100%!important;height:100%!important;border:0!important;
+    }
+    .room-view.show.cinema-mode .side-card{
+      width:360px!important;min-width:360px!important;max-width:360px!important;height:100%!important;
+      min-height:0!important;max-height:none!important;position:relative!important;top:auto!important;right:auto!important;
+      overflow:hidden!important;border-radius:0!important;display:flex!important;flex-direction:column!important;
+    }
+    .room-view.show.cinema-mode .side-card>.chat{flex:1 1 auto!important;min-height:0!important;height:auto!important;max-height:none!important}
+    .room-view.show.cinema-mode .side-card .chat-messages{min-height:0!important}
+    .room-view.show.cinema-mode .side-card .chat-form{flex:0 0 58px!important;height:58px!important;min-height:58px!important;max-height:58px!important}
+    .room-view.show.cinema-mode .side-card .participants{max-height:135px!important}
+    .room-view.show.cinema-mode .cinema-toggle{background:#6a526f!important;color:#fff!important;border-color:#7b6280!important}
+
+    @media(max-width:1000px){
+      .room-view.show .room-layout{width:calc(100% - 20px)!important;margin:12px auto 20px!important;grid-template-columns:1fr!important;gap:12px!important}
+      .room-view.show .side-card{width:100%!important;min-width:0!important;max-width:none!important;height:auto!important;min-height:0!important;max-height:none!important;position:static!important}
+      .room-view.show .side-card>.participants{height:112px!important;min-height:112px!important;max-height:112px!important}
+      .room-view.show .side-card>.voice-panel{height:74px!important;min-height:74px!important;max-height:74px!important}
+      .room-view.show .side-card>.chat{height:440px!important;min-height:440px!important;max-height:440px!important}
+      .room-view.show.cinema-mode .room-layout{display:block!important;height:calc(100dvh - 58px)!important;position:relative!important}
+      .room-view.show.cinema-mode .watch-card{height:100%!important}
+      .room-view.show.cinema-mode .side-card{
+        position:absolute!important;top:0!important;right:0!important;width:min(370px,88vw)!important;
+        min-width:0!important;max-width:none!important;height:100%!important;transform:translateX(102%)!important;z-index:970!important;
+      }
+      .room-view.show.cinema-mode.cinema-chat-open .side-card{transform:translateX(0)!important}
+    }
+    @media(max-width:600px){
+      .room-view.show .room-layout{width:100%!important;margin:8px 0 14px!important;gap:8px!important}
+      .room-view.show .side-card>.participants{height:104px!important;min-height:104px!important;max-height:104px!important}
+      .room-view.show .side-card>.voice-panel{height:68px!important;min-height:68px!important;max-height:68px!important}
+      .room-view.show .side-card>.chat{height:360px!important;min-height:360px!important;max-height:360px!important}
+      .room-view.show.cinema-mode .room-top{height:52px!important;min-height:52px!important;flex-basis:52px!important}
+      .room-view.show.cinema-mode .room-layout{height:calc(100dvh - 52px)!important}
+      .room-view.show.cinema-mode .player-wrap{height:calc(100dvh - 104px)!important}
+    }
+  `;
+  document.head.appendChild(style);
+})();
 
 const modal=document.getElementById("modal"),nameInput=document.getElementById("name"),roomInput=document.getElementById("room"),title=document.getElementById("modalTitle"),text=document.getElementById("modalText");
 function openModal(create){title.textContent=create?"Создать сессию":"Присоединиться к сессии";text.textContent=create?"Введите имя — код сессии будет создан автоматически.":"Введите имя и код сессии, который вам отправили.";roomInput.value=create?String(Math.floor(1000+Math.random()*9000)):"";roomInput.placeholder=create?"Код создан автоматически":"Код сессии";modal.classList.remove("hidden");nameInput.focus()}
@@ -208,135 +283,3 @@ function startRoom(roomId){
   socket.on("chat-message",addMessage);
   socket.on("chat-warning",m=>{if(!chatMessages)return;const el=document.createElement("div");el.className="chat-msg";el.innerHTML=`<span>${escapeHtml(m.text||"")}</span>`;chatMessages.appendChild(el);chatMessages.scrollTop=chatMessages.scrollHeight});
 }
-
-/* CINEORA FINAL DESKTOP ROOM FIX
-   The cinema CSS in index.html is loaded before client.js. The old restore rules
-   were therefore overriding cinema-mode. Keep the normal room layout, but give
-   cinema-mode its own final layer and keep the top room panel at the top. */
-(()=>{
-  const style=document.createElement("style");
-  style.id="cineora-final-desktop-room-fix";
-  style.textContent=`
-    .room-view.show .room-top{
-      position:sticky!important;
-      top:0!important;
-      z-index:900!important;
-      flex:0 0 76px!important;
-    }
-    .room-view.show .room-layout{position:relative!important;z-index:1!important}
-
-    .room-view.show.cinema-mode{
-      position:fixed!important;
-      inset:0!important;
-      width:100vw!important;
-      height:100dvh!important;
-      min-height:100dvh!important;
-      overflow:hidden!important;
-      z-index:500!important;
-      background:#0d0c10!important;
-    }
-    .room-view.show.cinema-mode .room-top{
-      position:relative!important;
-      top:auto!important;
-      height:58px!important;
-      min-height:58px!important;
-      flex:0 0 58px!important;
-      z-index:950!important;
-    }
-    .room-view.show.cinema-mode .room-layout{
-      width:100%!important;
-      max-width:none!important;
-      height:calc(100dvh - 58px)!important;
-      min-height:0!important;
-      margin:0!important;
-      display:grid!important;
-      grid-template-columns:minmax(0,1fr) 360px!important;
-      gap:0!important;
-      align-items:stretch!important;
-    }
-    .room-view.show.cinema-mode .watch-card{
-      height:100%!important;
-      min-width:0!important;
-      width:100%!important;
-      border-radius:0!important;
-      display:flex!important;
-      flex-direction:column!important;
-      background:#09090b!important;
-    }
-    .room-view.show.cinema-mode .watch-head{
-      flex:0 0 58px!important;
-      min-height:58px!important;
-    }
-    .room-view.show.cinema-mode .player-wrap{
-      flex:1 1 auto!important;
-      width:100%!important;
-      height:auto!important;
-      min-height:0!important;
-      max-height:none!important;
-      aspect-ratio:auto!important;
-      border-radius:0!important;
-    }
-    .room-view.show.cinema-mode #universalPlayer{
-      position:absolute!important;
-      inset:0!important;
-      width:100%!important;
-      height:100%!important;
-    }
-    .room-view.show.cinema-mode #universalPlayer iframe,
-    .room-view.show.cinema-mode #universalPlayer video{
-      position:absolute!important;
-      inset:0!important;
-      width:100%!important;
-      height:100%!important;
-      border:0!important;
-    }
-    .room-view.show.cinema-mode .side-card{
-      width:360px!important;
-      min-width:360px!important;
-      max-width:360px!important;
-      height:100%!important;
-      min-height:0!important;
-      max-height:none!important;
-      position:relative!important;
-      top:auto!important;
-      right:auto!important;
-      overflow:hidden!important;
-      border-radius:0!important;
-      display:flex!important;
-      flex-direction:column!important;
-    }
-    .room-view.show.cinema-mode .side-card>.chat{
-      flex:1 1 auto!important;
-      min-height:0!important;
-      height:auto!important;
-      max-height:none!important;
-    }
-    .room-view.show.cinema-mode .side-card .chat-messages{min-height:0!important}
-    .room-view.show.cinema-mode .side-card .chat-form{flex:0 0 58px!important;height:58px!important;min-height:58px!important;max-height:58px!important}
-    .room-view.show.cinema-mode .side-card .participants{max-height:135px!important}
-    .room-view.show.cinema-mode .cinema-toggle{background:#6a526f!important;color:#fff!important;border-color:#7b6280!important}
-
-    @media(max-width:1000px){
-      .room-view.show.cinema-mode .room-layout{display:block!important;height:calc(100dvh - 58px)!important;position:relative!important}
-      .room-view.show.cinema-mode .watch-card{height:100%!important}
-      .room-view.show.cinema-mode .side-card{
-        position:absolute!important;
-        top:0!important;
-        right:0!important;
-        width:min(370px,88vw)!important;
-        min-width:0!important;
-        max-width:none!important;
-        height:100%!important;
-        transform:translateX(102%)!important;
-        z-index:970!important;
-      }
-      .room-view.show.cinema-mode.cinema-chat-open .side-card{transform:translateX(0)!important}
-    }
-    @media(max-width:600px){
-      .room-view.show.cinema-mode .room-top{height:52px!important;min-height:52px!important;flex-basis:52px!important}
-      .room-view.show.cinema-mode .room-layout{height:calc(100dvh - 52px)!important}
-      .room-view.show.cinema-mode .player-wrap{height:calc(100dvh - 104px)!important}
-    }
-  `;
-  document.head.appendChild(style);
-})();
