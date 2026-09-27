@@ -1123,65 +1123,7 @@ html.cineora-dark .cineora-achievements{background:rgba(4,3,7,.72)}html.cineora-
 @media(max-width:700px){.room-top{min-height:64px}.room-brand{font-size:20px}.room-actions{max-width:78%;gap:6px}.room-actions .room-code,.room-actions .room-title-chip,.room-actions .room-mode-chip,#changeName{display:none}.room-layout{width:100%;margin:8px 0 14px;gap:8px}.watch-card,.side-card{border-radius:16px}.watch-head{min-height:58px;padding:12px 13px}.watch-title{font-size:19px}.player-wrap{aspect-ratio:16/9;min-height:0}.media-bar{padding:9px;display:grid;grid-template-columns:minmax(0,1fr) auto}.media-bar input{grid-column:1/-1;width:100%}.side-card{min-height:0}.participants{max-height:180px}.chat{min-height:300px}.chat-messages{padding:10px}.chat-form{padding:8px}.room-view.cinema-mode .room-top{height:52px;min-height:52px}.room-view.cinema-mode .room-layout{height:calc(100dvh - 52px)}.room-view.cinema-mode .side-card{width:min(92vw,360px)}}
 
 </style>
-<style id="cineora-room-final-repair">
-.room-view.show{display:block!important;width:100%!important;min-height:100vh!important}
-.room-view.show .room-top{width:100%!important;min-height:72px!important;box-sizing:border-box!important;position:sticky!important;top:0!important;z-index:900!important}
-.room-view.show .room-layout{width:min(1480px,calc(100% - 48px))!important;margin:24px auto 30px!important;display:grid!important;grid-template-columns:minmax(0,1fr) 390px!important;gap:20px!important;align-items:start!important}
-.room-view.show .watch-card{min-width:0!important;width:100%!important}
-.room-view.show .player-wrap{width:100%!important;aspect-ratio:16/9!important;min-height:0!important;height:auto!important;background:#0b0b0d!important}
-.room-view.show .player-wrap>#universalPlayer{position:absolute!important;inset:0!important;width:100%!important;height:100%!important}
-.room-view.show .player-wrap iframe,.room-view.show .player-wrap video{position:absolute!important;inset:0!important;width:100%!important;height:100%!important}
-.room-view.show .side-card{width:100%!important;min-width:0!important;position:sticky!important;top:84px!important;height:calc(100vh - 100px)!important;max-height:900px!important}
-.room-view.cinema-mode{position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;min-height:100dvh!important;z-index:5000!important;overflow:hidden!important}
-.room-view.cinema-mode .room-top{position:relative!important;top:auto!important;width:100%!important;height:60px!important;min-height:60px!important}
-.room-view.cinema-mode .room-layout{width:100%!important;height:calc(100dvh - 60px)!important;min-height:0!important;margin:0!important;display:grid!important;grid-template-columns:minmax(0,1fr) 380px!important;gap:0!important;align-items:stretch!important}
-.room-view.cinema-mode .watch-card{height:100%!important;min-width:0!important;border:0!important;border-radius:0!important;display:flex!important;flex-direction:column!important}
-.room-view.cinema-mode .watch-head{flex:0 0 58px!important;min-height:58px!important}
-.room-view.cinema-mode .player-wrap{flex:1 1 auto!important;height:auto!important;min-height:0!important;aspect-ratio:auto!important}
-.room-view.cinema-mode .media-bar{display:none!important}
-.room-view.cinema-mode .side-card{width:380px!important;min-width:380px!important;max-width:380px!important;height:100%!important;max-height:none!important;position:relative!important;top:auto!important;min-height:0!important;border-radius:0!important}
-.room-view.cinema-mode .chat{min-height:0!important}
-body.cineora-cinema-active{overflow:hidden!important}
-@media(max-width:1000px){
-  .room-view.show .room-layout{width:calc(100% - 20px)!important;grid-template-columns:1fr!important;gap:12px!important}
-  .room-view.show .side-card{position:static!important;width:100%!important;height:auto!important;max-height:none!important}
-  .room-view.cinema-mode .room-layout{display:block!important;height:calc(100dvh - 56px)!important;position:relative!important}
-  .room-view.cinema-mode .side-card{position:absolute!important;top:0!important;right:0!important;width:min(380px,88vw)!important;min-width:0!important;max-width:none!important;height:100%!important;transform:translateX(102%)!important;z-index:970!important}
-  .room-view.cinema-mode.cinema-chat-open .side-card{transform:translateX(0)!important}
-  .room-view.cinema-mode .room-top{height:56px!important;min-height:56px!important}
-}
-@media(max-width:700px){
-  .room-view.show .room-layout{width:100%!important;margin:8px 0 14px!important}
-  .room-view.show .player-wrap{aspect-ratio:16/9!important}
-  .room-view.cinema-mode .room-top{height:52px!important;min-height:52px!important}
-  .room-view.cinema-mode .room-layout{height:calc(100dvh - 52px)!important}
-}
-</style>
-
 <!-- CINEORA ROOM PANEL RESTORE -->
-<style id="cineora-room-panel-restore">
-/* CINEORA — аккуратно восстановленная панель комнаты для ПК */
-@media (min-width:701px){
-  .room-view.show{min-height:100vh!important}
-  .room-view.show > .room-top{width:100%!important;min-height:72px!important;height:72px!important;padding:0 28px!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:18px!important;position:sticky!important;top:0!important;z-index:9000!important;box-sizing:border-box!important}
-  .room-view.show > .room-top .room-brand{flex:0 0 auto!important;display:flex!important;align-items:center!important;white-space:nowrap!important}
-  .room-view.show > .room-top .room-actions{flex:1 1 auto!important;min-width:0!important;display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:8px!important;flex-wrap:nowrap!important}
-  .room-view.show > .room-top .room-code,.room-view.show > .room-top .room-btn{flex:0 0 auto!important;white-space:nowrap!important}
-  .room-view.show > .room-layout{width:min(1480px,calc(100% - 48px))!important;margin:20px auto 30px!important;display:grid!important;grid-template-columns:minmax(0,1fr) 390px!important;gap:20px!important;align-items:stretch!important}
-  .room-view.show > .room-layout > .watch-card{min-width:0!important;width:auto!important}
-  .room-view.show > .room-layout > .side-card{width:390px!important;min-width:390px!important;max-width:390px!important;height:calc(100vh - 112px)!important;min-height:0!important;max-height:calc(100vh - 112px)!important;position:sticky!important;top:92px!important;align-self:start!important;display:flex!important;flex-direction:column!important;overflow:hidden!important}
-  .room-view.show > .room-layout > .side-card .participants{flex:0 0 auto!important;max-height:190px!important;overflow:auto!important}
-  .room-view.show > .room-layout > .side-card .voice-panel{flex:0 0 auto!important}
-  .room-view.show > .room-layout > .side-card .chat{flex:1 1 auto!important;min-height:0!important;height:auto!important;max-height:none!important;display:flex!important;flex-direction:column!important}
-  .room-view.show > .room-layout > .side-card .chat-messages{flex:1 1 auto!important;min-height:0!important;overflow-y:auto!important}
-  .room-view.show > .room-layout > .side-card .chat-form{flex:0 0 auto!important}
-}
-@media (max-width:700px){
-  .room-view.show > .room-top{position:relative!important}
-  .room-view.show > .room-layout{display:flex!important;flex-direction:column!important}
-  .room-view.show > .room-layout > .side-card{width:100%!important;min-width:0!important;max-width:none!important;height:auto!important;max-height:none!important;position:relative!important;top:auto!important}
-}
-</style>
 </head>
 <body>
 
