@@ -1124,6 +1124,28 @@ html.cineora-dark .cineora-achievements{background:rgba(4,3,7,.72)}html.cineora-
 
 </style>
 <!-- CINEORA ROOM PANEL RESTORE -->
+
+<style id="cineora-side-panel-alignment">
+/* CINEORA — правая панель на одном уровне с карточкой «Совместный просмотр» */
+@media (min-width:701px){
+  .room-view.show > .room-layout{
+    align-items:stretch !important;
+  }
+  .room-view.show > .room-layout > .side-card{
+    align-self:stretch !important;
+    position:relative !important;
+    top:auto !important;
+    height:auto !important;
+    min-height:100% !important;
+    max-height:none !important;
+    margin:0 !important;
+  }
+  .room-view.show > .room-layout > .watch-card{
+    height:auto !important;
+    min-height:100% !important;
+  }
+}
+</style>
 </head>
 <body>
 
