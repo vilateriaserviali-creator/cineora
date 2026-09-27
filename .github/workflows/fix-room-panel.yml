@@ -11,19 +11,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Repair room panel markup and CSS
-        shell: python
         run: |
+          python3 - <<'PY'
           from pathlib import Path
+          import re
           p = Path('index.html')
           s = p.read_text(encoding='utf-8')
-          bad = '''      \n      \n    </div>\n    <aside class="side-card" id="sideCard">'''
-          good = '''      \n    <aside class="side-card" id="sideCard">'''
-          if bad in s:
-              s = s.replace(bad, good, 1)
-          else:
-              s = s.replace('''    </div>\n    <aside class="side-card" id="sideCard">''','''    <aside class="side-card" id="sideCard">''',1)
-          css = r'''
-<style id="cineora-room-top-final-fix">
+          s2, n = re.subn(r'</section>\s*</div>\s*<aside class="side-card" id="sideCard">', '</section>\n    <aside class="side-card" id="sideCard">', s, count=1)
+          if n:
+              s = s2
+          css = r'''\n<style id="cineora-room-top-final-fix">
 /* FINAL: верхняя панель комнаты всегда занимает всю ширину */
 .room-view.show > .room-top{
   display:grid!important;
@@ -46,7 +43,7 @@ jobs:
 .room-view.show > .room-top .room-actions{min-width:0!important;max-width:100%!important;justify-self:end!important;flex-wrap:nowrap!important;overflow-x:auto!important;overflow-y:hidden!important;scrollbar-width:none!important}
 .room-view.show > .room-top .room-actions::-webkit-scrollbar{display:none!important}
 .room-view.show > .room-top .room-actions .room-code,
-.room-view.show > .room-top .room-actions .room-btn{flex:0 0 auto!important;white-space:nowrap!important}
+.room.view.show > .room-top .room-actions .room-btn{flex:0 0 auto!important;white-space:nowrap!important}
 @media(max-width:1100px){
   .room-view.show > .room-top{grid-template-columns:auto minmax(120px,1fr) auto!important;padding:0 16px!important}
   .room-view.show > .room-top .room-actions .room-title-chip,
@@ -59,14 +56,14 @@ jobs:
 }
 .room-view.cinema-mode > .room-top{grid-template-columns:auto minmax(120px,1fr) auto!important}
 .room-view.cinema-mode > .room-top .room-actions{overflow-x:auto!important;scrollbar-width:none!important}
-</style>
-'''
-          marker='</head>'
+</style>\n'''
           if 'id="cineora-room-top-final-fix"' not in s:
-              s=s.replace(marker,css+marker,1)
-          p.write_text(s,encoding='utf-8')
+              s=s.replace('</head>', css+'</head>', 1)
+          p.write_text(s, encoding='utf-8')
+          print('markup_removed=', n)
+          print('css_added=', 'id="cineora-room-top-final-fix"' in s)
+          PY
       - name: Commit fix and remove workflow
-        shell: bash
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
