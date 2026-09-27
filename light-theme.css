@@ -1,0 +1,210 @@
+/* CINEORA — Clean Light Theme
+   Soft, warm, non-white light mode.
+   Loaded after the base theme so it only overrides light-mode visuals.
+*/
+
+:root {
+  --cineora-light-bg: #f3edf1;
+  --cineora-light-bg-2: #ece8ef;
+  --cineora-light-surface: rgba(255, 250, 252, 0.82);
+  --cineora-light-surface-solid: #f9f4f7;
+  --cineora-light-surface-soft: #f1ebf1;
+  --cineora-light-border: #d9cfd9;
+  --cineora-light-border-soft: #e4dce4;
+  --cineora-light-text: #454049;
+  --cineora-light-text-soft: #6d6670;
+  --cineora-light-muted: #8b828c;
+  --cineora-light-accent: #c9b4cc;
+  --cineora-light-accent-strong: #b59bb7;
+  --cineora-light-accent-text: #403743;
+  --cineora-light-shadow: rgba(82, 67, 86, 0.10);
+}
+
+/* Global light background */
+body:not(.dark-theme):not(.theme-dark) {
+  background: var(--cineora-light-bg) !important;
+  color: var(--cineora-light-text);
+}
+
+/* Homepage */
+body:not(.room-page):not(.dark-theme):not(.theme-dark) .hero {
+  color: var(--cineora-light-text) !important;
+  background:
+    radial-gradient(circle at 82% 28%, rgba(218, 199, 221, .72) 0, transparent 34%),
+    radial-gradient(circle at 12% 78%, rgba(207, 220, 225, .55) 0, transparent 28%),
+    linear-gradient(135deg, #f6eee9 0%, #eee8f1 52%, #e9eff1 100%) !important;
+}
+
+body:not(.room-page):not(.dark-theme):not(.theme-dark) .hero h1,
+body:not(.room-page):not(.dark-theme):not(.theme-dark) .section-title,
+body:not(.room-page):not(.dark-theme):not(.theme-dark) .card h3,
+body:not(.room-page):not(.dark-theme):not(.theme-dark) .feature-card h3 {
+  color: #403b43 !important;
+}
+
+body:not(.room-page):not(.dark-theme):not(.theme-dark) .lead,
+body:not(.room-page):not(.dark-theme):not(.theme-dark) .section-text,
+body:not(.room-page):not(.dark-theme):not(.theme-dark) .feature-card p {
+  color: var(--cineora-light-text-soft) !important;
+}
+
+body:not(.room-page):not(.dark-theme):not(.theme-dark) .header {
+  background: rgba(249, 244, 247, .78) !important;
+  border-bottom: 1px solid rgba(217, 207, 217, .8) !important;
+  backdrop-filter: blur(14px);
+}
+
+body:not(.room-page):not(.dark-theme):not(.theme-dark) .feature,
+body:not(.room-page):not(.dark-theme):not(.theme-dark) .feature-card,
+body:not(.room-page):not(.dark-theme):not(.theme-dark) .platform,
+body:not(.room-page):not(.dark-theme):not(.theme-dark) .card {
+  background: var(--cineora-light-surface) !important;
+  border-color: var(--cineora-light-border-soft) !important;
+  box-shadow: 0 10px 30px var(--cineora-light-shadow) !important;
+}
+
+body:not(.room-page):not(.dark-theme):not(.theme-dark) .primary {
+  background: var(--cineora-light-accent) !important;
+  border-color: var(--cineora-light-accent) !important;
+  color: var(--cineora-light-accent-text) !important;
+}
+
+body:not(.room-page):not(.dark-theme):not(.theme-dark) .secondary,
+body:not(.room-page):not(.dark-theme):not(.theme-dark) .create-top {
+  background: rgba(255, 250, 252, .62) !important;
+  border-color: var(--cineora-light-border) !important;
+  color: #504955 !important;
+}
+
+/* Room */
+.room-view:not(.dark-theme):not(.theme-dark) {
+  background:
+    radial-gradient(circle at 82% 12%, rgba(204, 181, 210, .34), transparent 31%),
+    radial-gradient(circle at 7% 82%, rgba(204, 220, 226, .28), transparent 28%),
+    linear-gradient(135deg, #f5eef2 0%, #ece8ef 52%, #e8eff1 100%) !important;
+  color: var(--cineora-light-text);
+}
+
+.room-view:not(.dark-theme):not(.theme-dark) .room-top {
+  background: rgba(249, 244, 247, .88) !important;
+  border-bottom: 1px solid var(--cineora-light-border-soft) !important;
+  box-shadow: 0 2px 16px rgba(82, 67, 86, .06) !important;
+  backdrop-filter: blur(14px);
+}
+
+.room-view:not(.dark-theme):not(.theme-dark) .watch-card,
+.room-view:not(.dark-theme):not(.theme-dark) .side-card {
+  background: rgba(255, 250, 252, .84) !important;
+  border: 1px solid rgba(190, 177, 193, .58) !important;
+  box-shadow: 0 18px 45px rgba(82, 67, 86, .10), 0 4px 12px rgba(82, 67, 86, .05) !important;
+}
+
+.room-view:not(.dark-theme):not(.theme-dark) .watch-head,
+.room-view:not(.dark-theme):not(.theme-dark) .chat-title-row,
+.room-view:not(.dark-theme):not(.theme-dark) .chat-form,
+.room-view:not(.dark-theme):not(.theme-dark) .participants-title-row {
+  border-color: var(--cineora-light-border-soft) !important;
+}
+
+/* Participants */
+.room-view:not(.dark-theme):not(.theme-dark) .person-row,
+.room-view:not(.dark-theme):not(.theme-dark) .participant-card {
+  background: #f2edf2 !important;
+  border: 1px solid #e0d7e0 !important;
+  color: var(--cineora-light-text) !important;
+}
+
+.room-view:not(.dark-theme):not(.theme-dark) .person-name,
+.room-view:not(.dark-theme):not(.theme-dark) .participant-name-line {
+  color: #4b454e !important;
+}
+
+.room-view:not(.dark-theme):not(.theme-dark) .person-time,
+.room-view:not(.dark-theme):not(.theme-dark) .participant-time {
+  color: var(--cineora-light-muted) !important;
+}
+
+/* Voice widget */
+.room-view:not(.dark-theme):not(.theme-dark) .voice-panel {
+  background: #eee7ee !important;
+  border-color: var(--cineora-light-border-soft) !important;
+}
+
+.room-view:not(.dark-theme):not(.theme-dark) .voice-title {
+  color: #504955 !important;
+}
+
+.room-view:not(.dark-theme):not(.theme-dark) .voice-status,
+.room-view:not(.dark-theme):not(.theme-dark) .voice-note,
+.room-view:not(.dark-theme):not(.theme-dark) .noise-option {
+  color: var(--cineora-light-muted) !important;
+}
+
+.room-view:not(.dark-theme):not(.theme-dark) .voice-toggle {
+  background: #d2bfd4 !important;
+  border-color: #bda8bf !important;
+  color: #423946 !important;
+}
+
+.room-view:not(.dark-theme):not(.theme-dark) .voice-toggle.on {
+  background: #b59bb7 !important;
+  border-color: #a489a6 !important;
+  color: #fff !important;
+}
+
+/* Chat */
+.room-view:not(.dark-theme):not(.theme-dark) .chat {
+  background: rgba(255, 250, 252, .50) !important;
+}
+
+.room-view:not(.dark-theme):not(.theme-dark) .chat-messages {
+  background: rgba(250, 246, 249, .76) !important;
+}
+
+.room-view:not(.dark-theme):not(.theme-dark) .chat-msg {
+  background: #eee9ef !important;
+  border-color: #ddd3de !important;
+  color: #4b454e !important;
+}
+
+.room-view:not(.dark-theme):not(.theme-dark) .chat-msg.own {
+  background: linear-gradient(135deg, #e4d6e7, #d9c9de) !important;
+  border-color: #ccb9d0 !important;
+}
+
+.room-view:not(.dark-theme):not(.theme-dark) .chat-form input {
+  background: #faf6f9 !important;
+  border: 1px solid #d9cfd9 !important;
+  color: #48424b !important;
+}
+
+.room-view:not(.dark-theme):not(.theme-dark) .chat-form input::placeholder {
+  color: #9a919b !important;
+}
+
+/* Media controls */
+.room-view:not(.dark-theme):not(.theme-dark) .media-bar,
+.room-view:not(.dark-theme):not(.theme-dark) .sync-note {
+  background: #f0ecef !important;
+  border-color: var(--cineora-light-border-soft) !important;
+}
+
+.room-view:not(.dark-theme):not(.theme-dark) .media-bar input {
+  background: #faf7f9 !important;
+  border-color: #d9cfd9 !important;
+  color: #454049 !important;
+}
+
+/* Prevent accidental bright-white blocks */
+body:not(.dark-theme):not(.theme-dark) .section,
+.room-view:not(.dark-theme):not(.theme-dark) .side-card,
+.room-view:not(.dark-theme):not(.theme-dark) .watch-card {
+  color-scheme: light;
+}
+
+@media (max-width: 1000px) {
+  .room-view:not(.dark-theme):not(.theme-dark) .watch-card,
+  .room-view:not(.dark-theme):not(.theme-dark) .side-card {
+    box-shadow: 0 12px 30px rgba(82, 67, 86, .08) !important;
+  }
+}
