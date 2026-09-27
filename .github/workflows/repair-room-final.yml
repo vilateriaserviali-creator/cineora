@@ -1,80 +1,70 @@
-name: Repair CINEORA room player and modes
+name: CINEORA room final repair
 on:
   push:
-    branches: [main]
+    branches:
+      - main
+permissions:
+  contents: write
 jobs:
   repair:
-    if: ${{ github.event.head_commit.message != 'Repair CINEORA room player and modes' }}
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
-      - uses: actions/checkout@v4
-      - name: Repair room CSS and VK embed fallback
-        shell: python
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Repair index.html
         run: |
+          python3 - <<'PY'
           from pathlib import Path
           p = Path('index.html')
           s = p.read_text(encoding='utf-8')
           marker = '<style id="cineora-room-final-repair">'
           if marker not in s:
-              css = r'''<style id="cineora-room-final-repair">
-/* CINEORA — final room repair: normal mode + cinema mode */
-.room-view.show{display:block!important;width:100%!important;min-height:100vh!important}
-.room-view.show .room-top{width:100%!important;min-height:72px!important;box-sizing:border-box!important;position:sticky!important;top:0!important;z-index:900!important}
-.room-view.show .room-layout{width:min(1480px,calc(100% - 48px))!important;margin:24px auto 30px!important;display:grid!important;grid-template-columns:minmax(0,1fr) 390px!important;gap:20px!important;align-items:start!important}
-.room-view.show .watch-card{min-width:0!important;width:100%!important}
-.room-view.show .player-wrap{width:100%!important;aspect-ratio:16/9!important;min-height:0!important;height:auto!important;background:#0b0b0d!important}
-.room-view.show .player-wrap>#universalPlayer{position:absolute!important;inset:0!important;width:100%!important;height:100%!important}
-.room-view.show .player-wrap iframe,.room-view.show .player-wrap video{position:absolute!important;inset:0!important;width:100%!important;height:100%!important}
-.room-view.show .side-card{width:100%!important;min-width:0!important;position:sticky!important;top:84px!important;height:calc(100vh - 100px)!important;max-height:900px!important}
-.room-view.cinema-mode{position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;min-height:100dvh!important;z-index:5000!important;overflow:hidden!important}
-.room-view.cinema-mode .room-top{position:relative!important;top:auto!important;width:100%!important;height:60px!important;min-height:60px!important}
-.room-view.cinema-mode .room-layout{width:100%!important;height:calc(100dvh - 60px)!important;min-height:0!important;margin:0!important;display:grid!important;grid-template-columns:minmax(0,1fr) 380px!important;gap:0!important;align-items:stretch!important}
-.room-view.cinema-mode .watch-card{height:100%!important;min-width:0!important;border:0!important;border-radius:0!important;display:flex!important;flex-direction:column!important}
-.room-view.cinema-mode .watch-head{flex:0 0 58px!important;min-height:58px!important}
-.room-view.cinema-mode .player-wrap{flex:1 1 auto!important;height:auto!important;min-height:0!important;aspect-ratio:auto!important}
-.room-view.cinema-mode .media-bar{display:none!important}
-.room-view.cinema-mode .side-card{width:380px!important;min-width:380px!important;max-width:380px!important;height:100%!important;max-height:none!important;position:relative!important;top:auto!important;min-height:0!important;border-radius:0!important}
-.room-view.cinema-mode .chat{min-height:0!important}
-body.cineora-cinema-active{overflow:hidden!important}
-@media(max-width:1000px){
-  .room-view.show .room-layout{width:calc(100% - 20px)!important;grid-template-columns:1fr!important;gap:12px!important}
-  .room-view.show .side-card{position:static!important;width:100%!important;height:auto!important;max-height:none!important}
-  .room-view.cinema-mode .room-layout{display:block!important;height:calc(100dvh - 56px)!important;position:relative!important}
-  .room-view.cinema-mode .side-card{position:absolute!important;top:0!important;right:0!important;width:min(380px,88vw)!important;min-width:0!important;max-width:none!important;height:100%!important;transform:translateX(102%)!important;z-index:970!important}
-  .room-view.cinema-mode.cinema-chat-open .side-card{transform:translateX(0)!important}
-  .room-view.cinema-mode .room-top{height:56px!important;min-height:56px!important}
-}
-@media(max-width:700px){
-  .room-view.show .room-layout{width:100%!important;margin:8px 0 14px!important}
-  .room-view.show .player-wrap{aspect-ratio:16/9!important}
-  .room-view.cinema-mode .room-top{height:52px!important;min-height:52px!important}
-  .room-view.cinema-mode .room-layout{height:calc(100dvh - 52px)!important}
-}
-</style>'''
+              css = '''<style id="cineora-room-final-repair">
+          .room-view.show{display:block!important;width:100%!important;min-height:100vh!important}
+          .room-view.show .room-top{width:100%!important;min-height:72px!important;box-sizing:border-box!important;position:sticky!important;top:0!important;z-index:900!important}
+          .room-view.show .room-layout{width:min(1480px,calc(100% - 48px))!important;margin:24px auto 30px!important;display:grid!important;grid-template-columns:minmax(0,1fr) 390px!important;gap:20px!important;align-items:start!important}
+          .room-view.show .watch-card{min-width:0!important;width:100%!important}
+          .room-view.show .player-wrap{width:100%!important;aspect-ratio:16/9!important;min-height:0!important;height:auto!important;background:#0b0b0d!important}
+          .room-view.show .player-wrap>#universalPlayer{position:absolute!important;inset:0!important;width:100%!important;height:100%!important}
+          .room-view.show .player-wrap iframe,.room-view.show .player-wrap video{position:absolute!important;inset:0!important;width:100%!important;height:100%!important}
+          .room-view.show .side-card{width:100%!important;min-width:0!important;position:sticky!important;top:84px!important;height:calc(100vh - 100px)!important;max-height:900px!important}
+          .room-view.cinema-mode{position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;min-height:100dvh!important;z-index:5000!important;overflow:hidden!important}
+          .room-view.cinema-mode .room-top{position:relative!important;top:auto!important;width:100%!important;height:60px!important;min-height:60px!important}
+          .room-view.cinema-mode .room-layout{width:100%!important;height:calc(100dvh - 60px)!important;min-height:0!important;margin:0!important;display:grid!important;grid-template-columns:minmax(0,1fr) 380px!important;gap:0!important;align-items:stretch!important}
+          .room-view.cinema-mode .watch-card{height:100%!important;min-width:0!important;border:0!important;border-radius:0!important;display:flex!important;flex-direction:column!important}
+          .room-view.cinema-mode .watch-head{flex:0 0 58px!important;min-height:58px!important}
+          .room-view.cinema-mode .player-wrap{flex:1 1 auto!important;height:auto!important;min-height:0!important;aspect-ratio:auto!important}
+          .room-view.cinema-mode .media-bar{display:none!important}
+          .room-view.cinema-mode .side-card{width:380px!important;min-width:380px!important;max-width:380px!important;height:100%!important;max-height:none!important;position:relative!important;top:auto!important;min-height:0!important;border-radius:0!important}
+          .room-view.cinema-mode .chat{min-height:0!important}
+          body.cineora-cinema-active{overflow:hidden!important}
+          @media(max-width:1000px){
+            .room-view.show .room-layout{width:calc(100% - 20px)!important;grid-template-columns:1fr!important;gap:12px!important}
+            .room-view.show .side-card{position:static!important;width:100%!important;height:auto!important;max-height:none!important}
+            .room-view.cinema-mode .room-layout{display:block!important;height:calc(100dvh - 56px)!important;position:relative!important}
+            .room-view.cinema-mode .side-card{position:absolute!important;top:0!important;right:0!important;width:min(380px,88vw)!important;min-width:0!important;max-width:none!important;height:100%!important;transform:translateX(102%)!important;z-index:970!important}
+            .room-view.cinema-mode.cinema-chat-open .side-card{transform:translateX(0)!important}
+            .room-view.cinema-mode .room-top{height:56px!important;min-height:56px!important}
+          }
+          @media(max-width:700px){
+            .room-view.show .room-layout{width:100%!important;margin:8px 0 14px!important}
+            .room-view.show .player-wrap{aspect-ratio:16/9!important}
+            .room-view.cinema-mode .room-top{height:52px!important;min-height:52px!important}
+            .room-view.cinema-mode .room-layout{height:calc(100dvh - 52px)!important}
+          }
+          </style>'''
               s = s.replace('</head>', css + '\n</head>', 1)
           s = s.replace('https://vkvideo.ru/video_ext.php?', 'https://vk.com/video_ext.php?')
           s = s.replace('></div>\\n\\n<div class="modal hidden"', '></div><div class="modal hidden"')
           s = s.replace('</script>\\n<style id="cineora-join-toast">', '</script><style id="cineora-join-toast">')
           s = s.replace('</style>\\n<style id="cineora-dark-chat-online-fix">', '</style><style id="cineora-dark-chat-online-fix">')
           p.write_text(s, encoding='utf-8')
-      - name: Commit repair
-        shell: bash
+          PY
+      - name: Commit and remove one-shot workflow
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add index.html
-          git diff --cached --quiet && exit 0
+          git add index.html .github/workflows/repair-room-final.yml
+          git rm .github/workflows/repair-room-final.yml
           git commit -m 'Repair CINEORA room player and modes'
           git push
-      - name: Remove one-shot workflow
-        if: success()
-        shell: bash
-        run: |
-          rm -f .github/workflows/repair-room-final.yml
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add .github/workflows/repair-room-final.yml
-          git commit -m 'Remove one-shot room repair workflow' || true
-          git push || true
