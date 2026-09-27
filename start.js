@@ -7,6 +7,27 @@ const express = require("express");
 const socketIO = require("socket.io");
 const BaseServer = socketIO.Server;
 
+// If a broken/minimal index.html ever reaches Render, restore the last known
+// good room page before Express starts serving it.
+const RESTORE_INDEX_URL = "https://raw.githubusercontent.com/vilateriaserviali-creator/cineora/aa69dcd727d820b4c6079bc3d8c9e55f1ac91a45/index.html";
+const indexPath = path.join(__dirname, "index.html");
+
+async function ensureHealthyIndex() {
+  try {
+    const current = fs.readFileSync(indexPath, "utf8");
+    if (current.includes("<body") && current.includes("side-card") && current.includes("</body>")) return;
+    console.warn("[CINEORA] index.html is incomplete; restoring known-good version...");
+    const response = await fetch(RESTORE_INDEX_URL, { cache: "no-store" });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const restored = await response.text();
+    if (!restored.includes("<body") || !restored.includes("side-card")) throw new Error("restored index is incomplete");
+    fs.writeFileSync(indexPath, restored, "utf8");
+    console.log("[CINEORA] index.html restored successfully.");
+  } catch (err) {
+    console.error("[CINEORA] index restore failed:", err.message);
+  }
+}
+
 // Render serves index.html directly through Express. Inject the room recovery
 // stylesheet and media-link compatibility layer without touching the legacy UI.
 const originalSendFile = express.response.sendFile;
@@ -19,8 +40,8 @@ express.response.sendFile = function patchedSendFile(filePath, ...args) {
       const css = fs.readFileSync(cssPath, "utf8");
       const mediaFix = fs.readFileSync(mediaPath, "utf8");
       const injected = html
-        .replace(/<\/head>/i, `<style id="cineora-room-recovery-fix">${css}</style></head>`)
-        .replace(/<\/body>/i, `<script id="cineora-media-link-fix">${mediaFix}</script></body>`);
+        .replace(/<\\/head>/i, `<style id="cineora-room-recovery-fix">${css}</style></head>`)
+        .replace(/<\\/body>/i, `<script id="cineora-media-link-fix">${mediaFix}</script></body>`);
       this.type("html");
       this.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
       return this.send(injected);
@@ -55,4 +76,4 @@ socketIO.Server = RenderSocketServer;
 process.on("uncaughtException", err => console.error("[CINEORA] uncaughtException", err));
 process.on("unhandledRejection", err => console.error("[CINEORA] unhandledRejection", err));
 
-require("./server.js");
+ensureHealthyIndex().finally(() => require("./server.js"));
