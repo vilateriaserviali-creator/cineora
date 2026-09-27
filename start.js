@@ -28,19 +28,21 @@ async function ensureHealthyIndex() {
   }
 }
 
-// Render serves index.html directly through Express. Inject the room recovery
-// stylesheet and media-link compatibility layer without touching the legacy UI.
+// Render serves index.html directly through Express. Inject the existing room
+// fixes plus the new compact sidebar layout before the page is sent.
 const originalSendFile = express.response.sendFile;
 express.response.sendFile = function patchedSendFile(filePath, ...args) {
   try {
     if (path.basename(String(filePath)) === "index.html") {
       const html = fs.readFileSync(filePath, "utf8");
       const cssPath = path.join(path.dirname(filePath), "room-fix.css");
+      const panelCssPath = path.join(path.dirname(filePath), "room-panel-fix.css");
       const mediaPath = path.join(path.dirname(filePath), "media-link-fix.js");
       const css = fs.readFileSync(cssPath, "utf8");
+      const panelCss = fs.readFileSync(panelCssPath, "utf8");
       const mediaFix = fs.readFileSync(mediaPath, "utf8");
       const injected = html
-        .replace(/<\\/head>/i, `<style id="cineora-room-recovery-fix">${css}</style></head>`)
+        .replace(/<\\/head>/i, `<style id="cineora-room-recovery-fix">${css}</style><style id="cineora-compact-panel-fix">${panelCss}</style></head>`)
         .replace(/<\\/body>/i, `<script id="cineora-media-link-fix">${mediaFix}</script></body>`);
       this.type("html");
       this.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
