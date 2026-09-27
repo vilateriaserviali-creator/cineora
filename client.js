@@ -175,7 +175,7 @@ if(q){document.querySelector(".hero").style.display="none";document.querySelecto
 function mediaKind(url){
   try{
     const u=new URL(url,location.href),h=u.hostname.toLowerCase(),p=u.pathname.toLowerCase();
-    if(/youtube\\.com$|youtu\\.be$/.test(h)||h.endsWith(".youtube.com"))return"youtube";
+    if(/youtube\\.com$\vert{}youtu\\.be$/.test(h)||h.endsWith(".youtube.com"))return"youtube";
     if(h==="rutube.ru"||h.endsWith(".rutube.ru"))return"rutube";
     if(h==="vk.com"||h.endsWith(".vk.com")||h==="vkvideo.ru"||h.endsWith(".vkvideo.ru"))return"vk";
     if(/\\.(mp4|webm|ogg|ogv|m4v|mov)(?:$|\\?)/i.test(p))return"video";
