@@ -1,0 +1,16 @@
+/* CINEORA — full-width homepage strip */
+body:not(.room-page) .features{
+  width:100vw !important;
+  max-width:none !important;
+  margin-left:calc(50% - 50vw) !important;
+  margin-right:calc(50% - 50vw) !important;
+  padding-left:max(24px,calc((100vw - 1320px)/2)) !important;
+  padding-right:max(24px,calc((100vw - 1320px)/2)) !important;
+}
+body:not(.room-page) .features .feature{min-width:0 !important;}
+@media(max-width:900px){
+  body:not(.room-page) .features{
+    padding-left:16px !important;
+    padding-right:16px !important;
+  }
+}
