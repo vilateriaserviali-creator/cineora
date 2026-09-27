@@ -1,0 +1,136 @@
+/* CINEORA — compact/wide Create Session modal */
+
+/* Common modal/dialog containers used by the create-session flow */
+.create-session-modal,
+.session-modal,
+.create-room-modal,
+#createSessionModal,
+#createRoomModal,
+.modal.create-session,
+.modal.create-room {
+  width: min(660px, calc(100vw - 32px)) !important;
+  max-width: 660px !important;
+  max-height: min(760px, calc(100vh - 32px)) !important;
+  box-sizing: border-box !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+}
+
+.create-session-modal .modal-content,
+.session-modal .modal-content,
+.create-room-modal .modal-content,
+#createSessionModal .modal-content,
+#createRoomModal .modal-content,
+.modal.create-session .modal-content,
+.modal.create-room .modal-content {
+  width: 100% !important;
+  max-width: none !important;
+  box-sizing: border-box !important;
+}
+
+/* Keep the form wide and compact */
+.create-session-modal form,
+.session-modal form,
+.create-room-modal form,
+#createSessionModal form,
+#createRoomModal form {
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* Compact vertical rhythm */
+.create-session-modal .form-group,
+.session-modal .form-group,
+.create-room-modal .form-group,
+#createSessionModal .form-group,
+#createRoomModal .form-group {
+  margin-bottom: 10px !important;
+}
+
+/* Avatar/style choices should use rows instead of tall stacks */
+.create-session-modal .avatar-options,
+.session-modal .avatar-options,
+.create-room-modal .avatar-options,
+#createSessionModal .avatar-options,
+#createRoomModal .avatar-options,
+.create-session-modal .avatar-grid,
+.session-modal .avatar-grid,
+.create-room-modal .avatar-grid,
+#createSessionModal .avatar-grid,
+#createRoomModal .avatar-grid {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 6px !important;
+  max-height: 92px !important;
+  overflow: hidden !important;
+}
+
+/* Frames in one compact row */
+.create-session-modal .frame-options,
+.session-modal .frame-options,
+.create-room-modal .frame-options,
+#createSessionModal .frame-options,
+#createRoomModal .frame-options {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 6px !important;
+}
+
+/* Admin extras must not stretch the modal */
+.create-session-modal .admin-widget,
+.session-modal .admin-widget,
+.create-room-modal .admin-widget,
+#createSessionModal .admin-widget,
+#createRoomModal .admin-widget,
+.create-session-modal .admin-panel,
+.session-modal .admin-panel,
+.create-room-modal .admin-panel,
+#createSessionModal .admin-panel,
+#createRoomModal .admin-panel {
+  max-height: 92px !important;
+  overflow: auto !important;
+  box-sizing: border-box !important;
+}
+
+/* Date + time side by side */
+.create-session-modal .datetime-row,
+.session-modal .datetime-row,
+.create-room-modal .datetime-row,
+#createSessionModal .datetime-row,
+#createRoomModal .datetime-row {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(100px, .45fr) !important;
+  gap: 8px !important;
+}
+
+/* Prevent labels/buttons from wrapping into each other */
+.create-session-modal button,
+.session-modal button,
+.create-room-modal button,
+#createSessionModal button,
+#createRoomModal button {
+  box-sizing: border-box !important;
+  min-width: 0 !important;
+  white-space: nowrap !important;
+}
+
+@media (max-width: 700px) {
+  .create-session-modal,
+  .session-modal,
+  .create-room-modal,
+  #createSessionModal,
+  #createRoomModal,
+  .modal.create-session,
+  .modal.create-room {
+    width: min(660px, calc(100vw - 20px)) !important;
+    max-height: calc(100vh - 20px) !important;
+  }
+
+  .create-session-modal .datetime-row,
+  .session-modal .datetime-row,
+  .create-room-modal .datetime-row,
+  #createSessionModal .datetime-row,
+  #createRoomModal .datetime-row {
+    grid-template-columns: 1fr 100px !important;
+  }
+}
