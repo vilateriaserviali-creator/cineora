@@ -19,6 +19,69 @@ const roomUiFixStyle=document.createElement("style");roomUiFixStyle.textContent=
 @media(max-width:600px){.room-view.show .side-card .chat{height:320px!important}.room-view.show .side-card .chat-form{padding:8px!important}.room-view.show .side-card .chat-form input,.room-view.show .side-card .chat-form>button{height:40px!important}.room-view.show .player-wrap{aspect-ratio:16/9!important}}
 `;document.head.appendChild(roomUiFixStyle);
 
+/* FINAL ROOM RESTORE: override the later large-video layer without touching chat logic. */
+const roomLayoutRestoreStyle=document.createElement("style");roomLayoutRestoreStyle.id="cineora-room-layout-restore";roomLayoutRestoreStyle.textContent=`
+.room-view.show .room-layout{
+  width:min(1480px,calc(100% - 48px))!important;
+  margin:18px auto 28px!important;
+  grid-template-columns:minmax(0,1fr) 410px!important;
+  gap:18px!important;
+  align-items:start!important;
+}
+.room-view.show .watch-card{min-width:0!important;width:100%!important}
+.room-view.show .side-card{
+  width:410px!important;min-width:410px!important;max-width:410px!important;
+  height:calc(100vh - 100px)!important;min-height:520px!important;max-height:900px!important;
+  position:sticky!important;top:84px!important;overflow:hidden!important;
+  display:flex!important;flex-direction:column!important;align-self:start!important;
+}
+.room-view.show .side-card>.side-title{
+  flex:0 0 42px!important;height:42px!important;min-height:42px!important;padding:12px 16px!important;box-sizing:border-box!important;
+}
+.room-view.show .side-card>.participants{
+  flex:0 0 112px!important;height:112px!important;min-height:112px!important;max-height:112px!important;
+  overflow:hidden!important;padding:4px 10px 7px!important;gap:4px!important;
+}
+.room-view.show .side-card .person-row{
+  flex:0 0 50px!important;width:100%!important;height:50px!important;min-height:50px!important;max-height:50px!important;
+  padding:6px 9px!important;box-sizing:border-box!important;overflow:hidden!important;
+}
+.room-view.show .side-card>.voice-panel{
+  flex:0 0 74px!important;width:100%!important;height:74px!important;min-height:74px!important;max-height:74px!important;
+  overflow:hidden!important;padding:7px 11px!important;box-sizing:border-box!important;
+}
+.room-view.show .side-card .voice-head{height:23px!important;min-height:23px!important;margin:0!important}
+.room-view.show .side-card .voice-title{font-size:13px!important;line-height:1!important;margin:0!important}
+.room-view.show .side-card .voice-toggle{height:24px!important;min-height:24px!important;padding:0 9px!important;font-size:9px!important}
+.room-view.show .side-card .voice-tools{height:13px!important;min-height:13px!important;margin:1px 0 0!important;overflow:hidden!important}
+.room-view.show .side-card .voice-users{height:15px!important;min-height:15px!important;margin:1px 0 0!important;overflow:hidden!important;white-space:nowrap!important}
+.room-view.show .side-card>.chat{
+  flex:1 1 auto!important;width:100%!important;min-width:0!important;min-height:0!important;height:auto!important;max-height:none!important;
+  display:flex!important;flex-direction:column!important;overflow:hidden!important;
+}
+.room-view.show .side-card .chat-title-row{flex:0 0 46px!important;height:46px!important;min-height:46px!important;padding:0 14px!important;box-sizing:border-box!important;display:flex!important;align-items:center!important}
+.room-view.show .side-card .chat-title-row .side-title{padding:0!important;font-size:18px!important;line-height:1!important}
+.room-view.show .side-card .chat-messages{flex:1 1 auto!important;min-height:0!important;height:auto!important;max-height:none!important;overflow-y:auto!important;padding:10px!important}
+.room-view.show .side-card .chat-form{flex:0 0 58px!important;width:100%!important;height:58px!important;min-height:58px!important;max-height:58px!important;padding:8px!important;box-sizing:border-box!important;display:flex!important;align-items:center!important;position:relative!important;inset:auto!important}
+.room-view.show .side-card .chat-form input{height:40px!important;min-height:40px!important;max-height:40px!important}
+.room-view.show .side-card .chat-form>button{height:40px!important;min-height:40px!important;max-height:40px!important;flex:0 0 42px!important;width:42px!important}
+.room-view.show .side-card .emoji-toggle{width:40px!important;min-width:40px!important;height:40px!important}
+@media(max-width:1000px){
+  .room-view.show .room-layout{width:calc(100% - 20px)!important;margin:12px auto 20px!important;grid-template-columns:1fr!important;gap:12px!important}
+  .room-view.show .side-card{width:100%!important;min-width:0!important;max-width:none!important;height:auto!important;min-height:0!important;max-height:none!important;position:static!important}
+  .room-view.show .side-card>.participants{height:112px!important;min-height:112px!important;max-height:112px!important}
+  .room-view.show .side-card>.voice-panel{height:74px!important;min-height:74px!important;max-height:74px!important}
+  .room-view.show .side-card>.chat{height:440px!important;min-height:440px!important;max-height:440px!important}
+}
+@media(max-width:600px){
+  .room-view.show .room-layout{width:100%!important;margin:8px 0 14px!important;gap:8px!important}
+  .room-view.show .side-card>.participants{height:104px!important;min-height:104px!important;max-height:104px!important}
+  .room-view.show .side-card>.voice-panel{height:68px!important;min-height:68px!important;max-height:68px!important}
+  .room-view.show .side-card>.chat{height:360px!important;min-height:360px!important;max-height:360px!important}
+}
+`;
+document.head.appendChild(roomLayoutRestoreStyle);
+
 const modal=document.getElementById("modal"),nameInput=document.getElementById("name"),roomInput=document.getElementById("room"),title=document.getElementById("modalTitle"),text=document.getElementById("modalText");
 function openModal(create){title.textContent=create?"Создать сессию":"Присоединиться к сессии";text.textContent=create?"Введите имя — код сессии будет создан автоматически.":"Введите имя и код сессии, который вам отправили.";roomInput.value=create?String(Math.floor(1000+Math.random()*9000)):"";roomInput.placeholder=create?"Код создан автоматически":"Код сессии";modal.classList.remove("hidden");nameInput.focus()}
 document.getElementById("join").onclick=()=>openModal(false);document.getElementById("create").onclick=()=>openModal(true);document.getElementById("createTop").onclick=()=>openModal(true);document.getElementById("login").onclick=()=>openModal(false);document.getElementById("close").onclick=()=>modal.classList.add("hidden");
@@ -37,24 +100,24 @@ if(q){document.querySelector(".hero").style.display="none";document.querySelecto
 function mediaKind(url){
   try{
     const u=new URL(url,location.href),h=u.hostname.toLowerCase(),p=u.pathname.toLowerCase();
-    if(/youtube\.com$|youtu\.be$/.test(h)||h.endsWith(".youtube.com"))return"youtube";
+    if(/youtube\\.com$|youtu\\.be$/.test(h)||h.endsWith(".youtube.com"))return"youtube";
     if(h==="rutube.ru"||h.endsWith(".rutube.ru"))return"rutube";
     if(h==="vk.com"||h.endsWith(".vk.com")||h==="vkvideo.ru"||h.endsWith(".vkvideo.ru"))return"vk";
-    if(/\.(mp4|webm|ogg|ogv|m4v|mov)(?:$|\?)/i.test(p))return"video";
-    if(/\.(m3u8)(?:$|\?)/i.test(p))return"video";
+    if(/\\.(mp4|webm|ogg|ogv|m4v|mov)(?:$|\\?)/i.test(p))return"video";
+    if(/\\.(m3u8)(?:$|\\?)/i.test(p))return"video";
     return"iframe";
   }catch(e){return"iframe"}
 }
 function mediaEmbedUrl(url){
   try{
     const u=new URL(url,location.href),h=u.hostname.toLowerCase(),p=u.pathname;
-    if(h.includes("youtu.be")){const id=p.replace(/^\//,"").split("/")[0];return "https://www.youtube.com/embed/"+encodeURIComponent(id)+"?enablejsapi=1&origin="+encodeURIComponent(location.origin)}
+    if(h.includes("youtu.be")){const id=p.replace(/^\\//,"").split("/")[0];return "https://www.youtube.com/embed/"+encodeURIComponent(id)+"?enablejsapi=1&origin="+encodeURIComponent(location.origin)}
     if(h.includes("youtube.com")){
-      const id=u.searchParams.get("v")||((p.match(/\/shorts\/([^/]+)/)||[])[1]);
+      const id=u.searchParams.get("v")||((p.match(/\\/shorts\\/([^/]+)/)||[])[1]);
       if(id)return "https://www.youtube.com/embed/"+encodeURIComponent(id)+"?enablejsapi=1&origin="+encodeURIComponent(location.origin);
     }
     if(h==="rutube.ru"||h.endsWith(".rutube.ru")){
-      const m=p.match(/\/video\/([a-zA-Z0-9_-]+)/);if(m)return "https://rutube.ru/play/embed/"+encodeURIComponent(m[1])+"/";
+      const m=p.match(/\\/video\\/([a-zA-Z0-9_-]+)/);if(m)return "https://rutube.ru/play/embed/"+encodeURIComponent(m[1])+"/";
     }
     return url;
   }catch(e){return url}
