@@ -6,13 +6,15 @@ const socketIO = require("socket.io");
 const BaseServer = socketIO.Server;
 const EventEmitter = require("events");
 
-// Cross-device profile/statistics API. Mounted here so server.js does not need
-// to be rewritten and the legacy room/chat code remains untouched.
 const profileSyncRouter = require("./profile-sync-router");
 const originalExpressFactory = express;
 const wrappedExpressFactory = function wrappedExpressFactory(...args) {
   const app = originalExpressFactory(...args);
   app.use(profileSyncRouter);
+  // Explicit routes guarantee that the new profile pages are served through
+  // the injection layer even if server.js later enables express.static().
+  app.get("/profile.html", (req,res)=>res.sendFile(path.join(__dirname,"profile.html")));
+  app.get("/public-achievements.html", (req,res)=>res.sendFile(path.join(__dirname,"public-achievements.html")));
   return app;
 };
 Object.assign(wrappedExpressFactory, originalExpressFactory);
@@ -20,7 +22,6 @@ wrappedExpressFactory.response = originalExpressFactory.response;
 wrappedExpressFactory.request = originalExpressFactory.request;
 require.cache[require.resolve("express")].exports = wrappedExpressFactory;
 
-// Inject small compatibility layers without rewriting the legacy room UI.
 const originalSendFile = express.response.sendFile;
 express.response.sendFile = function patchedSendFile(filePath, ...args) {
   try {
@@ -33,7 +34,7 @@ express.response.sendFile = function patchedSendFile(filePath, ...args) {
       this.type("html"); this.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
       return this.send(injected);
     }
-    if (baseName === "profile.html") {
+    if (baseName === "profile.html" || baseName === "public-achievements.html") {
       const html = fs.readFileSync(filePath, "utf8");
       const syncClient = fs.readFileSync(path.join(path.dirname(filePath), "profile-sync-client.js"), "utf8");
       const syncCss = fs.readFileSync(path.join(path.dirname(filePath), "profile-sync.css"), "utf8");
