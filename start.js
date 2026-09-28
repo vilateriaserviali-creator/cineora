@@ -6,6 +6,7 @@ const path = require("path");
 const express = require("express");
 const socketIO = require("socket.io");
 const BaseServer = socketIO.Server;
+const EventEmitter = require("events");
 
 // Render serves index.html directly through Express. Inject the room recovery
 // stylesheet and media-link compatibility layer without touching the legacy UI.
@@ -29,6 +30,42 @@ express.response.sendFile = function patchedSendFile(filePath, ...args) {
     console.error("[CINEORA] room/media injection failed:", err.message);
   }
   return originalSendFile.apply(this, [filePath, ...args]);
+};
+
+/*
+ * Playback sync safety fix.
+ * The legacy server only accepted the `sync` event from the current host.
+ * CINEORA's intended behaviour is that a participant explicitly pressing
+ * the sync button can send that state to the room. Intercept the registration
+ * of that one event and broadcast the explicit command to the other sockets.
+ * No timer or automatic currentTime correction is introduced.
+ */
+const originalEmitterOn = EventEmitter.prototype.on;
+EventEmitter.prototype.on = function patchedEmitterOn(eventName, listener) {
+  if (eventName === "sync" && this && this.id && this.data && this.data.roomId && typeof this.to === "function") {
+    const socket = this;
+    const explicitSyncHandler = function syncFromParticipant(payload = {}) {
+      const playing = !!payload.playing;
+      const position = Math.max(0, Number(payload.position) || 0);
+      const serverTime = Date.now();
+      socket.to(socket.data.roomId).emit("sync", {
+        playing,
+        position,
+        serverTime,
+        sourceId: socket.id,
+        explicit: true
+      });
+      socket.to(socket.data.roomId).emit("sync-state", {
+        playing,
+        position,
+        serverTime,
+        sourceId: socket.id,
+        explicit: true
+      });
+    };
+    return originalEmitterOn.call(this, eventName, explicitSyncHandler);
+  }
+  return originalEmitterOn.call(this, eventName, listener);
 };
 
 class RenderSocketServer extends BaseServer {
