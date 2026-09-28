@@ -4,41 +4,32 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>CINEORA — Профиль</title>
-  <link rel="stylesheet" href="profile.css">
+  <link rel="stylesheet" href="/profile.css">
 </head>
 <body class="cineora-profile-page">
   <main class="profile-shell">
     <a class="profile-back" href="/">← CINEORA</a>
-
     <section class="profile-card" aria-label="Профиль пользователя">
       <div class="profile-main">
-        <div class="profile-avatar" aria-label="Аватар">✦</div>
+        <div class="profile-avatar" id="profileAvatar" aria-label="Аватар">✦</div>
         <div class="profile-identity">
-          <h1>Летта</h1>
+          <h1 id="profileName">Летта</h1>
           <div class="profile-status">✦ Создатель</div>
-          <p>«Кино становится ближе.»</p>
+          <p id="profileBio">«Кино становится ближе.»</p>
         </div>
       </div>
-
       <div class="profile-stats">
         <div><strong>0</strong><span>🎬 Комнат</span></div>
         <div><strong>0 ч</strong><span>🍿 Просмотра</span></div>
         <div><strong>0</strong><span>🏆 Достижений</span></div>
       </div>
-
       <div class="profile-options">
-        <article class="profile-option">
-          <span class="option-icon">🎭</span>
-          <div><b>Рамка</b><small>Классика</small></div>
-        </article>
-        <article class="profile-option">
-          <span class="option-icon">🐈</span>
-          <div><b>Маскот</b><small>CINEORA Mascot</small></div>
-        </article>
+        <article class="profile-option"><span class="option-icon">🎭</span><div><b>Рамка</b><small id="profileFrame">Классика</small></div></article>
+        <article class="profile-option"><span class="option-icon">🐈</span><div><b>Маскот</b><small id="profileMascot">CINEORA Mascot</small></div></article>
       </div>
-
-      <button class="profile-edit" type="button">Редактировать профиль</button>
+      <button class="profile-edit" type="button" id="editProfile">Редактировать профиль</button>
     </section>
   </main>
+  <script src="/profile.js"></script>
 </body>
 </html>
