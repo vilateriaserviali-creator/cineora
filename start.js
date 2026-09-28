@@ -8,12 +8,28 @@ const socketIO = require("socket.io");
 const BaseServer = socketIO.Server;
 const EventEmitter = require("events");
 
+// Cross-device profile/statistics API. Mounted here so server.js does not need
+// to be rewritten and the legacy room/chat code remains untouched.
+const profileSyncRouter = require("./profile-sync-router");
+const originalExpressFactory = express;
+const wrappedExpressFactory = function wrappedExpressFactory(...args) {
+  const app = originalExpressFactory(...args);
+  app.use(profileSyncRouter);
+  return app;
+};
+Object.assign(wrappedExpressFactory, originalExpressFactory);
+wrappedExpressFactory.response = originalExpressFactory.response;
+wrappedExpressFactory.request = originalExpressFactory.request;
+require.cache[require.resolve("express")].exports = wrappedExpressFactory;
+
 // Render serves index.html directly through Express. Inject the room recovery
-// stylesheet and media-link compatibility layer without touching the legacy UI.
+// stylesheet, media-link compatibility layer and profile sync client without
+// touching the legacy UI source.
 const originalSendFile = express.response.sendFile;
 express.response.sendFile = function patchedSendFile(filePath, ...args) {
   try {
-    if (path.basename(String(filePath)) === "index.html") {
+    const baseName = path.basename(String(filePath));
+    if (baseName === "index.html") {
       const html = fs.readFileSync(filePath, "utf8");
       const cssPath = path.join(path.dirname(filePath), "room-fix.css");
       const mediaPath = path.join(path.dirname(filePath), "media-link-fix.js");
@@ -26,8 +42,17 @@ express.response.sendFile = function patchedSendFile(filePath, ...args) {
       this.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
       return this.send(injected);
     }
+    if (baseName === "profile.html") {
+      const html = fs.readFileSync(filePath, "utf8");
+      const syncPath = path.join(path.dirname(filePath), "profile-sync-client.js");
+      const syncClient = fs.readFileSync(syncPath, "utf8");
+      const injected = html.replace(/<\/body>/i, `<script id="cineora-profile-sync">${syncClient}</script></body>`);
+      this.type("html");
+      this.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+      return this.send(injected);
+    }
   } catch (err) {
-    console.error("[CINEORA] room/media injection failed:", err.message);
+    console.error("[CINEORA] page injection failed:", err.message);
   }
   return originalSendFile.apply(this, [filePath, ...args]);
 };
