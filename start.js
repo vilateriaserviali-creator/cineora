@@ -11,8 +11,6 @@ const originalExpressFactory = express;
 const wrappedExpressFactory = function wrappedExpressFactory(...args) {
   const app = originalExpressFactory(...args);
   app.use(profileSyncRouter);
-  // Explicit routes guarantee that the new profile pages are served through
-  // the injection layer even if server.js later enables express.static().
   app.get("/profile.html", (req,res)=>res.sendFile(path.join(__dirname,"profile.html")));
   app.get("/public-achievements.html", (req,res)=>res.sendFile(path.join(__dirname,"public-achievements.html")));
   return app;
@@ -30,7 +28,10 @@ express.response.sendFile = function patchedSendFile(filePath, ...args) {
       const html = fs.readFileSync(filePath, "utf8");
       const css = fs.readFileSync(path.join(path.dirname(filePath), "room-fix.css"), "utf8");
       const mediaFix = fs.readFileSync(path.join(path.dirname(filePath), "media-link-fix.js"), "utf8");
-      const injected = html.replace(/<\/head>/i, `<style id="cineora-room-recovery-fix">${css}</style></head>`).replace(/<\/body>/i, `<script id="cineora-media-link-fix">${mediaFix}</script></body>`);
+      const profileNav = fs.readFileSync(path.join(path.dirname(filePath), "profile-nav-inject.js"), "utf8");
+      const injected = html
+        .replace(/<\/head>/i, `<style id="cineora-room-recovery-fix">${css}</style></head>`)
+        .replace(/<\/body>/i, `<script id="cineora-media-link-fix">${mediaFix}</script><script id="cineora-profile-nav-inject">${profileNav}</script></body>`);
       this.type("html"); this.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
       return this.send(injected);
     }
@@ -46,7 +47,6 @@ express.response.sendFile = function patchedSendFile(filePath, ...args) {
   return originalSendFile.apply(this, [filePath, ...args]);
 };
 
-/* Explicit participant sync only. No automatic currentTime correction. */
 const originalEmitterOn = EventEmitter.prototype.on;
 EventEmitter.prototype.on = function patchedEmitterOn(eventName, listener) {
   if (eventName === "sync" && this && this.id && this.data && this.data.roomId && typeof this.to === "function") {
