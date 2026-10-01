@@ -2428,19 +2428,6 @@ html.cineora-dark .cineora-achievements{background:rgba(4,3,7,.72)}html.cineora-
     <aside class="side-card" id="sideCard"><div class="session-countdown" id="sessionCountdown"></div>
       <div class="side-title participants-title-row"><span>Участники <span id="participantCount">0</span></span><span class="room-sync-indicator" id="roomSyncIndicator"><i></i><span>Все синхронизированы</span></span></div>
       <div class="participants" id="participants"></div>
-      <div class="voice-panel" id="voicePanel">
-        <div class="voice-head">
-          <div>
-            <div class="voice-title">🎙 Голосовая комната</div>
-            <div class="voice-status" id="voiceStatus">Микрофон выключен</div>
-          </div>
-          <button class="voice-toggle" id="voiceToggle" type="button">🎙 Включить микрофон</button>
-        </div>
-        <div class="voice-tools">
-          <label class="noise-option"><input type="checkbox" id="noiseSuppression" checked> Шумоподавление</label>
-          <span class="voice-note" id="voiceConnection">● нет связи</span>
-        </div>
-        <div class="voice-users" id="voiceUsers"></div>
       </div>
       <div class="chat">
         <div class="side-title chat-title-row">Чат <span id="chatConnection">● нет связи</span></div>
@@ -2679,122 +2666,6 @@ function startRoom(roomId,pageParams){
   window.cineoraRoomJoined=false;
   window.socket=socket;
   window.dispatchEvent(new Event("cineora:socket-ready")); const roomTitle=pageParams?.get("title")||"Киносеанс"; const scheduledAt=Number(pageParams?.get("at")||0); const roomTitleLabel=document.getElementById("roomTitleLabel"),inviteTitle=document.getElementById("inviteTitle"),countdown=document.getElementById("sessionCountdown"); if(roomTitleLabel)roomTitleLabel.textContent="🎬 "+roomTitle; if(inviteTitle)inviteTitle.textContent="🍿 "+roomTitle; if(scheduledAt&&countdown){let scheduledStarted=false;const tick=()=>{const left=scheduledAt-Date.now();if(left<=0){countdown.textContent="🍿 Киносеанс начинается сейчас";countdown.classList.add("show");if(!scheduledStarted&&socket.connected){scheduledStarted=true;publishSync(true,0);setTimeout(()=>applySync(true,0,Date.now()),300)}return}const s=Math.floor(left/1000),d=Math.floor(s/86400),hh=Math.floor(s%86400/3600),mm=Math.floor(s%3600/60),ss=s%60;countdown.textContent="🍿 Сеанс начнётся через "+(d?d+" д ":"")+String(hh).padStart(2,"0")+":"+String(mm).padStart(2,"0")+":"+String(ss).padStart(2,"0");countdown.classList.add("show")};tick();setInterval(tick,1000)}
-  // Real-time voice chat: WebRTC mesh with Socket.IO signaling.
-  const voicePeers=new Map();
-  const voiceMuted=new Map();
-  let voiceStream=null, voiceEnabled=false, voiceNoiseEnabled=true;
-  const voiceToggle=document.getElementById("voiceToggle");
-  const noiseSuppression=document.getElementById("noiseSuppression");
-  const voiceStatus=document.getElementById("voiceStatus");
-  const voiceConnection=document.getElementById("voiceConnection");
-  const voiceUsers=document.getElementById("voiceUsers");
-
-  function updateVoiceButton(){
-    if(!voiceToggle)return;
-    voiceToggle.classList.toggle("on",voiceEnabled);
-    voiceToggle.textContent=voiceEnabled?"🎙 Выключить микрофон":"🎙 Включить микрофон";
-    if(voiceStatus)voiceStatus.textContent=voiceEnabled?(voiceNoiseEnabled?"Микрофон включён · шумоподавление":"Микрофон включён · без шумоподавления"):"Микрофон выключен";
-  }
-  function renderVoiceUsers(users){
-    if(!voiceUsers)return;
-    voiceUsers.innerHTML=(users||[]).map(u=>{
-      const name=escapeHtml(u.name||"Гость");
-      return '<span class="voice-user '+(u.voiceEnabled?"active":"muted")+'" data-voice-id="'+escapeHtml(u.id||"")+'"><i class="voice-speaking-dot"></i><span class="voice-name">🎙 '+name+'</span><button type="button" class="voice-mute" title="Отключить звук">🔊</button><input class="voice-volume" type="range" min="0" max="1" step=".05" value="'+(voiceMuted.get(u.id)?0:.85)+'"></span>';
-    }).join("");
-  }
-  voiceUsers?.addEventListener("input",e=>{if(!e.target.classList.contains("voice-volume"))return;const row=e.target.closest(".voice-user"),id=row?.dataset.voiceId,p=voicePeers.get(id);if(!id||!p?.audio)return;const v=Number(e.target.value);voiceMuted.set(id,v===0);p.audio.volume=v;const b=row.querySelector(".voice-mute");if(b)b.textContent=v===0?"🔇":"🔊"});
-  voiceUsers?.addEventListener("click",e=>{const b=e.target.closest(".voice-mute");if(!b)return;const row=b.closest(".voice-user"),id=row?.dataset.voiceId,p=voicePeers.get(id);if(!id||!p?.audio)return;const v=p.audio.volume>0?0:.85;p.audio.volume=v;voiceMuted.set(id,v===0);b.textContent=v===0?"🔇":"🔊";const s=row.querySelector(".voice-volume");if(s)s.value=v});
-  function updateSpeaking(){for(const [id,p] of voicePeers){if(!p.analyser)continue;try{if(p.analyser.ctx.state==="suspended")p.analyser.ctx.resume();p.analyser.node.getByteFrequencyData(p.analyser.data);let sum=0;for(const n of p.analyser.data)sum+=n;const row=voiceUsers.querySelector('[data-voice-id="'+CSS.escape(id)+'"]');if(row)row.classList.toggle("speaking",sum/p.analyser.data.length>22)}catch(e){}}requestAnimationFrame(updateSpeaking)}
-  function removeVoicePeer(id){
-    const peer=voicePeers.get(id);
-    if(!peer)return;
-    try{peer.pc.close()}catch(e){}
-    if(peer.audio)peer.audio.remove();
-    voicePeers.delete(id);
-  }
-  function createVoicePeer(id,name,initiator){
-    if(voicePeers.has(id))return voicePeers.get(id).pc;
-    const pc=new RTCPeerConnection({
-      iceServers:[
-        {urls:"stun:stun.l.google.com:19302"},
-        {urls:"stun:stun1.l.google.com:19302"}
-      ]
-    });
-    const peer={pc,audio:null,name:name||"Гость",analyser:null};
-    voicePeers.set(id,peer);
-    if(voiceStream)voiceStream.getTracks().forEach(track=>pc.addTrack(track,voiceStream));
-    pc.onicecandidate=e=>{if(e.candidate)socket.emit("voice-signal",{to:id,data:{type:"candidate",candidate:e.candidate}})};
-    pc.ontrack=e=>{
-      let audio=peer.audio;
-      if(!audio){audio=document.createElement("audio");audio.autoplay=true;audio.playsInline=true;audio.volume=voiceMuted.get(id)?0:.85;audio.dataset.voicePeer=id;document.body.appendChild(audio);peer.audio=audio;try{const ctx=new (window.AudioContext||window.webkitAudioContext)();const src=ctx.createMediaElementSource(audio);const node=ctx.createAnalyser();node.fftSize=256;src.connect(node);node.connect(ctx.destination);peer.analyser={ctx,node,data:new Uint8Array(node.frequencyBinCount)}}catch(e){}}
-      if(e.streams&&e.streams[0])audio.srcObject=e.streams[0];
-    };
-    pc.onconnectionstatechange=()=>{
-      if(["failed","closed","disconnected"].includes(pc.connectionState))removeVoicePeer(id);
-    };
-    if(initiator){
-      pc.createOffer().then(o=>pc.setLocalDescription(o)).then(()=>socket.emit("voice-signal",{to:id,data:{type:"offer",sdp:pc.localDescription}})).catch(()=>{});
-    }
-    return pc;
-  }
-  async function ensureVoiceStream(){
-    if(voiceStream)return voiceStream;
-    if(!navigator.mediaDevices?.getUserMedia)throw new Error("Браузер не поддерживает доступ к микрофону.");
-    voiceStream=await navigator.mediaDevices.getUserMedia({
-      audio:{
-        echoCancellation:true,
-        noiseSuppression:voiceNoiseEnabled,
-        autoGainControl:true,
-        channelCount:1
-      },
-      video:false
-    });
-    voiceStream.getAudioTracks().forEach(t=>t.enabled=voiceEnabled);
-    return voiceStream;
-  }
-  async function setVoiceEnabled(enabled){
-    try{
-      if(enabled){
-        await ensureVoiceStream();
-        voiceEnabled=true;
-        voiceStream.getAudioTracks().forEach(t=>t.enabled=true);
-        for(const peer of voicePeers.values()){
-          const sender=peer.pc.getSenders().find(s=>s.track&&s.track.kind==="audio");
-          if(sender)await sender.replaceTrack(voiceStream.getAudioTracks()[0]);
-        }
-        socket.emit("voice-state",{enabled:true});
-      }else{
-        voiceEnabled=false;
-        if(voiceStream)voiceStream.getAudioTracks().forEach(t=>t.enabled=false);
-        socket.emit("voice-state",{enabled:false});
-      }
-      updateVoiceButton();
-    }catch(e){
-      voiceEnabled=false;
-      updateVoiceButton();
-      if(voiceStatus)voiceStatus.textContent=e.name==="NotAllowedError"?"Разрешите доступ к микрофону в браузере":"Не удалось включить микрофон";
-    }
-  }
-  async function setNoiseSuppression(enabled){
-    voiceNoiseEnabled=!!enabled;
-    if(!voiceStream)return;
-    const track=voiceStream.getAudioTracks()[0];
-    try{await track.applyConstraints({noiseSuppression:voiceNoiseEnabled,echoCancellation:true,autoGainControl:true})}catch(e){}
-    updateVoiceButton();
-  }
-  voiceToggle?.addEventListener("click",()=>setVoiceEnabled(!voiceEnabled));
-
-  // После включения микрофона сразу подключаемся к уже говорящим участникам.
-  socket.on("voice-user-state",u=>{
-    if(voiceEnabled)ensureVoicePeers(u.users||[]);
-  });
-  socket.on("connect",()=>{
-    if(voiceEnabled)socket.emit("voice-state",{enabled:true});
-  });
-  updateSpeaking();
-  noiseSuppression?.addEventListener("change",e=>setNoiseSuppression(e.target.checked));
-  updateVoiceButton();
-
   const wrap=document.getElementById("playerWrap"), host=document.getElementById("universalPlayer"), empty=document.getElementById("emptyPlayer");
   const participants=document.getElementById("participants"), chatMessages=document.getElementById("chatMessages");
   let suppress=false,lastProgress=0,currentType="",player=null,currentUrl="",hostId="",roomPlaying=false,roomPosition=0,roomServerTime=Date.now();
@@ -3644,46 +3515,6 @@ function renderUsers(users){
   chatInput.addEventListener("input",()=>{refreshTyping()});
   chatInput.addEventListener("blur",()=>{clearTimeout(typingTimer);setTyping(false)});
   chatInput.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();clearTimeout(typingTimer);setTyping(false);sendChatMessage()}});
-  socket.on("voice-signal",async({from,name,data})=>{
-    try{
-      let peer=voicePeers.get(from);
-      if(data?.type==="offer"){
-        const pc=createVoicePeer(from,name,false);
-        await pc.setRemoteDescription(new RTCSessionDescription(data.sdp));
-        const answer=await pc.createAnswer();
-        await pc.setLocalDescription(answer);
-        socket.emit("voice-signal",{to:from,data:{type:"answer",sdp:pc.localDescription}});
-      }else if(data?.type==="answer"){
-        if(!peer)peer={pc:createVoicePeer(from,name,false),name:name||"Гость"};
-        await peer.pc.setRemoteDescription(new RTCSessionDescription(data.sdp));
-      }else if(data?.type==="candidate"&&peer){
-        try{await peer.pc.addIceCandidate(data.candidate)}catch(e){}
-      }
-    }catch(e){}
-  });
-  function ensureVoicePeers(users){
-    // Слушать голос можно и без включённого собственного микрофона.
-    // WebRTC-пир создаём для каждого участника, который сейчас говорит.
-    (users||[]).filter(u=>u.id!==socket.id && u.voiceEnabled).forEach(u=>{
-      const initiator=String(socket.id)<String(u.id);
-      createVoicePeer(u.id,u.name,initiator);
-    });
-  }
-  socket.on("voice-peer-list",users=>{
-    renderVoiceUsers(users);
-    ensureVoicePeers(users);
-  });
-  socket.on("voice-user-state",u=>{
-    const users=u.users||[];
-    renderVoiceUsers(users);
-    ensureVoicePeers(users);
-  });
-  socket.on("voice-peer-left",id=>removeVoicePeer(id));
-
-  socket.on("disconnect",()=>{
-    for(const [id] of voicePeers)removeVoicePeer(id);
-    if(voiceStatus)voiceStatus.textContent="Соединение с голосовым чатом потеряно";
-  });
   socket.on("disconnect",()=>{
     // Save only the time actually spent connected to the room.
     if(roomJoined) achievementWatchTick();
@@ -3693,7 +3524,6 @@ function renderUsers(users){
     window.cineoraRoomJoined=false;
     setStatus("Соединение потеряно — переподключаемся…");
     const el=document.getElementById("chatConnection");if(el)el.textContent="● нет связи";
-    const voiceEl=document.getElementById("voiceConnection");if(voiceEl)voiceEl.textContent="● нет связи";
     window.dispatchEvent(new Event("cineora:disconnected"))
   });
   socket.on("connect_error",()=>{setStatus("Нет соединения с комнатой — переподключаемся…");const el=document.getElementById("chatConnection");if(el)el.textContent="● нет связи";const voiceEl=document.getElementById("voiceConnection");if(voiceEl)voiceEl.textContent="● нет связи"});
