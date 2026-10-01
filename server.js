@@ -982,15 +982,11 @@ async function joinRoomForSocket(socket, { roomId, name, avatar, frame, privateR
     playing: existing?.playing ?? room.playing,
     progressUpdatedAt: Date.now(),
     duration: existing?.duration || 0,
-    voiceEnabled: !!existing?.voiceEnabled,
     isAdmin: !!socket.data.isAdmin,
     avatar,
     frame: existing?.frame || "classic"
   });
 
-  socket.emit("voice-peer-list", [...room.users.values()].map(u => ({
-    id:u.id, name:u.name, voiceEnabled:!!u.voiceEnabled
-  })));
   socket.emit("room-state", {
     hostId: room.hostId,
     playing: room.playing,
@@ -1000,11 +996,6 @@ async function joinRoomForSocket(socket, { roomId, name, avatar, frame, privateR
   });
   broadcastRoom(roomId);
   socket.emit("room-users", publicUsers(room));
-  io.to(roomId).emit("voice-user-state", {
-    users: [...room.users.values()].map(u => ({
-      id:u.id, name:u.name, voiceEnabled:!!u.voiceEnabled
-    }))
-  });
 
   // История чата хранится в PostgreSQL, поэтому не пропадает после перезагрузки
   // страницы или перезапуска сервера. Память комнаты используется как быстрый кэш.
@@ -1066,19 +1057,6 @@ io.on("connection", socket => {
     roomState(cleanRoom);
     if (typeof ack === "function") ack({ ok: true, roomId: cleanRoom });
   });
-  socket.on("voice-state", ({ enabled }) => {
-    const roomId = socket.data.roomId; if (!roomId) return;
-    const room = rooms.get(roomId); if (!room) return;
-    const user = room.users.get(socket.id); if (!user) return;
-    user.voiceEnabled = !!enabled;
-    io.to(roomId).emit("voice-user-state", { users: [...room.users.values()].map(u => ({ id:u.id, name:u.name, voiceEnabled:!!u.voiceEnabled })) });
-  });
-  socket.on("voice-signal", ({ to, data }) => {
-    const roomId = socket.data.roomId;
-    const target = io.sockets.sockets.get(String(to || ""));
-    if (!roomId || !target || target.data.roomId !== roomId || !data) return;
-    socket.to(target.id).emit("voice-signal", { from: socket.id, name: socket.data.name || "Гость", data });
-  });
 
   socket.on("join-room", async ({ roomId, name, avatar, frame, privateRoom, accessToken } = {}, ack) => {
     const result = await joinRoomForSocket(socket, { roomId, name, avatar, frame, privateRoom, accessToken });
@@ -1100,7 +1078,6 @@ io.on("connection", socket => {
       user.isAdmin = !!socket.data.isAdmin;
     }
     broadcastRoom(roomId);
-    io.to(roomId).emit("voice-user-state", { users: [...room.users.values()].map(u => ({ id:u.id, name:u.name, voiceEnabled:!!u.voiceEnabled })) });
   });
   socket.on("set-media", ({ url } = {}, ack) => {
     const roomId = socket.data.roomId;
@@ -1180,11 +1157,6 @@ io.on("connection", socket => {
     const room = rooms.get(roomId);
     if (!room) return;
     socket.emit("room-users", publicUsers(room));
-    socket.emit("voice-user-state", {
-      users: [...room.users.values()].map(u => ({
-        id:u.id, name:u.name, voiceEnabled:!!u.voiceEnabled
-      }))
-    });
   });
 
   socket.on("request-room-state", () => {
@@ -1299,8 +1271,6 @@ io.on("connection", socket => {
     const roomId = socket.data.roomId; if (!roomId || !rooms.has(roomId)) return;
     const room = rooms.get(roomId);
     room.users.delete(socket.id);
-    socket.to(roomId).emit("voice-peer-left", socket.id);
-    io.to(roomId).emit("voice-user-state", { users: [...room.users.values()].map(u => ({ id:u.id, name:u.name, voiceEnabled:!!u.voiceEnabled })) });
     if (room.hostId === socket.id) {
       const next = room.users.values().next().value;
       room.hostId = next ? next.id : null;
