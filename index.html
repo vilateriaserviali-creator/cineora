@@ -3552,6 +3552,13 @@ function renderUsers(users){
         achievementWatchTick();
         window.cineoraRoomJoined=true;
         setStatus("Комната подключена");
+        // Если пользователь начал писать во время переподключения, отправляем
+        // сообщение сразу после успешного входа, не заставляя его набирать заново.
+        if(pendingChat){
+          const queued=pendingChat;
+          pendingChat="";
+          setTimeout(()=>sendChatMessage(queued),0);
+        }
         if(el)el.textContent="● онлайн";const voiceEl=document.getElementById("voiceConnection");if(voiceEl)voiceEl.textContent="● онлайн";
         window.dispatchEvent(new Event("cineora:connected"));
         if(joinRetryTimer){clearTimeout(joinRetryTimer);joinRetryTimer=null;}
