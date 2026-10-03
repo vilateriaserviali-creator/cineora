@@ -1,4 +1,4 @@
-// CINEORA Render entrypoint.
+// LUNEVIA Render entrypoint.
 const fs = require("fs");
 const path = require("path");
 const express = require("express");
@@ -28,7 +28,7 @@ express.response.sendFile = function patchedSendFile(filePath, ...args) {
       const mediaFix = fs.readFileSync(path.join(path.dirname(filePath), "media-link-fix.js"), "utf8");
       const profileNav = fs.readFileSync(path.join(path.dirname(filePath), "profile-nav-inject.js"), "utf8");
       const injected = html
-        .replace(/<\/body>/i, `<script id="cineora-media-link-fix">${mediaFix}</script><script id="cineora-profile-nav-inject">${profileNav}</script></body>`);
+        .replace(/<\/body>/i, `<script id="lunevia-media-link-fix">${mediaFix}</script><script id="lunevia-profile-nav-inject">${profileNav}</script></body>`);
       this.type("html"); this.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
       return this.send(injected);
     }
@@ -36,11 +36,11 @@ express.response.sendFile = function patchedSendFile(filePath, ...args) {
       const html = fs.readFileSync(filePath, "utf8");
       const syncClient = fs.readFileSync(path.join(path.dirname(filePath), "profile-sync-client.js"), "utf8");
       const syncCss = fs.readFileSync(path.join(path.dirname(filePath), "profile-sync.css"), "utf8");
-      const injected = html.replace(/<\/head>/i, `<style id="cineora-profile-sync-style">${syncCss}</style></head>`).replace(/<\/body>/i, `<script id="cineora-profile-sync">${syncClient}</script></body>`);
+      const injected = html.replace(/<\/head>/i, `<style id="lunevia-profile-sync-style">${syncCss}</style></head>`).replace(/<\/body>/i, `<script id="lunevia-profile-sync">${syncClient}</script></body>`);
       this.type("html"); this.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
       return this.send(injected);
     }
-  } catch (err) { console.error("[CINEORA] page injection failed:", err.message); }
+  } catch (err) { console.error("[LUNEVIA] page injection failed:", err.message); }
   return originalSendFile.apply(this, [filePath, ...args]);
 };
 
@@ -50,6 +50,6 @@ class RenderSocketServer extends BaseServer {
   }
 }
 socketIO.Server = RenderSocketServer;
-process.on("uncaughtException", err => console.error("[CINEORA] uncaughtException", err));
-process.on("unhandledRejection", err => console.error("[CINEORA] unhandledRejection", err));
+process.on("uncaughtException", err => console.error("[LUNEVIA] uncaughtException", err));
+process.on("unhandledRejection", err => console.error("[LUNEVIA] unhandledRejection", err));
 require("./server.js");
