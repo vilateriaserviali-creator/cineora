@@ -2511,7 +2511,7 @@ body.cinema-mode .chat-messages{
 
 <div class="lunevia-achievements" id="achievementsModal" aria-hidden="true"><div class="achievements-box" role="dialog" aria-modal="true"><div class="achievements-head"><h2>🏆 Достижения LUNEVIA</h2><button class="achievements-close" id="achievementsClose" type="button">×</button></div><div class="achievement-progress" id="achievementProgress"></div><div class="achievement-grid" id="achievementGrid"></div></div></div><section class="room-view" id="roomView">
   <header class="room-top">
-    <a class="room-brand" href="/" aria-label="LUNEVIA — на главную">CINE<span class="accent">ORA</span></a>
+    <a class="room-brand lunevia-room-logo" href="/" aria-label="LUNEVIA — на главную"><span class="lunevia-room-mark" aria-hidden="true">☾</span><span>LUNEVIA</span><span class="lunevia-room-star" aria-hidden="true">✦</span></a>
     <div class="top-invite" title="Ссылка на комнату"><span id="inviteTitle">🔗 Ссылка комнаты</span><span id="inviteLinkPreview" class="invite-link-preview">lunevia…/?room=—</span><button id="inviteJoin" type="button">Скопировать ссылку</button><span id="inviteSub" class="top-invite-sub">Отправьте её друзьям</span></div>
     <div class="room-actions"><button class="room-btn achievements-btn" id="achievementsBtn" type="button" title="Ваши достижения">🏆 <span>Достижения</span><i class="achievement-dot"></i></button><button id="roomThemeToggle" class="room-btn" type="button" title="Переключить оформление комнаты">◐ Тема</button>
       <span class="room-code">Сессия: <b id="roomCodeLabel">—</b></span><span class="room-code room-title-chip" id="roomTitleLabel">🎬 Киносеанс</span><span class="room-code room-mode-chip public" id="roomModeLabel">🌐 Обычная</span><span class="room-code">👥 Смотрят: <b id="viewerCount">0</b></span>
@@ -2555,13 +2555,13 @@ body.cinema-mode .chat-messages{
 <section class="hero">
 <div class="wrap">
 <header class="header">
-<a class="logo" href="/">CINE<span>ORA</span></a>
+<a class="logo lunevia-logo" href="/" aria-label="LUNEVIA — на главную"><span class="lunevia-logo-mark" aria-hidden="true">☾</span><span class="lunevia-logo-word">LUNEVIA</span><span class="lunevia-logo-star" aria-hidden="true">✦</span></a>
 <nav class="nav"><a href="#about">О сервисе</a><a href="#features">Возможности</a><a href="#how">Как это работает</a></nav>
 <div class="home-head-actions"><button type="button" class="home-theme-toggle" id="homeThemeToggle" aria-label="Переключить тему" title="Тёмная тема">🌙</button><button type="button" class="login" id="login">Войти / Регистрация</button><button type="button" class="create-top" id="createTop">Создать сессию</button></div>
 </header>
 <div class="hero-content">
 <div class="eyebrow" id="funEyebrow">Совместный просмотр фильмов и видео</div>
-<div class="brand-big">CINE<span class="accent">O</span>RA</div>
+<div class="brand-big lunevia-brand-big"><span class="lunevia-big-mark" aria-hidden="true">☾</span><span>LUNEVIA</span><span class="lunevia-big-star" aria-hidden="true">✦</span></div>
 <h1>Кино становится <em class="accent">ближе.</em></h1>
 <p class="lead">Смотрите фильмы и видео вместе с друзьями — в одной синхронизированной сессии, где бы вы ни были.</p><div id="funLine" style="margin-top:16px;font-size:13px;color:#6f6470;min-height:20px"></div>
 <div class="actions"><button type="button" class="primary" id="join">▶ &nbsp;Присоединиться к сессии</button><button type="button" class="secondary" id="create">＋ &nbsp;Создать комнату</button></div>
@@ -4445,5 +4445,95 @@ body.lunevia-home-dark .idea-link{color:#ddd}
   });
 })();
 </script>
-</body>
+<style id="lunevia-moon-logo">
+/* LUNEVIA — лунный логотип */
+.lunevia-logo{
+  display:inline-flex!important;
+  align-items:center;
+  gap:9px;
+  letter-spacing:.14em!important;
+  color:#403844!important;
+  white-space:nowrap;
+}
+.lunevia-logo-mark{
+  display:inline-grid;
+  place-items:center;
+  width:30px;
+  height:30px;
+  font-family:"Playfair Display",serif!important;
+  font-size:31px!important;
+  line-height:1!important;
+  color:#806889!important;
+  transform:rotate(-12deg);
+  text-shadow:0 3px 14px rgba(112,82,121,.20);
+}
+.lunevia-logo-word{
+  color:inherit!important;
+  font:600 25px/1 "DM Sans",sans-serif!important;
+  letter-spacing:.19em!important;
+}
+.lunevia-logo-star{
+  color:#aa8caf!important;
+  font-size:13px!important;
+  margin-left:-3px;
+  transform:translateY(-9px);
+}
+.lunevia-logo:hover .lunevia-logo-mark{transform:rotate(-18deg) translateY(-1px)}
+.lunevia-logo:hover .lunevia-logo-star{transform:translateY(-10px) scale(1.08)}
+.lunevia-brand-big{
+  display:flex;
+  align-items:center;
+  gap:15px;
+  color:#514656;
+}
+.lunevia-brand-big>span:not(.lunevia-big-mark):not(.lunevia-big-star){
+  color:#514656!important;
+}
+.lunevia-big-mark{
+  font-family:"Playfair Display",serif!important;
+  font-size:.72em!important;
+  color:#806889!important;
+  transform:rotate(-12deg);
+  text-shadow:0 8px 30px rgba(112,82,121,.18);
+}
+.lunevia-big-star{
+  color:#aa8caf!important;
+  font-size:.22em!important;
+  align-self:flex-start;
+  margin-top:.05em;
+  margin-left:-7px;
+}
+.lunevia-room-logo{
+  display:inline-flex!important;
+  align-items:center;
+  gap:7px;
+  letter-spacing:.11em!important;
+}
+.lunevia-room-mark{
+  font-family:"Playfair Display",serif!important;
+  font-size:27px!important;
+  line-height:1!important;
+  color:#8a6f91!important;
+  transform:rotate(-12deg);
+}
+.lunevia-room-logo>span:not(.lunevia-room-mark):not(.lunevia-room-star){color:inherit!important}
+.lunevia-room-star{
+  color:#aa8caf!important;
+  font-size:10px!important;
+  align-self:flex-start;
+  transform:translateY(-4px);
+}
+html.lunevia-dark .lunevia-logo,
+body.lunevia-home-dark .lunevia-logo{color:#f1eaf2!important}
+html.lunevia-dark .lunevia-logo-word,
+body.lunevia-home-dark .lunevia-logo-word{color:#f1eaf2!important}
+html.lunevia-dark .lunevia-logo-mark,
+html.lunevia-dark .lunevia-room-mark{color:#b99bbf!important}
+html.lunevia-dark .lunevia-big-mark{color:#b99bbf!important}
+@media(max-width:900px){
+  .lunevia-logo-word{font-size:21px!important;letter-spacing:.15em!important}
+  .lunevia-logo-mark{width:25px;height:25px;font-size:27px!important}
+  .lunevia-brand-big{gap:10px}
+}
+</style>\n</body>
 </html>
