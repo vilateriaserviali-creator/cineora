@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: cineora
+    name: lunevia
     runtime: node
     buildCommand: npm install
     startCommand: npm start
