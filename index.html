@@ -5547,5 +5547,410 @@ body:not(.room-page) .go{background:var(--lv-moon)!important;color:#17131b!impor
  body:not(.room-page) .section{padding:78px 0!important}
 }
 </style>
+<style id="lunevia-fairytale-home">
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=Cormorant+Garamond:ital,wght@400;500;600&family=Manrope:wght@400;500;600&display=swap');
+
+/* LUNEVIA — новая сказочная визуальная система главной страницы */
+.hero{
+  min-height:100svh!important;
+  background:
+    radial-gradient(ellipse at 78% 19%,rgba(191,174,211,.18) 0%,transparent 23%),
+    radial-gradient(ellipse at 18% 78%,rgba(126,111,154,.12) 0%,transparent 30%),
+    linear-gradient(125deg,#090b13 0%,#11121d 43%,#191725 72%,#0a0c13 100%)!important;
+  color:#eee9f3!important;
+  overflow:hidden;
+}
+.hero:before{
+  width:720px!important;height:720px!important;
+  right:-150px!important;top:-100px!important;
+  background:
+    radial-gradient(circle,rgba(220,207,231,.13) 0 1px,transparent 2px),
+    radial-gradient(circle,rgba(220,207,231,.08) 0 1px,transparent 2px)!important;
+  background-size:83px 83px,137px 137px!important;
+  box-shadow:none!important;
+  opacity:.7;
+}
+.hero:after{
+  background:
+    radial-gradient(ellipse at 74% 26%,transparent 0 20%,rgba(4,5,9,.22) 55%,rgba(4,5,9,.78) 100%),
+    linear-gradient(180deg,rgba(5,7,13,.18),transparent 35%,rgba(5,6,11,.72) 100%)!important;
+}
+.hero>.wrap{min-height:100svh!important}
+.header{
+  height:94px!important;
+  border-bottom:1px solid rgba(219,207,229,.12)!important;
+  position:relative;z-index:8;
+}
+.logo{
+  font-family:"Cinzel",serif!important;
+  font-size:21px!important;
+  letter-spacing:.26em!important;
+  color:#e9e0ec!important;
+}
+.logo span,.accent{color:#c8b6d2!important}
+.logo .lunevia-logo-mark{font-family:"Cormorant Garamond",serif;font-size:31px;vertical-align:-3px}
+.logo .lunevia-logo-star{font-size:14px;margin-left:2px}
+.nav{gap:31px!important}
+.nav a,.login{
+  font-family:"Manrope",sans-serif!important;
+  color:#c7c0cb!important;
+  font-size:12px!important;
+  letter-spacing:.02em;
+}
+.nav a:after{background:#bda8ca!important;bottom:-10px}
+.create-top{
+  border:1px solid rgba(211,193,220,.32)!important;
+  background:rgba(255,255,255,.045)!important;
+  color:#e8dfeb!important;
+  border-radius:14px!important;
+  padding:12px 17px!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.07);
+}
+.hero-content{
+  padding-top:clamp(70px,12vh,135px)!important;
+  max-width:720px!important;
+  position:relative;z-index:5;
+}
+.eyebrow{
+  border:0!important;background:transparent!important;box-shadow:none!important;
+  padding:0!important;
+  font-family:"Manrope",sans-serif!important;
+  color:#9e90a8!important;
+  letter-spacing:.25em!important;
+  font-size:10px!important;
+  text-transform:uppercase;
+}
+.eyebrow:before{
+  width:28px!important;height:1px!important;border-radius:0!important;
+  background:#9b849f!important;box-shadow:none!important;
+}
+.brand-big{
+  margin-top:23px!important;
+  font-family:"Cinzel",serif!important;
+  font-size:clamp(48px,7vw,82px)!important;
+  line-height:.94!important;
+  letter-spacing:.16em!important;
+  color:#f0e9f3!important;
+  text-shadow:0 0 45px rgba(205,185,216,.16)!important;
+}
+.brand-big .lunevia-big-mark{
+  font-family:"Cormorant Garamond",serif!important;
+  font-size:1.18em!important;
+  color:#cdb9d5!important;
+}
+.brand-big .lunevia-big-star{color:#bda8c9!important;font-size:.42em}
+.hero h1{
+  margin:27px 0 18px!important;
+  max-width:660px;
+  font-family:"Cormorant Garamond",serif!important;
+  font-size:clamp(44px,5.5vw,72px)!important;
+  font-weight:500!important;
+  line-height:.95!important;
+  letter-spacing:-.025em!important;
+  color:#eee7f1!important;
+}
+.lead{
+  max-width:520px!important;
+  font-family:"Manrope",sans-serif!important;
+  font-size:14px!important;
+  line-height:1.8!important;
+  color:#aaa2b1!important;
+}
+#funLine{
+  background:transparent!important;
+  border:0!important;
+  padding:0!important;
+  color:#bcaec3!important;
+  font-family:"Cormorant Garamond",serif!important;
+  font-size:17px!important;
+  font-style:italic;
+}
+.actions{margin-top:35px!important;gap:10px!important}
+.primary,.secondary{
+  min-width:0!important;
+  padding:14px 20px!important;
+  border-radius:12px!important;
+  font-family:"Manrope",sans-serif!important;
+  font-size:11px!important;
+  letter-spacing:.04em;
+}
+.primary{
+  background:#c7b3cf!important;
+  border-color:#c7b3cf!important;
+  color:#19141d!important;
+  box-shadow:0 14px 38px rgba(179,150,191,.16)!important;
+}
+.secondary{
+  background:rgba(255,255,255,.035)!important;
+  border:1px solid rgba(216,201,223,.23)!important;
+  color:#d9d0de!important;
+}
+.sources{margin-top:42px!important}
+.sources-title{
+  color:#82788a!important;
+  font-family:"Manrope",sans-serif!important;
+  font-size:9px!important;
+  letter-spacing:.24em!important;
+}
+.source-row{gap:9px!important;margin-top:13px!important}
+.source{
+  padding:8px 11px!important;
+  border:1px solid rgba(218,204,224,.12)!important;
+  border-radius:999px!important;
+  background:rgba(255,255,255,.035)!important;
+  color:#bcb4c1!important;
+  font-family:"Manrope",sans-serif!important;
+  font-size:10px!important;
+  transition:.22s ease;
+}
+.source:hover{
+  transform:translateY(-2px);
+  border-color:rgba(213,190,222,.28)!important;
+  background:rgba(211,190,222,.08)!important;
+}
+.source-icon{
+  width:17px!important;height:17px!important;
+  border:0!important;border-radius:50%!important;
+  background:rgba(207,189,215,.12)!important;
+  color:#c8b8cf!important;
+  font-size:8px!important;
+}
+.features{
+  margin-top:auto!important;
+  padding:20px 0 25px!important;
+  border-top:1px solid rgba(218,204,224,.10)!important;
+}
+.feature{
+  border-color:rgba(218,204,224,.09)!important;
+  color:#99909e!important;
+  font-family:"Manrope",sans-serif!important;
+  font-size:10px!important;
+  letter-spacing:.01em;
+}
+.feature-icon{
+  color:#bca8c4!important;
+  font-family:"Cormorant Garamond",serif!important;
+  font-size:26px!important;
+}
+
+/* Вместо прежнего карточного превью — лунное окно-сцена */
+.home-visual{
+  width:min(610px,48vw)!important;
+  height:610px!important;
+  right:-12px!important;
+  top:135px!important;
+  opacity:1!important;
+}
+.home-visual-glow{
+  width:500px!important;height:500px!important;
+  right:25px!important;top:20px!important;
+  background:radial-gradient(circle,rgba(188,165,203,.16),transparent 67%)!important;
+  filter:blur(7px)!important;
+}
+.mock-window{
+  width:430px!important;
+  right:45px!important;
+  top:70px!important;
+  border:1px solid rgba(219,203,225,.16)!important;
+  border-radius:32px!important;
+  background:linear-gradient(145deg,rgba(35,31,43,.94),rgba(10,11,17,.97))!important;
+  box-shadow:0 45px 100px rgba(0,0,0,.46),0 0 0 12px rgba(210,191,218,.018)!important;
+  transform:rotate(1.8deg)!important;
+}
+.mock-top{
+  height:48px!important;
+  background:rgba(255,255,255,.025)!important;
+  border-bottom:1px solid rgba(220,205,226,.08)!important;
+  color:#817888!important;
+}
+.mock-top b{font-family:"Cinzel",serif!important;font-size:8px!important;letter-spacing:.22em!important;color:#bcb0c2!important}
+.mock-dot{background:#766a7b!important}
+.mock-screen{
+  height:275px!important;
+  background:
+    radial-gradient(circle at 66% 29%,rgba(221,208,226,.25) 0 2px,transparent 3px),
+    radial-gradient(circle at 66% 29%,rgba(201,178,211,.12) 0 60px,transparent 61px),
+    linear-gradient(150deg,#312a36 0%,#17151d 58%,#0b0c12 100%)!important;
+}
+.mock-screen:after{
+  content:"☾"!important;
+  position:absolute!important;
+  right:45px!important;
+  top:35px!important;
+  color:rgba(222,208,229,.45)!important;
+  font:400 48px "Cormorant Garamond"!important;
+}
+.mock-play{
+  width:64px!important;height:64px!important;
+  background:rgba(214,197,221,.94)!important;
+  color:#433749!important;
+  box-shadow:0 14px 40px rgba(0,0,0,.45)!important;
+}
+.mock-caption{
+  left:22px!important;bottom:18px!important;
+  font-family:"Cormorant Garamond",serif!important;
+  font-size:22px!important;
+  color:#e8dfe9!important;
+}
+.mock-bottom{
+  background:rgba(255,255,255,.018)!important;
+  border-top:1px solid rgba(220,205,226,.06);
+  color:#756b7a!important;
+  font-family:"Manrope",sans-serif!important;
+}
+.float-card{
+  border:1px solid rgba(220,204,227,.15)!important;
+  background:rgba(25,21,31,.80)!important;
+  color:#c9bfcc!important;
+  backdrop-filter:blur(18px)!important;
+  border-radius:18px!important;
+  box-shadow:0 24px 55px rgba(0,0,0,.28)!important;
+  min-width:160px!important;
+}
+.float-card b{font-family:"Manrope",sans-serif!important;font-size:10px!important}
+.float-card small{color:#7f7483!important}
+.float-card-one{left:15px!important;top:120px!important;transform:rotate(-5deg)!important}
+.float-card-two{right:0!important;bottom:85px!important;transform:rotate(3deg)!important}
+
+/* Ниже — сказочная книжная подача, а не стандартные стартап-блоки */
+.section.cream{
+  background:
+    radial-gradient(circle at 12% 12%,rgba(196,174,204,.13),transparent 27%),
+    linear-gradient(180deg,#14131b 0%,#101018 100%)!important;
+  color:#e8e1ea!important;
+}
+.section.dark{
+  background:
+    radial-gradient(circle at 85% 35%,rgba(171,145,184,.10),transparent 30%),
+    #0b0c12!important;
+  color:#e8e1ea!important;
+}
+.section-title{
+  font-family:"Cormorant Garamond",serif!important;
+  font-size:clamp(40px,4.5vw,60px)!important;
+  line-height:.95!important;
+  color:#eee7f0!important;
+}
+.section-kicker{
+  color:#8f8395!important;
+  font-family:"Manrope",sans-serif!important;
+  letter-spacing:.24em!important;
+  font-size:9px!important;
+}
+.section-text,.about-copy{
+  color:#a59ca9!important;
+  font-family:"Manrope",sans-serif!important;
+  font-size:13px!important;
+  line-height:1.85!important;
+}
+#about .about-copy{
+  background:rgba(255,255,255,.025)!important;
+  border:1px solid rgba(220,204,226,.10)!important;
+  border-radius:24px!important;
+  box-shadow:none!important;
+}
+.cards{gap:12px!important}
+.card{
+  background:rgba(255,255,255,.025)!important;
+  border:1px solid rgba(220,204,226,.10)!important;
+  border-radius:24px!important;
+  color:#e8e0ea!important;
+  min-height:215px;
+  transition:transform .25s ease,border-color .25s ease,background .25s ease!important;
+}
+.card:hover{
+  transform:translateY(-7px)!important;
+  border-color:rgba(205,181,215,.27)!important;
+  background:rgba(197,172,207,.045)!important;
+}
+.card .num{
+  background:transparent!important;
+  border:1px solid rgba(204,183,213,.28)!important;
+  color:#c9b8cf!important;
+}
+.card h3,.feature-card h3,.platform b,.news-card h3{
+  font-family:"Cormorant Garamond",serif!important;
+}
+.card h3{font-size:26px!important}
+.card p,.feature-card p{color:#938a98!important;font-family:"Manrope",sans-serif!important;font-size:12px!important}
+.features-grid{gap:12px!important}
+.feature-card{
+  background:rgba(255,255,255,.025)!important;
+  border:1px solid rgba(220,204,226,.10)!important;
+  border-radius:24px!important;
+  color:#e7dfe9!important;
+}
+.platforms{gap:10px!important}
+.platform{
+  background:rgba(255,255,255,.025)!important;
+  border:1px solid rgba(220,204,226,.10)!important;
+  border-radius:18px!important;
+  color:#c8bfca!important;
+}
+.platform span{color:#b9a5c0!important}
+.updates-section{
+  background:#0a0b11!important;
+  color:#e8e0ea!important;
+}
+.updates-subtitle{color:#918895!important}
+.updates-badge{
+  background:rgba(255,255,255,.025)!important;
+  border-color:rgba(220,204,226,.12)!important;
+  color:#9f94a3!important;
+}
+.news-feed{gap:12px!important}
+.news-card{
+  background:rgba(255,255,255,.025)!important;
+  border-color:rgba(220,204,226,.10)!important;
+  border-radius:24px!important;
+  color:#e8e0ea!important;
+  box-shadow:none!important;
+}
+.news-card.featured{
+  background:linear-gradient(135deg,#24202b,#15141c)!important;
+  border-color:rgba(220,204,226,.13)!important;
+}
+.news-card h3{color:#e8e0ea!important;font-size:27px!important}
+.news-card p{color:#918894!important;font-family:"Manrope",sans-serif!important}
+.news-date{color:#766c7c!important}
+.news-card-icon{background:rgba(201,177,210,.10)!important;color:#c8b5cf!important}
+.news-new{background:#c6b1ce!important;color:#211b24!important}
+.news-feature-item{border-color:rgba(220,204,226,.09)!important;background:rgba(255,255,255,.025)!important;color:#b4abb9!important}
+.news-empty{background:rgba(255,255,255,.025)!important;border-color:rgba(220,204,226,.14)!important}
+.news-empty h3{color:#e8e0ea!important}.news-empty p{color:#918894!important}
+.footer{
+  background:#08090e!important;
+  border-top:1px solid rgba(220,204,226,.08)!important;
+  color:#77707d!important;
+}
+.idea-link{color:#bda9c5!important}
+
+/* Полностью убираем ощущение старого переключателя темы */
+.home-theme-toggle,.home-theme,.theme-toggle{display:none!important}
+
+@media(max-width:1180px){
+  .home-visual{right:-155px!important;opacity:.55!important}
+}
+@media(max-width:900px){
+  .hero{min-height:0!important}
+  .hero>.wrap{min-height:0!important}
+  .header{height:auto!important;min-height:76px!important}
+  .hero-content{padding-top:58px!important}
+  .home-visual{display:none!important}
+  .features{margin-top:55px!important}
+  .section-title{font-size:44px!important}
+}
+@media(max-width:600px){
+  .logo{font-size:18px!important}
+  .brand-big{font-size:45px!important;letter-spacing:.12em!important}
+  .hero h1{font-size:43px!important}
+  .lead{font-size:13px!important}
+  .actions .primary,.actions .secondary{width:auto!important;min-width:0!important}
+  .source-row{gap:7px!important}
+  .source{font-size:9px!important;padding:7px 9px!important}
+  .feature{font-size:9px!important}
+  .section{padding:70px 0!important}
+}
+</style>
 </body>
 </html>
