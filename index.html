@@ -2505,7 +2505,44 @@ body.cinema-mode .chat-messages{
   }
 }
 </style>
-</head>
+<style id="lunevia-single-night-theme">
+
+/* =========================================================
+   LUNEVIA — ONE THEME / NIGHT PALETTE
+   No light theme, no legacy CINEORA palette.
+   ========================================================= */
+:root{
+  --lv-bg:#111018;
+  --lv-bg-2:#17151e;
+  --lv-surface:#211c29;
+  --lv-surface-2:#292331;
+  --lv-surface-3:#30283a;
+  --lv-border:#3a3043;
+  --lv-border-soft:#30283a;
+  --lv-text:#ddd5e2;
+  --lv-text-soft:#b8aabd;
+  --lv-muted:#817887;
+  --lv-accent:#9a849f;
+  --lv-accent-2:#b8a8c3;
+  --lv-silver:#8d8a96;
+  --lv-danger:#b88e96;
+  --lv-shadow:rgba(0,0,0,.32);
+}
+html,body{background:var(--lv-bg)!important;color:var(--lv-text)!important}
+body{background:radial-gradient(circle at 82% 8%,rgba(128,101,139,.12),transparent 28%),radial-gradient(circle at 8% 86%,rgba(111,119,133,.08),transparent 25%),linear-gradient(135deg,#111018 0%,#17151e 52%,#1b1721 100%)!important}
+body,body *{--cream:var(--lv-bg);--paper:var(--lv-bg);--white:var(--lv-surface-2);--line:var(--lv-border);--ink:var(--lv-text);--muted:var(--lv-muted);--lime:var(--lv-accent-2)}
+/* Homepage */
+.hero{background:radial-gradient(circle at 78% 38%,rgba(132,105,143,.20),transparent 38%),linear-gradient(115deg,#0e0d13 0%,#15131c 48%,#241d2b 100%)!important;color:var(--lv-text)!important}
+.hero:before{background:radial-gradient(circle,rgba(184,168,195,.07) 0 38%,transparent 39% 100%)!important;box-shadow:0 0 0 1px rgba(184,168,195,.06),0 0 100px rgba(0,0,0,.55)!important}
+.hero:after{background:linear-gradient(90deg,rgba(0,0,0,.35),transparent 55%,rgba(0,0,0,.28)),linear-gradient(180deg,rgba(0,0,0,.15),transparent 60%,rgba(0,0,0,.5))!important}
+.header{border-bottom-color:rgba(184,168,195,.16)!important}.nav a,.login,.lead,.source,.feature,.hero h1{color:var(--lv-text)!important}.eyebrow,.sources-title{color:var(--lv-text-soft)!important}.logo span,.accent{color:var(--lv-accent-2)!important}.create-top,.secondary{background:rgba(154,132,159,.08)!important;border-color:var(--lv-accent)!important;color:var(--lv-text)!important}.primary{background:var(--lv-accent)!important;border-color:var(--lv-accent)!important;color:#17131b!important}.source-icon{border-color:var(--lv-border)!important}.features{border-color:rgba(184,168,195,.14)!important}.feature{border-color:rgba(184,168,195,.12)!important}
+.section,.cream,.section.dark{background:transparent!important;color:var(--lv-text)!important}.section-text,.about-copy,.card p,.news-card p,.updates-subtitle,.news-empty p{color:var(--lv-text-soft)!important}.about-copy strong,.section-title,.card h3,.news-card h3{color:var(--lv-text)!important}.card,.platform,.news-card,.news-empty{background:rgba(33,28,41,.86)!important;border-color:var(--lv-border)!important;box-shadow:0 14px 36px var(--lv-shadow)!important}.card .num,.news-card-icon{background:var(--lv-surface-3)!important;color:var(--lv-accent-2)!important}.feature-card{background:rgba(41,35,49,.78)!important;border-color:var(--lv-border)!important}.feature-card p{color:var(--lv-text-soft)!important}.platform span{color:var(--lv-accent-2)!important}.updates-badge{background:var(--lv-surface)!important;border-color:var(--lv-border)!important;color:var(--lv-text-soft)!important}.news-card.featured{background:linear-gradient(135deg,#1a1721,#2a2132)!important;border-color:var(--lv-border)!important}.news-card.featured p,.news-feature-item{color:var(--lv-text-soft)!important}.news-new{background:var(--lv-accent)!important;color:#17131b!important}.footer{background:#0c0b10!important;color:var(--lv-muted)!important}.idea-link,.admin-link:hover{color:var(--lv-accent-2)!important}.suggestion-box textarea,.modal-box input{background:var(--lv-surface)!important;border-color:var(--lv-border)!important;color:var(--lv-text)!important}.modal{background:rgba(5,4,8,.78)!important}.modal-box{background:var(--lv-surface)!important;border-color:var(--lv-border)!important}.modal-box p{color:var(--lv-text-soft)!important}.go{background:var(--lv-accent)!important;color:#17131b!important}.close{color:var(--lv-text-soft)!important}
+/* Room */
+.room-view{background:radial-gradient(circle at 80% 5%,rgba(126,100,137,.13),transparent 30%),linear-gradient(135deg,#111018,#17151e 55%,#1b1721)!important;color:var(--lv-text)!important}.room-top{background:rgba(17,16,24,.78)!important;border-bottom-color:var(--lv-border)!important}.room-brand{color:var(--lv-text)!important}.room-code,.room-btn{background:rgba(154,132,159,.08)!important;border-color:var(--lv-border)!important;color:var(--lv-text)!important}.room-btn.primary{background:var(--lv-accent)!important;border-color:var(--lv-accent)!important;color:#17131b!important}.watch-card,.side-card{background:rgba(33,28,41,.94)!important;border-color:var(--lv-border)!important;box-shadow:0 18px 48px var(--lv-shadow)!important}.watch-head,.chat,.chat-form,.sync-note,.media-bar{border-color:var(--lv-border)!important}.watch-title,.side-title{color:var(--lv-text)!important}.source-pill,.person-time,.sync-note{color:var(--lv-muted)!important}.media-bar,.sync-note{background:var(--lv-surface)!important}.media-bar input,.chat-form input{background:var(--lv-bg-2)!important;border-color:var(--lv-border)!important;color:var(--lv-text)!important}.player-fullscreen,.emoji-toggle{background:var(--lv-surface-2)!important;border-color:var(--lv-border)!important;color:var(--lv-text)!important}.participants{background:transparent!important}.person-row{background:rgba(48,40,58,.55)!important;border-color:var(--lv-border)!important}.person-name{color:var(--lv-text)!important}.chat{background:transparent!important}.chat-messages{background:rgba(17,16,24,.32)!important}.chat-msg{background:rgba(48,40,58,.55)!important;border-color:var(--lv-border)!important}.chat-msg b{color:var(--lv-accent-2)!important}.chat-msg span{color:var(--lv-text)!important}.chat-msg small{color:var(--lv-muted)!important}.emoji-picker{background:var(--lv-surface-2)!important;border-color:var(--lv-border)!important}.emoji-picker button:hover{background:var(--lv-surface-3)!important}.chat-form button{background:var(--lv-accent)!important;color:#17131b!important}.leave{color:var(--lv-danger)!important;border-color:rgba(184,142,150,.3)!important}
+/* Kill theme-specific bright surfaces and hide any theme switcher */
+#themeToggle,.theme-toggle,.theme-switch,.theme-switcher,[data-theme-toggle],[data-action="toggle-theme"]{display:none!important}
+body.dark-theme,body.theme-dark,body.light-theme{background:var(--lv-bg)!important;color:var(--lv-text)!important}
+</style>\n</head>
 <body>
 
 
