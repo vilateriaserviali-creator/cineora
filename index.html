@@ -4063,7 +4063,7 @@ function renderUsers(users){
 </script>
 <div id="luneviaConnectionBanner" class="lunevia-connection-banner">● <b>Связь прервалась</b> — LUNEVIA переподключается…</div>
 
-<script id="lunevia-home-theme-toggle">(function(){const b=document.getElementById("homeThemeToggle");if(!b)return;const k="lunevia_home_theme";function apply(v){const dark=v==="dark";document.body.classList.toggle("lunevia-home-dark",dark);b.textContent=dark?"☀️":"🌙";b.title=dark?"Светлая тема":"Тёмная тема";b.setAttribute("aria-label",b.title);try{localStorage.setItem(k,v)}catch(e){}}let saved="soft";try{saved=localStorage.getItem(k)||"soft"}catch(e){}apply(saved);b.addEventListener("click",()=>apply(document.body.classList.contains("lunevia-home-dark")?"soft":"dark"));})();</script><script id="lunevia-theme-toggle">
+<script id="lunevia-home-theme-toggle">(function(){const b=document.getElementById("homeThemeToggle");document.body.classList.add("lunevia-home-dark");try{localStorage.setItem("lunevia_home_theme","dark")}catch(e){}if(b){b.style.display="none";b.setAttribute("aria-hidden","true");b.tabIndex=-1;}})();</script><script id="lunevia-theme-toggle">
 (function(){
  const b=document.getElementById("roomThemeToggle"),root=document.documentElement;
  if(!b)return;
