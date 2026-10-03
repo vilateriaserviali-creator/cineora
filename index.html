@@ -6202,5 +6202,61 @@ body:not(.room-page) .lunevia-chapter .section-title{font-size:clamp(58px,6.6vw,
 @media(max-width:1100px){body:not(.room-page) .lunevia-story h1{font-size:clamp(56px,7.5vw,82px)!important}body:not(.room-page) .lunevia-story .source-row{grid-template-columns:repeat(2,minmax(0,1fr))!important}body:not(.room-page) .lunevia-story .home-visual{min-height:520px!important}}
 @media(max-width:900px){body:not(.room-page) .lunevia-story .header{height:78px!important}body:not(.room-page) .lunevia-hero-scene{padding-top:55px!important}body:not(.room-page) .lunevia-story h1{font-size:clamp(48px,10vw,72px)!important}body:not(.room-page) .lunevia-story .home-visual{min-height:460px!important}body:not(.room-page) .lunevia-story .mock-window{width:88%!important;right:6%!important}body:not(.room-page) .lunevia-story .lunevia-reel{width:300px!important;height:300px!important;left:0!important}}
 @media(max-width:600px){body:not(.room-page) .lunevia-story .header{height:70px!important}body:not(.room-page) .lunevia-story .nav{display:none!important}body:not(.room-page) .lunevia-story .lunevia-logo{font-size:20px!important}body:not(.room-page) .lunevia-story .login{font-size:9px!important}body:not(.room-page) .lunevia-story .create-top{font-size:9px!important;padding:10px 12px!important}body:not(.room-page) .lunevia-story h1{font-size:clamp(43px,12vw,58px)!important}body:not(.room-page) .lunevia-story .lead{font-size:15px!important}body:not(.room-page) .lunevia-story .actions{display:grid!important;grid-template-columns:1fr!important}body:not(.room-page) .lunevia-story .actions button{width:100%!important;min-width:0!important}body:not(.room-page) .lunevia-story .source-row{grid-template-columns:repeat(2,minmax(0,1fr))!important}body:not(.room-page) .lunevia-story .source{min-height:74px!important;padding:13px!important}body:not(.room-page) .lunevia-story .home-visual{min-height:370px!important}body:not(.room-page) .lunevia-story .mock-window{width:96%!important;right:2%!important}body:not(.room-page) .lunevia-story .mock-screen{height:245px!important}body:not(.room-page) .lunevia-story .mock-caption{font-size:19px!important}body:not(.room-page) .lunevia-story .float-card{min-width:145px!important;padding:11px!important}body:not(.room-page) .lunevia-story .float-card-one{left:-4%!important}body:not(.room-page) .lunevia-story .float-card-two{right:-4%!important}body:not(.room-page) .lunevia-story>.wrap>.features{grid-template-columns:1fr!important}body:not(.room-page) .lunevia-story>.wrap>.features .feature{min-height:82px!important}body:not(.room-page) .lunevia-chapter .section-title{font-size:clamp(45px,12vw,60px)!important}body:not(.room-page) .lunevia-chapter .about-copy{font-size:18px!important}}
+</style><style id="lunevia-magic-sources-v3">
+body:not(.room-page) .lunevia-story .sources{position:relative;padding-top:10px!important}
+body:not(.room-page) .lunevia-story .sources:before{content:"✦  ОТКРОЙТЕ ОКНО В ДРУГОЙ МИР  ✦";display:block;text-align:center;margin:0 auto 24px;color:#9e8baa;font:500 10px/1 'Cinzel',serif;letter-spacing:.32em;opacity:.85}
+body:not(.room-page) .lunevia-story .sources-title{display:none!important}
+body:not(.room-page) .lunevia-story .source-row{gap:16px!important;align-items:stretch!important}
+body:not(.room-page) .lunevia-story .source{
+ position:relative!important;min-height:150px!important;padding:22px 21px!important;overflow:hidden!important;
+ display:flex!important;flex-direction:column!important;justify-content:flex-end!important;
+ border:1px solid #cbb7d52b!important;border-radius:24px!important;
+ background:
+ radial-gradient(circle at 78% 18%,#cdb8dc20 0 2px,transparent 3px),
+ radial-gradient(circle at 20% 30%,#d9c9e316 0 1px,transparent 2px),
+ linear-gradient(145deg,#17151f,#0d0e16)!important;
+ box-shadow:inset 0 1px #ffffff0a,0 20px 50px #0005!important;
+ color:#ded3e2!important;
+ transition:transform .35s cubic-bezier(.2,.8,.2,1),border-color .35s,box-shadow .35s!important;
+}
+body:not(.room-page) .lunevia-story .source:before{
+ content:"";position:absolute;inset:0;pointer-events:none;
+ background:linear-gradient(120deg,transparent 20%,#dfcce915 50%,transparent 80%);
+ transform:translateX(-130%);transition:transform .7s ease;
+}
+body:not(.room-page) .lunevia-story .source:after{
+ content:"✦";position:absolute;right:18px;top:14px;color:#bca7c9;font-size:13px;opacity:.65;
+}
+body:not(.room-page) .lunevia-story .source:hover{
+ transform:translateY(-9px) scale(1.025)!important;border-color:#d5bedf63!important;
+ box-shadow:inset 0 1px #ffffff12,0 28px 65px #0008,0 0 35px #bda7c51a!important;
+}
+body:not(.room-page) .lunevia-story .source:hover:before{transform:translateX(130%)}
+body:not(.room-page) .lunevia-story .source-icon{
+ position:relative!important;width:48px!important;height:48px!important;margin-bottom:auto!important;
+ display:grid!important;place-items:center!important;border-radius:50%!important;
+ background:radial-gradient(circle at 35% 30%,#e2d3e955,#8e769d22 48%,transparent 70%)!important;
+ border:1px solid #d8c4df3d!important;color:#e6d9e9!important;
+ font:600 16px 'Cinzel',serif!important;box-shadow:0 0 28px #bba2c52a!important;
+}
+body:not(.room-page) .lunevia-story .source-icon:after{content:"";position:absolute;inset:-7px;border:1px solid #bba6c51c;border-radius:50%;transform:rotate(25deg)}
+body:not(.room-page) .lunevia-story .source:nth-child(1) .source-icon{font-size:14px!important}
+body:not(.room-page) .lunevia-story .source:nth-child(1) .source-icon:before{content:"☾";font-size:22px}
+body:not(.room-page) .lunevia-story .source:nth-child(2) .source-icon:before{content:"✦";font-size:21px}
+body:not(.room-page) .lunevia-story .source:nth-child(3) .source-icon:before{content:"R";font-size:17px}
+body:not(.room-page) .lunevia-story .source:nth-child(4) .source-icon:before{content:"↗";font-size:21px}
+body:not(.room-page) .lunevia-story .source-icon{font-size:0!important}
+body:not(.room-page) .lunevia-story .source-name{display:block!important;margin-top:16px!important;font:500 17px/1.2 'Cormorant Garamond',serif!important;letter-spacing:.05em!important;color:#eee6f0!important}
+body:not(.room-page) .lunevia-story .source-name:after{content:"  ✦";font-size:9px;color:#9d89aa}
+body:not(.room-page) .lunevia-story .source-desc{display:block!important;margin-top:5px!important;color:#807486!important;font:500 9px/1.5 'Manrope',sans-serif!important;letter-spacing:.12em!important;text-transform:uppercase!important}
+@media(max-width:900px){
+ body:not(.room-page) .lunevia-story .source{min-height:135px!important}
+}
+@media(max-width:600px){
+ body:not(.room-page) .lunevia-story .sources:before{font-size:8px;letter-spacing:.2em;margin-bottom:18px}
+ body:not(.room-page) .lunevia-story .source{min-height:125px!important;border-radius:19px!important;padding:17px!important}
+ body:not(.room-page) .lunevia-story .source-icon{width:40px!important;height:40px!important}
+ body:not(.room-page) .lunevia-story .source-name{font-size:16px!important}
+}
 </style></body>
 </html>
