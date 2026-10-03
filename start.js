@@ -28,7 +28,6 @@ express.response.sendFile = function patchedSendFile(filePath, ...args) {
       const mediaFix = fs.readFileSync(path.join(path.dirname(filePath), "media-link-fix.js"), "utf8");
       const profileNav = fs.readFileSync(path.join(path.dirname(filePath), "profile-nav-inject.js"), "utf8");
       const injected = html
-        .replace(/<\/head>/i, `</head>`)
         .replace(/<\/body>/i, `<script id="cineora-media-link-fix">${mediaFix}</script><script id="cineora-profile-nav-inject">${profileNav}</script></body>`);
       this.type("html"); this.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
       return this.send(injected);
