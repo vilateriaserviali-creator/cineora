@@ -4535,5 +4535,237 @@ html.lunevia-dark .lunevia-big-mark{color:#b99bbf!important}
   .lunevia-logo-mark{width:25px;height:25px;font-size:27px!important}
   .lunevia-brand-big{gap:10px}
 }
+</style>\n<style id="lunevia-brand-system-v2">
+/* LUNEVIA — единая бренд-палитра: ночная слива, лавандовый туман, холодное серебро */
+:root{
+  --lv-ink:#26212a;
+  --lv-ink-soft:#514957;
+  --lv-muted:#817787;
+  --lv-bg:#eee8f0;
+  --lv-bg-2:#e6e1e9;
+  --lv-surface:#f7f2f7;
+  --lv-surface-strong:#fbf8fb;
+  --lv-border:#d2c6d5;
+  --lv-border-soft:#e3dae5;
+  --lv-plum:#6f5675;
+  --lv-plum-soft:#9a7fa0;
+  --lv-lilac:#c7b0ca;
+  --lv-lilac-light:#e5d8e7;
+  --lv-silver:#aeb8c3;
+  --lv-night:#17141c;
+  --lv-night-2:#211c26;
+}
+html{color-scheme:light}
+body{background:var(--lv-bg)!important;color:var(--lv-ink)!important}
+
+/* Главный экран */
+.hero{
+  color:var(--lv-ink)!important;
+  background:
+    radial-gradient(circle at 79% 18%,rgba(199,176,202,.72) 0,transparent 29%),
+    radial-gradient(circle at 8% 82%,rgba(174,184,195,.32) 0,transparent 28%),
+    linear-gradient(135deg,#f3ebef 0%,#ebe5ee 51%,#e5eaee 100%)!important;
+}
+.hero:before{
+  width:650px;height:650px;right:-130px;top:45px;
+  background:radial-gradient(circle,rgba(111,86,117,.10) 0 36%,transparent 37% 100%)!important;
+  box-shadow:0 0 0 1px rgba(111,86,117,.10),0 0 110px rgba(64,49,69,.14)!important;
+}
+.hero:after{
+  background:linear-gradient(90deg,rgba(255,255,255,.34),transparent 58%,rgba(214,204,219,.20)),
+             linear-gradient(180deg,rgba(255,255,255,.25),transparent 60%,rgba(111,86,117,.12))!important;
+}
+.header{border-bottom-color:rgba(111,86,117,.18)!important}
+.nav a,.login{color:var(--lv-ink-soft)!important}
+.nav a:after{background:var(--lv-plum-soft)!important}
+.create-top{color:var(--lv-ink-soft)!important;border-color:var(--lv-plum-soft)!important;background:rgba(255,250,255,.48)!important}
+.eyebrow{color:var(--lv-plum)!important;border-color:var(--lv-border)!important;background:rgba(255,250,255,.62)!important}
+.eyebrow:before{background:var(--lv-plum-soft)!important;box-shadow:0 0 0 4px rgba(154,127,160,.18)!important}
+.brand-big,.hero h1{color:var(--lv-ink)!important}
+.lead{color:var(--lv-ink-soft)!important}
+.accent{color:var(--lv-plum-soft)!important}
+.primary{background:var(--lv-plum)!important;border-color:var(--lv-plum)!important;color:#fff!important}
+.primary:hover{background:#604a66!important}
+.secondary{background:rgba(255,250,255,.54)!important;border-color:var(--lv-border)!important;color:var(--lv-ink-soft)!important}
+.sources-title,.section-kicker{color:var(--lv-plum)!important}
+.source{color:var(--lv-ink-soft)!important}
+.source-icon{border-color:var(--lv-border)!important;color:var(--lv-plum)!important;background:rgba(255,250,255,.35)}
+.features{border-top-color:rgba(111,86,117,.18)!important}
+.feature{border-color:rgba(111,86,117,.16)!important;color:var(--lv-ink-soft)!important}
+.feature-icon{color:var(--lv-plum-soft)!important}
+
+/* Секции */
+.section.cream{background:var(--lv-bg)!important}
+.section.dark{background:linear-gradient(135deg,#2b2330,#342a38)!important;color:#f5eff6!important}
+.section-title{color:var(--lv-ink)!important}
+.dark .section-title{color:#f6eff7!important}
+.section-text,.about-copy{color:var(--lv-muted)!important}
+.dark .section-text{color:#d8cfd9!important}
+.about-copy strong{color:var(--lv-ink-soft)!important}
+.card,.feature-card,.platform{
+  background:rgba(250,246,250,.72)!important;
+  border-color:var(--lv-border-soft)!important;
+  box-shadow:0 12px 32px rgba(72,55,76,.07)!important;
+}
+.card .num{background:var(--lv-lilac-light)!important;color:var(--lv-plum)!important}
+.card h3,.feature-card h3{color:var(--lv-ink-soft)!important}
+.card p,.feature-card p{color:var(--lv-muted)!important}
+.platform b{color:var(--lv-ink-soft)!important}
+.platform span{color:var(--lv-plum-soft)!important}
+.footer{background:#1d1821!important;color:#bfb3c2!important}
+.idea-link{color:#c7b0ca!important}
+
+/* Карточки обновлений */
+.news-card{background:rgba(250,246,250,.78)!important;border-color:var(--lv-border-soft)!important;box-shadow:0 12px 30px rgba(72,55,76,.07)!important}
+.news-card h3{color:var(--lv-ink-soft)!important}
+.news-card p{color:var(--lv-muted)!important}
+.news-card-icon{background:var(--lv-lilac-light)!important;color:var(--lv-plum)!important}
+.news-card.featured{background:linear-gradient(135deg,#28202d,#3a2d3e)!important}
+.news-card.featured h3{color:#fff!important}
+.news-card.featured p{color:#d8cfd9!important}
+.news-new{background:var(--lv-lilac)!important;color:#342a38!important}
+
+/* Модальные окна */
+.modal-box{background:#27212b!important;border-color:#514555!important}
+.modal-box p{color:#c9bfca!important}
+.modal-box input{background:#1b1720!important;border-color:#493d4e!important;color:#f5eff6!important}
+.go{background:var(--lv-plum-soft)!important;color:#fff!important}
+
+/* Домашняя тёмная тема */
+body.lunevia-home-dark{background:var(--lv-night)!important;color:#eee7f0!important}
+body.lunevia-home-dark .hero{
+  color:#eee7f0!important;
+  background:
+    radial-gradient(circle at 78% 18%,rgba(111,86,117,.38),transparent 30%),
+    radial-gradient(circle at 12% 82%,rgba(93,111,127,.18),transparent 28%),
+    linear-gradient(135deg,#15121a 0%,#211b25 52%,#171a20 100%)!important;
+}
+body.lunevia-home-dark .header{background:rgba(20,17,24,.72)!important;border-bottom-color:#403643!important}
+body.lunevia-home-dark .nav a,body.lunevia-home-dark .login{color:#eee7f0!important}
+body.lunevia-home-dark .create-top{background:#241e29!important;color:#eee7f0!important;border-color:#705b72!important}
+body.lunevia-home-dark .eyebrow{background:#211a25!important;color:#c7b0ca!important;border-color:#514354!important}
+body.lunevia-home-dark .brand-big,body.lunevia-home-dark .hero h1{color:#f3edf5!important}
+body.lunevia-home-dark .lead{color:#cfc5d1!important}
+body.lunevia-home-dark .secondary{background:#211c25!important;color:#e8dfea!important;border-color:#5a4b5d!important}
+body.lunevia-home-dark .primary{background:#9a7fa0!important;border-color:#9a7fa0!important;color:#201a22!important}
+body.lunevia-home-dark .sources-title,body.lunevia-home-dark .section-kicker{color:#bda5c1!important}
+body.lunevia-home-dark .source,body.lunevia-home-dark .feature{color:#d3cad5!important}
+body.lunevia-home-dark .source-icon{border-color:#5b4d5f!important;background:#211b25!important}
+body.lunevia-home-dark .section.cream{background:#211c25!important}
+body.lunevia-home-dark .section-title{color:#f1eaf2!important}
+body.lunevia-home-dark .section-text,body.lunevia-home-dark .about-copy{color:#c9bfca!important}
+body.lunevia-home-dark .card,body.lunevia-home-dark .feature-card,body.lunevia-home-dark .platform{
+  background:#2b2530!important;border-color:#463b4b!important;box-shadow:0 16px 38px rgba(0,0,0,.20)!important
+}
+body.lunevia-home-dark .card h3,body.lunevia-home-dark .feature-card h3,body.lunevia-home-dark .platform b{color:#eee7f0!important}
+body.lunevia-home-dark .card p,body.lunevia-home-dark .feature-card p{color:#bdb3c0!important}
+body.lunevia-home-dark .section.dark{background:#17141b!important}
+body.lunevia-home-dark .news-card{background:#2b2530!important;border-color:#463b4b!important}
+body.lunevia-home-dark .news-card h3{color:#eee7f0!important}
+body.lunevia-home-dark .news-card p{color:#bdb3c0!important}
+body.lunevia-home-dark .footer{background:#111016!important}
+
+/* Комната: та же палитра, без чистого белого */
+.room-view{
+  background:
+    radial-gradient(circle at 82% 10%,rgba(199,176,202,.30),transparent 31%),
+    radial-gradient(circle at 8% 84%,rgba(174,184,195,.24),transparent 28%),
+    linear-gradient(135deg,#eee7ed 0%,#e6e1e9 50%,#e1e8ed 100%)!important;
+  color:var(--lv-ink)!important;
+}
+.room-view .room-top{background:rgba(247,241,246,.88)!important;border-color:#d2c6d5!important}
+.room-view .room-brand{color:var(--lv-ink-soft)!important}
+.room-view .room-code,.room-view .room-btn{
+  background:rgba(250,246,250,.90)!important;
+  color:var(--lv-ink-soft)!important;
+  border-color:var(--lv-border)!important;
+}
+.room-view .room-btn.primary{background:var(--lv-plum)!important;color:#fff!important;border-color:var(--lv-plum)!important}
+.room-view .watch-card,.room-view .side-card{
+  background:rgba(249,245,249,.92)!important;
+  border-color:var(--lv-border)!important;
+  box-shadow:0 16px 45px rgba(72,55,76,.11)!important;
+}
+.room-view .watch-head{background:rgba(250,246,250,.88)!important;border-color:var(--lv-border-soft)!important}
+.room-view .watch-title,.room-view .side-title{color:var(--lv-ink-soft)!important}
+.room-view .source-pill{background:#eee5f0!important;border-color:#d8c9da!important;color:#756579!important}
+.room-view .media-bar{background:#f2ebf1!important;border-color:var(--lv-border-soft)!important}
+.room-view .media-bar input{background:#faf7fa!important;border-color:var(--lv-border)!important;color:var(--lv-ink)!important}
+.room-view .invite-card{background:linear-gradient(135deg,#eee2ef,#e5dbe7)!important;border-color:#cdb8d0!important}
+.room-view .invite-card strong{color:#4e4251!important}
+.room-view .invite-card span{color:#786c7c!important}
+.room-view .invite-card button{background:var(--lv-plum-soft)!important;color:#fff!important;border-color:var(--lv-plum-soft)!important}
+.room-view .person-row{background:#f3edf3!important;border-color:#ded3df!important}
+.room-view .person-name{color:#504654!important}
+.room-view .person-time{color:#8a7e8d!important}
+.room-view .chat{background:#f8f3f7!important;border-color:var(--lv-border-soft)!important}
+.room-view .chat-messages{background:#faf7fa!important}
+.room-view .chat-msg{background:#f0e9f1!important;border-color:#ded4e0!important}
+.room-view .chat-msg b{color:#725b77!important}
+.room-view .chat-msg span{color:#4e4851!important}
+.room-view .chat-msg small{color:#918693!important}
+.room-view .chat-form{background:#eee6ec!important;border-color:var(--lv-border-soft)!important}
+.room-view .chat-form input{background:#faf7fa!important;border-color:var(--lv-border)!important;color:#4a434d!important}
+.room-view .emoji-toggle{background:#faf7fa!important;border-color:var(--lv-border)!important}
+.room-view .voice-panel{background:#eee5ed!important;border-color:var(--lv-border-soft)!important}
+.room-view .voice-title{color:#514655!important}
+.room-view .voice-toggle{background:var(--lv-lilac)!important;border-color:var(--lv-plum-soft)!important;color:#3e3442!important}
+.room-view .sync-note{background:#f2ebf1!important;color:#827785!important;border-color:var(--lv-border-soft)!important}
+
+/* Тёмная комната */
+html.lunevia-dark .room-view{
+  background:
+    radial-gradient(circle at 80% 12%,rgba(111,86,117,.30),transparent 33%),
+    radial-gradient(circle at 8% 86%,rgba(83,101,118,.16),transparent 27%),
+    linear-gradient(135deg,#15121a 0%,#211b25 52%,#171a20 100%)!important;
+  color:#eee7f0!important;
+}
+html.lunevia-dark .room-view .room-top{background:rgba(24,20,29,.92)!important;border-color:#413643!important}
+html.lunevia-dark .room-view .room-brand{color:#f0e9f2!important}
+html.lunevia-dark .room-view .room-code,html.lunevia-dark .room-view .room-btn{background:#28212c!important;color:#eee7f0!important;border-color:#493d4e!important}
+html.lunevia-dark .room-view .room-btn.primary{background:#9a7fa0!important;color:#211a23!important;border-color:#9a7fa0!important}
+html.lunevia-dark .room-view .watch-card,html.lunevia-dark .room-view .side-card{background:#241e28!important;border-color:#403543!important;box-shadow:0 18px 55px rgba(0,0,0,.34)!important}
+html.lunevia-dark .room-view .watch-head{background:#29232e!important;border-color:#403543!important}
+html.lunevia-dark .room-view .watch-title,html.lunevia-dark .room-view .side-title{color:#f1eaf2!important}
+html.lunevia-dark .room-view .source-pill{background:#302734!important;border-color:#4b3e50!important;color:#b9a9bc!important}
+html.lunevia-dark .room-view .media-bar{background:#201a23!important;border-color:#3d3341!important}
+html.lunevia-dark .room-view .media-bar input{background:#17141b!important;border-color:#493e4d!important;color:#eee7f0!important}
+html.lunevia-dark .room-view .invite-card{background:linear-gradient(135deg,#342a38,#2c2430)!important;border-color:#504153!important}
+html.lunevia-dark .room-view .invite-card strong{color:#f0e8f1!important}
+html.lunevia-dark .room-view .invite-card span{color:#c1b5c4!important}
+html.lunevia-dark .room-view .person-row{background:#2a232e!important;border-color:#403543!important}
+html.lunevia-dark .room-view .person-name{color:#eee7f0!important}
+html.lunevia-dark .room-view .person-time{color:#a79ba9!important}
+html.lunevia-dark .room-view .chat{background:#1f1922!important;border-color:#403543!important}
+html.lunevia-dark .room-view .chat-messages{background:#1c171f!important}
+html.lunevia-dark .room-view .chat-msg{background:#29232e!important;border-color:#403543!important}
+html.lunevia-dark .room-view .chat-msg b{color:#c9aec9!important}
+html.lunevia-dark .room-view .chat-msg span{color:#eee7f0!important}
+html.lunevia-dark .room-view .chat-msg small{color:#938995!important}
+html.lunevia-dark .room-view .chat-form{background:#241e28!important;border-color:#403543!important}
+html.lunevia-dark .room-view .chat-form input{background:#17141b!important;border-color:#493e4d!important;color:#eee7f0!important}
+html.lunevia-dark .room-view .emoji-toggle{background:#2b2430!important;border-color:#4a3d4e!important}
+html.lunevia-dark .room-view .voice-panel{background:#251f29!important;border-color:#403543!important}
+html.lunevia-dark .room-view .voice-title{color:#eee7f0!important}
+html.lunevia-dark .room-view .voice-toggle{background:#9a7fa0!important;border-color:#705b72!important;color:#241d27!important}
+html.lunevia-dark .room-view .sync-note{background:#201a23!important;color:#a79ba9!important;border-color:#403543!important}
+
+/* Логотип: фиксируем бренд независимо от старых правил */
+.lunevia-logo,.lunevia-room-logo{color:var(--lv-ink-soft)!important}
+.lunevia-logo-word,.lunevia-logo-mark,.lunevia-logo-star,
+.lunevia-room-mark,.lunevia-room-star{color:var(--lv-plum)!important}
+.lunevia-big-mark,.lunevia-big-star{color:var(--lv-plum-soft)!important}
+body.lunevia-home-dark .lunevia-logo,
+body.lunevia-home-dark .lunevia-logo-word,
+body.lunevia-home-dark .lunevia-room-logo{color:#f0e9f2!important}
+body.lunevia-home-dark .lunevia-logo-mark,
+body.lunevia-home-dark .lunevia-logo-star,
+html.lunevia-dark .lunevia-logo-mark,
+html.lunevia-dark .lunevia-logo-star,
+html.lunevia-dark .lunevia-room-mark,
+html.lunevia-dark .lunevia-room-star{color:#c7a9c9!important}
+html.lunevia-dark .lunevia-logo,
+html.lunevia-dark .lunevia-logo-word,
+html.lunevia-dark .lunevia-room-logo{color:#f0e9f2!important}
 </style>\n</body>
 </html>
