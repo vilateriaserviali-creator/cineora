@@ -40,7 +40,7 @@ app.get("/favicon.ico", (req, res) => {
   res.sendFile(path.join(__dirname, "favicon.svg"));
 });
 app.get("/", (req, res) => { res.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate"); res.sendFile(path.join(__dirname, "index.html")); });
-app.get("/cineora-hero.png", (req, res) => res.sendFile(path.join(__dirname, "cineora-hero.png")));
+app.get("/lunevia-hero.png", (req, res) => res.sendFile(path.join(__dirname, "lunevia-hero.png")));
 app.get("/stickers/:name.svg", (req, res) => {
   const allowed = new Set(["haha","cry","love","wow","look","fire","popcorn","sleep"]);
   const name = String(req.params.name || "");
@@ -49,15 +49,15 @@ app.get("/stickers/:name.svg", (req, res) => {
   res.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
   res.sendFile(path.join(__dirname, "stickers", name + ".svg"));
 });
-app.get("/cineora-mascot.svg", (req, res) => {
+app.get("/lunevia-mascot.svg", (req, res) => {
   res.type("image/svg+xml");
   res.set("Cache-Control", "public, max-age=86400");
-  res.sendFile(path.join(__dirname, "cineora-mascot.svg"));
+  res.sendFile(path.join(__dirname, "lunevia-mascot.svg"));
 });
-app.get("/cineora-cover.svg", (req, res) => {
+app.get("/lunevia-cover.svg", (req, res) => {
   res.type("image/svg+xml");
   res.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
-  res.sendFile(path.join(__dirname, "cineora-cover.svg"));
+  res.sendFile(path.join(__dirname, "lunevia-cover.svg"));
 });
 
 app.get("/lira.svg", (req, res) => {
@@ -222,7 +222,7 @@ app.get("/api/movies", async (req, res) => {
 
 app.get("/health", (req, res) => {
   res.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
-  res.json({ ok: true, service: "CINEORA", time: Date.now() });
+  res.json({ ok: true, service: "LUNEVIA", time: Date.now() });
 });
 
 // Permanent user suggestions storage via PostgreSQL.
@@ -295,7 +295,7 @@ app.post("/api/suggestions", async (req, res) => {
       fallbackSuggestions.unshift(item);
       if (mailer) {
         try {
-          await mailer.sendMail({ from: smtpUser, to: String(process.env.ADMIN_EMAIL || smtpUser).trim(), subject: "Новое предложение для CINEORA", text: ["Новое предложение для CINEORA", "", `Имя: ${item.name}`, "", item.text].join("\n") });
+          await mailer.sendMail({ from: smtpUser, to: String(process.env.ADMIN_EMAIL || smtpUser).trim(), subject: "Новое предложение для LUNEVIA", text: ["Новое предложение для LUNEVIA", "", `Имя: ${item.name}`, "", item.text].join("\n") });
         } catch (mailErr) { console.error("Suggestion email failed:", mailErr); }
       }
       return res.json({ ok: true, stored: "memory" });
@@ -312,9 +312,9 @@ app.post("/api/suggestions", async (req, res) => {
         await mailer.sendMail({
           from: smtpUser,
           to: String(process.env.ADMIN_EMAIL || smtpUser).trim(),
-          subject: "Новое предложение для CINEORA",
+          subject: "Новое предложение для LUNEVIA",
           text: [
-            "Новое предложение для CINEORA",
+            "Новое предложение для LUNEVIA",
             "",
             `Имя: ${name || "Гость"}`,
             "",
@@ -346,7 +346,7 @@ app.get("/api/news", async (req, res) => {
   }
 });
 
-const ADMIN_COOKIE = "cineora_admin";
+const ADMIN_COOKIE = "lunevia_admin";
 const ADMIN_SESSION_TTL = 12 * 60 * 60 * 1000;
 
 function adminToken() {
@@ -376,7 +376,7 @@ function validAdminToken(token) {
 
 function getAdminCookie(req) {
   const raw = String(req.headers.cookie || "");
-  const match = raw.match(/(?:^|;\s*)cineora_admin=([^;]+)/);
+  const match = raw.match(/(?:^|;\s*)lunevia_admin=([^;]+)/);
   return match ? decodeURIComponent(match[1]) : "";
 }
 
@@ -576,7 +576,7 @@ app.get("/admin", (req, res) => {
 <meta name="theme-color" content="#15151c">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="shortcut icon" href="/favicon.svg">
-<title>CINEORA — Админ-панель</title>
+<title>LUNEVIA — Админ-панель</title>
 <style>
 :root{--bg:#101016;--panel:#171720;--panel2:#1d1d28;--line:#2d2d3a;--text:#f4f2f7;--muted:#9a97a5;--pink:#f1b8cf;--lilac:#cbbcf5;--green:#9edc9d;--danger:#ef9caa;--shadow:0 18px 50px rgba(0,0,0,.25)}
 *{box-sizing:border-box}html{background:var(--bg)}body{margin:0;min-height:100vh;background:radial-gradient(circle at 15% 0%,rgba(203,188,245,.12),transparent 32%),radial-gradient(circle at 90% 10%,rgba(241,184,207,.1),transparent 30%),var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.wrap{width:min(1280px,calc(100% - 32px));margin:0 auto;padding:26px 0 44px}.top{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:4px 2px 22px}.brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--text)}.brand-mark{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,var(--pink),var(--lilac));color:#15151c;display:grid;place-items:center;font-weight:900;box-shadow:0 10px 28px rgba(203,188,245,.16)}.brand-name{font-weight:850;letter-spacing:.12em;font-size:20px}.brand-name span{opacity:.75}.site-link{color:var(--muted);text-decoration:none;border:1px solid var(--line);background:rgba(255,255,255,.03);padding:10px 14px;border-radius:999px}.site-link:hover{color:var(--text);background:rgba(255,255,255,.06)}.login{background:rgba(23,23,32,.86);border:1px solid var(--line);border-radius:24px;padding:22px;box-shadow:var(--shadow);display:flex;gap:10px;align-items:center;flex-wrap:wrap}.login input{flex:1;min-width:220px;padding:13px 15px;border-radius:13px;border:1px solid var(--line);background:#111119;color:var(--text);outline:none}.login input:focus{border-color:var(--lilac);box-shadow:0 0 0 3px rgba(203,188,245,.1)}button{font:inherit}.btn{border:1px solid transparent;border-radius:13px;padding:12px 16px;background:linear-gradient(135deg,var(--pink),var(--lilac));color:#181720;font-weight:800;cursor:pointer}.btn:hover{transform:translateY(-1px);filter:brightness(1.04)}.btn.secondary{background:var(--panel2);border-color:var(--line);color:var(--text)}.status{font-size:13px;color:var(--muted)}.error{color:var(--danger);margin-top:10px}.dashboard{display:none}.dashboard.show{display:block}.hero{display:flex;align-items:end;justify-content:space-between;gap:20px;margin:28px 0 18px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);margin-bottom:8px}.hero h1{font-size:clamp(30px,5vw,46px);line-height:1.05;margin:0;letter-spacing:-.04em}.hero p{margin:10px 0 0;color:var(--muted)}.hero-actions{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.updated{font-size:12px;color:var(--muted)}.nav{display:flex;gap:7px;overflow:auto;padding:6px;background:rgba(23,23,32,.8);border:1px solid var(--line);border-radius:16px;margin:18px 0}.nav button{white-space:nowrap;border:0;background:transparent;color:var(--muted);padding:11px 15px;border-radius:11px;cursor:pointer;font-weight:700}.nav button.active{background:#292937;color:var(--text);box-shadow:inset 0 0 0 1px #3a3a4b}.view{display:none}.view.active{display:block}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.stat{background:linear-gradient(145deg,rgba(29,29,40,.98),rgba(23,23,32,.98));border:1px solid var(--line);border-radius:20px;padding:19px;min-height:120px}.stat-icon{font-size:20px}.stat b{display:block;font-size:34px;letter-spacing:-.04em;margin-top:10px}.stat span{color:var(--muted);font-size:13px}.grid{display:grid;grid-template-columns:1.2fr .8fr;gap:14px;margin-top:14px}.card{background:rgba(23,23,32,.94);border:1px solid var(--line);border-radius:20px;padding:20px;box-shadow:0 12px 34px rgba(0,0,0,.14)}.card h2{font-size:18px;margin:0}.card-head{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:15px}.room-list,.cards{display:grid;gap:10px}.room,.idea,.news{background:#13131b;border:1px solid #292936;border-radius:16px;padding:15px}.room-head,.idea-head,.news-head{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}.room-code{font-weight:850;letter-spacing:.08em}.pill{display:inline-flex;align-items:center;gap:6px;padding:6px 9px;border-radius:999px;background:#20202b;color:var(--muted);font-size:12px}.pill.live{color:var(--green);background:rgba(158,220,157,.09)}.room-meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:11px}.people{margin-top:11px;color:var(--muted);font-size:13px;line-height:1.6}.person-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--green);margin-right:6px;box-shadow:0 0 10px rgba(158,220,157,.7)}.toolbar{display:flex;gap:9px;flex-wrap:wrap;margin:15px 0}.toolbar input,.toolbar select{padding:12px 13px;border-radius:12px;border:1px solid var(--line);background:#111119;color:var(--text);outline:none}.toolbar input{flex:1;min-width:220px}.toolbar input:focus,.toolbar select:focus{border-color:var(--lilac)}.idea-text,.news-text{margin:13px 0;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.6;color:#ddd9e3}.person{font-weight:800}.date{font-size:12px;color:var(--muted);margin-top:4px}.actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.select{padding:9px 11px;border-radius:10px;border:1px solid var(--line);background:#1a1a24;color:var(--text)}.smallbtn{border:1px solid var(--line);background:#1a1a24;color:var(--text);border-radius:10px;padding:9px 12px;cursor:pointer}.smallbtn:hover{background:#242432}.smallbtn.primary{background:rgba(241,184,207,.14);border-color:rgba(241,184,207,.28)}.user-card{display:flex;align-items:center;justify-content:space-between;gap:14px;background:#13131b;border:1px solid #292936;border-radius:16px;padding:15px}.user-main{display:flex;align-items:center;gap:12px;min-width:0}.user-avatar{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,var(--pink),var(--lilac));color:#171720;display:grid;place-items:center;font-weight:900;flex:0 0 auto}.user-name{font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.user-sub{color:var(--muted);font-size:12px;margin-top:3px}.achievement{background:#13131b;border:1px solid #292936;border-radius:16px;padding:16px;display:flex;gap:13px;align-items:center}.achievement-icon{width:46px;height:46px;border-radius:15px;background:linear-gradient(135deg,rgba(241,184,207,.2),rgba(203,188,245,.2));display:grid;place-items:center;font-size:22px}.achievement h3{font-size:15px;margin:0 0 4px}.achievement p{font-size:12px;color:var(--muted);margin:0;line-height:1.45}.achievement label{margin-left:auto;color:var(--muted);font-size:11px;white-space:nowrap}.achievement input{accent-color:#cbbcf5}.smallbtn.danger{color:var(--danger);background:rgba(239,156,170,.07)}.editor{background:#13131b;border:1px solid #292936;border-radius:18px;padding:17px;margin-bottom:14px}.editor h2{font-size:18px;margin:0 0 13px}.editor input,.editor textarea{width:100%;padding:12px 13px;border-radius:11px;border:1px solid var(--line);background:#0f0f16;color:var(--text);margin-bottom:9px;outline:none}.editor textarea{min-height:125px;resize:vertical}.editor-row{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.check{color:var(--muted);font-size:13px}.published{color:var(--green);font-size:12px;font-weight:800}.unpublished{color:#d8b679;font-size:12px;font-weight:800}.empty{text-align:center;padding:42px 15px;color:var(--muted);border:1px dashed var(--line);border-radius:16px}.danger-note{color:var(--danger);font-size:12px}.footer-note{margin-top:16px;color:var(--muted);font-size:12px;text-align:center}@media(max-width:900px){.stats{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}}@media(max-width:600px){.wrap{width:calc(100% - 20px);padding-top:14px}.top{padding-bottom:12px}.brand-mark{width:38px;height:38px}.brand-name{font-size:17px}.site-link{padding:8px 11px}.login{padding:15px}.login input{min-width:100%;flex-basis:100%}.hero{align-items:flex-start;flex-direction:column}.hero-actions{width:100%}.hero-actions .btn{flex:1}.stats{grid-template-columns:1fr 1fr;gap:8px}.stat{padding:14px;min-height:105px}.stat b{font-size:28px}.card{padding:14px}.room-head,.idea-head,.news-head{display:block}.actions{margin-top:10px}.toolbar input{min-width:100%}}\n</style>
@@ -599,7 +599,7 @@ app.get("/admin", (req, res) => {
   <section class="dashboard" id="dashboard">
     <div class="hero">
       <div>
-        <div class="eyebrow">CINEORA / CONTROL CENTER</div>
+        <div class="eyebrow">LUNEVIA / CONTROL CENTER</div>
         <h1>Администрация</h1>
         <p>Комнаты, пользователи, предложения и обновления — в одном месте.</p>
       </div>
@@ -650,7 +650,7 @@ app.get("/admin", (req, res) => {
       <div class="grid">
         <div class="card"><div class="card-head"><h2>Сводка активности</h2><span class="pill">LIVE</span></div><div id="analyticsSummary" class="cards"></div></div>
         <div class="card"><div class="card-head"><h2>Система</h2></div><div class="cards">
-          <div class="room"><b>🟢 Сервер</b><div class="date">CINEORA работает и принимает подключения.</div></div>
+          <div class="room"><b>🟢 Сервер</b><div class="date">LUNEVIA работает и принимает подключения.</div></div>
           <div class="room"><b>🔐 Админ-сессия</b><div class="date">Доступ к панели защищён серверной авторизацией.</div></div>
         </div></div>
       </div>
@@ -658,7 +658,7 @@ app.get("/admin", (req, res) => {
 
     <section class="view" id="view-features">
       <div class="card">
-        <div class="card-head"><h2>Функции CINEORA</h2><span class="pill">Локальные настройки</span></div>
+        <div class="card-head"><h2>Функции LUNEVIA</h2><span class="pill">Локальные настройки</span></div>
         <div id="featureList" class="cards"></div>
       </div>
       <div class="footer-note">Переключатели сохраняются в браузере администратора. Они подготовлены как центр управления функциями; серверные feature flags можно подключить следующим этапом.</div>
@@ -698,7 +698,7 @@ app.get("/admin", (req, res) => {
 
     <section class="view" id="view-achievements">
       <div class="card">
-        <div class="card-head"><h2>Достижения CINEORA</h2><span class="pill">Система</span></div>
+        <div class="card-head"><h2>Достижения LUNEVIA</h2><span class="pill">Система</span></div>
         <div id="achievementList" class="cards"></div>
       </div>
       <div class="footer-note">Переключатели сохраняются для этого браузера администратора. Начисление достижений подключим к общей статистике после появления постоянного профиля пользователя.</div>
@@ -716,7 +716,7 @@ app.get("/admin", (req, res) => {
       <div class="editor">
         <h2>Новое обновление</h2>
         <input id="newsTitle" maxlength="140" placeholder="Заголовок">
-        <textarea id="newsText" maxlength="3000" placeholder="Что нового появилось в CINEORA?"></textarea>
+        <textarea id="newsText" maxlength="3000" placeholder="Что нового появилось в LUNEVIA?"></textarea>
         <div class="editor-row">
           <label class="check"><input type="checkbox" id="newsPublished" checked> Показывать на главной</label>
           <button class="btn" onclick="createNews()">Опубликовать</button>
@@ -732,8 +732,8 @@ app.get("/admin", (req, res) => {
 
 <script>
 let password="",adminAuthenticated=false,items=[],newsItems=[],rooms=[];
-const featureDefs=[["🎭","Аватарки","Создание персональной аватарки"],["🖼️","Рамки","Рамки профиля и достижения"],["🏆","Достижения","Награды за активность"],["💬","Чат","Общий чат комнаты"],["😂","Смешные слова","Автоматические фразы CINEORA"],["🎬","Совместный просмотр","Синхронизация видео"],["🎵","Музыка","Музыкальные функции"],["✨","Новые эффекты","Экспериментальные визуальные эффекты"]];
-function featureState(){try{return JSON.parse(localStorage.getItem("cineora_admin_features")||"{}")}catch(e){return {}}}
+const featureDefs=[["🎭","Аватарки","Создание персональной аватарки"],["🖼️","Рамки","Рамки профиля и достижения"],["🏆","Достижения","Награды за активность"],["💬","Чат","Общий чат комнаты"],["😂","Смешные слова","Автоматические фразы LUNEVIA"],["🎬","Совместный просмотр","Синхронизация видео"],["🎵","Музыка","Музыкальные функции"],["✨","Новые эффекты","Экспериментальные визуальные эффекты"]];
+function featureState(){try{return JSON.parse(localStorage.getItem("lunevia_admin_features")||"{}")}catch(e){return {}}}
 function renderFeatures(){
   const state=featureState(),el=document.getElementById("featureList");if(!el)return;
   el.innerHTML=featureDefs.map(([icon,name,desc],i)=>{
@@ -744,9 +744,9 @@ function renderFeatures(){
     input.addEventListener("change",()=>toggleFeature(input.getAttribute("data-feature-name"),input.checked));
   });
 }
-function toggleFeature(name,on){const s=featureState();s[name]=!!on;localStorage.setItem("cineora_admin_features",JSON.stringify(s));addLog("Изменена функция: "+name+" — "+(on?"включена":"выключена"));renderFeatures()}
-function getLogs(){try{return JSON.parse(localStorage.getItem("cineora_admin_log")||"[]")}catch(e){return []}}
-function addLog(text){const a=getLogs();a.unshift({text,time:new Date().toISOString()});localStorage.setItem("cineora_admin_log",JSON.stringify(a.slice(0,50)));renderLog()}
+function toggleFeature(name,on){const s=featureState();s[name]=!!on;localStorage.setItem("lunevia_admin_features",JSON.stringify(s));addLog("Изменена функция: "+name+" — "+(on?"включена":"выключена"));renderFeatures()}
+function getLogs(){try{return JSON.parse(localStorage.getItem("lunevia_admin_log")||"[]")}catch(e){return []}}
+function addLog(text){const a=getLogs();a.unshift({text,time:new Date().toISOString()});localStorage.setItem("lunevia_admin_log",JSON.stringify(a.slice(0,50)));renderLog()}
 function renderLog(){const el=document.getElementById("adminLog");if(!el)return;const a=getLogs();el.innerHTML=a.length?a.map(x=>"<div class='room'><b>⚙️ "+esc(x.text)+"</b><div class='date'>"+fmtDate(x.time)+"</div></div>").join(""):"<div class='empty'>Действий пока нет.</div>"}
 function renderAnalytics(){
  const msgs=rooms.reduce((n,r)=>n+((r.messages&&r.messages.length)||0),0),media=rooms.filter(r=>r.mediaUrl).length,users=rooms.reduce((n,r)=>n+(r.userCount||0),0);
@@ -833,15 +833,15 @@ const achievementDefs=[
   ["💬","Болтун","Отправить 50 сообщений"],
   ["👥","Собрал компанию","Пригласить друзей в комнату"],
   ["🔥","Кино-марафон","Провести длинный совместный просмотр"],
-  ["✨","Душа CINEORA","Активно пользоваться сервисом"]
+  ["✨","Душа LUNEVIA","Активно пользоваться сервисом"]
 ];
 function renderAchievements(){
   const el=document.getElementById("achievementList");if(!el)return;
-  const saved=JSON.parse(localStorage.getItem("cineora_admin_achievements")||"{}");
+  const saved=JSON.parse(localStorage.getItem("lunevia_admin_achievements")||"{}");
   el.innerHTML=achievementDefs.map((a,i)=>"<article class='achievement'><div class='achievement-icon'>"+a[0]+"</div><div><h3>"+a[1]+"</h3><p>"+a[2]+"</p></div><label><input type='checkbox' "+(saved[i]!==false?"checked":"")+" onchange='toggleAchievement("+i+",this.checked)'> Включено</label></article>").join("");
 }
 function toggleAchievement(i,on){
-  const saved=JSON.parse(localStorage.getItem("cineora_admin_achievements")||"{}");saved[i]=on;localStorage.setItem("cineora_admin_achievements",JSON.stringify(saved));
+  const saved=JSON.parse(localStorage.getItem("lunevia_admin_achievements")||"{}");saved[i]=on;localStorage.setItem("lunevia_admin_achievements",JSON.stringify(saved));
 }
 function renderIdeas(){
   const q=(document.getElementById("search").value||"").toLowerCase().trim();
@@ -943,7 +943,7 @@ async function joinRoomForSocket(socket, { roomId, name, avatar, frame, privateR
   accessToken = String(accessToken || "").trim().slice(0, 96);
   clientId = String(clientId || "").trim().slice(0, 80);
   const allowedAvatars = new Set(["star","film","popcorn","moon","heart","spark","play","smile","mascot"]);
-  const allowedFrames = new Set(["classic","neon","gold","cineora","achievement","creator"]);
+  const allowedFrames = new Set(["classic","neon","gold","lunevia","achievement","creator"]);
   const creator = !!socket.data.isAdmin;
   const requestedAvatar = String(avatar || "");
   const requestedFrame = String(frame || "");
@@ -1225,7 +1225,7 @@ io.on("connection", socket => {
     if (!clean) { if (typeof ack === "function") ack({ ok: false, error: "Пустое сообщение." }); return; }
     const blocked = /(?:\bnazi\b|\bнацист\w*|\bнеонацист\w*|\bфашист\w*|\bгитлер\w*|\bсвастик\w*|\bss[- ]?символ\w*|\bрасист\w*|\bрасизм\w*)/iu;
     if (blocked.test(clean)) {
-      if (typeof ack === "function") ack({ ok: false, blocked: true, error: "Сообщение заблокировано: CINEORA не пропускает нацистский, расистский и экстремистский контент." });
+      if (typeof ack === "function") ack({ ok: false, blocked: true, error: "Сообщение заблокировано: LUNEVIA не пропускает нацистский, расистский и экстремистский контент." });
       socket.emit("chat-warning", { text: "⚠️ Сообщение не отправлено. Нацистский и расистский контент в чате запрещён." });
       return;
     }
@@ -1285,7 +1285,7 @@ const PORT = process.env.PORT || 3000;
 // Open the HTTP port before any optional startup work.
 // Render must be able to detect the listener even if DB or SMTP is slow/unavailable.
 server.listen(PORT, "0.0.0.0", () => {
-  console.log(`CINEORA running on port ${PORT}`);
+  console.log(`LUNEVIA running on port ${PORT}`);
 });
 
 async function startServer() {
@@ -1293,7 +1293,7 @@ async function startServer() {
     await initDatabase();
     console.log("PostgreSQL initialization completed.");
   } catch (err) {
-    console.error("PostgreSQL initialization failed. CINEORA will continue without database:", err.message);
+    console.error("PostgreSQL initialization failed. LUNEVIA will continue without database:", err.message);
   }
 
   // SMTP is optional. Do not run transporter.verify() during startup:
@@ -1307,5 +1307,5 @@ async function startServer() {
 }
 
 startServer().catch(err => {
-  console.error("Unexpected CINEORA startup error:", err);
+  console.error("Unexpected LUNEVIA startup error:", err);
 });
