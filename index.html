@@ -4799,5 +4799,33 @@ html.lunevia-dark .lunevia-room-logo{color:#f0e9f2!important}
 @media(max-width:600px){
  .lunevia-brand-big:after{width:72px;bottom:-9px}
 }
+</style>\n<style id="lunevia-mascot-system-v2">
+.lunevia-mascot-card,.mascot-card,[data-mascot-card]{position:relative;isolation:isolate}
+.lunevia-mascot-card img,.mascot-card img,[data-mascot-card] img{
+  display:block!important;visibility:visible!important;opacity:1!important;
+  width:100%;height:100%;object-fit:contain;
+}
+.avatar-mascot img{object-fit:cover!important;border-radius:inherit}
+.sticker-grid button img,.regular-sticker-grid button img{
+  display:block!important;visibility:visible!important;opacity:1!important;
+  width:100%!important;height:100%!important;object-fit:contain!important;
+}
+.sticker-grid button,.regular-sticker-grid button{
+  position:relative;overflow:hidden;
+  background:rgba(255,255,255,.28)!important;
+  border:1px solid rgba(111,86,117,.14)!important;
+}
+.sticker-grid button:hover,.regular-sticker-grid button:hover{
+  background:#e2d3e4!important;
+  box-shadow:0 8px 18px rgba(91,72,96,.12);
+}
+.lunevia-mascot-glow{
+  position:absolute;inset:8%;border-radius:50%;
+  background:radial-gradient(circle,rgba(199,176,202,.32),transparent 68%);
+  filter:blur(16px);z-index:-1;pointer-events:none;
+}
+@media(prefers-reduced-motion:reduce){
+ .sticker-grid button,.regular-sticker-grid button{transition:none!important}
+}
 </style>\n</body>
 </html>
