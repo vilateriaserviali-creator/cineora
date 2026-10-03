@@ -5117,5 +5117,173 @@ body:not(.room-page) .home-theme-toggle{display:none!important}
 @media(max-width:900px){body:not(.room-page) .hero:before{width:300px!important;height:300px!important;right:-90px!important;top:170px!important}body:not(.room-page) .brand-big{font-size:52px!important}body:not(.room-page) .hero h1{font-size:45px!important}}
 </style>
 
+
+<style id="lunevia-complete-home-redesign">
+:root{
+ --lv-bg:#0d0c12;--lv-bg2:#13111a;--lv-panel:#181520;--lv-panel2:#1e1928;
+ --lv-line:rgba(232,224,238,.12);--lv-text:#eee8f0;--lv-soft:#b9afbf;
+ --lv-muted:#817887;--lv-moon:#d7c9dc;--lv-mauve:#9e8aa5;--lv-shadow:rgba(0,0,0,.32)
+}
+body:not(.room-page){background:var(--lv-bg)!important;color:var(--lv-text)!important;font-family:"Manrope",sans-serif!important}
+body:not(.room-page) .wrap{width:min(1240px,calc(100% - 48px))}
+body:not(.room-page) .hero{
+ min-height:760px!important;
+ background:
+ radial-gradient(circle at 79% 32%,rgba(215,201,220,.13),transparent 13%),
+ radial-gradient(circle at 79% 32%,rgba(158,138,165,.12),transparent 31%),
+ linear-gradient(135deg,#0d0c12 0%,#111019 48%,#191420 100%)!important;
+}
+body:not(.room-page) .hero:before{
+ width:570px!important;height:570px!important;right:-65px!important;top:105px!important;
+ background:radial-gradient(circle at 38% 38%,rgba(238,232,240,.18) 0 20%,rgba(215,201,220,.08) 21% 35%,transparent 36%)!important;
+ box-shadow:0 0 0 1px rgba(238,232,240,.08),0 0 120px rgba(215,201,220,.10)!important;
+}
+body:not(.room-page) .hero:after{
+ background:
+ radial-gradient(circle at 18% 20%,#fff 0 1px,transparent 1.5px),
+ radial-gradient(circle at 31% 34%,#fff 0 1px,transparent 1.5px),
+ radial-gradient(circle at 61% 16%,#fff 0 1px,transparent 1.5px),
+ radial-gradient(circle at 72% 70%,#fff 0 1px,transparent 1.5px),
+ linear-gradient(90deg,transparent 0%,rgba(13,12,18,.08) 55%,rgba(13,12,18,.5) 100%)!important;
+ opacity:.5!important;
+}
+body:not(.room-page) .header{height:82px!important;border-bottom:1px solid var(--lv-line)!important}
+body:not(.room-page) .logo{
+ font-family:"Cormorant Garamond",serif!important;font-size:31px!important;font-weight:600!important;
+ letter-spacing:.22em!important;color:var(--lv-text)!important
+}
+body:not(.room-page) .logo span{color:var(--lv-moon)!important}
+body:not(.room-page) .nav{gap:34px!important}
+body:not(.room-page) .nav a,body:not(.room-page) .login{color:var(--lv-soft)!important;transition:color .2s}
+body:not(.room-page) .nav a:hover,body:not(.room-page) .login:hover{color:var(--lv-text)!important}
+body:not(.room-page) .create-top{
+ background:rgba(255,255,255,.035)!important;border:1px solid var(--lv-line)!important;
+ color:var(--lv-text)!important;border-radius:12px!important;padding:11px 18px!important
+}
+body:not(.room-page) .hero-content{padding:120px 0 0!important;max-width:710px!important}
+body:not(.room-page) .eyebrow{
+ color:var(--lv-mauve)!important;font-size:10px!important;letter-spacing:.28em!important;
+ margin-bottom:25px!important
+}
+body:not(.room-page) .brand-big{
+ font-family:"Cormorant Garamond",serif!important;font-size:76px!important;font-weight:500!important;
+ letter-spacing:.14em!important;color:var(--lv-text)!important
+}
+body:not(.room-page) .hero h1{
+ font-family:"Cormorant Garamond",serif!important;font-size:60px!important;line-height:.98!important;
+ font-weight:500!important;letter-spacing:-.02em!important;color:#f1ebf2!important;
+ max-width:650px!important;margin:22px 0 22px!important
+}
+body:not(.room-page) .hero h1 .accent{color:var(--lv-moon)!important}
+body:not(.room-page) .lead{
+ max-width:560px!important;color:var(--lv-soft)!important;font-size:15px!important;line-height:1.75!important
+}
+body:not(.room-page) .actions{margin-top:34px!important;gap:11px!important}
+body:not(.room-page) .primary,body:not(.room-page) .secondary{
+ min-width:0!important;padding:14px 21px!important;border-radius:12px!important;
+ font-size:13px!important;transition:transform .2s,background .2s,border-color .2s!important
+}
+body:not(.room-page) .primary{
+ background:var(--lv-moon)!important;border-color:var(--lv-moon)!important;color:#17131b!important
+}
+body:not(.room-page) .secondary{
+ background:rgba(255,255,255,.035)!important;border-color:var(--lv-line)!important;color:var(--lv-text)!important
+}
+body:not(.room-page) .primary:hover,body:not(.room-page) .secondary:hover{transform:translateY(-2px)!important}
+body:not(.room-page) .sources{margin-top:38px!important}
+body:not(.room-page) .sources-title,body:not(.room-page) .section-kicker{
+ color:var(--lv-muted)!important;font-size:9px!important;letter-spacing:.24em!important
+}
+body:not(.room-page) .source-row{gap:9px!important;margin-top:12px!important}
+body:not(.room-page) .source{
+ padding:8px 11px!important;border:1px solid var(--lv-line)!important;border-radius:9px!important;
+ background:rgba(255,255,255,.025)!important;color:var(--lv-soft)!important;font-size:11px!important
+}
+body:not(.room-page) .source-icon{
+ width:21px!important;height:21px!important;border-radius:6px!important;border-color:rgba(232,224,238,.18)!important
+}
+body:not(.room-page) .features{
+ margin-top:44px!important;padding:20px 0!important;border-top:1px solid var(--lv-line)!important
+}
+body:not(.room-page) .feature{
+ border-color:var(--lv-line)!important;color:var(--lv-muted)!important;font-size:11px!important
+}
+body:not(.room-page) .feature-icon{color:var(--lv-moon)!important;font-size:20px!important}
+body:not(.room-page) .section{
+ padding:110px 0!important;background:var(--lv-bg)!important;color:var(--lv-text)!important
+}
+body:not(.room-page) .section.dark{background:var(--lv-bg2)!important}
+body:not(.room-page) .intro{grid-template-columns:.75fr 1.25fr!important;gap:110px!important}
+body:not(.room-page) .section-title{
+ font-family:"Cormorant Garamond",serif!important;font-size:52px!important;font-weight:500!important;
+ line-height:1!important;color:var(--lv-text)!important
+}
+body:not(.room-page) .section-text,body:not(.room-page) .about-copy{
+ color:var(--lv-soft)!important;line-height:1.8!important;font-size:14px!important
+}
+body:not(.room-page) .about-copy strong{color:var(--lv-text)!important}
+body:not(.room-page) .cards{gap:12px!important;margin-top:42px!important}
+body:not(.room-page) .card{
+ background:linear-gradient(145deg,var(--lv-panel),#15121d)!important;
+ border:1px solid var(--lv-line)!important;border-radius:16px!important;padding:25px!important;
+ box-shadow:none!important;transition:transform .2s,border-color .2s!important
+}
+body:not(.room-page) .card:hover{transform:translateY(-4px)!important;border-color:rgba(215,201,220,.25)!important}
+body:not(.room-page) .card .num{
+ background:rgba(215,201,220,.1)!important;color:var(--lv-moon)!important;width:29px!important;height:29px!important
+}
+body:not(.room-page) .card h3,body:not(.room-page) .feature-card h3,body:not(.room-page) .news-card h3{
+ font-family:"Cormorant Garamond",serif!important;color:var(--lv-text)!important
+}
+body:not(.room-page) .card p,body:not(.room-page) .feature-card p,body:not(.room-page) .news-card p{color:var(--lv-muted)!important}
+body:not(.room-page) .features-grid{gap:12px!important}
+body:not(.room-page) .feature-card{
+ background:var(--lv-panel)!important;border:1px solid var(--lv-line)!important;border-radius:16px!important;
+ box-shadow:none!important
+}
+body:not(.room-page) .platforms{gap:10px!important}
+body:not(.room-page) .platform{
+ background:var(--lv-panel)!important;border:1px solid var(--lv-line)!important;border-radius:13px!important;
+ color:var(--lv-text)!important
+}
+body:not(.room-page) .platform span{color:var(--lv-moon)!important}
+body:not(.room-page) .updates-section:before{background:rgba(158,138,165,.10)!important}
+body:not(.room-page) .updates-heading{align-items:flex-end!important}
+body:not(.room-page) .updates-badge{
+ background:var(--lv-panel)!important;border-color:var(--lv-line)!important;color:var(--lv-soft)!important
+}
+body:not(.room-page) .updates-subtitle{color:var(--lv-muted)!important}
+body:not(.room-page) .news-feed{gap:12px!important}
+body:not(.room-page) .news-card{
+ background:var(--lv-panel)!important;border:1px solid var(--lv-line)!important;
+ border-radius:16px!important;box-shadow:none!important
+}
+body:not(.room-page) .news-card:hover{border-color:rgba(215,201,220,.24)!important;box-shadow:none!important}
+body:not(.room-page) .news-card.featured{
+ background:linear-gradient(135deg,#211b2b,#15121c)!important;border-color:var(--lv-line)!important
+}
+body:not(.room-page) .news-card-icon{background:rgba(215,201,220,.10)!important;color:var(--lv-moon)!important}
+body:not(.room-page) .news-new{background:var(--lv-moon)!important;color:#17131b!important}
+body:not(.room-page) .footer{
+ background:#09080d!important;border-top:1px solid var(--lv-line)!important;color:var(--lv-muted)!important
+}
+body:not(.room-page) .idea-link{color:var(--lv-moon)!important}
+body:not(.room-page) .modal{background:rgba(7,6,10,.82)!important}
+body:not(.room-page) .modal-box{
+ background:#17131e!important;border:1px solid var(--lv-line)!important;border-radius:18px!important;
+ color:var(--lv-text)!important
+}
+body:not(.room-page) .modal-box input{background:#0f0d14!important;border-color:var(--lv-line)!important;color:var(--lv-text)!important}
+body:not(.room-page) .go{background:var(--lv-moon)!important;color:#17131b!important}
+@media(max-width:900px){
+ body:not(.room-page) .wrap{width:calc(100% - 30px)!important}
+ body:not(.room-page) .hero{min-height:760px!important}
+ body:not(.room-page) .hero-content{padding-top:75px!important}
+ body:not(.room-page) .brand-big{font-size:52px!important}
+ body:not(.room-page) .hero h1{font-size:46px!important}
+ body:not(.room-page) .intro{grid-template-columns:1fr!important;gap:35px!important}
+ body:not(.room-page) .section{padding:78px 0!important}
+}
+</style>
 </body>
 </html>
