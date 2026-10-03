@@ -1,7 +1,7 @@
 (() => {
-  if (window.__CINEORA_ACHIEVEMENT_OBSERVER__) return;
-  window.__CINEORA_ACHIEVEMENT_OBSERVER__ = true;
-  const api = () => window.CINEORA && window.CINEORA.achievement;
+  if (window.__LUNEVIA_ACHIEVEMENT_OBSERVER__) return;
+  window.__LUNEVIA_ACHIEVEMENT_OBSERVER__ = true;
+  const api = () => window.LUNEVIA && window.LUNEVIA.achievement;
   let roomDone = false;
   let messageDone = false;
   let styleDone = false;
