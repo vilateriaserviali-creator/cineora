@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="light-theme.css">
 
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2216%22%20fill%3D%22%2317151a%22%2F%3E%3Ccircle%20cx%3D%2232%22%20cy%3D%2232%22%20r%3D%2221%22%20fill%3D%22%23d9a9ef%22%2F%3E%3Cpath%20d%3D%22M24%2019v26l22-13z%22%20fill%3D%22%2317151a%22%2F%3E%3Ccircle%20cx%3D%2232%22%20cy%3D%2232%22%20r%3D%2225%22%20fill%3D%22none%22%20stroke%3D%22%23b695b3%22%20stroke-width%3D%222%22%2F%3E%3C%2Fsvg%3E">
-<link rel="shortcut icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2216%22%20fill%3D%22%2317151a%22%2F%3E%3Ccircle%20cx%3D%2232%22%20cy%3D%2232%22%20r%3D%2221%22%20fill%3D%22%23d9a9ef%22%2F%3E%3Cpath%20d%3D%22M24%2019v26l22-13z%22%20fill%3D%22%2317151a%22%2F%3E%3Ccircle%20cx%3D%2232%22%20cy%3D%2232%22%20r%3D%2225%22%20fill%3D%22none%22%20stroke%3D%22%23b695b3%22%20stroke-width%3D%222%22%2F%3E%3C%2Fsvg%3E">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%2317141c'/%3E%3Cpath d='M42 12c-9 3-15 11-15 21 0 11 8 19 19 19 3 0 5-.5 8-1.5-4.5 7-12 11.5-21 11.5C19 62 8 51 8 37S19 12 33 7c3-1 6-1 9-1Z' fill='%23c7a9c9'/%3E%3Cpath d='M47 14l1.8 5 5 1.8-5 1.8-1.8 5-1.8-5-5-1.8 5-1.8Z' fill='%23eee4ef'/%3E%3Ccircle cx='47' cy='43' r='1.5' fill='%23a98eac'/%3E%3C/svg%3E">
+<link rel="shortcut icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%2317141c'/%3E%3Cpath d='M42 12c-9 3-15 11-15 21 0 11 8 19 19 19 3 0 5-.5 8-1.5-4.5 7-12 11.5-21 11.5C19 62 8 51 8 37S19 12 33 7c3-1 6-1 9-1Z' fill='%23c7a9c9'/%3E%3Cpath d='M47 14l1.8 5 5 1.8-5 1.8-1.8 5-1.8-5-5-1.8 5-1.8Z' fill='%23eee4ef'/%3E%3Ccircle cx='47' cy='43' r='1.5' fill='%23a98eac'/%3E%3C/svg%3E">
 <title>LUNEVIA — Кино становится ближе</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;1,500&display=swap');
@@ -4767,5 +4767,37 @@ html.lunevia-dark .lunevia-room-star{color:#c7a9c9!important}
 html.lunevia-dark .lunevia-logo,
 html.lunevia-dark .lunevia-logo-word,
 html.lunevia-dark .lunevia-room-logo{color:#f0e9f2!important}
+</style>\n<style id="lunevia-brand-details-v3">
+/* Финальные фирменные детали LUNEVIA */
+.lunevia-logo{position:relative!important}
+.lunevia-logo-mark,.lunevia-big-mark,.lunevia-room-mark{
+  font-family:"Playfair Display",serif!important;
+  font-weight:500!important;
+}
+.lunevia-logo-mark{font-size:30px!important}
+.lunevia-logo-star{font-size:12px!important}
+.lunevia-brand-big{position:relative}
+.lunevia-brand-big:after{
+  content:"";
+  position:absolute;
+  left:2px;bottom:-13px;
+  width:100px;height:1px;
+  background:linear-gradient(90deg,#9a7fa0,transparent);
+  opacity:.45;
+}
+.hero .brand-big .lunevia-big-star{animation:lunevia-star-breathe 3.6s ease-in-out infinite}
+@keyframes lunevia-star-breathe{
+  0%,100%{opacity:.65;transform:translateY(.05em) scale(.94)}
+  50%{opacity:1;transform:translateY(-.08em) scale(1)}
+}
+.hero .lunevia-logo-mark{filter:drop-shadow(0 4px 10px rgba(111,86,117,.16))}
+.room-view .lunevia-room-mark{filter:drop-shadow(0 3px 8px rgba(111,86,117,.14))}
+@media(prefers-reduced-motion:reduce){
+ .hero .brand-big .lunevia-big-star{animation:none!important}
+ .lunevia-logo,.logo,.room-brand{transition:none!important}
+}
+@media(max-width:600px){
+ .lunevia-brand-big:after{width:72px;bottom:-9px}
+}
 </style>\n</body>
 </html>
