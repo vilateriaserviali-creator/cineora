@@ -2542,7 +2542,187 @@ body,body *{--cream:var(--lv-bg);--paper:var(--lv-bg);--white:var(--lv-surface-2
 /* Kill theme-specific bright surfaces and hide any theme switcher */
 #themeToggle,.theme-toggle,.theme-switch,.theme-switcher,[data-theme-toggle],[data-action="toggle-theme"]{display:none!important}
 body.dark-theme,body.theme-dark,body.light-theme{background:var(--lv-bg)!important;color:var(--lv-text)!important}
-</style>\n</head>
+</style>\n<style id="lunevia-night-cinema-home">
+/* LUNEVIA — отдельная ночная сцена главной страницы. Room UI не затрагивается. */
+body:not(.room-page){background:#0d0b11!important;color:#ece6ef!important}
+body:not(.room-page) .hero{
+  min-height:clamp(720px,100vh,940px)!important;
+  color:#eee8f0!important;
+  background:
+    radial-gradient(circle at 78% 20%,rgba(151,123,161,.20),transparent 28%),
+    radial-gradient(circle at 18% 75%,rgba(92,76,107,.16),transparent 30%),
+    linear-gradient(135deg,#0b0910 0%,#14101a 48%,#1b1420 100%)!important;
+}
+body:not(.room-page) .hero:before{
+  width:560px!important;height:560px!important;right:-90px!important;top:105px!important;
+  background:radial-gradient(circle at 42% 42%,rgba(218,205,222,.14) 0 18%,rgba(165,139,174,.08) 19% 42%,transparent 43%)!important;
+  box-shadow:0 0 0 1px rgba(236,226,240,.07),0 0 110px rgba(0,0,0,.55)!important;
+}
+body:not(.room-page) .hero:after{
+  background:
+    radial-gradient(circle at 10% 15%,rgba(255,255,255,.18) 0 1px,transparent 1.5px),
+    radial-gradient(circle at 62% 18%,rgba(255,255,255,.13) 0 1px,transparent 1.5px),
+    radial-gradient(circle at 72% 72%,rgba(255,255,255,.12) 0 1px,transparent 1.5px),
+    linear-gradient(90deg,rgba(4,3,7,.35),transparent 55%,rgba(4,3,7,.28))!important;
+  background-size:180px 180px,240px 240px,210px 210px,auto!important;
+}
+body:not(.room-page) .header{
+  height:82px!important;
+  border-bottom:1px solid rgba(232,224,238,.10)!important;
+}
+body:not(.room-page) .logo{font-size:28px!important;color:#eee8f0!important}
+body:not(.room-page) .logo span,.accent{color:#cdbbd2!important}
+body:not(.room-page) .nav a,body:not(.room-page) .login{color:#bdb3c3!important}
+body:not(.room-page) .nav a:hover,body:not(.room-page) .login:hover{color:#eee8f0!important}
+body:not(.room-page) .create-top{
+  background:rgba(255,255,255,.045)!important;
+  border:1px solid rgba(214,198,220,.32)!important;
+  color:#e8e0eb!important;
+  backdrop-filter:blur(12px);
+}
+body:not(.room-page) .hero-content{padding-top:clamp(65px,10vh,105px)!important;max-width:650px!important}
+body:not(.room-page) .eyebrow{color:#9f91a5!important;letter-spacing:.24em!important}
+body:not(.room-page) .brand-big{
+  font-size:clamp(54px,7vw,88px)!important;
+  letter-spacing:.20em!important;
+  color:#eee8f0!important;
+  text-shadow:0 10px 45px rgba(0,0,0,.35);
+}
+body:not(.room-page) .hero h1{
+  max-width:590px!important;
+  font-size:clamp(42px,5.2vw,62px)!important;
+  line-height:1.02!important;
+  color:#f0eaf2!important;
+  margin:20px 0 22px!important;
+}
+body:not(.room-page) .lead{color:#aaa0af!important;max-width:560px!important}
+body:not(.room-page) #funLine{
+  background:rgba(211,195,216,.07)!important;
+  border:1px solid rgba(211,195,216,.16)!important;
+  color:#c7bdca!important;
+  backdrop-filter:blur(8px);
+}
+body:not(.room-page) .actions{margin-top:32px!important}
+body:not(.room-page) .actions .primary{
+  background:#cdbbd2!important;border-color:#cdbbd2!important;color:#211a24!important;
+  box-shadow:0 14px 36px rgba(111,86,119,.24)!important;
+}
+body:not(.room-page) .actions .secondary{
+  background:rgba(255,255,255,.035)!important;border-color:rgba(215,199,221,.28)!important;
+  color:#ded5e1!important;backdrop-filter:blur(12px);
+}
+body:not(.room-page) .sources{
+  margin-top:38px!important;padding-top:20px!important;
+  border-top:1px solid rgba(232,224,238,.09);
+}
+body:not(.room-page) .sources-title{color:#817586!important}
+body:not(.room-page) .source-row{gap:10px!important}
+body:not(.room-page) .source{
+  padding:9px 12px!important;border:1px solid rgba(232,224,238,.10)!important;
+  border-radius:999px!important;background:rgba(255,255,255,.035)!important;
+  color:#bdb3c1!important;transition:.2s ease;
+}
+body:not(.room-page) .source:hover{background:rgba(205,187,210,.08)!important;border-color:rgba(205,187,210,.25)!important;transform:translateY(-2px)}
+body:not(.room-page) .source-icon{width:22px!important;height:22px!important;border-color:rgba(220,208,224,.22)!important;background:rgba(255,255,255,.04)!important}
+body:not(.room-page) .features{
+  border-top:1px solid rgba(232,224,238,.09)!important;
+  margin-top:46px!important;padding:20px 0 24px!important;
+}
+body:not(.room-page) .feature{color:#aaa0af!important;border-color:rgba(232,224,238,.09)!important}
+body:not(.room-page) .feature-icon{color:#cdbbd2!important}
+body:not(.room-page) .home-visual{opacity:1!important;filter:drop-shadow(0 35px 70px rgba(0,0,0,.38))}
+body:not(.room-page) .home-visual-glow{background:radial-gradient(circle,rgba(177,149,187,.20),transparent 68%)!important}
+body:not(.room-page) .mock-window{
+  background:#17131b!important;border-color:rgba(218,203,222,.18)!important;
+  box-shadow:0 35px 90px rgba(0,0,0,.48),0 10px 30px rgba(0,0,0,.28)!important;
+}
+body:not(.room-page) .mock-top{background:#211b25!important;color:#aaa0af!important}
+body:not(.room-page) .mock-top b{color:#ded5e1!important}
+body:not(.room-page) .mock-screen{background:radial-gradient(circle at 58% 34%,#62556a,#2a242e 53%,#111015 100%)!important}
+body:not(.room-page) .mock-play{background:#cdbbd2!important;color:#332a36!important}
+body:not(.room-page) .mock-caption{color:#eee8f0!important}
+body:not(.room-page) .mock-bottom{background:#120f15!important;color:#817586!important}
+body:not(.room-page) .float-card{
+  background:rgba(29,24,33,.84)!important;
+  border-color:rgba(219,204,223,.16)!important;
+  color:#ded5e1!important;
+  box-shadow:0 22px 55px rgba(0,0,0,.34)!important;
+}
+body:not(.room-page) .float-card small{color:#958a9a!important}
+body:not(.room-page) .section.cream{
+  background:#111017!important;color:#eee8f0!important;
+  border-top:1px solid rgba(232,224,238,.06);
+}
+body:not(.room-page) .section.dark{
+  background:#0b0a0e!important;color:#eee8f0!important;
+  border-top:1px solid rgba(232,224,238,.05);
+}
+body:not(.room-page) .section-title{color:#eee8f0!important}
+body:not(.room-page) .section-kicker{color:#85798b!important}
+body:not(.room-page) .section-text,body:not(.room-page) .about-copy{color:#a89eac!important}
+body:not(.room-page) #about .about-copy{
+  background:linear-gradient(145deg,#19151d,#151219)!important;
+  border:1px solid rgba(232,224,238,.09)!important;
+  box-shadow:0 20px 55px rgba(0,0,0,.22)!important;
+}
+body:not(.room-page) #about .about-copy strong{color:#ddd4e0!important}
+body:not(.room-page) .cards,body:not(.room-page) .features-grid,body:not(.room-page) .platforms{gap:14px!important}
+body:not(.room-page) .card,body:not(.room-page) .feature-card,body:not(.room-page) .platform{
+  background:linear-gradient(145deg,#19151d,#151219)!important;
+  border:1px solid rgba(232,224,238,.09)!important;
+  color:#eee8f0!important;
+  box-shadow:0 16px 45px rgba(0,0,0,.16)!important;
+  transition:transform .2s ease,border-color .2s ease,background .2s ease,box-shadow .2s ease;
+}
+body:not(.room-page) .card:hover,body:not(.room-page) .feature-card:hover,body:not(.room-page) .platform:hover{
+  transform:translateY(-4px)!important;
+  border-color:rgba(205,187,210,.28)!important;
+  background:linear-gradient(145deg,#211a25,#18141d)!important;
+  box-shadow:0 22px 55px rgba(0,0,0,.24)!important;
+}
+body:not(.room-page) .card .num{background:#2a2130!important;border-color:#4a3b4e!important;color:#cdbbd2!important}
+body:not(.room-page) .card h3,body:not(.room-page) .feature-card h3{color:#e8e0ea!important}
+body:not(.room-page) .card p,body:not(.room-page) .feature-card p{color:#958b9a!important}
+body:not(.room-page) .platform b{color:#ddd4e0!important}
+body:not(.room-page) .platform span{color:#cdbbd2!important}
+body:not(.room-page) .news-card{
+  background:#17131b!important;border-color:rgba(232,224,238,.09)!important;color:#eee8f0!important;
+  box-shadow:0 18px 50px rgba(0,0,0,.22)!important;
+}
+body:not(.room-page) .news-card.featured{
+  background:linear-gradient(135deg,#241b29,#17131b)!important;border-color:rgba(205,187,210,.18)!important;
+}
+body:not(.room-page) .news-card h3{color:#e8e0ea!important}
+body:not(.room-page) .news-card p{color:#9b919f!important}
+body:not(.room-page) .news-date{color:#7f7385!important}
+body:not(.room-page) .news-card-icon{background:#2a2130!important;color:#cdbbd2!important}
+body:not(.room-page) .news-feature-item{background:rgba(255,255,255,.035)!important;border-color:rgba(232,224,238,.08)!important;color:#b8aebc!important}
+body:not(.room-page) .updates-subtitle{color:#968b9a!important}
+body:not(.room-page) .updates-badge{background:#17131b!important;border-color:rgba(232,224,238,.09)!important;color:#a89eac!important}
+body:not(.room-page) .footer{background:#08070b!important;border-top:1px solid rgba(232,224,238,.07)!important;color:#807586!important}
+body:not(.room-page) .footer .idea-link{color:#cdbbd2!important}
+body:not(.room-page) .modal-box{background:#18141d!important;border-color:rgba(232,224,238,.12)!important}
+body:not(.room-page) .modal-box h2{color:#eee8f0!important}
+body:not(.room-page) .modal-box p{color:#9b919f!important}
+body:not(.room-page) .modal-box input,body:not(.room-page) .suggestion-box textarea{background:#100e14!important;border-color:rgba(232,224,238,.12)!important;color:#eee8f0!important}
+body:not(.room-page) .go{background:#cdbbd2!important;color:#241c27!important}
+body:not(.room-page) .home-theme-toggle,.home-theme{display:none!important}
+@media(max-width:900px){
+  body:not(.room-page) .hero{min-height:auto!important}
+  body:not(.room-page) .hero-content{padding-top:48px!important}
+  body:not(.room-page) .brand-big{font-size:50px!important}
+  body:not(.room-page) .hero h1{font-size:42px!important}
+  body:not(.room-page) .features{margin-top:42px!important}
+}
+@media(max-width:600px){
+  body:not(.room-page) .brand-big{font-size:43px!important;letter-spacing:.14em!important}
+  body:not(.room-page) .hero h1{font-size:36px!important}
+  body:not(.room-page) .lead{font-size:15px!important}
+  body:not(.room-page) .source-row{gap:8px!important}
+  body:not(.room-page) .source{font-size:12px!important;padding:8px 10px!important}
+}
+</style>
+</head>
 <body>
 
 
