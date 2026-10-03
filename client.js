@@ -1,5 +1,5 @@
 const roomUiFixStyle=document.createElement("style");roomUiFixStyle.textContent=`
-/* CINEORA room: keep the sidebar compact and keep the chat composer visible. */
+/* LUNEVIA room: keep the sidebar compact and keep the chat composer visible. */
 .room-view.show .room-layout{align-items:start!important}
 .room-view.show .side-card{height:auto!important;max-height:none!important;min-height:0!important;position:static!important;overflow:hidden!important}
 .room-view.show .side-card .chat{display:flex!important;flex-direction:column!important;min-height:0!important;height:330px!important;overflow:hidden!important}
@@ -11,16 +11,16 @@ const roomUiFixStyle=document.createElement("style");roomUiFixStyle.textContent=
 .room-view.show #universalPlayer{position:absolute!important;inset:0!important;width:100%!important;height:100%!important}
 .room-view.show #universalPlayer iframe,.room-view.show #universalPlayer video{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;border:0!important}
 .room-view.show .player-wrap{position:relative!important;aspect-ratio:16/9!important;min-height:0!important}
-.cineora-media-frame{position:absolute;inset:0;width:100%;height:100%;border:0;background:#09080b}
-.cineora-media-video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000}
-.cineora-media-fallback{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;padding:25px;text-align:center;background:#0d0b10;color:#eee7f1;z-index:5}
-.cineora-media-fallback strong{font-size:17px}.cineora-media-fallback span{max-width:520px;color:#aaa0ad;font-size:12px;line-height:1.5}.cineora-media-fallback a{display:inline-flex;padding:10px 16px;border-radius:999px;background:#b996c4;color:#211722;font-weight:700;text-decoration:none}
+.lunevia-media-frame{position:absolute;inset:0;width:100%;height:100%;border:0;background:#09080b}
+.lunevia-media-video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000}
+.lunevia-media-fallback{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;padding:25px;text-align:center;background:#0d0b10;color:#eee7f1;z-index:5}
+.lunevia-media-fallback strong{font-size:17px}.lunevia-media-fallback span{max-width:520px;color:#aaa0ad;font-size:12px;line-height:1.5}.lunevia-media-fallback a{display:inline-flex;padding:10px 16px;border-radius:999px;background:#b996c4;color:#211722;font-weight:700;text-decoration:none}
 @media(max-width:1000px){.room-view.show .side-card .chat{height:360px!important}}
 @media(max-width:600px){.room-view.show .side-card .chat{height:320px!important}.room-view.show .side-card .chat-form{padding:8px!important}.room-view.show .side-card .chat-form input,.room-view.show .side-card .chat-form>button{height:40px!important}.room-view.show .player-wrap{aspect-ratio:16/9!important}}
 `;document.head.appendChild(roomUiFixStyle);
 
 /* FINAL ROOM RESTORE: override the later large-video layer without touching chat logic. */
-const roomLayoutRestoreStyle=document.createElement("style");roomLayoutRestoreStyle.id="cineora-room-layout-restore";roomLayoutRestoreStyle.textContent=`
+const roomLayoutRestoreStyle=document.createElement("style");roomLayoutRestoreStyle.id="lunevia-room-layout-restore";roomLayoutRestoreStyle.textContent=`
 .room-view.show .room-layout{
   width:min(1480px,calc(100% - 48px))!important;
   margin:18px auto 28px!important;
@@ -85,7 +85,7 @@ document.head.appendChild(roomLayoutRestoreStyle);
 const modal=document.getElementById("modal"),nameInput=document.getElementById("name"),roomInput=document.getElementById("room"),title=document.getElementById("modalTitle"),text=document.getElementById("modalText");
 function openModal(create){title.textContent=create?"Создать сессию":"Присоединиться к сессии";text.textContent=create?"Введите имя — код сессии будет создан автоматически.":"Введите имя и код сессии, который вам отправили.";roomInput.value=create?String(Math.floor(1000+Math.random()*9000)):"";roomInput.placeholder=create?"Код создан автоматически":"Код сессии";modal.classList.remove("hidden");nameInput.focus()}
 document.getElementById("join").onclick=()=>openModal(false);document.getElementById("create").onclick=()=>openModal(true);document.getElementById("createTop").onclick=()=>openModal(true);document.getElementById("login").onclick=()=>openModal(false);document.getElementById("close").onclick=()=>modal.classList.add("hidden");
-document.getElementById("go").onclick=()=>{const n=nameInput.value.trim()||"Гость",r=roomInput.value.trim().toUpperCase();if(!r)return;sessionStorage.setItem("cineora_name",n);location.href="/?room="+encodeURIComponent(r)};
+document.getElementById("go").onclick=()=>{const n=nameInput.value.trim()||"Гость",r=roomInput.value.trim().toUpperCase();if(!r)return;sessionStorage.setItem("lunevia_name",n);location.href="/?room="+encodeURIComponent(r)};
 
 const ideaModal=document.getElementById("ideaModal"),ideaText=document.getElementById("ideaText"),ideaName=document.getElementById("ideaName"),ideaStatus=document.getElementById("ideaStatus");document.getElementById("ideaBtn").onclick=()=>{ideaStatus.textContent="";ideaModal.classList.remove("hidden");ideaText.focus()};document.getElementById("ideaClose").onclick=()=>ideaModal.classList.add("hidden");document.getElementById("ideaSend").onclick=async()=>{const text=ideaText.value.trim();if(text.length<3){ideaStatus.textContent="Напишите предложение чуть подробнее.";return}const btn=document.getElementById("ideaSend");btn.disabled=true;ideaStatus.textContent="Отправляем...";try{const r=await fetch("/api/suggestions",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({name:ideaName.value.trim()||"Гость",text})});const d=await r.json();if(!r.ok)throw new Error(d.error||"Не удалось отправить");ideaStatus.textContent="Спасибо! Предложение отправлено администратору.";ideaText.value="";setTimeout(()=>ideaModal.classList.add("hidden"),1200)}catch(e){ideaStatus.textContent=e.message||"Не удалось отправить предложение."}finally{btn.disabled=false}};
 
@@ -139,12 +139,12 @@ function renderMedia(url){
   const kind=mediaKind(clean);
   if(kind==="video"){
     const v=video||document.createElement("video");
-    v.className="cineora-media-video";v.controls=true;v.playsInline=true;v.preload="metadata";v.src=clean;
+    v.className="lunevia-media-video";v.controls=true;v.playsInline=true;v.preload="metadata";v.src=clean;
     if(!video&&root)root.appendChild(v);else if(video){if(root)root.appendChild(video);}
     v.style.display="block";v.onerror=()=>showMediaFallback(clean,"Не удалось открыть этот прямой видеофайл.");
     return;
   }
-  const frame=document.createElement("iframe");frame.className="cineora-media-frame";frame.allow="autoplay; fullscreen; picture-in-picture; encrypted-media";frame.allowFullscreen=true;frame.referrerPolicy="strict-origin-when-cross-origin";frame.src=mediaEmbedUrl(clean);
+  const frame=document.createElement("iframe");frame.className="lunevia-media-frame";frame.allow="autoplay; fullscreen; picture-in-picture; encrypted-media";frame.allowFullscreen=true;frame.referrerPolicy="strict-origin-when-cross-origin";frame.src=mediaEmbedUrl(clean);
   frame.addEventListener("error",()=>showMediaFallback(clean,"Внешний видеоплеер не ответил."));
   if(root)root.appendChild(frame);
   if(kind==="vk")setTimeout(()=>{if(frame.isConnected&&!frame.dataset.loaded)showMediaFallback(clean,"VK Video сейчас не отвечает.")},9000);
@@ -152,7 +152,7 @@ function renderMedia(url){
 }
 function showMediaFallback(url,message){
   const root=document.getElementById("universalPlayer");if(!root)return;root.innerHTML="";
-  const box=document.createElement("div");box.className="cineora-media-fallback";
+  const box=document.createElement("div");box.className="lunevia-media-fallback";
   const strong=document.createElement("strong");strong.textContent=message;
   const span=document.createElement("span");span.textContent="Комната и чат продолжают работать. Можно открыть источник напрямую.";
   const a=document.createElement("a");a.href=url;a.target="_blank";a.rel="noopener";a.textContent="Открыть видео";
@@ -167,10 +167,10 @@ function startRoom(roomId){
     reconnectionAttempts:Infinity,
     reconnectionDelay:1000,
     reconnectionDelayMax:10000,
-    auth:{roomId,name:sessionStorage.getItem("cineora_name")||"Гость",avatar:"mascot",frame:"creator",privateRoom:new URLSearchParams(location.search).get("private")==="1"}
+    auth:{roomId,name:sessionStorage.getItem("lunevia_name")||"Гость",avatar:"mascot",frame:"creator",privateRoom:new URLSearchParams(location.search).get("private")==="1"}
   });
   window.socket=socket;
-  const myName=sessionStorage.getItem("cineora_name")||"Гость";
+  const myName=sessionStorage.getItem("lunevia_name")||"Гость";
   const video=document.getElementById("roomVideo"),empty=document.getElementById("emptyPlayer"),participants=document.getElementById("participants"),chatMessages=document.getElementById("chatMessages");
   let suppress=false,lastProgress=0;
   const roomCodeLabel=document.getElementById("roomCodeLabel"),myRoomName=document.getElementById("myRoomName");
@@ -190,7 +190,7 @@ function startRoom(roomId){
 
   /* Playback is deliberately NOT broadcast automatically. A participant chooses when to sync. */
   const syncBtn=document.getElementById("syncBtn");
-  if(syncBtn)syncBtn.onclick=()=>{const position=video?video.currentTime:0;const playing=video?!video.paused:false;socket.emit("sync",{playing,position});const state=document.getElementById("syncState");if(state){state.textContent="Синхронизация отправлена";state.classList.add("cineora-sync-ok");setTimeout(()=>state.textContent="Готово к синхронизации",1300)}};
+  if(syncBtn)syncBtn.onclick=()=>{const position=video?video.currentTime:0;const playing=video?!video.paused:false;socket.emit("sync",{playing,position});const state=document.getElementById("syncState");if(state){state.textContent="Синхронизация отправлена";state.classList.add("lunevia-sync-ok");setTimeout(()=>state.textContent="Готово к синхронизации",1300)}};
   if(video){video.addEventListener("timeupdate",()=>{if(Date.now()-lastProgress>1000){lastProgress=Date.now();socket.emit("user-progress",{position:video.currentTime,playing:!video.paused,duration:video.duration||0})}})}
 
   const chatForm=document.getElementById("chatForm"),chatInput=document.getElementById("chatInput");
@@ -198,7 +198,7 @@ function startRoom(roomId){
 
   socket.on("connect",()=>{document.querySelector(".room-view")?.classList.remove("connection-lost");socket.emit("join-room",{roomId,name:myName,avatar:"mascot",frame:"creator",privateRoom:new URLSearchParams(location.search).get("private")==="1"});socket.emit("request-room-state");socket.emit("request-room-users")});
   socket.on("disconnect",()=>document.querySelector(".room-view")?.classList.add("connection-lost"));
-  socket.on("connect_error",err=>console.warn("[CINEORA] Socket.IO:",err.message));
+  socket.on("connect_error",err=>console.warn("[LUNEVIA] Socket.IO:",err.message));
   socket.on("room-state",state=>{loadMedia(state.mediaUrl);if(video&&state.mediaUrl&&Number.isFinite(Number(state.position))){suppress=true;video.currentTime=Number(state.position)||0;setTimeout(()=>suppress=false,200)}});
   socket.on("media-changed",data=>loadMedia(typeof data==="string"?data:data?.url));
   socket.on("sync",state=>applySync(state.playing,state.position));
@@ -209,13 +209,13 @@ function startRoom(roomId){
   socket.on("chat-warning",m=>{if(!chatMessages)return;const el=document.createElement("div");el.className="chat-msg";el.innerHTML=`<span>${escapeHtml(m.text||"")}</span>`;chatMessages.appendChild(el);chatMessages.scrollTop=chatMessages.scrollHeight});
 }
 
-/* CINEORA FINAL DESKTOP ROOM FIX
+/* LUNEVIA FINAL DESKTOP ROOM FIX
    The cinema CSS in index.html is loaded before client.js. The old restore rules
    were therefore overriding cinema-mode. Keep the normal room layout, but give
    cinema-mode its own final layer and keep the top room panel at the top. */
 (()=>{
   const style=document.createElement("style");
-  style.id="cineora-final-desktop-room-fix";
+  style.id="lunevia-final-desktop-room-fix";
   style.textContent=`
     .room-view.show .room-top{
       position:sticky!important;
