@@ -1,14 +1,14 @@
 (() => {
-  if (window.__CINEORA_ACHIEVEMENT_HOOKS__) return;
-  window.__CINEORA_ACHIEVEMENT_HOOKS__ = true;
-  const api = () => window.CINEORA && window.CINEORA.achievement;
+  if (window.__LUNEVIA_ACHIEVEMENT_HOOKS__) return;
+  window.__LUNEVIA_ACHIEVEMENT_HOOKS__ = true;
+  const api = () => window.LUNEVIA && window.LUNEVIA.achievement;
   const once = fn => { let done = false; return (...args) => { if (done) return; done = true; fn(...args); }; };
   const room = once(() => api()?.roomCreated());
   const message = once(() => api()?.messageSent());
   const style = once(() => api()?.styleUsed());
-  window.addEventListener('cineora:room-created', room);
-  window.addEventListener('cineora:message-sent', message);
-  window.addEventListener('cineora:profile-styled', style);
+  window.addEventListener('lunevia:room-created', room);
+  window.addEventListener('lunevia:message-sent', message);
+  window.addEventListener('lunevia:profile-styled', style);
   let last = Date.now();
   const tick = () => {
     const a = api();
