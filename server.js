@@ -997,8 +997,8 @@ async function joinRoomForSocket(socket, { roomId, name, avatar, frame, privateR
   broadcastRoom(roomId);
   socket.emit("room-users", publicUsers(room));
 
-  // История чата хранится в PostgreSQL, поэтому не пропадает после перезагрузки
-  // страницы или перезапуска сервера. Память комнаты используется как быстрый кэш.
+  // Всегда отдаём историю чата. PostgreSQL даёт постоянное хранение,
+  // а room.messages — быстрый fallback, если DATABASE_URL пока не настроен.
   if (pool) {
     try {
       const result = await pool.query(
@@ -1018,11 +1018,15 @@ async function joinRoomForSocket(socket, { roomId, name, avatar, frame, privateR
         text: row.text,
         createdAt: new Date(row.created_at).toISOString()
       }));
-      room.messages = stored;
-      socket.emit("chat-history", stored);
+      // Не затираем более свежий in-memory кэш, если он уже появился между запросами.
+      if (stored.length || !room.messages.length) room.messages = stored;
+      socket.emit("chat-history", room.messages.slice(-100));
     } catch (err) {
       console.error("[chat] history load failed:", err.message);
+      socket.emit("chat-history", room.messages.slice(-100));
     }
+  } else {
+    socket.emit("chat-history", room.messages.slice(-100));
   }
 
   return { ok:true, roomId };
