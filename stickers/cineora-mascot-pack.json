@@ -1,14 +1,17 @@
 {
-  "pack_name": "CINEORA Official Mascot Pack",
-  "version": "1.0.0",
-  "author": "CINEORA Team",
+  "pack_name": "LUNEVIA Official Mascot Pack",
+  "version": "2.0.0",
+  "author": "LUNEVIA Team",
   "exclusive": false,
+  "style": "soft gothic / nocturnal / lavender-silver",
   "stickers": [
-    {
-      "id": "watch_together",
-      "title": "Смотрим вместе?",
-      "emoji": "🍿",
-      "file": "/stickers/watch_together.png"
-    }
+    {"id":"haha","title":"Смеюсь","emoji":"😂","file":"/stickers/haha.svg"},
+    {"id":"cry","title":"Плачу","emoji":"😭","file":"/stickers/cry.svg"},
+    {"id":"love","title":"Любовь","emoji":"❤️","file":"/stickers/love.svg"},
+    {"id":"wow","title":"Шок","emoji":"😱","file":"/stickers/wow.svg"},
+    {"id":"look","title":"Смотрю","emoji":"👀","file":"/stickers/look.svg"},
+    {"id":"fire","title":"Огонь","emoji":"🔥","file":"/stickers/fire.svg"},
+    {"id":"popcorn","title":"Попкорн","emoji":"🍿","file":"/stickers/popcorn.svg"},
+    {"id":"sleep","title":"Засыпаю","emoji":"😴","file":"/stickers/sleep.svg"}
   ]
 }
