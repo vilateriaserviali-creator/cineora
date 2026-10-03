@@ -6258,5 +6258,183 @@ body:not(.room-page) .lunevia-story .source-desc{display:block!important;margin-
  body:not(.room-page) .lunevia-story .source-icon{width:40px!important;height:40px!important}
  body:not(.room-page) .lunevia-story .source-name{font-size:16px!important}
 }
-</style></body>
+</style>
+<style id="lunevia-magic-sections-v4">
+/* LUNEVIA — magical chapter atmosphere */
+body:not(.room-page) .lunevia-chapter,
+body:not(.room-page) .lunevia-magic,
+body:not(.room-page) .lunevia-path,
+body:not(.room-page) .lunevia-journal{
+  position:relative!important;
+  overflow:hidden!important;
+  background:
+    radial-gradient(circle at 12% 20%,#bca6c510 0 2px,transparent 3px),
+    radial-gradient(circle at 82% 30%,#d8c6df0d 0 1px,transparent 2px),
+    linear-gradient(180deg,#11111a 0%,#0d0e15 100%)!important;
+  color:#e9e1eb!important;
+}
+body:not(.room-page) .lunevia-chapter:before,
+body:not(.room-page) .lunevia-magic:before,
+body:not(.room-page) .lunevia-path:before,
+body:not(.room-page) .lunevia-journal:before{
+  content:"☾";position:absolute;right:5vw;top:8%;font:400 clamp(90px,14vw,220px)/1 "Cormorant Garamond",serif;
+  color:#cbb5d51a;transform:rotate(-12deg);pointer-events:none;
+}
+body:not(.room-page) .lunevia-chapter>.wrap,
+body:not(.room-page) .lunevia-magic>.wrap,
+body:not(.room-page) .lunevia-path>.wrap,
+body:not(.room-page) .lunevia-journal>.wrap{position:relative;z-index:1}
+body:not(.room-page) .lunevia-chapter .section-kicker,
+body:not(.room-page) .lunevia-magic .section-kicker,
+body:not(.room-page) .lunevia-path .section-kicker,
+body:not(.room-page) .lunevia-journal .section-kicker{
+  color:#9e8baa!important;font:500 10px/1 "Cinzel",serif!important;letter-spacing:.3em!important;
+}
+body:not(.room-page) .lunevia-chapter .section-title,
+body:not(.room-page) .lunevia-magic .section-title,
+body:not(.room-page) .lunevia-path .section-title,
+body:not(.room-page) .lunevia-journal .section-title{
+  color:#eee6f0!important;font-family:"Cormorant Garamond",serif!important;font-weight:400!important;
+  letter-spacing:-.02em!important;
+}
+body:not(.room-page) .lunevia-chapter .section-title em,
+body:not(.room-page) .lunevia-magic .section-title em,
+body:not(.room-page) .lunevia-path .section-title em{
+  color:#bca5c5!important;
+}
+body:not(.room-page) .lunevia-chapter .about-copy,
+body:not(.room-page) .lunevia-magic .feature-card p,
+body:not(.room-page) .lunevia-path .card p,
+body:not(.room-page) .lunevia-journal .updates-subtitle{
+  color:#958b9b!important;line-height:1.9!important;
+}
+body:not(.room-page) .lunevia-chapter .about-copy strong{
+  color:#ddd0e1!important;
+}
+body:not(.room-page) .lunevia-magic .features-grid{
+  gap:0!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  border-top:1px solid #cbb7d51a!important;border-bottom:1px solid #cbb7d51a!important;
+}
+body:not(.room-page) .lunevia-magic .feature-card{
+  min-height:310px!important;padding:34px 30px!important;border:0!important;border-right:1px solid #cbb7d51a!important;
+  border-radius:0!important;background:linear-gradient(180deg,#ffffff05,#ffffff01)!important;
+  transition:background .35s ease,transform .35s ease!important;
+}
+body:not(.room-page) .lunevia-magic .feature-card:last-child{border-right:0!important}
+body:not(.room-page) .lunevia-magic .feature-card:hover{
+  background:linear-gradient(180deg,#cbb6d50d,#ffffff02)!important;transform:translateY(-4px)!important;
+}
+body:not(.room-page) .lunevia-magic .feature-card:before{
+  content:"✦";display:block;color:#b89fc2;font-size:15px;margin-bottom:70px;opacity:.8;
+}
+body:not(.room-page) .lunevia-magic .feature-card h3{
+  color:#eee6f0!important;font:400 clamp(24px,2vw,34px)/1.1 "Cormorant Garamond",serif!important;margin-bottom:14px!important;
+}
+body:not(.room-page) .lunevia-magic .platforms{gap:12px!important;margin-top:48px!important}
+body:not(.room-page) .lunevia-magic .platform{
+  min-height:110px!important;padding:22px!important;border:1px solid #cbb7d526!important;border-radius:20px!important;
+  background:linear-gradient(145deg,#17151f,#0d0e15)!important;color:#ddd3e0!important;
+  transition:transform .3s ease,border-color .3s ease,box-shadow .3s ease!important;
+}
+body:not(.room-page) .lunevia-magic .platform:hover{
+  transform:translateY(-7px)!important;border-color:#cdb6d954!important;box-shadow:0 20px 45px #0007!important;
+}
+body:not(.room-page) .lunevia-magic .platform span{
+  width:42px;height:42px;border:1px solid #cdb6d936;border-radius:50%;display:grid;place-items:center;color:#cdb6d9!important;
+}
+body:not(.room-page) .lunevia-magic .platform b{font:500 17px "Cormorant Garamond",serif!important;color:#eee6f0!important}
+body:not(.room-page) .lunevia-path .cards{
+  gap:0!important;border-top:1px solid #cbb7d51a!important;
+}
+body:not(.room-page) .lunevia-path .card{
+  position:relative!important;min-height:300px!important;border:0!important;border-right:1px solid #cbb7d51a!important;border-radius:0!important;
+  background:transparent!important;padding:42px 40px!important;transition:background .3s ease!important;
+}
+body:not(.room-page) .lunevia-path .card:last-child{border-right:0!important}
+body:not(.room-page) .lunevia-path .card:hover{background:#cbb6d507!important}
+body:not(.room-page) .lunevia-path .card .num{
+  width:auto!important;height:auto!important;background:none!important;border:0!important;color:#9c89a5!important;
+  font:500 12px "Cinzel",serif!important;letter-spacing:.25em!important;
+}
+body:not(.room-page) .lunevia-path .card .num:after{content:"  —  ✦";color:#6f6075}
+body:not(.room-page) .lunevia-path .card h3{
+  color:#eee6f0!important;font:400 clamp(27px,2.4vw,40px)/1.1 "Cormorant Garamond",serif!important;
+  margin-top:65px!important;
+}
+body:not(.room-page) .lunevia-journal{
+  background:
+    radial-gradient(circle at 75% 45%,#8f789f12,transparent 30%),
+    linear-gradient(180deg,#0b0c12,#11101a)!important;
+}
+body:not(.room-page) .lunevia-journal .news-feed{
+  display:block!important;max-width:none!important;margin-top:48px!important;
+}
+body:not(.room-page) .lunevia-journal .news-empty{
+  position:relative!important;min-height:360px!important;padding:80px 30px!important;
+  display:grid!important;place-items:center!important;
+  border:1px solid #cbb7d522!important;border-radius:28px!important;
+  background:radial-gradient(circle at 50% 42%,#cbb6d50c,transparent 35%),#0e0f17!important;
+}
+body:not(.room-page) .lunevia-journal .news-empty:before{
+  content:"✦";position:absolute;top:50px;left:50%;transform:translateX(-50%);
+  color:#c4adcc;font-size:22px;animation:lunevia-star-pulse 3s ease-in-out infinite;
+}
+body:not(.room-page) .lunevia-journal .news-empty-icon{font-size:58px!important;color:#bca4c5!important;margin:0 0 16px!important}
+body:not(.room-page) .lunevia-journal .news-empty h3{
+  color:#eee6f0!important;font:400 38px "Cormorant Garamond",serif!important;
+}
+body:not(.room-page) .lunevia-journal .news-empty p{color:#807588!important}
+body:not(.room-page) .lunevia-footer{
+  position:relative!important;background:#08090e!important;border-top:1px solid #cbb7d514!important;
+  color:#83798a!important;padding:42px 0!important;
+}
+body:not(.room-page) .lunevia-footer:before{
+  content:"☾  ✦  ☾";position:absolute;left:50%;top:-13px;transform:translateX(-50%);
+  padding:0 18px;background:#08090e;color:#9c86a5;font-size:13px;letter-spacing:.35em;
+}
+body:not(.room-page) .lunevia-footer .wrap{min-height:90px!important}
+body:not(.room-page) .lunevia-footer span:first-child{font:500 18px "Cinzel",serif!important;letter-spacing:.18em;color:#ddd2e0!important}
+body:not(.room-page) .lunevia-footer .idea-link{
+  color:#bda7c7!important;letter-spacing:.08em!important;transition:color .2s ease,transform .2s ease!important;
+}
+body:not(.room-page) .lunevia-footer .idea-link:hover{color:#eee3f0!important;transform:translateY(-2px)!important}
+body:not(.room-page) .lunevia-footer .admin-link{color:#665c6c!important}
+body:not(.room-page) .modal{
+  background:#07080de8!important;backdrop-filter:blur(18px)!important;
+}
+body:not(.room-page) .modal-box{
+  position:relative!important;width:min(560px,100%)!important;padding:42px!important;
+  border:1px solid #cbb7d52b!important;border-radius:28px!important;
+  background:radial-gradient(circle at 85% 10%,#cbb6d512,transparent 35%),#12121b!important;
+  box-shadow:0 35px 100px #000b!important;
+}
+body:not(.room-page) .modal-box:before{
+  content:"☾";position:absolute;right:32px;top:20px;color:#bba4c5;font:400 45px "Cormorant Garamond",serif;
+}
+body:not(.room-page) .modal-box h2{color:#eee6f0!important;font:400 38px "Cormorant Garamond",serif!important}
+body:not(.room-page) .modal-box p{color:#958b9b!important;line-height:1.7!important}
+body:not(.room-page) .modal-box textarea,
+body:not(.room-page) .modal-box input{
+  background:#0b0c12!important;border:1px solid #cbb7d522!important;color:#eee6f0!important;border-radius:15px!important;
+}
+body:not(.room-page) .modal-box .go{background:#d7c3dc!important;color:#251e29!important}
+@keyframes lunevia-star-pulse{0%,100%{opacity:.45;transform:translateX(-50%) scale(.9)}50%{opacity:1;transform:translateX(-50%) scale(1.15)}}
+@media(max-width:900px){
+ body:not(.room-page) .lunevia-magic .features-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ body:not(.room-page) .lunevia-magic .feature-card{border-bottom:1px solid #cbb7d51a!important}
+ body:not(.room-page) .lunevia-path .card{min-height:240px!important}
+}
+@media(max-width:600px){
+ body:not(.room-page) .lunevia-magic .features-grid{grid-template-columns:1fr!important}
+ body:not(.room-page) .lunevia-magic .feature-card{border-right:0!important}
+ body:not(.room-page) .lunevia-magic .feature-card:before{margin-bottom:40px}
+ body:not(.room-page) .lunevia-path .cards{grid-template-columns:1fr!important}
+ body:not(.room-page) .lunevia-path .card{border-right:0!important;border-bottom:1px solid #cbb7d51a!important;padding:35px 0!important}
+ body:not(.room-page) .lunevia-path .card h3{margin-top:45px!important}
+ body:not(.room-page) .lunevia-journal .news-empty{min-height:300px!important;padding:65px 20px!important}
+ body:not(.room-page) .lunevia-journal .news-empty h3{font-size:32px!important}
+ body:not(.room-page) .modal-box{padding:30px 22px!important}
+}
+</style>
+</body>
 </html>
