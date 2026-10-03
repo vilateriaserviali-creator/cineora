@@ -2392,6 +2392,119 @@ html.cineora-dark .cineora-achievements{background:rgba(4,3,7,.72)}html.cineora-
   transition:none!important;
 }
 </style><style id="cineora-mascot-stickers-visible">.mascot-sticker-grid{grid-template-columns:repeat(4,1fr)!important;gap:7px!important}.mascot-sticker-grid button{height:68px!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:2px!important;background:rgba(255,255,255,.42)!important;border:1px solid #d5c4d5!important}.mascot-sticker-grid button img{width:54px!important;height:54px!important;display:block!important;object-fit:contain!important;border-radius:14px!important;filter:drop-shadow(0 3px 5px rgba(75,60,80,.18))}.mascot-sticker-grid button .mascot{width:42px;height:42px;display:grid;place-items:center;border-radius:50%;font-size:28px;line-height:1}.mascot-sticker-grid button small{font-size:7px!important;color:#665968!important;font-weight:700!important}.mascot-sticker-grid button:hover img{transform:scale(1.08) rotate(-3deg)}html.cineora-dark .mascot-sticker-grid button{background:rgba(45,38,49,.75)!important;border-color:#514653!important}.sticker-hint{font-size:9px!important</style>
+<style id="cineora-chat-cinema-final">
+/* Финальная геометрия чата: шире и без выхода за экран в режиме «Кинотеатр». */
+.room-view .side-card{
+  min-width:0!important;
+  max-width:100%!important;
+  box-sizing:border-box!important;
+}
+.room-view .chat{
+  min-width:0!important;
+  width:100%!important;
+  max-width:100%!important;
+  box-sizing:border-box!important;
+}
+.room-view .chat-messages,
+.room-view .chat-form,
+.room-view .chat-title-row,
+.room-view .chat-typing{
+  min-width:0!important;
+  max-width:100%!important;
+  box-sizing:border-box!important;
+}
+.room-view .chat-messages{
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+}
+.room-view .chat-msg{
+  max-width:100%!important;
+  box-sizing:border-box!important;
+}
+.room-view .chat-form{
+  display:grid!important;
+  grid-template-columns:44px minmax(0,1fr) 44px!important;
+  align-items:center!important;
+}
+.room-view .chat-form input{
+  min-width:0!important;
+  width:100%!important;
+  box-sizing:border-box!important;
+}
+.room-view .emoji-wrap{min-width:0!important}
+.room-view .emoji-picker{
+  max-width:calc(100vw - 24px)!important;
+  box-sizing:border-box!important;
+}
+
+/* Обычная комната — чат заметно шире. */
+@media(min-width:1001px){
+  .room-layout{
+    grid-template-columns:minmax(0,1fr) 390px!important;
+    gap:18px!important;
+  }
+}
+@media(min-width:1300px){
+  .room-layout{
+    grid-template-columns:minmax(0,1fr) 420px!important;
+  }
+}
+@media(min-width:1600px){
+  .room-layout{
+    grid-template-columns:minmax(0,1fr) 440px!important;
+  }
+}
+
+/* «Кинотеатр»: боковой чат получает фиксированную доступную ширину
+   и никогда не создаёт горизонтальный скролл страницы. */
+.room-view.cinema-mode,
+body.cinema-mode,
+html.cinema-mode{
+  overflow-x:hidden!important;
+}
+.room-view.cinema-mode .room-layout,
+body.cinema-mode .room-layout{
+  width:min(100%,1920px)!important;
+  max-width:100%!important;
+  grid-template-columns:minmax(0,1fr) minmax(340px,430px)!important;
+  gap:12px!important;
+  box-sizing:border-box!important;
+}
+.room-view.cinema-mode .side-card,
+body.cinema-mode .side-card{
+  width:100%!important;
+  max-width:430px!important;
+  min-width:0!important;
+  overflow:hidden!important;
+  box-sizing:border-box!important;
+}
+.room-view.cinema-mode .chat,
+body.cinema-mode .chat{
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
+}
+.room-view.cinema-mode .chat-messages,
+body.cinema-mode .chat-messages{
+  overflow-x:hidden!important;
+}
+@media(max-width:1000px){
+  .room-view.cinema-mode .room-layout,
+  body.cinema-mode .room-layout{
+    grid-template-columns:1fr!important;
+  }
+  .room-view.cinema-mode .side-card,
+  body.cinema-mode .side-card{
+    max-width:100%!important;
+  }
+}
+@media(max-width:600px){
+  .room-view .chat-form{
+    grid-template-columns:40px minmax(0,1fr) 40px!important;
+    gap:6px!important;
+  }
+}
+</style>
 </head>
 <body>
 
