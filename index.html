@@ -5285,5 +5285,237 @@ body:not(.room-page) .go{background:var(--lv-moon)!important;color:#17131b!impor
  body:not(.room-page) .section{padding:78px 0!important}
 }
 </style>
+
+<style id="lunevia-home-radical-editorial">
+/* LUNEVIA — новая композиция главной. Не трогает room-view и JS-хуки. */
+body:not(.room-page){
+  --night:#09090d;--ink:#ece8ef;--dim:#918b98;--silver:#c9c1ce;--violet:#8f7a98;
+  background:var(--night)!important;color:var(--ink)!important;overflow-x:hidden;
+}
+body:not(.room-page) .hero{
+  min-height:100svh!important;
+  background:#09090d!important;
+  position:relative!important;
+  isolation:isolate;
+}
+body:not(.room-page) .hero:before{
+  content:""!important;position:absolute!important;
+  width:min(62vw,760px)!important;height:min(62vw,760px)!important;
+  right:-8vw!important;top:8vh!important;border-radius:50%!important;
+  background:
+    radial-gradient(circle at 50% 50%,rgba(244,239,246,.95) 0 18%,rgba(210,201,215,.82) 19% 27%,rgba(137,120,145,.35) 28% 29%,rgba(255,255,255,.035) 30% 48%,transparent 49%)!important;
+  box-shadow:0 0 120px rgba(201,190,210,.16),inset 0 0 80px rgba(255,255,255,.08)!important;
+  filter:none!important;transform:none!important;z-index:-2!important;
+}
+body:not(.room-page) .hero:after{
+  content:""!important;position:absolute!important;inset:0!important;z-index:-1!important;
+  background:
+    radial-gradient(circle at 73% 19%,rgba(255,255,255,.8) 0 1px,transparent 2px),
+    radial-gradient(circle at 84% 58%,rgba(255,255,255,.55) 0 1px,transparent 2px),
+    radial-gradient(circle at 58% 73%,rgba(255,255,255,.42) 0 1px,transparent 2px),
+    linear-gradient(100deg,#09090d 0%,#09090d 34%,rgba(9,9,13,.82) 51%,rgba(9,9,13,.18) 78%,#09090d 100%)!important;
+  background-size:auto!important;opacity:.85!important;pointer-events:none!important;
+}
+body:not(.room-page) .hero>.wrap{width:min(1380px,calc(100% - 80px))!important;position:relative!important;z-index:2}
+body:not(.room-page) .header{
+  height:96px!important;border-bottom:0!important;position:relative!important;
+  display:flex!important;align-items:center!important;
+}
+body:not(.room-page) .logo{
+  font-family:"Manrope",sans-serif!important;font-size:18px!important;font-weight:700!important;
+  letter-spacing:.42em!important;text-transform:uppercase;color:#f2edf3!important;
+}
+body:not(.room-page) .logo .lunevia-logo-mark{font-size:26px!important;letter-spacing:0!important;margin-right:4px}
+body:not(.room-page) .logo .lunevia-logo-star{font-size:10px!important;letter-spacing:0!important}
+body:not(.room-page) .nav{gap:28px!important;margin-left:auto!important;margin-right:30px!important}
+body:not(.room-page) .nav a,body:not(.room-page) .login{
+  font-family:"Manrope",sans-serif!important;font-size:11px!important;letter-spacing:.08em!important;
+  text-transform:uppercase;color:#aaa4ae!important;
+}
+body:not(.room-page) .nav a:hover,body:not(.room-page) .login:hover{color:#f0ebf1!important}
+body:not(.room-page) .create-top{
+  border:1px solid rgba(235,229,239,.25)!important;background:rgba(255,255,255,.045)!important;
+  color:#eee8f0!important;border-radius:2px!important;padding:11px 17px!important;
+  text-transform:uppercase;font-size:10px!important;letter-spacing:.13em!important;
+  box-shadow:none!important;
+}
+body:not(.room-page) .hero-content{
+  max-width:680px!important;padding:clamp(110px,17vh,175px) 0 0!important;
+  position:relative!important;
+}
+body:not(.room-page) .eyebrow{
+  display:inline-flex!important;align-items:center!important;gap:10px!important;
+  margin:0 0 26px!important;padding:0!important;border:0!important;background:none!important;
+  color:#928a97!important;font-size:9px!important;letter-spacing:.32em!important;
+}
+body:not(.room-page) .eyebrow:before{
+  content:""!important;width:34px!important;height:1px!important;background:#8f7a98!important;
+  box-shadow:none!important;border-radius:0!important;
+}
+body:not(.room-page) .brand-big{
+  font-family:"Cormorant Garamond",serif!important;font-size:clamp(72px,9vw,126px)!important;
+  line-height:.76!important;font-weight:500!important;letter-spacing:.08em!important;
+  margin-left:-7px!important;color:#f0ebf1!important;text-shadow:none!important;
+}
+body:not(.room-page) .brand-big .lunevia-big-mark{display:none!important}
+body:not(.room-page) .brand-big .lunevia-big-star{
+  font-family:Manrope,sans-serif!important;font-size:13px!important;vertical-align:top!important;
+  margin-left:7px!important;color:#a895ae!important;
+}
+body:not(.room-page) .hero h1{
+  font-family:"Manrope",sans-serif!important;font-size:clamp(30px,3.4vw,48px)!important;
+  font-weight:400!important;line-height:1.08!important;letter-spacing:-.045em!important;
+  max-width:520px!important;margin:35px 0 18px!important;color:#e8e2ea!important;text-shadow:none!important;
+}
+body:not(.room-page) .hero h1 .accent{color:#a895ae!important;font-style:italic}
+body:not(.room-page) .lead{
+  max-width:480px!important;font-size:13px!important;line-height:1.9!important;
+  color:#96909b!important;margin:0!important;
+}
+body:not(.room-page) .actions{margin-top:32px!important;gap:8px!important}
+body:not(.room-page) .primary,body:not(.room-page) .secondary{
+  min-width:0!important;border-radius:2px!important;padding:13px 18px!important;
+  font-size:10px!important;letter-spacing:.1em!important;text-transform:uppercase!important;
+  box-shadow:none!important;
+}
+body:not(.room-page) .primary{
+  background:#e8e1e9!important;border-color:#e8e1e9!important;color:#151319!important;
+}
+body:not(.room-page) .secondary{
+  background:transparent!important;border-color:rgba(232,225,234,.28)!important;color:#d8d0db!important;
+}
+body:not(.room-page) .primary:hover,body:not(.room-page) .secondary:hover{transform:none!important;border-color:#eee7ef!important}
+body:not(.room-page) .sources{
+  position:absolute!important;left:calc(100% + 90px)!important;bottom:-7px!important;width:270px!important;
+  margin:0!important;padding-left:18px!important;border-left:1px solid rgba(232,225,234,.14)!important;
+}
+body:not(.room-page) .sources-title{
+  color:#6f6875!important;font-size:8px!important;letter-spacing:.26em!important;
+}
+body:not(.room-page) .source-row{display:grid!important;grid-template-columns:1fr 1fr!important;gap:7px!important;margin-top:12px!important}
+body:not(.room-page) .source{
+  padding:9px 8px!important;border-radius:0!important;border:1px solid rgba(232,225,234,.10)!important;
+  background:rgba(255,255,255,.025)!important;color:#aaa2ad!important;box-shadow:none!important;
+  font-size:9px!important;
+}
+body:not(.room-page) .source-icon{
+  width:19px!important;height:19px!important;min-width:19px!important;border-radius:50%!important;
+  border-color:rgba(232,225,234,.15)!important;background:#17151b!important;color:#b9afbd!important;
+}
+body:not(.room-page) .source:hover{transform:none!important;background:rgba(255,255,255,.06)!important;box-shadow:none!important}
+body:not(.room-page) .features{
+  position:absolute!important;left:0!important;right:0!important;bottom:34px!important;
+  margin:0!important;padding:18px 0 0!important;border-top:1px solid rgba(232,225,234,.10)!important;
+  background:none!important;
+}
+body:not(.room-page) .feature{font-size:10px!important;color:#77717c!important;border-color:rgba(232,225,234,.10)!important;padding:0 22px!important}
+body:not(.room-page) .feature:first-child{padding-left:0!important}
+body:not(.room-page) .feature-icon{font-size:16px!important;color:#9a879f!important;background:none!important;box-shadow:none!important}
+body:not(.room-page) .section{
+  padding:150px 0!important;background:#0d0c11!important;color:#eee8f0!important;
+  border-top:1px solid rgba(232,225,234,.06)!important;
+}
+body:not(.room-page) .section.cream{background:#0d0c11!important}
+body:not(.room-page) .section.dark{background:#111017!important}
+body:not(.room-page) .intro{grid-template-columns:1fr 1.35fr!important;gap:130px!important;align-items:start!important}
+body:not(.room-page) .section-kicker{
+  font-family:Manrope,sans-serif!important;color:#756e7b!important;font-size:8px!important;
+  letter-spacing:.3em!important;text-transform:uppercase!important;
+}
+body:not(.room-page) .section-title{
+  font-family:"Cormorant Garamond",serif!important;font-size:clamp(50px,6vw,82px)!important;
+  line-height:.9!important;font-weight:500!important;letter-spacing:-.02em!important;
+  color:#ece6ee!important;margin-top:18px!important;
+}
+body:not(.room-page) .section-text,body:not(.room-page) .about-copy{
+  color:#88818d!important;font-size:13px!important;line-height:2!important;
+}
+body:not(.room-page) .about-copy{
+  border-left:1px solid rgba(232,225,234,.14)!important;padding:4px 0 4px 36px!important;
+  background:none!important;box-shadow:none!important;
+}
+body:not(.room-page) .about-copy strong{color:#d6cdd8!important}
+body:not(.room-page) .cards{
+  grid-template-columns:1.2fr 1fr 1fr!important;gap:0!important;margin-top:80px!important;
+  border-top:1px solid rgba(232,225,234,.12)!important;
+}
+body:not(.room-page) .card{
+  min-height:230px!important;border:0!important;border-right:1px solid rgba(232,225,234,.10)!important;
+  border-radius:0!important;padding:30px 34px!important;background:transparent!important;
+  box-shadow:none!important;
+}
+body:not(.room-page) .card:first-child{padding-left:0!important}
+body:not(.room-page) .card:last-child{border-right:0!important}
+body:not(.room-page) .card:hover{transform:none!important;border-color:rgba(232,225,234,.10)!important}
+body:not(.room-page) .card .num{
+  width:auto!important;height:auto!important;border-radius:0!important;margin:0 0 58px!important;
+  background:none!important;color:#726a78!important;font-size:10px!important;display:block!important;
+}
+body:not(.room-page) .card h3{font-family:"Manrope",sans-serif!important;font-size:15px!important;font-weight:600!important;color:#e5dee7!important}
+body:not(.room-page) .card p{font-size:11px!important;line-height:1.7!important;color:#77717c!important;max-width:270px}
+body:not(.room-page) .features-grid{grid-template-columns:repeat(3,1fr)!important;gap:0!important;border-top:1px solid rgba(232,225,234,.10)!important}
+body:not(.room-page) .feature-card{
+  border:0!important;border-right:1px solid rgba(232,225,234,.10)!important;border-radius:0!important;
+  padding:34px!important;background:transparent!important;box-shadow:none!important;
+}
+body:not(.room-page) .feature-card:first-child{padding-left:0!important}
+body:not(.room-page) .feature-card:last-child{border-right:0!important}
+body:not(.room-page) .feature-card h3{font-family:"Manrope",sans-serif!important;font-size:14px!important;color:#e5dee7!important}
+body:not(.room-page) .feature-card p{font-size:11px!important;color:#77717c!important;line-height:1.75!important}
+body:not(.room-page) .platforms{grid-template-columns:repeat(4,1fr)!important;gap:0!important;border-top:1px solid rgba(232,225,234,.10)!important}
+body:not(.room-page) .platform{
+  border:0!important;border-right:1px solid rgba(232,225,234,.10)!important;border-radius:0!important;
+  padding:30px!important;background:transparent!important;box-shadow:none!important;
+}
+body:not(.room-page) .platform:last-child{border-right:0!important}
+body:not(.room-page) .platform span{color:#9d8ba2!important}
+body:not(.room-page) .platform b{color:#d6cfd8!important;font-size:11px!important}
+body:not(.room-page) .news-feed{grid-template-columns:1.3fr 1fr 1fr!important;gap:0!important;border-top:1px solid rgba(232,225,234,.10)!important}
+body:not(.room-page) .news-card,.news-card.featured{
+  grid-column:auto!important;max-width:none!important;width:auto!important;justify-self:stretch!important;
+  border:0!important;border-right:1px solid rgba(232,225,234,.10)!important;border-radius:0!important;
+  padding:25px!important;background:transparent!important;box-shadow:none!important;
+}
+body:not(.room-page) .news-card:first-child{padding-left:0!important}
+body:not(.room-page) .news-card:last-child{border-right:0!important}
+body:not(.room-page) .news-card:hover{transform:none!important;box-shadow:none!important}
+body:not(.room-page) .news-card-icon{background:#1b1720!important;color:#9d8ba2!important}
+body:not(.room-page) .news-card h3{font-family:"Cormorant Garamond",serif!important;font-size:27px!important;color:#e6dfe8!important}
+body:not(.room-page) .news-card p{color:#77717c!important;font-size:11px!important}
+body:not(.room-page) .footer{
+  background:#08080b!important;border-top:1px solid rgba(232,225,234,.08)!important;color:#67616c!important;
+}
+body:not(.room-page) .footer .wrap{min-height:90px!important}
+body:not(.room-page) .idea-link{color:#a493a9!important}
+body:not(.room-page) .modal-box{background:#141219!important;border-color:rgba(232,225,234,.15)!important;border-radius:2px!important}
+body:not(.room-page) .modal-box h2{font-family:"Cormorant Garamond",serif!important;font-size:34px!important}
+body:not(.room-page) .modal-box input{border-radius:2px!important;background:#0c0b10!important}
+@media(max-width:1100px){
+  body:not(.room-page) .sources{position:static!important;width:auto!important;margin-top:38px!important;padding:18px 0 0!important;border-left:0!important;border-top:1px solid rgba(232,225,234,.10)!important}
+  body:not(.room-page) .source-row{display:flex!important}
+}
+@media(max-width:900px){
+  body:not(.room-page) .hero{min-height:auto!important;padding-bottom:0!important}
+  body:not(.room-page) .hero>.wrap{width:calc(100% - 32px)!important}
+  body:not(.room-page) .header{height:76px!important}
+  body:not(.room-page) .nav{display:none!important}
+  body:not(.room-page) .create-top{display:none!important}
+  body:not(.room-page) .hero-content{padding-top:90px!important;padding-bottom:60px!important}
+  body:not(.room-page) .brand-big{font-size:68px!important}
+  body:not(.room-page) .hero h1{font-size:34px!important;margin-top:28px!important}
+  body:not(.room-page) .hero:before{width:420px!important;height:420px!important;right:-180px!important;top:120px!important}
+  body:not(.room-page) .sources{margin-top:34px!important}
+  body:not(.room-page) .features{position:static!important;display:grid!important;grid-template-columns:1fr!important;padding:0!important;margin:35px 0 0!important}
+  body:not(.room-page) .feature{padding:14px 0!important;border-right:0!important;border-bottom:1px solid rgba(232,225,234,.10)!important}
+  body:not(.room-page) .section{padding:90px 0!important}
+  body:not(.room-page) .intro{grid-template-columns:1fr!important;gap:34px!important}
+  body:not(.room-page) .section-title{font-size:58px!important}
+  body:not(.room-page) .cards,.body:not(.room-page) .features-grid,.body:not(.room-page) .platforms,.body:not(.room-page) .news-feed{grid-template-columns:1fr!important}
+  body:not(.room-page) .cards{display:block!important}
+  body:not(.room-page) .card,.body:not(.room-page) .feature-card,.body:not(.room-page) .platform,.body:not(.room-page) .news-card{border-right:0!important;border-bottom:1px solid rgba(232,225,234,.10)!important;padding:26px 0!important;min-height:0!important}
+  body:not(.room-page) .card .num{margin-bottom:28px!important}
+  body:not(.room-page) .about-copy{padding-left:20px!important}
+}
+</style>
 </body>
 </html>
