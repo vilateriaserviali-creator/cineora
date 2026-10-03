@@ -1,13 +1,13 @@
-/* CINEORA — achievement bridge
- * Safe, client-side only. Room code can call window.CINEORA.achievement.roomCreated(),
+/* LUNEVIA — achievement bridge
+ * Safe, client-side only. Room code can call window.LUNEVIA.achievement.roomCreated(),
  * messageSent() and watch(minutes). The bridge also watches common room controls
  * without changing the room UI or sync logic.
  */
 (() => {
-  const KEY='cineoraStats';
+  const KEY='luneviaStats';
   const read=()=>{try{return {...{rooms:0,messages:0,watchMinutes:0,styled:false},...JSON.parse(localStorage.getItem(KEY)||'{}')}}catch{return {rooms:0,messages:0,watchMinutes:0,styled:false}}};
   const save=s=>localStorage.setItem(KEY,JSON.stringify(s));
-  const notify=()=>window.dispatchEvent(new CustomEvent('cineora:stats',{detail:read()}));
+  const notify=()=>window.dispatchEvent(new CustomEvent('lunevia:stats',{detail:read()}));
   const api={
     roomCreated(){const s=read();s.rooms+=1;save(s);notify()},
     messageSent(){const s=read();s.messages+=1;save(s);notify()},
@@ -15,8 +15,8 @@
     styleUsed(){const s=read();s.styled=true;save(s);notify()},
     getStats:read
   };
-  window.CINEORA=window.CINEORA||{};
-  window.CINEORA.achievement=Object.assign(window.CINEORA.achievement||{},api);
+  window.LUNEVIA=window.LUNEVIA||{};
+  window.LUNEVIA.achievement=Object.assign(window.LUNEVIA.achievement||{},api);
   let last=Date.now(), wasPlaying=false;
   const tick=()=>{
     const now=Date.now();
